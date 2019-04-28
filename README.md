@@ -4,13 +4,14 @@ for an good programming experience. This library let's you write your own applic
 and fires actions via the [Home Assistant Websocket Api](https://developers.home-assistant.io/docs/en/external_api_websocket.html).
 Or you can call any other third party code or api.
 
-```
+Example:
+```kotlin
 listenState("sensor.livingroom_luminance") {
     constrain {
         newState.get<Double>() <= 3.0
     }
 
-    callback {
+    action {
         callService {
             light {
                 entityId = "light.livingroom_main"
@@ -30,3 +31,41 @@ page.
 
 ## Warning
 This project is in early alpha state. You can't rely on it **yet**. But I encourage everybody to test it and report issues.
+Changes in the API, removal of features or other changes will occur.
+
+## Installation
+For now you can use [Jitpack](http://jitpack.io) to install Khome locally. Just add the following lines to your build.gradle file.
+Since did'nt made an official release yet, use `master-SNAPSHOT` as version. After the first release, exchange `master-SNAPSHOT` with 
+the release tag.
+
+#### Gradle
+```groovy
+repositories {
+    ...
+    maven { url "https://jitpack.io" }
+}
+```
+```groovy
+dependencies {
+    ...
+    implementation 'com.github.dennisschroeder:khome:master-SNAPSHOT'
+}
+```
+
+#### Maven
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+```xml
+<dependency>
+        <groupId>com.github.dennisschroeder</groupId>
+        <artifactId>khome</artifactId>
+        <version>master-SNAPSHOT</version>
+</dependency>
+
+```
