@@ -35,7 +35,7 @@ Changes in the API, removal of features or other changes will occur.
 
 ## Installation
 For now you can use [Jitpack](http://jitpack.io) to install Khome locally. Just add the following lines to your build.gradle file.
-Since did'nt made an official release yet, use `master-SNAPSHOT` as version. After the first release, exchange `master-SNAPSHOT` with 
+Since there is no official release yet, use `master-SNAPSHOT` as version. After the first release, exchange `master-SNAPSHOT` with 
 the release tag.
 
 #### Gradle
