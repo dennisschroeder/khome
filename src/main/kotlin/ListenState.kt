@@ -63,7 +63,7 @@ data class Constraint(
     val oldState: State
 )
 
-fun ListenState.callback(func: EventResult.() -> Unit) {
+fun ListenState.action(func: EventResult.() -> Unit) {
     if (constraint) func(data)
     if (executeOnce) stateChangeEvents.minusAssign(handle)
 
