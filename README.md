@@ -8,7 +8,7 @@ Example:
 ```kotlin
 listenState("sensor.livingroom_luminance") {
     constrain {
-        newState.get<Double>() <= 3.0
+        newState.get<Double>() ?: 0.0 <= 3.0
     }
 
     action {
