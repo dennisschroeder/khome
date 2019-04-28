@@ -51,9 +51,9 @@ your own server. But there is plenty of information and tutorials on the web to 
 will help you. Also there is an [Discord channel](https://discordapp.com/invite/c5DvZ4e) to get in touch easily with the community.
 
 #### ... the Python World:
-Yes you need to learn Kotlin. It is definitely worth a try. In my personal opinion it is worth even more. Probably the fastet 
-way to get into Kotlin is the [Kotlin for Python Introduction](https://kotlinlang.org/docs/tutorials/kotlin-for-py/introduction.html)
-from the official Kotlin documentation. Here is a list of the import [Kotlin Online Resources](https://kotlinlang.org/community/#kotlin-online-resources).
+Yes you need to learn Kotlin. It is definitely worth a try. In my personal opinion it is worth even more. But thats a different story.
+Probably the fastest way for you to get into Kotlin, is the [Kotlin for Python Introduction](https://kotlinlang.org/docs/tutorials/kotlin-for-py/introduction.html)
+from the official Kotlin documentation. Here is a list of the most importent [Kotlin online resources](https://kotlinlang.org/community/#kotlin-online-resources).
 
 ## Installation
 
