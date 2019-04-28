@@ -96,3 +96,7 @@ dependencies {
 </dependency>
 
 ```
+
+## Documentation
+
+...coming soon.
