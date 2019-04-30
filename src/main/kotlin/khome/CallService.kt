@@ -64,14 +64,20 @@ fun CallService.cover(init: CoverData.() -> Unit) {
     domain = "cover"
     serviceData = CoverData(
         entityId = "cover",
-        position = null
+        position = null,
+        setCoverPosition = "set_cover_position",
+        openCover = "open_cover",
+        closeCover = "close_cover"
     ).apply(init)
 
 }
 
 data class CoverData(
     var entityId: String,
-    var position: Int?
+    var position: Int?,
+    val setCoverPosition: String,
+    val openCover: String,
+    val closeCover: String
 
 ) : ServiceData
 
