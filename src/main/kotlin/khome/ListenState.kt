@@ -75,13 +75,13 @@ fun ListenState.action(func: EventResult.() -> Unit) {
 
 }
 
-inline fun WebSocketSession.runsAtSunrise(crossinline action: EventResult.() -> Unit) =
-    runsAtSunPosition("above_horizon", action)
+inline fun WebSocketSession.runAtSunrise(crossinline action: EventResult.() -> Unit) =
+    runAtSunPosition("above_horizon", action)
 
-inline fun WebSocketSession.runsAtSunset(crossinline action: EventResult.() -> Unit) =
-    runsAtSunPosition("below_horizon", action)
+inline fun WebSocketSession.runAtSunset(crossinline action: EventResult.() -> Unit) =
+    runAtSunPosition("below_horizon", action)
 
-inline fun WebSocketSession.runsAtSunPosition(position: String, crossinline action: EventResult.() -> Unit) {
+inline fun WebSocketSession.runAtSunPosition(position: String, crossinline action: EventResult.() -> Unit) {
     listenState("sun.sun") {
         constrain {
             newState.get<String>() == position
