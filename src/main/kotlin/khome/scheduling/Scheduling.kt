@@ -1,5 +1,7 @@
-package khome
+package khome.scheduling
 
+import khome.Khome
+import khome.LifeCycleHandlerInterface
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -73,17 +75,13 @@ fun convertLocalDateTimeToDate(localDate: LocalDateTime): Date = Date
     .from(localDate.atZone(ZoneId.systemDefault()).toInstant())
 
 class LifeCycleHandler(timer: Timer): LifeCycleHandlerInterface {
-    override val lazyCancellation: Unit by lazy { timer.cancel() }
+    override val lazyCancellation: Unit by lazy {
+        timer.cancel()
+        Khome.logger.info { "Schedule canceled." }
+    }
 
     override fun cancel() = lazyCancellation
     override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
     override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 
-}
-
-interface LifeCycleHandlerInterface {
-    val lazyCancellation: Unit
-    fun cancel()
-    fun cancelInSeconds(seconds: Int): LifeCycleHandlerInterface
-    fun cancelInMinutes(minutes: Int): LifeCycleHandlerInterface
 }

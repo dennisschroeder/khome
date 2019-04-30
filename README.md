@@ -68,13 +68,13 @@ the release tag.
 #### Gradle
 ```groovy
 repositories {
-    ...
+    // ...
     maven { url "https://jitpack.io" }
 }
 ```
 ```groovy
 dependencies {
-    ...
+    // ...
     implementation 'com.github.dennisschroeder:khome:master-SNAPSHOT'
 }
 ```
@@ -99,4 +99,11 @@ dependencies {
 
 ## Documentation
 
-...coming soon.
+Khome has no opinion on how you want to run your application, what other libraries or pattern you choose or what else  is best for what you like to build.
+All Khome needs is an Kotlin environment to run properly. All dependencies comes with it.
+
+Again, if you are new to Kotlin, you might check out [Getting Started with Intellij IDEA](https://kotlinlang.org/docs/tutorials/getting-started.html)
+or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorials/command-line.html).
+I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
+
+

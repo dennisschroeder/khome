@@ -1,7 +1,11 @@
 package khome
 
+import io.ktor.http.cio.websocket.WebSocketSession
+import khome.Khome.Companion.logger
 import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.states
+import khome.scheduling.runOnceInMinutes
+import khome.scheduling.runOnceInSeconds
 import java.util.*
 
 
@@ -9,7 +13,7 @@ fun getState(entityId: String) = states[entityId]
 fun getAttributes(entityId: String) = states[entityId]?.attributes
 
 
-fun listenState(entityId: String,callback: ListenState.() -> Unit) {
+fun listenState(entityId: String, callback: ListenState.() -> Unit): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
     stateChangeEvents[handle] = {
         if (it.event.data.entityId == entityId) {
@@ -23,6 +27,8 @@ fun listenState(entityId: String,callback: ListenState.() -> Unit) {
             stateListener.apply(callback)
         }
     }
+
+    return LifeCycleHandler(handle, entityId)
 }
 
 fun listenStateOnce(entityId: String, callback: ListenState.() -> Unit) {
@@ -69,5 +75,30 @@ fun ListenState.action(func: EventResult.() -> Unit) {
 
 }
 
-fun ListenState.unsubscribe() = stateChangeEvents.minusAssign(handle)
+inline fun WebSocketSession.runsAtSunrise(crossinline action: EventResult.() -> Unit) =
+    runsAtSunPosition("above_horizon", action)
 
+inline fun WebSocketSession.runsAtSunset(crossinline action: EventResult.() -> Unit) =
+    runsAtSunPosition("below_horizon", action)
+
+inline fun WebSocketSession.runsAtSunPosition(position: String, crossinline action: EventResult.() -> Unit) {
+    listenState("sun.sun") {
+        constrain {
+            newState.get<String>() == position
+        }
+
+        action { action() }
+    }
+}
+
+class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
+    override val lazyCancellation: Unit by lazy {
+        stateChangeEvents.minusAssign(handle)
+        logger.info { "Subscription to $entityId canceled." }
+    }
+
+    override fun cancel() = lazyCancellation
+    override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
+    override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
+
+}
