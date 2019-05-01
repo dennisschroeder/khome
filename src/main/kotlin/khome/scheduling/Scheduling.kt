@@ -1,10 +1,16 @@
 package khome.scheduling
 
 import khome.Khome
+import khome.Khome.Companion.logger
 import khome.LifeCycleHandlerInterface
+import khome.getState
+import java.lang.RuntimeException
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAccessor
 
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -50,6 +56,15 @@ inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit
     return LifeCycleHandler(timer)
 }
 
+inline fun runOnceAt(date: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val handle = UUID.randomUUID().toString()
+
+    val timer = Timer(handle, true)
+    timer.schedule(date, action)
+
+    return LifeCycleHandler(timer)
+}
+
 inline fun runOnceInSeconds(seconds: Int, crossinline callback: TimerTask.() -> Unit): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
 
@@ -68,13 +83,42 @@ inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) 
 fun createDateFromTimeOfDayAsString(timeOfDay: String): Date {
     val (hour, minute) = timeOfDay.split(":")
     val startLocalDate = LocalDate.now().atTime(hour.toInt(), minute.toInt())
-    return convertLocalDateTimeToDate(startLocalDate)
+    return startLocalDate.toDate()
 }
 
-fun convertLocalDateTimeToDate(localDate: LocalDateTime): Date = Date
-    .from(localDate.atZone(ZoneId.systemDefault()).toInstant())
+fun runEverySunRise(action: TimerTask.() -> Unit) {
+    val now = LocalDateTime.now().toDate()
+    val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
-class LifeCycleHandler(timer: Timer): LifeCycleHandlerInterface {
+    runEveryAt(dailyPeriodInMillis, now) {
+        val nextSunrise = nextSunrise()
+        runOnceAt(nextSunrise, action)
+    }
+}
+
+fun runEverySunSet(action: TimerTask.() -> Unit) {
+    val now = LocalDateTime.now().toDate()
+    val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
+
+    runEveryAt(dailyPeriodInMillis, now) {
+        val nextSunrise = nextSunset()
+        runOnceAt(nextSunrise, action)
+    }
+}
+
+fun nextSunrise(): Date = getNextSunPosition("next_rising")
+fun nextSunset(): Date = getNextSunPosition("next_setting")
+
+@Throws(RuntimeException::class)
+fun getNextSunPosition(nextPosition: String): Date {
+    val sunset = getState("sun.sun")?.getAttribute<String>(nextPosition)
+        ?: throw RuntimeException("Could not fetch $nextPosition time from state-attribute")
+    val sunsetLocaleDateTime = LocalDateTime.parse(sunset, DateTimeFormatter.ISO_DATE_TIME)
+
+    return sunsetLocaleDateTime.toDate()
+}
+
+class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
         timer.cancel()
         Khome.logger.info { "Schedule canceled." }
@@ -85,3 +129,6 @@ class LifeCycleHandler(timer: Timer): LifeCycleHandlerInterface {
     override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 
 }
+
+fun LocalDateTime.toDate() = Date
+    .from(atZone(ZoneId.systemDefault()).toInstant())

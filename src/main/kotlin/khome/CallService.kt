@@ -75,9 +75,9 @@ fun CallService.cover(init: CoverData.() -> Unit) {
 data class CoverData(
     var entityId: String,
     var position: Int?,
-    val setCoverPosition: String,
-    val openCover: String,
-    val closeCover: String
+    @Transient val setCoverPosition: String,
+    @Transient val openCover: String,
+    @Transient val closeCover: String
 
 ) : ServiceData
 
@@ -85,14 +85,20 @@ fun CallService.covers(init: CoversData.() -> Unit) {
     domain = "cover"
     serviceData = CoversData(
         entityIds = listOf("cover"),
-        position = null
+        position = null,
+        setCoverPosition = "set_cover_position",
+        openCover = "open_cover",
+        closeCover = "close_cover"
     ).apply(init)
 
 }
 
 data class CoversData(
     @SerializedName("entity_id") var entityIds: List<String>,
-    var position: Int?
+    var position: Int?,
+    @Transient val setCoverPosition: String,
+    @Transient val openCover: String,
+    @Transient val closeCover: String
 
 ) : ServiceData
 
