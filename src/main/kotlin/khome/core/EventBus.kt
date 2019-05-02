@@ -1,4 +1,4 @@
-package khome
+package khome.core
 import java.util.function.Consumer
 
 typealias Handler<EventType> = Consumer<EventType>

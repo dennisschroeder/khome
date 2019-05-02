@@ -6,24 +6,11 @@ import io.ktor.http.cio.websocket.readText
 import java.util.*
 import kotlin.reflect.KClass
 
-data class Auth(
-    override val type: String = "auth",
-    val accessToken: String
-) : Message
-
-data class AuthResponse(
-    override val type: String,
-    val haVersion: String
-) : Message
-
-fun AuthResponse.authRequired() = type == "auth_required"
-fun AuthResponse.isAuthenticated() = type == "auth_ok"
-
 
 data class ListenEvent(
     val id: Int,
     override val type: String = "subscribe_events",
-    val eventType: String = "state_changed"
+    val eventType: String
 ) : Message
 
 data class EventResult(val id: Int, override val type: String, val event: Event) :
@@ -53,6 +40,7 @@ fun <M : Any> Frame.Text.toObject(type: KClass<M>): M {
 }
 
 data class FetchStates(val id: Int, override val type: String = "get_states") : Message
+
 data class Result(
     val id: Int,
     override val type: String,
@@ -89,17 +77,6 @@ data class StateResult(
         return result1
     }
 }
-
-data class CallService(
-    private var id: Int?,
-    override val type: String = "call_service",
-    var domain: String?,
-    var service: String?,
-    var serviceData: ServiceData?
-) : Message
-
-interface ServiceData
-fun ServiceData.toJson(): String = serializer.toJson(this)
 
 
 interface Message {

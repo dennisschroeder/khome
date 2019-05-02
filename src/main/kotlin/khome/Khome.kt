@@ -11,6 +11,7 @@ import io.ktor.client.features.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.*
 import io.ktor.util.KtorExperimentalAPI
+import khome.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import mu.KotlinLogging
@@ -135,23 +136,7 @@ data class Configuration(
     var startStateStream: Boolean = true
 )
 
-@ObsoleteCoroutinesApi
-suspend fun WebSocketSession.authenticate(token: String) {
-    val initMessage = getMessage<AuthResponse>()
 
-    if (initMessage.authRequired()) {
-        logger.info("Authentication required!")
-        val authMessage = Auth(accessToken = token).toJson()
-        logger.info("Sending authentication message.")
-        callWebSocketApi(authMessage)
-    } else {
-        logger.info("No authentication required!")
-    }
-
-    val authResponse = runCatching { incoming.receive().asObject<AuthResponse>() }
-    authResponse.onFailure { logger.error { it.printStackTrace() } }
-    authResponse.onSuccess { if (it.isAuthenticated()) logger.info { "Authenticated successfully." } }
-}
 
 suspend fun WebSocketSession.startStateStream() {
     callWebSocketApi(FetchStates(1000).toJson())
@@ -160,7 +145,7 @@ suspend fun WebSocketSession.startStateStream() {
     message.result.forEach {
         states[it.entityId] = it
     }
-    callWebSocketApi(ListenEvent(1100).toJson())
+    callWebSocketApi(ListenEvent(1100, eventType = "state_changed").toJson())
 }
 
 suspend fun WebSocketSession.callWebSocketApi(content: String) = send(content)
