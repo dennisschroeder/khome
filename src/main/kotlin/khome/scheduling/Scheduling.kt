@@ -1,16 +1,13 @@
 package khome.scheduling
 
 import khome.Khome
-import khome.Khome.Companion.logger
 import khome.LifeCycleHandlerInterface
 import khome.getState
 import java.lang.RuntimeException
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
 
 import java.util.*
 import java.util.concurrent.TimeUnit
