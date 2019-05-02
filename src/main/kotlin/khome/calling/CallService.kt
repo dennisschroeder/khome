@@ -5,6 +5,8 @@ import khome.Khome.Companion.incrementIdCounter
 import khome.Khome.Companion.logger
 import io.ktor.http.cio.websocket.WebSocketSession
 import khome.*
+import khome.core.MessageInterface
+import khome.core.serializer
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -38,7 +40,7 @@ data class CallService(
     var domain: String?,
     var service: String?,
     var serviceData: ServiceData?
-) : Message
+) : MessageInterface
 
 interface ServiceData
-fun ServiceData.toJson(): String = Khome.serializer.toJson(this)
+fun ServiceData.toJson(): String = serializer.toJson(this)

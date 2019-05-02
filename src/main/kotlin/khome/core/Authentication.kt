@@ -25,12 +25,12 @@ suspend fun WebSocketSession.authenticate(token: String) {
 data class Auth(
     override val type: String = "auth",
     val accessToken: String
-) : Message
+) : MessageInterface
 
 data class AuthResponse(
     override val type: String,
     val haVersion: String
-) : Message
+) : MessageInterface
 
 fun AuthResponse.authRequired() = type == "auth_required"
 fun AuthResponse.isAuthenticated() = type == "auth_ok"
