@@ -75,22 +75,6 @@ fun ListenState.action(func: EventResult.() -> Unit) {
 
 }
 
-inline fun WebSocketSession.runAtSunrise(crossinline action: EventResult.() -> Unit) =
-    runAtSunPosition("above_horizon", action)
-
-inline fun WebSocketSession.runAtSunset(crossinline action: EventResult.() -> Unit) =
-    runAtSunPosition("below_horizon", action)
-
-inline fun WebSocketSession.runAtSunPosition(position: String, crossinline action: EventResult.() -> Unit) {
-    listenState("sun.sun") {
-        constrain {
-            newState.get<String>() == position
-        }
-
-        action { action() }
-    }
-}
-
 class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
         stateChangeEvents.minusAssign(handle)
