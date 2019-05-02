@@ -1,15 +1,14 @@
 package khome.listening
 
-import khome.Khome.Companion.logger
-import khome.Khome.Companion.stateChangeEvents
-import khome.Khome.Companion.states
-import khome.core.EventResult
-import khome.core.LifeCycleHandlerInterface
-import khome.core.State
-import khome.scheduling.runOnceInMinutes
-import khome.scheduling.runOnceInSeconds
 import java.util.*
-
+import khome.core.State
+import khome.core.logger
+import khome.core.EventResult
+import khome.Khome.Companion.states
+import khome.scheduling.runOnceInSeconds
+import khome.scheduling.runOnceInMinutes
+import khome.core.LifeCycleHandlerInterface
+import khome.Khome.Companion.stateChangeEvents
 
 fun getState(entityId: String) = states[entityId]
 fun getAttributes(entityId: String) = states[entityId]?.attributes
@@ -29,7 +28,6 @@ fun listenState(entityId: String, callback: ListenState.() -> Unit): LifeCycleHa
             stateListener.apply(callback)
         }
     }
-
     return LifeCycleHandler(handle, entityId)
 }
 
@@ -74,7 +72,6 @@ data class Constraint(
 fun ListenState.action(func: EventResult.() -> Unit) {
     if (constraint) func(data)
     if (executeOnce) stateChangeEvents.minusAssign(handle)
-
 }
 
 class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
@@ -86,5 +83,4 @@ class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInter
     override fun cancel() = lazyCancellation
     override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
     override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
-
 }

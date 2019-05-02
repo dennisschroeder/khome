@@ -9,8 +9,7 @@ class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
 
     private val list = LinkedHashMap<String, Handler<T>>()
 
-    var nextUnnamedIndex = 0L
-        private set
+    private var nextUnnamedIndex = 0L
 
     val size: Int @JvmName("size") get() = list.size
     val listeners: MutableCollection<MutableMap.MutableEntry<String, Handler<T>>> get() = list.entries
@@ -21,12 +20,12 @@ class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
 
     @JvmName("add")
     operator fun plusAssign(handler: Handler<T>) {
-        list.put("${nextUnnamedIndex++}", handler)
+        list["${nextUnnamedIndex++}"] = handler
     }
 
     @JvmName("put")
     operator fun set(name: String, handler: Handler<T>) {
-        list.put(name, handler)
+        list[name] = handler
     }
 
     @JvmName("add")

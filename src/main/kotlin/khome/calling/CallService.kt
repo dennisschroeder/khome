@@ -1,14 +1,14 @@
 package khome.calling
 
-import khome.Khome.Companion.fetchNextId
-import khome.Khome.Companion.incrementIdCounter
-import khome.Khome.Companion.logger
-import io.ktor.http.cio.websocket.WebSocketSession
 import khome.*
-import khome.core.MessageInterface
 import khome.core.serializer
 import kotlinx.coroutines.launch
+import khome.core.MessageInterface
 import kotlinx.coroutines.runBlocking
+import khome.Khome.Companion.fetchNextId
+import khome.Khome.Companion.incrementIdCounter
+import io.ktor.http.cio.websocket.WebSocketSession
+import khome.core.logger
 
 fun WebSocketSession.callService(init: CallService.() -> Unit) {
     runBlocking {
@@ -32,15 +32,16 @@ fun CallService.entityId(entityId: String) {
     serviceData = EntityId(entityId)
 }
 
-data class EntityId(var entityId: String) : ServiceData
+data class EntityId(var entityId: String) : ServiceDataInterface
 
 data class CallService(
-    private var id: Int?,
+    private var id: Int,
     override val type: String = "call_service",
     var domain: String?,
     var service: String?,
-    var serviceData: ServiceData?
+    var serviceData: ServiceDataInterface?
 ) : MessageInterface
 
-interface ServiceData
-fun ServiceData.toJson(): String = serializer.toJson(this)
+interface ServiceDataInterface {
+    fun toJson(): String = serializer.toJson(this)
+}

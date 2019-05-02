@@ -1,17 +1,16 @@
 package khome.scheduling
 
-import khome.Khome
-import khome.core.LifeCycleHandlerInterface
+import java.util.*
+import java.time.ZoneId
+import khome.core.logger
+import java.time.LocalDate
+import kotlin.concurrent.*
+import java.time.LocalDateTime
 import khome.listening.getState
 import java.lang.RuntimeException
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.*
+import java.time.format.DateTimeFormatter
+import khome.core.LifeCycleHandlerInterface
 
 inline fun runEveryAt(period: Long, time: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
@@ -118,7 +117,7 @@ fun getNextSunPosition(nextPosition: String): Date {
 class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
         timer.cancel()
-        Khome.logger.info { "Schedule canceled." }
+        logger.info { "Schedule canceled." }
     }
 
     override fun cancel() = lazyCancellation
@@ -127,5 +126,5 @@ class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
 
 }
 
-fun LocalDateTime.toDate() = Date
+fun LocalDateTime.toDate(): Date = Date
     .from(atZone(ZoneId.systemDefault()).toInstant())

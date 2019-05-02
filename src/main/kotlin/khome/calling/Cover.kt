@@ -11,7 +11,6 @@ fun CallService.cover(init: CoverData.() -> Unit) {
         openCover = "open_cover",
         closeCover = "close_cover"
     ).apply(init)
-
 }
 
 data class CoverData(
@@ -21,7 +20,7 @@ data class CoverData(
     @Transient val openCover: String,
     @Transient val closeCover: String
 
-) : ServiceData
+) : ServiceDataInterface
 
 fun CallService.covers(init: CoversData.() -> Unit) {
     domain = "cover"
@@ -32,7 +31,6 @@ fun CallService.covers(init: CoversData.() -> Unit) {
         openCover = "open_cover",
         closeCover = "close_cover"
     ).apply(init)
-
 }
 
 data class CoversData(
@@ -42,4 +40,4 @@ data class CoversData(
     @Transient val openCover: String,
     @Transient val closeCover: String
 
-) : ServiceData
+) : ServiceDataInterface

@@ -1,19 +1,17 @@
 package khome
 
-import khome.Khome.Companion.logger
-import khome.Khome.Companion.resultEvents
-import khome.Khome.Companion.stateChangeEvents
-import khome.Khome.Companion.states
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.websocket.*
-import io.ktor.http.HttpMethod
-import io.ktor.http.cio.websocket.*
-import io.ktor.util.KtorExperimentalAPI
 import khome.core.*
 import kotlinx.coroutines.*
+import io.ktor.http.HttpMethod
+import io.ktor.client.HttpClient
+import io.ktor.http.cio.websocket.*
+import khome.Khome.Companion.states
+import io.ktor.client.engine.cio.CIO
+import io.ktor.util.KtorExperimentalAPI
+import khome.Khome.Companion.resultEvents
+import io.ktor.client.features.websocket.*
+import khome.Khome.Companion.stateChangeEvents
 import kotlinx.coroutines.channels.consumeEach
-import mu.KotlinLogging
 
 fun initialize(init: Khome.() -> Unit): Khome {
     return Khome().apply(init)
@@ -25,7 +23,6 @@ class Khome {
         val stateChangeEvents = Event<EventResult>()
         val resultEvents = Event<Result>()
         val config = Configuration()
-        val logger = KotlinLogging.logger {}
 
         /**
          * Since the Homeassistant web socket API needs an incrementing
@@ -43,7 +40,7 @@ class Khome {
     private val method = HttpMethod.Get
     private val path = "/api/websocket"
 
-    fun configure(init: Configuration.() -> Unit): Unit {
+    fun configure(init: Configuration.() -> Unit) {
         config.apply(init)
     }
 
@@ -131,7 +128,6 @@ data class Configuration(
     var accessToken: String = "<create one in khome.khome>",
     var startStateStream: Boolean = true
 )
-
 
 
 suspend fun WebSocketSession.startStateStream() {

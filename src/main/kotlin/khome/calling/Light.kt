@@ -33,4 +33,4 @@ data class LightData(
     var brightnessPct: Int?,
     var profile: String?
 
-) : ServiceData
+) : ServiceDataInterface
