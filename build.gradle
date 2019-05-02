@@ -24,6 +24,7 @@ dependencies {
     implementation "io.ktor:ktor-client-websocket:$ktor_version"
     implementation "org.slf4j:slf4j-simple:1.7.26"
     implementation "io.github.microutils:kotlin-logging:1.6.24"
+    testImplementation"org.junit.jupiter:junit-jupiter:5.4.2"
 }
 
 compileKotlin {
