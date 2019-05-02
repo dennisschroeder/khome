@@ -1,6 +1,5 @@
 package khome
 
-import com.google.gson.*
 import khome.Khome.Companion.logger
 import khome.Khome.Companion.resultEvents
 import khome.Khome.Companion.stateChangeEvents
@@ -26,9 +25,6 @@ class Khome {
         val stateChangeEvents = Event<EventResult>()
         val resultEvents = Event<Result>()
         val config = Configuration()
-        val serializer = GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .create()!!
         val logger = KotlinLogging.logger {}
 
         /**
@@ -164,3 +160,10 @@ suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming
 inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
 
 
+data class ListenEvent(
+    val id: Int,
+    override val type: String = "subscribe_events",
+    val eventType: String
+) : MessageInterface
+
+data class FetchStates(val id: Int, override val type: String = "get_states") : MessageInterface

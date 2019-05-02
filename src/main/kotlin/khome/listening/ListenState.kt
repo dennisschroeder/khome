@@ -1,11 +1,11 @@
 package khome.listening
 
-import khome.EventResult
 import khome.Khome.Companion.logger
 import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.states
-import khome.State
+import khome.core.EventResult
 import khome.core.LifeCycleHandlerInterface
+import khome.core.State
 import khome.scheduling.runOnceInMinutes
 import khome.scheduling.runOnceInSeconds
 import java.util.*
