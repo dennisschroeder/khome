@@ -11,9 +11,11 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.stateChangeEvents
+import khome.core.exceptions.EventStreamException
 import kotlinx.coroutines.channels.consumeEach
 
 fun initialize(init: Khome.() -> Unit): Khome {
+    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
     return Khome().apply(init)
 }
 
@@ -69,10 +71,10 @@ class Khome {
                     consumeStateChangesByTriggeringEvents()
 
                 } else {
-                    throw Exception("Could not subscribe to event stream!")
+                    throw EventStreamException("Could not subscribe to event stream!")
                 }
             }
-            run.onFailure { logger.error { it.printStackTrace() } }
+            run.onFailure { logger.error(it) { it.printStackTrace() } }
         }
     }
 
@@ -129,7 +131,6 @@ data class Configuration(
     var startStateStream: Boolean = true
 )
 
-
 suspend fun WebSocketSession.startStateStream() {
     callWebSocketApi(FetchStates(1000).toJson())
     val message = getMessage<StateResult>()
@@ -154,7 +155,6 @@ fun logResults() {
 suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming.receive().asObject()
 
 inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
-
 
 data class ListenEvent(
     val id: Int,
