@@ -106,4 +106,50 @@ Again, if you are new to Kotlin, you might check out [Getting Started with Intel
 or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorials/command-line.html).
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
+### Quickstart
 
+#### Initialization & Configuration
+
+To start off listening to state change events and call services, you need to initialize and configure khome.
+
+```kotlin
+initialize { // this: Khome
+    configure { // this: Configuration
+        host = "localhost"
+        port = 8123
+        accessToken = "Your super secret token"
+     }
+}
+```
+
+##### Required Parameters
+
+- **host**: Local ip address or url from your Home-Assistant server instance
+- **port**: The port of Home-Assistant (defaults to 8123)
+- **accessToken**: You need to create a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token).
+You can do so within the Lovelace ui. Just go to your user profile, scroll to the bottom and generate one.
+
+#### Connect to the web socket api
+
+```
+initialize {
+    configure {...}
+    connect { // this: DefaultClientWebSocketSession
+        
+    }
+}
+```
+
+By calling the connect function, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
+change streaming. When all went as supposed, you should see: 
+
+```bash
+[main] INFO khome.core.Logger - Authentication required!
+[main] INFO khome.core.Logger - Sending authentication message.
+[main] INFO khome.core.Logger - Authenticated successfully.
+```
+
+in the console.
+
+The `connect {}` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.wss() {}` function, which is the scope to receive from and send messages 
+to the websocket api. Inside the connect scope, you can use khome's abstracted functions, or your very own, to build your smart home-automation's. 
