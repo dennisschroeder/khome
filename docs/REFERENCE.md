@@ -54,7 +54,7 @@ configure {
 }
 ```
 
-###Configuration()
+### Configuration()
 #### Synopsis
 
 ```kotlin
@@ -65,7 +65,7 @@ data class Configuration(
     var startStateStream: Boolean
 )
 ```
-####Properties
+#### Properties
 - **host**: String <br> Local ip address or url from your Home-Assistant server instance. <br>Defaults: `"localhost"`
 
 - **port**: Int <br> The port of Home-Assistant (defaults to 8123). <br>Default: `8123`
