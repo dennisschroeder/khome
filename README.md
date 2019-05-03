@@ -152,4 +152,6 @@ change streaming. When all went as supposed, you should see the following output
 ```
 
 The `connect {}` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.wss() {}` function, which is the scope to receive from and send messages 
-to the websocket api. Inside the connect scope, you can use khome's abstracted functions, or your very own, to build your smart home-automation's. 
+to the websocket api. Inside the connect scope, you can use khome's abstracted functions, or your very own, to build your smart home-automation's.
+
+ 
