@@ -12,13 +12,6 @@ import java.util.concurrent.TimeUnit
 import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
 
-inline fun runEveryAt(period: Long, time: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val handle = UUID.randomUUID().toString()
-    val timer = fixedRateTimer(handle, true, time, period, action)
-
-    return LifeCycleHandler(timer)
-}
-
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
 
     val startDate = createDateFromTimeOfDayAsString(timeOfDay)
@@ -40,6 +33,13 @@ inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> 
     val periodInMilliseconds = TimeUnit.MINUTES.toMillis(1)
 
     return runEveryAt(periodInMilliseconds, startDate, action)
+}
+
+inline fun runEveryAt(period: Long, time: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val handle = UUID.randomUUID().toString()
+    val timer = fixedRateTimer(handle, true, time, period, action)
+
+    return LifeCycleHandler(timer)
 }
 
 inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
