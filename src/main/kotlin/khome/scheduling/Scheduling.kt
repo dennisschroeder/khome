@@ -103,7 +103,12 @@ fun runEverySunSet(action: TimerTask.() -> Unit) {
 }
 
 fun nextSunrise(): Date = getNextSunPosition("next_rising")
+
 fun nextSunset(): Date = getNextSunPosition("next_setting")
+
+fun isSunUp() = getState("sun.sun")!!.get<String>() == "above_horizon"
+
+fun isSunDown() = getState("sun.sun")!!.get<String>() == "below_horizon"
 
 @Throws(RuntimeException::class)
 fun getNextSunPosition(nextPosition: String): Date {
@@ -123,7 +128,6 @@ class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
     override fun cancel() = lazyCancellation
     override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
     override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
-
 }
 
 fun LocalDateTime.toDate(): Date = Date
