@@ -39,8 +39,8 @@ a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Rasp
 If you're not already familiar with Home Assistant, you find all you need on the [Getting Started page](https://www.home-assistant.io/getting-started/).
 
 ## Warning
-This project is in early alpha state. You can't rely on it **yet**. But I encourage everybody to test it and report [issues](https://github.com/dennisschroeder/khome/issues).
-Changes in the API, removal of features or other changes will occur.
+This project is in early alpha state. You can't rely on it **yet**. But I encourage you to test it and report [issues](https://github.com/dennisschroeder/khome/issues).
+Changes in the API, removal of features or other changes will occur. Of course, [contributions](https://github.com/dennisschroeder/khome/pulls) are also very welcome.
 
 ## If you are from...
 
@@ -124,9 +124,11 @@ initialize { // this: Khome
 
 ##### Required Parameters
 
-- **host**: Local ip address or url from your Home-Assistant server instance
-- **port**: The port of Home-Assistant (defaults to 8123)
-- **accessToken**: You need to create a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token).
+- **host**: String <br> Local ip address or url from your Home-Assistant server instance
+
+- **port**: Int <br> The port of Home-Assistant (defaults to 8123)
+
+- **accessToken**: String <br> You need to create a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token).
 You can do so within the Lovelace ui. Just go to your user profile, scroll to the bottom and generate one.
 
 #### Connect to the web socket api
@@ -141,15 +143,13 @@ initialize {
 ```
 
 By calling the connect function, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
-change streaming. When all went as supposed, you should see: 
+change streaming. When all went as supposed, you should see the following output in the console. 
 
 ```bash
 [main] INFO khome.core.Logger - Authentication required!
 [main] INFO khome.core.Logger - Sending authentication message.
 [main] INFO khome.core.Logger - Authenticated successfully.
 ```
-
-in the console.
 
 The `connect {}` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.wss() {}` function, which is the scope to receive from and send messages 
 to the websocket api. Inside the connect scope, you can use khome's abstracted functions, or your very own, to build your smart home-automation's. 
