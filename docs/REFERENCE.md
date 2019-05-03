@@ -42,7 +42,7 @@ the Khome. See example below.
 #### Parameters
     init: Configuration.() -> Unit
 Takes an extension-function which has access to the config property of the Khome class.
-The config property itself is the Configuration class. See [Configuration](#Configuration())
+The config property itself is the Configuration class. See [Configuration](#configuration)
 
 #### Examples
 
