@@ -2,7 +2,7 @@ package khome.calling
 
 import com.google.gson.annotations.SerializedName
 
-fun CallService.cover(init: CoverData.() -> Unit) {
+fun ServiceCaller.cover(init: CoverData.() -> Unit) {
     domain = "cover"
     serviceData = CoverData(
         entityId = "cover",
@@ -22,7 +22,7 @@ data class CoverData(
 
 ) : ServiceDataInterface
 
-fun CallService.covers(init: CoversData.() -> Unit) {
+fun ServiceCaller.covers(init: CoversData.() -> Unit) {
     domain = "cover"
     serviceData = CoversData(
         entityIds = listOf("cover"),
