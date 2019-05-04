@@ -11,51 +11,39 @@ import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.stateChangeEvents
 
 fun getState(entityId: String) = states[entityId]
-fun getAttributes(entityId: String) = states[entityId]?.attributes
+fun getStateAttributes(entityId: String) = states[entityId]?.attributes
 
 
-fun listenState(entityId: String, callback: ListenState.() -> Unit): LifeCycleHandler {
+inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) = registerStateChangeEvent(entityId, callback)
+
+inline fun registerStateChangeEvent(entityId: String, crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
+    val lifeCycleHandler = LifeCycleHandler(handle, entityId)
+
     stateChangeEvents[handle] = {
         if (it.event.data.entityId == entityId) {
-            val stateListener = ListenState(
+            val stateListener = StateListener(
                 entityId = entityId,
-                executeOnce = false,
                 handle = handle,
                 data = it,
-                constraint = true
+                constraint = true,
+                lifeCycleHandler = lifeCycleHandler
             )
             stateListener.apply(callback)
         }
     }
-    return LifeCycleHandler(handle, entityId)
+    return lifeCycleHandler
 }
 
-fun listenStateOnce(entityId: String, callback: ListenState.() -> Unit) {
-    val handle = UUID.randomUUID().toString()
-    stateChangeEvents[handle] = {
-        if (it.event.data.entityId == entityId) {
-            val stateListener = ListenState(
-                entityId = entityId,
-                executeOnce = true,
-                handle = handle,
-                data = it,
-                constraint = true
-            )
-            stateListener.apply(callback)
-        }
-    }
-}
-
-data class ListenState(
+data class StateListener(
     val entityId: String,
-    var executeOnce: Boolean,
     val handle: String,
     val data: EventResult,
-    var constraint: Boolean
+    var constraint: Boolean,
+    val lifeCycleHandler: LifeCycleHandler
 )
 
-inline fun ListenState.constrain(func: Constraint.() -> Boolean) {
+inline fun StateListener.constrain(func: Constraint.() -> Boolean) {
     constraint = func(
         Constraint(
             data.event.data.newState,
@@ -69,9 +57,12 @@ data class Constraint(
     val oldState: State
 )
 
-fun ListenState.action(func: EventResult.() -> Unit) {
+fun StateListener.action(func: EventResult.() -> Unit) {
     if (constraint) func(data)
-    if (executeOnce) stateChangeEvents.minusAssign(handle)
+}
+
+fun StateListener.cancel() {
+    lifeCycleHandler.cancel()
 }
 
 class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
