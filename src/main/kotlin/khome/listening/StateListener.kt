@@ -13,7 +13,6 @@ import khome.Khome.Companion.stateChangeEvents
 fun getState(entityId: String) = states[entityId]
 fun getStateAttributes(entityId: String) = states[entityId]?.attributes
 
-
 inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) = registerStateChangeEvent(entityId, callback)
 
 inline fun registerStateChangeEvent(entityId: String, crossinline callback: StateListener.() -> Unit): LifeCycleHandler {

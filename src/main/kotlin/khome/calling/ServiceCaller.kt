@@ -1,6 +1,5 @@
 package khome.calling
 
-import com.google.gson.annotations.SerializedName
 import khome.*
 import khome.core.logger
 import khome.core.serializer
@@ -9,6 +8,7 @@ import khome.core.MessageInterface
 import kotlinx.coroutines.runBlocking
 import khome.Khome.Companion.fetchNextId
 import khome.Khome.Companion.incrementIdCounter
+import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
 
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
