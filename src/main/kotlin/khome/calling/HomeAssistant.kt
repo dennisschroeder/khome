@@ -27,7 +27,7 @@ fun ServiceCaller.updateEntity(entityId: String) {
 fun ServiceCaller.updateEntities(vararg entityIds: String) {
     domain = "homeassistant"
     service = "update_entity"
-    serviceData = EntityIds(listOf(*entityIds))
+    serviceData = EntityIds(listOf(*entityIds).joinToString(","))
 }
 
 fun ServiceCaller.stopHomeAssistant() {

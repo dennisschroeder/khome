@@ -1,5 +1,6 @@
 package khome.calling
 
+import com.google.gson.annotations.SerializedName
 import khome.*
 import khome.core.logger
 import khome.core.serializer
@@ -34,7 +35,7 @@ fun ServiceCaller.entityId(entityId: String) {
 
 data class EntityId(var entityId: String) : ServiceDataInterface
 
-data class EntityIds(var entityIds: List<String>) : ServiceDataInterface
+data class EntityIds(@SerializedName("entity_id") var entityIds: String) : ServiceDataInterface
 
 data class ServiceCaller(
     private var id: Int,
