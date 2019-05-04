@@ -34,6 +34,8 @@ fun ServiceCaller.entityId(entityId: String) {
 
 data class EntityId(var entityId: String) : ServiceDataInterface
 
+data class EntityIds(var entityIds: List<String>) : ServiceDataInterface
+
 data class ServiceCaller(
     private var id: Int,
     override val type: String = "call_service",
