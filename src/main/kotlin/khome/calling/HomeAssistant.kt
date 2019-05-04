@@ -32,7 +32,7 @@ fun ServiceCaller.updateEntities(vararg entityIds: String) {
 
 fun ServiceCaller.stopHomeAssistant() {
     domain = "homeassistant"
-    service = "restart"
+    service = "stop"
 }
 
 fun ServiceCaller.restartHomeAssistant() {
