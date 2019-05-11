@@ -10,7 +10,7 @@ data class EventResult(val id: Int, override val type: String, val event: Event)
 }
 
 data class State(val entityId: String, val lastChanged: Date, val state: Any, val attributes: Map<String, Any>) {
-    inline fun <reified T> get(): T? {
+    inline fun <reified T> getValue(): T? {
         if (state !is T) return null
 
         return state
