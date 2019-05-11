@@ -9,13 +9,22 @@ import khome.scheduling.runOnceInSeconds
 import khome.scheduling.runOnceInMinutes
 import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.stateChangeEvents
+import khome.listening.exceptions.EntityStateNotFoundException
 
-fun getState(entityId: String) = states[entityId]
-fun getStateAttributes(entityId: String) = states[entityId]?.attributes
+fun getState(entityId: String) =
+    states[entityId] ?: throw EntityStateNotFoundException("No state for entity with id: $entityId found.")
 
-inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) = registerStateChangeEvent(entityId, callback)
+inline fun <reified T : Any> getStateValue(entityId: String) = getState(entityId).getValue<T>()
 
-inline fun registerStateChangeEvent(entityId: String, crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
+fun getStateAttributes(entityId: String) = getState(entityId).attributes
+
+inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) =
+    registerStateChangeEvent(entityId, callback)
+
+inline fun registerStateChangeEvent(
+    entityId: String,
+    crossinline callback: StateListener.() -> Unit
+): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
     val lifeCycleHandler = LifeCycleHandler(handle, entityId)
 
