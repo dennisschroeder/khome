@@ -54,7 +54,7 @@ class Khome {
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
     suspend fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
-        client.wss(
+        client.ws(
             method = method,
             host = config.host,
             port = config.port,
@@ -81,9 +81,9 @@ class Khome {
     }
 
     suspend inline fun <reified S> hasStateChangedAfterTime(entityId: String, time: Long): Boolean {
-        val presentState = states[entityId]?.get<S>()
+        val presentState = states[entityId]?.getValue<S>()
         delay(time)
-        val futureState = states[entityId]?.get<S>()
+        val futureState = states[entityId]?.getValue<S>()
         return presentState == futureState
     }
 
