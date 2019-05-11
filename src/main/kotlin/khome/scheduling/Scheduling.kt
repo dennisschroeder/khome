@@ -11,6 +11,7 @@ import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
+import khome.listening.getStateValue
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
 
@@ -106,9 +107,9 @@ fun nextSunrise(): Date = getNextSunPosition("next_rising")
 
 fun nextSunset(): Date = getNextSunPosition("next_setting")
 
-fun isSunUp() = getState("sun.sun")!!.get<String>() == "above_horizon"
+fun isSunUp() = getStateValue<String>("sun.sun") == "above_horizon"
 
-fun isSunDown() = getState("sun.sun")!!.get<String>() == "below_horizon"
+fun isSunDown() = getStateValue<String>("sun.sun") == "below_horizon"
 
 @Throws(RuntimeException::class)
 fun getNextSunPosition(nextPosition: String): Date {
