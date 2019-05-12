@@ -7,12 +7,12 @@ import khome.listening.getStateAttributes
 
 object Sun : EntityInterface {
     override val domain: String = "sun"
-    override val service: String = "sun"
-    override val entityId: String = "$domain.$service"
-    override val state: Lazy<State> = lazy { getState(entityId) }
-    override val attributes = lazy { getStateAttributes(entityId) }
+    override val name: String = "sun"
+    override val entityId: String = "$domain.$name"
+    override val state: State by lazy { getState(entityId) }
+    override val attributes: Map<String, Any> by lazy { getStateAttributes(entityId) }
 
     inline fun <reified AttributeValueType> getAttributeValue(name: String): AttributeValueType =
-        Sun.state.value.getAttribute(name)
-            ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with id: $entityId and name: $name found.")
+        Sun.state.getAttribute(name)
+            ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: $entityId and name: $name found.")
 }

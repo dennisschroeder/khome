@@ -4,8 +4,8 @@ import khome.core.State
 
 interface EntityInterface {
     val domain: String
-    val service: String
+    val name: String
     val entityId: String
-    val state: Lazy<State>
-    val attributes: Lazy<Map<String, Any>>
+    val state: State
+    val attributes: Map<String, Any>
 }
