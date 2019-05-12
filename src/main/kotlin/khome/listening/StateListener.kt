@@ -24,15 +24,15 @@ inline fun listenState(entityId: String, crossinline callback: StateListener.() 
     registerStateChangeEvent(entityId, callback)
 
 inline fun <reified Entity: EntityInterface> listenState(crossinline callback: StateListener.() -> Unit) {
-    val entity = asObject<Entity>()
+    val entity = getEntityInstance<Entity>()
     val entityId = entity.entityId
 
     registerStateChangeEvent(entityId, callback)
 }
 
-inline fun <reified Entity: EntityInterface> asObject() = asObject(Entity::class)
+inline fun <reified Entity: EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
 
-inline fun <reified Entity: EntityInterface> asObject(type: KClass<Entity>): Entity {
+inline fun <reified Entity: EntityInterface> getEntityInstance(type: KClass<Entity>): Entity {
     return type.objectInstance as Entity
 }
 
