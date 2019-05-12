@@ -11,6 +11,7 @@ import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
+import khome.core.entities.Sun
 import khome.listening.getStateValue
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
@@ -107,13 +108,12 @@ fun nextSunrise(): Date = getNextSunPosition("next_rising")
 
 fun nextSunset(): Date = getNextSunPosition("next_setting")
 
-fun isSunUp() = getStateValue<String>("sun.sun") == "above_horizon"
+fun isSunUp() = getStateValue<String>(Sun) == "above_horizon"
 
-fun isSunDown() = getStateValue<String>("sun.sun") == "below_horizon"
+fun isSunDown() = getStateValue<String>(Sun) == "below_horizon"
 
-@Throws(RuntimeException::class)
 fun getNextSunPosition(nextPosition: String): Date {
-    val sunset = getState("sun.sun")?.getAttribute<String>(nextPosition)
+    val sunset = getState("sun.sun").getAttribute<String>(nextPosition)
         ?: throw RuntimeException("Could not fetch $nextPosition time from state-attribute")
     val sunsetLocaleDateTime = LocalDateTime.parse(sunset, DateTimeFormatter.ISO_DATE_TIME)
 
