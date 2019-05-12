@@ -14,7 +14,7 @@ fun getState(entityId: String) =
 
 inline fun <reified StateValueType> getStateValue(entityId: String) = getState(entityId).getValue<StateValueType>()!!
 inline fun <reified StateValueType> getStateValue(entity: EntityInterface) =
-    entity.state.value.getValue<StateValueType>()
+    entity.state.getValue<StateValueType>()
 
 fun getStateAttributes(entityId: String) = getState(entityId).attributes
 fun getStateAttributes(entity: EntityInterface) = entity.attributes
