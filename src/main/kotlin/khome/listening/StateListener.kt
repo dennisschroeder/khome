@@ -2,13 +2,12 @@ package khome.listening
 
 import khome.core.*
 import java.util.*
+import khome.scheduling.*
+import kotlin.reflect.KClass
 import khome.Khome.Companion.states
-import khome.scheduling.runOnceInSeconds
-import khome.scheduling.runOnceInMinutes
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.stateChangeEvents
 import khome.listening.exceptions.EntityStateNotFoundException
-import kotlin.reflect.KClass
 
 fun getState(entityId: String) =
     states[entityId] ?: throw EntityStateNotFoundException("No state for entity with id: $entityId found.")
@@ -23,11 +22,11 @@ fun getStateAttributes(entity: EntityInterface) = entity.attributes
 inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) =
     registerStateChangeEvent(entityId, callback)
 
-inline fun <reified Entity: EntityInterface> listenState(crossinline callback: StateListener.() -> Unit) {
+inline fun <reified Entity: EntityInterface> listenState(crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
     val entityId = entity.entityId
 
-    registerStateChangeEvent(entityId, callback)
+    return registerStateChangeEvent(entityId, callback)
 }
 
 inline fun <reified Entity: EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
