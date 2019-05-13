@@ -15,7 +15,6 @@ import khome.core.entities.Sun
 import khome.listening.getStateValue
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-
     val startDate = createDateFromTimeOfDayAsString(timeOfDay)
     val periodInMilliseconds = TimeUnit.DAYS.toMillis(1)
 
@@ -38,35 +37,29 @@ inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> 
 }
 
 inline fun runEveryAt(period: Long, time: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val handle = UUID.randomUUID().toString()
-    val timer = fixedRateTimer(handle, true, time, period, action)
+    val timer = fixedRateTimer("scheduler", false, time, period, action)
 
     return LifeCycleHandler(timer)
 }
 
 inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val handle = UUID.randomUUID().toString()
     val startDate = createDateFromTimeOfDayAsString(timeOfDay)
 
-    val timer = Timer(handle, true)
+    val timer = Timer("scheduler", false)
     timer.schedule(startDate, action)
 
     return LifeCycleHandler(timer)
 }
 
 inline fun runOnceAt(date: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val handle = UUID.randomUUID().toString()
-
-    val timer = Timer(handle, true)
+    val timer = Timer("scheduler", false)
     timer.schedule(date, action)
 
     return LifeCycleHandler(timer)
 }
 
 inline fun runOnceInSeconds(seconds: Int, crossinline callback: TimerTask.() -> Unit): LifeCycleHandler {
-    val handle = UUID.randomUUID().toString()
-
-    val timer = Timer(handle, true)
+    val timer = Timer("scheduler", false)
     timer.schedule(seconds * 1000L, callback)
 
     return LifeCycleHandler(timer)
@@ -123,7 +116,7 @@ fun getNextSunPosition(nextPosition: String): Date {
 class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
         timer.cancel()
-        logger.info { "Schedule canceled." }
+        logger.info { "schedule canceled." }
     }
 
     override fun cancel() = lazyCancellation
