@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
 import khome.core.entities.Sun
 import khome.listening.getStateValue
+import java.time.LocalTime
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createDateFromTimeOfDayAsString(timeOfDay)
@@ -126,3 +127,9 @@ class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
 
 fun LocalDateTime.toDate(): Date = Date
     .from(atZone(ZoneId.systemDefault()).toInstant())
+
+fun nowIsBefore(timeOfDay: String): Boolean {
+    val now = LocalDateTime.now().toDate()
+    val timeOfDayDate = createDateFromTimeOfDayAsString(timeOfDay)
+    return now < timeOfDayDate
+}
