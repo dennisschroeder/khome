@@ -14,10 +14,10 @@ abstract class AbstractEntity(entityDomain: String, entityName: String) : Entity
     override val attributes: Map<String, Any> by lazy { getStateAttributes(entityId) }
 
     inline fun <reified StateValueType> getStateValue(): StateValueType =
-        Sun.state.getValue<StateValueType>()
+        state.getValue<StateValueType>()
             ?: throw throw EntityStateNotFoundException("No state for entity with id: $entityId found.")
 
     inline fun <reified AttributeValueType> getAttributeValue(name: String): AttributeValueType =
-        Sun.state.getAttribute(name)
+        state.getAttribute(name)
             ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: ${Sun.entityId} and name: $name found.")
 }
