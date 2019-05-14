@@ -131,5 +131,5 @@ fun LocalDateTime.toDate(): Date = Date
 fun nowIsBefore(timeOfDay: String): Boolean {
     val now = LocalDateTime.now().toDate()
     val timeOfDayDate = createDateFromTimeOfDayAsString(timeOfDay)
-    return now < timeOfDayDate
+    return now.before(timeOfDayDate)
 }
