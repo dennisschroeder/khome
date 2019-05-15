@@ -13,48 +13,56 @@ import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
 import khome.core.entities.Sun
 import khome.listening.getStateValue
-import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val startDate = createDateFromTimeOfDayAsString(timeOfDay)
+    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    val nextStartDate = startDate.plusDays(1)
+    val nextExecution =
+        if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.DAYS.toMillis(1)
-
-    return runEveryAt(periodInMilliseconds, startDate, action)
+    return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
 inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val startDate = createDateFromTimeOfDayAsString(timeOfDay)
+    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    val now = LocalDateTime.now()
+    val hoursSinceStartDate = startDate.until(now, ChronoUnit.YEARS) + 1
+    val nextStartDate = startDate.plusHours(hoursSinceStartDate)
+    val nextExecution =
+        if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.HOURS.toMillis(1)
 
-    return runEveryAt(periodInMilliseconds, startDate, action)
+    return runEveryAt(periodInMilliseconds, nextExecution, action)
 
 }
 
 inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val startDate = createDateFromTimeOfDayAsString(timeOfDay)
+    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    val now = LocalDateTime.now()
+    val minutesSinceStartDate = startDate.until(now, ChronoUnit.MINUTES) + 1
+    val nextStartDate = startDate.plusMinutes(minutesSinceStartDate)
+    val nextExecution =
+        if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.MINUTES.toMillis(1)
 
-    return runEveryAt(periodInMilliseconds, startDate, action)
+    return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun runEveryAt(period: Long, time: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val timer = fixedRateTimer("scheduler", false, time, period, action)
+inline fun runEveryAt(period: Long, localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timer = fixedRateTimer("scheduler", false, localDateTime.toDate(), period, action)
 
     return LifeCycleHandler(timer)
 }
 
 inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val startDate = createDateFromTimeOfDayAsString(timeOfDay)
-
-    val timer = Timer("scheduler", false)
-    timer.schedule(startDate, action)
-
-    return LifeCycleHandler(timer)
+    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    return runOnceAt(startDate, action)
 }
 
-inline fun runOnceAt(date: Date, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val timer = Timer("scheduler", false)
-    timer.schedule(date, action)
+    timer.schedule(dateTime.toDate(), action)
 
     return LifeCycleHandler(timer)
 }
@@ -72,14 +80,14 @@ inline fun runOnceInMinutes(minutes: Int, crossinline action: TimerTask.() -> Un
 inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) =
     runOnceInSeconds((hours * 60) * 60, action)
 
-fun createDateFromTimeOfDayAsString(timeOfDay: String): Date {
+fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     val (hour, minute) = timeOfDay.split(":")
     val startLocalDate = LocalDate.now().atTime(hour.toInt(), minute.toInt())
-    return startLocalDate.toDate()
+    return startLocalDate
 }
 
 fun runEverySunRise(action: TimerTask.() -> Unit) {
-    val now = LocalDateTime.now().toDate()
+    val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     runEveryAt(dailyPeriodInMillis, now) {
@@ -89,7 +97,7 @@ fun runEverySunRise(action: TimerTask.() -> Unit) {
 }
 
 fun runEverySunSet(action: TimerTask.() -> Unit) {
-    val now = LocalDateTime.now().toDate()
+    val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     runEveryAt(dailyPeriodInMillis, now) {
@@ -98,20 +106,19 @@ fun runEverySunSet(action: TimerTask.() -> Unit) {
     }
 }
 
-fun nextSunrise(): Date = getNextSunPosition("next_rising")
+fun nextSunrise() = getNextSunPosition("next_rising")
 
-fun nextSunset(): Date = getNextSunPosition("next_setting")
+fun nextSunset()= getNextSunPosition("next_setting")
 
 fun isSunUp() = getStateValue<String>(Sun) == "above_horizon"
 
 fun isSunDown() = getStateValue<String>(Sun) == "below_horizon"
 
-fun getNextSunPosition(nextPosition: String): Date {
+fun getNextSunPosition(nextPosition: String): LocalDateTime {
     val sunset = getState("sun.sun").getAttribute<String>(nextPosition)
         ?: throw RuntimeException("Could not fetch $nextPosition time from state-attribute")
-    val sunsetLocaleDateTime = LocalDateTime.parse(sunset, DateTimeFormatter.ISO_DATE_TIME)
 
-    return sunsetLocaleDateTime.toDate()
+    return LocalDateTime.parse(sunset, DateTimeFormatter.ISO_DATE_TIME)
 }
 
 class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
@@ -128,8 +135,12 @@ class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
 fun LocalDateTime.toDate(): Date = Date
     .from(atZone(ZoneId.systemDefault()).toInstant())
 
-fun nowIsBefore(timeOfDay: String): Boolean {
+fun nowIsAfter(timeOfDay: String): Boolean {
+    val timeOfDayDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    return nowIsAfter(timeOfDayDate)
+}
+
+fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
     val now = LocalDateTime.now().toDate()
-    val timeOfDayDate = createDateFromTimeOfDayAsString(timeOfDay)
-    return now.before(timeOfDayDate)
+    return now.after(localDateTime.toDate())
 }
