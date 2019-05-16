@@ -34,7 +34,6 @@ inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Un
     val periodInMilliseconds = TimeUnit.HOURS.toMillis(1)
 
     return runEveryAt(periodInMilliseconds, nextExecution, action)
-
 }
 
 inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
