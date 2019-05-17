@@ -35,8 +35,11 @@ class Khome {
          */
         private var idCounter: Int = 10000
 
-        fun incrementIdCounter() = idCounter++
-        fun fetchNextId(): Int = idCounter
+        @Synchronized fun incrementIdCounter() = idCounter++
+        @Synchronized fun incrementIdCounterAndFetchNextId(): Int {
+            incrementIdCounter()
+            return idCounter
+        }
     }
 
     private val method = HttpMethod.Get
