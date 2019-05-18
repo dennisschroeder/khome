@@ -24,7 +24,7 @@ inline fun listenState(entityId: String, crossinline callback: StateListener.() 
 
 inline fun <reified Entity: EntityInterface> listenState(crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
-    val entityId = entity.entityId
+    val entityId = entity.id
 
     return registerStateChangeEvent(entityId, callback)
 }
