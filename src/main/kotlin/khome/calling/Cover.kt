@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 inline fun <reified Entity : EntityInterface> ServiceCaller.openCover() {
     val entity = getEntityInstance<Entity>()
-    openCover(entity.entityId)
+    openCover(entity.id)
 }
 
 fun ServiceCaller.openCover(entityId: String) {
@@ -18,7 +18,7 @@ fun ServiceCaller.openCover(entityId: String) {
 
 inline fun <reified Entity : EntityInterface> ServiceCaller.closeCover() {
     val entity = getEntityInstance<Entity>()
-    closeCover(entity.entityId)
+    closeCover(entity.id)
 }
 
 fun ServiceCaller.closeCover(entityId: String) {
@@ -30,7 +30,7 @@ fun ServiceCaller.closeCover(entityId: String) {
 
 inline fun <reified Entity : EntityInterface> ServiceCaller.setCoverPositionTo(position: Int) {
     val entity = getEntityInstance<Entity>()
-    setCoverPositionTo(position, entity.entityId)
+    setCoverPositionTo(position, entity.id)
 }
 
 fun ServiceCaller.setCoverPositionTo(position: Int, entityId: String) {
