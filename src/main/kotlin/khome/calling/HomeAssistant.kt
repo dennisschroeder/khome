@@ -12,7 +12,7 @@ fun ServiceCaller.turnOn(entityId: String) {
 inline fun <reified Entity : EntityInterface> ServiceCaller.turnOn() {
     val entity = getEntityInstance<Entity>()
 
-    turnOn(entity.entityId)
+    turnOn(entity.id)
 }
 
 fun ServiceCaller.turnOff(entityId: String) {
@@ -24,7 +24,7 @@ fun ServiceCaller.turnOff(entityId: String) {
 inline fun <reified Entity : EntityInterface> ServiceCaller.turnOff() {
     val entity = getEntityInstance<Entity>()
 
-    turnOff(entity.entityId)
+    turnOff(entity.id)
 }
 
 fun ServiceCaller.toggle(entityId: String) {
@@ -36,7 +36,7 @@ fun ServiceCaller.toggle(entityId: String) {
 inline fun <reified Entity : EntityInterface> ServiceCaller.toggle() {
     val entity = getEntityInstance<Entity>()
 
-    toggle(entity.entityId)
+    toggle(entity.id)
 }
 
 fun ServiceCaller.updateEntity(entityId: String) {
@@ -48,7 +48,7 @@ fun ServiceCaller.updateEntity(entityId: String) {
 inline fun <reified Entity : EntityInterface> ServiceCaller.updateEntity() {
     val entity = getEntityInstance<Entity>()
 
-    updateEntity(entity.entityId)
+    updateEntity(entity.id)
 }
 
 fun ServiceCaller.updateEntities(vararg entityIds: String) {
