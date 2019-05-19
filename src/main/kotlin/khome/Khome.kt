@@ -13,9 +13,13 @@ import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.stateChangeEvents
 import khome.core.exceptions.EventStreamException
 import kotlinx.coroutines.channels.consumeEach
+import java.util.logging.LogManager
 
 fun initialize(init: Khome.() -> Unit): Khome {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
+    System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "true")
+    System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, "yyyy-MM-dd HH:mm:ss")
+
     return Khome().apply(init)
 }
 
