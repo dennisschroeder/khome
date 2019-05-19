@@ -8,6 +8,7 @@ fun ServiceCaller.mediaPlayer(init: MediaData.() -> Unit) {
         null,
         null,
         null,
+        null,
         null
     ).apply(init)
 }
@@ -16,7 +17,9 @@ data class MediaData(
     override var entityId: String?,
     var isVolumeMuted: Boolean?,
     var mediaContentId: String?,
-    var mediaContentType: MediaContentType?
+    var mediaContentType: MediaContentType?,
+    var source: String?
+
 ) : ServiceDataInterface
 
 enum class MediaContentType {
