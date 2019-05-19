@@ -19,7 +19,7 @@ fun ServiceCaller.light(init: LightData.() -> Unit) {
 }
 
 data class LightData(
-    var entityId: String,
+    override var entityId: String?,
     var transition: Int?,
     var rgbColor: Array<Int>?,
     var colorName: String?,

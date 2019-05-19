@@ -8,4 +8,5 @@ interface EntityInterface {
     val id: String
     val state: State
     val attributes: Map<String, Any>
+    val friendlyName: String
 }

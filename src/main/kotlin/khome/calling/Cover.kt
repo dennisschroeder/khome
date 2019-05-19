@@ -44,7 +44,7 @@ fun ServiceCaller.setCoverPositionTo(position: Int, entityId: String) {
 fun ServiceCaller.cover(init: CoverData.() -> Unit) {
     domain = "cover"
     serviceData = CoverData(
-        entityId = "cover",
+        entityId = null,
         position = null,
         setCoverPosition = "set_cover_position",
         openCover = "open_cover",
@@ -53,7 +53,7 @@ fun ServiceCaller.cover(init: CoverData.() -> Unit) {
 }
 
 data class CoverData(
-    var entityId: String,
+    override var entityId: String?,
     var position: Int?,
     @Transient val setCoverPosition: String,
     @Transient val openCover: String,
@@ -64,6 +64,7 @@ data class CoverData(
 fun ServiceCaller.covers(init: CoversData.() -> Unit) {
     domain = "cover"
     serviceData = CoversData(
+        entityId = null,
         entityIds = listOf("cover"),
         position = null,
         setCoverPosition = "set_cover_position",
@@ -73,6 +74,7 @@ fun ServiceCaller.covers(init: CoversData.() -> Unit) {
 }
 
 data class CoversData(
+    @Transient override var entityId: String?,
     @SerializedName("entity_id") var entityIds: List<String>,
     var position: Int?,
     @Transient val setCoverPosition: String,

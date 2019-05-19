@@ -54,7 +54,7 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.updateEntity() {
 fun ServiceCaller.updateEntities(vararg entityIds: String) {
     domain = "homeassistant"
     service = "update_entity"
-    serviceData = EntityIds(listOf(*entityIds).joinToString(","))
+    serviceData = EntityIds(listOf(*entityIds).joinToString(","), null)
 }
 
 fun ServiceCaller.stopHomeAssistant() {

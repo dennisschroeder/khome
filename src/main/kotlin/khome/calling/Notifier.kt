@@ -16,6 +16,7 @@ fun ServiceCaller.notifyIOS(deviceId: String, init: NotifierMessage.() -> Unit) 
         null,
         null,
         null,
+        null,
         null
     ).apply(init)
 }
@@ -26,11 +27,13 @@ fun ServiceCaller.notify(init: NotifierMessage.() -> Unit) {
         null,
         null,
         null,
+        null,
         null
     ).apply(init)
 }
 
 data class NotifierMessage(
+    override var entityId: String?,
     var message: String?,
     var title: String?,
     @SerializedName("target") var targets: List<String>?,

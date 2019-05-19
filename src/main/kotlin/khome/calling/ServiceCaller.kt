@@ -28,9 +28,9 @@ fun ServiceCaller.entityId(entityId: String) {
     serviceData = EntityId(entityId)
 }
 
-data class EntityId(var entityId: String) : ServiceDataInterface
+data class EntityId(override var entityId: String?) : ServiceDataInterface
 
-data class EntityIds(@SerializedName("entity_id") var entityIds: String) : ServiceDataInterface
+data class EntityIds(@SerializedName("entity_id") var entityIds: String, override var entityId: String?) : ServiceDataInterface
 
 data class ServiceCaller(
     private var id: Int,
@@ -40,6 +40,7 @@ data class ServiceCaller(
     var serviceData: ServiceDataInterface?
 ) : MessageInterface
 
-interface ServiceDataInterface {
+interface ServiceDataInterface{
+    var entityId: String?
     fun toJson(): String = serializer.toJson(this)
 }
