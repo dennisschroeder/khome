@@ -6,6 +6,6 @@ abstract class AbstractMediaPlayerEntity(medidPlayerEntityName: String) : Abstra
     val isOn = getStateValue<String>() == "on"
     val isOff = getStateValue<String>() == "off"
     val isIdle = getStateValue<String>() == "idle"
-    val isMute = getAttributeValue<Boolean>("is_volume_muted")
-    val volume = getAttributeValue<Double>("volume_level")
+    val isMute get() = if (isOn) getAttributeValue("is_volume_muted") else false
+    val volume get() = if (isOn) getAttributeValue("volume_level") else 0.00
 }
