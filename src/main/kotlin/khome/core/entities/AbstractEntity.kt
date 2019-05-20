@@ -10,8 +10,8 @@ abstract class AbstractEntity(entityDomain: String, entityName: String) : Entity
     override val domain: String = entityDomain
     override val name: String = entityName
     override val id: String get() = "$domain.$name"
-    override val state: State by lazy { getState(id) }
-    override val attributes: Map<String, Any> by lazy { getStateAttributes(id) }
+    override val state: State get() = getState(id)
+    override val attributes: Map<String, Any> get() =  getStateAttributes(id)
     override val friendlyName: String = getAttributeValue("friendly_name")
 
     inline fun <reified StateValueType> getStateValue(): StateValueType =
