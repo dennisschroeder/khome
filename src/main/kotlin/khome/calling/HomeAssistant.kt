@@ -4,8 +4,8 @@ import khome.core.entities.EntityInterface
 import khome.listening.getEntityInstance
 
 fun ServiceCaller.turnOn(entityId: String) {
-    domain = "homeassistant"
-    service = "turn_on"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.TURN_ON
     serviceData = EntityId(entityId)
 }
 
@@ -16,8 +16,8 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.turnOn() {
 }
 
 fun ServiceCaller.turnOff(entityId: String) {
-    domain = "homeassistant"
-    service = "turn_off"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.TURN_OFF
     serviceData = EntityId(entityId)
 }
 
@@ -28,8 +28,8 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.turnOff() {
 }
 
 fun ServiceCaller.toggle(entityId: String) {
-    domain = "homeassistant"
-    service = "toggle"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.TOGGLE
     serviceData = EntityId(entityId)
 }
 
@@ -40,8 +40,8 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.toggle() {
 }
 
 fun ServiceCaller.updateEntity(entityId: String) {
-    domain = "homeassistant"
-    service = "update_entity"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.UPDATE_ENTITY
     serviceData = EntityId(entityId)
 }
 
@@ -52,17 +52,21 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.updateEntity() {
 }
 
 fun ServiceCaller.updateEntities(vararg entityIds: String) {
-    domain = "homeassistant"
-    service = "update_entity"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.UPDATE_ENTITY
     serviceData = EntityIds(listOf(*entityIds).joinToString(","), null)
 }
 
 fun ServiceCaller.stopHomeAssistant() {
-    domain = "homeassistant"
-    service = "stop"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.STOP
 }
 
 fun ServiceCaller.restartHomeAssistant() {
-    domain = "homeassistant"
-    service = "restart"
+    domain = Domain.HOMEASSISTANT
+    service = HomeAssistantServices.RESTART
+}
+
+enum class HomeAssistantServices : ServiceInterface {
+    TURN_ON, TURN_OFF, TOGGLE, UPDATE_ENTITY, STOP, RESTART
 }

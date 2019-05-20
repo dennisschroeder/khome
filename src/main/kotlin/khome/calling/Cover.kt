@@ -12,7 +12,7 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.openCover() {
 fun ServiceCaller.openCover(entityId: String) {
     cover {
         this.entityId = entityId
-        service = openCover
+        service = CoverServices.OPEN_COVER
     }
 }
 
@@ -24,7 +24,7 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.closeCover() {
 fun ServiceCaller.closeCover(entityId: String) {
     cover {
         this.entityId = entityId
-        service = closeCover
+        service = CoverServices.CLOSE_COVER
     }
 }
 
@@ -36,49 +36,40 @@ inline fun <reified Entity : EntityInterface> ServiceCaller.setCoverPositionTo(p
 fun ServiceCaller.setCoverPositionTo(position: Int, entityId: String) {
     cover {
         this.entityId = entityId
-        service = setCoverPosition
+        service = CoverServices.SET_COVER_POSITION
         this.position = position
     }
 }
 
 fun ServiceCaller.cover(init: CoverData.() -> Unit) {
-    domain = "cover"
+    domain = Domain.COVER
     serviceData = CoverData(
         entityId = null,
-        position = null,
-        setCoverPosition = "set_cover_position",
-        openCover = "open_cover",
-        closeCover = "close_cover"
+        position = null
     ).apply(init)
 }
 
 data class CoverData(
     override var entityId: String?,
-    var position: Int?,
-    @Transient val setCoverPosition: String,
-    @Transient val openCover: String,
-    @Transient val closeCover: String
+    var position: Int?
 
 ) : ServiceDataInterface
 
 fun ServiceCaller.covers(init: CoversData.() -> Unit) {
-    domain = "cover"
+    domain = Domain.COVER
     serviceData = CoversData(
         entityId = null,
         entityIds = listOf("cover"),
-        position = null,
-        setCoverPosition = "set_cover_position",
-        openCover = "open_cover",
-        closeCover = "close_cover"
+        position = null
     ).apply(init)
 }
 
 data class CoversData(
     @Transient override var entityId: String?,
     @SerializedName("entity_id") var entityIds: List<String>,
-    var position: Int?,
-    @Transient val setCoverPosition: String,
-    @Transient val openCover: String,
-    @Transient val closeCover: String
-
+    var position: Int?
 ) : ServiceDataInterface
+
+enum class CoverServices : ServiceInterface{
+    OPEN_COVER, CLOSE_COVER, SET_COVER_POSITION
+}

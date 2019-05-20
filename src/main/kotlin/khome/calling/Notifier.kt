@@ -1,28 +1,9 @@
 package khome.calling
 
-import khome.listening.getEntityInstance
-import khome.core.entities.EntityInterface
 import com.google.gson.annotations.SerializedName
 
-inline fun <reified Entity : EntityInterface> ServiceCaller.notifyIOS(noinline init: NotifierMessage.() -> Unit) {
-    val entity = getEntityInstance<Entity>()
-    notifyIOS(entity.name, init)
-}
-
-fun ServiceCaller.notifyIOS(deviceId: String, init: NotifierMessage.() -> Unit) {
-    domain = "notify"
-    service = "ios_$deviceId"
-    serviceData = NotifierMessage(
-        null,
-        null,
-        null,
-        null,
-        null
-    ).apply(init)
-}
-
 fun ServiceCaller.notify(init: NotifierMessage.() -> Unit) {
-    domain = "notify"
+    domain = Domain.NOTIFY
     serviceData = NotifierMessage(
         null,
         null,
@@ -41,3 +22,7 @@ data class NotifierMessage(
 ) : ServiceDataInterface
 
 interface NotifierDataInterface
+
+enum class NotifierServices : ServiceInterface {
+     NOTIFY
+}

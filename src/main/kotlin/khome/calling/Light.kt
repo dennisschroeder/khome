@@ -1,7 +1,7 @@
 package khome.calling
 
 fun ServiceCaller.light(init: LightData.() -> Unit) {
-    domain = "light"
+    domain = Domain.LIGHT
     serviceData = LightData(
         "light",
         null,
