@@ -20,5 +20,5 @@ abstract class AbstractEntity(entityDomain: String, entityName: String) : Entity
 
     inline fun <reified AttributeValueType> getAttributeValue(name: String): AttributeValueType =
         state.getAttribute(name)
-            ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: ${Sun.id} and name: $name found.")
+            ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: $id and name: $name found.")
 }
