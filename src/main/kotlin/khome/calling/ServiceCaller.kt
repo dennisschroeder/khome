@@ -5,22 +5,25 @@ import khome.core.logger
 import khome.core.serializer
 import kotlinx.coroutines.launch
 import khome.core.MessageInterface
+import kotlinx.coroutines.runBlocking
+import khome.Khome.Companion.idCounter
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
-import khome.Khome.Companion.incrementIdCounterAndFetchNextId
 
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
-    val callService = ServiceCaller(
-        incrementIdCounterAndFetchNextId(),
-        "call_service",
-        null,
-        null,
-        null
-    ).apply(init)
+    runBlocking {
+        val callService = ServiceCaller(
+            idCounter.incrementAndGet(),
+            "call_service",
+            null,
+            null,
+            null
+        ).apply(init)
 
-    launch {
-        callWebSocketApi(callService.toJson())
-        logger.info { "Called  Service with: " + callService.toJson() }
+        launch {
+            callWebSocketApi(callService.toJson())
+            logger.info { "Called  Service with: " + callService.toJson() }
+        }
     }
 }
 

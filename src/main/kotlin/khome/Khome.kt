@@ -13,6 +13,7 @@ import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.stateChangeEvents
 import khome.core.exceptions.EventStreamException
 import kotlinx.coroutines.channels.consumeEach
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.LogManager
 
 fun initialize(init: Khome.() -> Unit): Khome {
@@ -37,13 +38,7 @@ class Khome {
          *
          * @see "https://developers.home-assistant.io/docs/en/external_api_websocket.html#message-format"
          */
-        private var idCounter: Int = 10000
-
-        @Synchronized fun incrementIdCounter() = idCounter++
-        @Synchronized fun incrementIdCounterAndFetchNextId(): Int {
-            incrementIdCounter()
-            return idCounter
-        }
+         var idCounter = AtomicInteger(10000)
     }
 
     private val method = HttpMethod.Get
