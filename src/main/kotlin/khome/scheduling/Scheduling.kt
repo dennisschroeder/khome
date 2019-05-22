@@ -5,15 +5,24 @@ import java.time.ZoneId
 import khome.core.logger
 import java.time.LocalDate
 import kotlin.concurrent.*
+import khome.core.entities.Sun
 import java.time.LocalDateTime
 import khome.listening.getState
 import java.lang.RuntimeException
+import khome.listening.getStateValue
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
-import khome.core.entities.Sun
-import khome.listening.getStateValue
-import java.time.temporal.ChronoUnit
+import khome.core.entities.inputDateTime.AbstractTimeEntity
+import khome.listening.getEntityInstance
+
+inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val entity = getEntityInstance<Entity>()
+    val dayTime = determineDayTimeFromTimeEntity(entity)
+
+    return runDailyAt(dayTime, action)
+}
 
 inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
@@ -22,6 +31,13 @@ inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Uni
         if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.DAYS.toMillis(1)
     return runEveryAt(periodInMilliseconds, nextExecution, action)
+}
+
+inline fun <reified Entity : AbstractTimeEntity> runHourlyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val entity = getEntityInstance<Entity>()
+    val dayTime = determineDayTimeFromTimeEntity(entity)
+
+    return runHourlyAt(dayTime, action)
 }
 
 inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
@@ -36,6 +52,13 @@ inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Un
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
+inline fun <reified Entity : AbstractTimeEntity> runMinutelyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val entity = getEntityInstance<Entity>()
+    val dayTime = determineDayTimeFromTimeEntity(entity)
+
+    return runMinutelyAt(dayTime, action)
+}
+
 inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
@@ -48,7 +71,17 @@ inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> 
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun runEveryAt(period: Long, localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): String {
+    val hour = timeEntity.time.hour
+    val minute = timeEntity.time.minute
+    return "$hour:$minute"
+}
+
+inline fun runEveryAt(
+    period: Long,
+    localDateTime: LocalDateTime,
+    crossinline action: TimerTask.() -> Unit
+): LifeCycleHandler {
     val timer = fixedRateTimer("scheduler", false, localDateTime.toDate(), period, action)
 
     return LifeCycleHandler(timer)
@@ -107,7 +140,7 @@ fun runEverySunSet(action: TimerTask.() -> Unit) {
 
 fun nextSunrise() = getNextSunPosition("next_rising")
 
-fun nextSunset()= getNextSunPosition("next_setting")
+fun nextSunset() = getNextSunPosition("next_setting")
 
 fun isSunUp() = getStateValue<String>(Sun) == "above_horizon"
 
