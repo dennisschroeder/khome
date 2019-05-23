@@ -12,6 +12,7 @@ fun ServiceCaller.setVolume(entityId: String, level: Float) {
     mediaPlayer {
         this.entityId = entityId
         service = MediaPlayerServices.VOLUME_SET
+        volumeLevel = level
     }
 }
 
@@ -72,12 +73,14 @@ fun ServiceCaller.mediaPlayer(init: MediaData.() -> Unit) {
         null,
         null,
         null,
+        null,
         null
     ).apply(init)
 }
 
 data class MediaData(
     override var entityId: String?,
+    var volumeLevel: Float?,
     var isVolumeMuted: Boolean?,
     var mediaContentId: String?,
     var mediaContentType: MediaContentType?,
