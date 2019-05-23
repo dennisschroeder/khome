@@ -16,6 +16,9 @@ import java.time.format.DateTimeFormatter
 import khome.core.LifeCycleHandlerInterface
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 import khome.listening.getEntityInstance
+import java.text.ParseException
+import java.time.OffsetDateTime
+import java.time.format.DateTimeParseException
 
 inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
@@ -133,8 +136,8 @@ fun runEverySunSet(action: TimerTask.() -> Unit) {
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     runEveryAt(dailyPeriodInMillis, now) {
-        val nextSunrise = nextSunset()
-        runOnceAt(nextSunrise, action)
+        val nextSunset = nextSunset()
+        runOnceAt(nextSunset, action)
     }
 }
 
@@ -147,10 +150,14 @@ fun isSunUp() = getStateValue<String>(Sun) == "above_horizon"
 fun isSunDown() = getStateValue<String>(Sun) == "below_horizon"
 
 fun getNextSunPosition(nextPosition: String): LocalDateTime {
-    val sunset = getState("sun.sun").getAttribute<String>(nextPosition)
-        ?: throw RuntimeException("Could not fetch $nextPosition time from state-attribute")
+    val nextSunPositionChange = Sun.getAttributeValue<String>(nextPosition)
+    return convertUtcToLocalDateTime(nextSunPositionChange)
+}
 
-    return LocalDateTime.parse(sunset, DateTimeFormatter.ISO_DATE_TIME)
+fun convertUtcToLocalDateTime(utcDateTime: String): LocalDateTime {
+    val offsetDateTime = OffsetDateTime.parse(utcDateTime)
+    val zonedDateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault())
+    return zonedDateTime.toLocalDateTime()
 }
 
 class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
