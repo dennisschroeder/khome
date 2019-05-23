@@ -11,7 +11,7 @@ inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.setVolume(
 fun ServiceCaller.setVolume(entityId: String, level: Float) {
     mediaPlayer {
         this.entityId = entityId
-        service = MediaPlayerServices.TOGGLE
+        service = MediaPlayerServices.VOLUME_SET
     }
 }
 
