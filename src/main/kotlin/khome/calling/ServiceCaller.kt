@@ -2,27 +2,29 @@ package khome.calling
 
 import khome.*
 import khome.core.logger
+import kotlinx.coroutines.*
 import khome.core.serializer
-import kotlinx.coroutines.launch
 import khome.core.MessageInterface
 import khome.Khome.Companion.idCounter
+import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
 
 @Synchronized
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
+    runBlocking {
+        withContext(callServiceContext) {
+            val callService = ServiceCaller(
+                idCounter.incrementAndGet(),
+                "call_service",
+                null,
+                null,
+                null
+            ).apply(init)
 
-    val callService = ServiceCaller(
-        idCounter.incrementAndGet(),
-        "call_service",
-        null,
-        null,
-        null
-    ).apply(init)
-
-    launch {
-        callWebSocketApi(callService.toJson())
-        logger.info { "Called  Service with: " + callService.toJson() }
+            callWebSocketApi(callService.toJson())
+            logger.info { "Called  Service with: " + callService.toJson() }
+        }
     }
 
 }

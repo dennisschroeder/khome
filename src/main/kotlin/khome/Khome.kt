@@ -38,7 +38,9 @@ class Khome {
          *
          * @see "https://developers.home-assistant.io/docs/en/external_api_websocket.html#message-format"
          */
-         var idCounter = AtomicInteger(10000)
+        var idCounter = AtomicInteger(10000)
+
+        val callServiceContext = newSingleThreadContext("ServiceContext")
     }
 
     private val method = HttpMethod.Get
@@ -55,29 +57,31 @@ class Khome {
 
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    suspend fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
-        client.ws(
-            method = method,
-            host = config.host,
-            port = config.port,
-            path = path
-        ) {
-            val run = runCatching {
-                authenticate(config.accessToken)
-                if (config.startStateStream) {
-                    startStateStream()
-                }
-                if (successfullyStartedStateStream()) {
-                    logResults()
-                    reactOnStateChangeEvents()
-                    consumeStateChangesByTriggeringEvents()
+    fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
+        runBlocking {
+            client.ws(
+                method = method,
+                host = config.host,
+                port = config.port,
+                path = path
+            ) {
+                val run = runCatching {
+                    authenticate(config.accessToken)
+                    if (config.startStateStream) {
+                        startStateStream()
+                    }
+                    if (successfullyStartedStateStream()) {
+                        logResults()
+                        reactOnStateChangeEvents()
+                        consumeStateChangesByTriggeringEvents()
 
-                } else {
-                    throw EventStreamException("Could not subscribe to event stream!")
+                    } else {
+                        throw EventStreamException("Could not subscribe to event stream!")
+                    }
                 }
-            }
-            run.onFailure {
-                logger.error(it) { it.printStackTrace() }
+                run.onFailure {
+                    logger.error(it) { it.printStackTrace() }
+                }
             }
         }
     }
