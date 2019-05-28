@@ -22,16 +22,16 @@ fun getStateAttributes(entity: EntityInterface) = entity.attributes
 inline fun listenState(entityId: String, crossinline callback: StateListener.() -> Unit) =
     registerStateChangeEvent(entityId, callback)
 
-inline fun <reified Entity: EntityInterface> listenState(crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
+inline fun <reified Entity : EntityInterface> listenState(crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
     val entityId = entity.id
 
     return registerStateChangeEvent(entityId, callback)
 }
 
-inline fun <reified Entity: EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
+inline fun <reified Entity : EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
 
-inline fun <reified Entity: EntityInterface> getEntityInstance(type: KClass<Entity>): Entity {
+inline fun <reified Entity : EntityInterface> getEntityInstance(type: KClass<Entity>): Entity {
     return type.objectInstance as Entity
 }
 
@@ -63,29 +63,29 @@ data class StateListener(
     val data: EventResult,
     var constraint: Boolean,
     val lifeCycleHandler: LifeCycleHandler
-)
-
-inline fun StateListener.constrain(func: Constraint.() -> Boolean) {
-    constraint = func(
-        Constraint(
-            data.event.data.newState,
-            data.event.data.oldState
+) {
+    inline fun constrain(func: Constraint.() -> Boolean) {
+        constraint = func(
+            Constraint(
+                data.event.data.newState,
+                data.event.data.oldState
+            )
         )
-    )
+    }
+
+    inline fun execute(func: EventResult.() -> Unit) {
+        if (constraint) func(data)
+    }
+
+    fun cancel() {
+        lifeCycleHandler.cancel()
+    }
 }
 
 data class Constraint(
     val newState: State,
     val oldState: State
 )
-
-fun StateListener.action(func: EventResult.() -> Unit) {
-    if (constraint) func(data)
-}
-
-fun StateListener.cancel() {
-    lifeCycleHandler.cancel()
-}
 
 class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
