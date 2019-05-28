@@ -7,18 +7,13 @@ import java.time.LocalDate
 import kotlin.concurrent.*
 import khome.core.entities.Sun
 import java.time.LocalDateTime
-import khome.listening.getState
-import java.lang.RuntimeException
-import khome.listening.getStateValue
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
-import java.time.format.DateTimeFormatter
+import khome.listening.getStateValue
+import khome.listening.getEntityInstance
 import khome.core.LifeCycleHandlerInterface
 import khome.core.entities.inputDateTime.AbstractTimeEntity
-import khome.listening.getEntityInstance
-import java.text.ParseException
-import java.time.OffsetDateTime
-import java.time.format.DateTimeParseException
 
 inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
@@ -85,7 +80,7 @@ inline fun runEveryAt(
     localDateTime: LocalDateTime,
     crossinline action: TimerTask.() -> Unit
 ): LifeCycleHandler {
-    val timer = fixedRateTimer("scheduler", false, localDateTime.toDate(), period, action)
+    val timer = fixedRateTimer("scheduler", true, localDateTime.toDate(), period, action)
 
     return LifeCycleHandler(timer)
 }
@@ -160,15 +155,14 @@ fun convertUtcToLocalDateTime(utcDateTime: String): LocalDateTime {
     return zonedDateTime.toLocalDateTime()
 }
 
-class LifeCycleHandler(timer: Timer) : LifeCycleHandlerInterface {
-    override val lazyCancellation: Unit by lazy {
+class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
+    override val lazyCancellation by lazy {
         timer.cancel()
-        logger.info { "schedule canceled." }
     }
 
-    override fun cancel() = lazyCancellation
-    override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
-    override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
+    fun cancel() = lazyCancellation
+    fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
+    fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 }
 
 fun LocalDateTime.toDate(): Date = Date

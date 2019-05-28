@@ -2,7 +2,6 @@ package khome.listening
 
 import khome.core.*
 import java.util.*
-import khome.scheduling.*
 import kotlin.reflect.KClass
 import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
@@ -77,23 +76,5 @@ data class StateListener(
         if (constraint) func(data)
     }
 
-    fun cancel() {
-        lifeCycleHandler.cancel()
-    }
-}
-
-data class Constraint(
-    val newState: State,
-    val oldState: State
-)
-
-class LifeCycleHandler(handle: String, entityId: String) : LifeCycleHandlerInterface {
-    override val lazyCancellation: Unit by lazy {
-        stateChangeEvents.minusAssign(handle)
-        logger.info { "Subscription to $entityId canceled." }
-    }
-
-    override fun cancel() = lazyCancellation
-    override fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
-    override fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
+    fun disable() = lifeCycleHandler.disable()
 }
