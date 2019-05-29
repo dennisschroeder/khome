@@ -60,10 +60,10 @@ data class StateListener(
     val entityId: String,
     val handle: String,
     val data: EventResult,
-    var constraint: Boolean,
+    private var constraint: Boolean,
     val lifeCycleHandler: LifeCycleHandler
 ) {
-    inline fun constrain(func: Constraint.() -> Boolean) {
+    fun constrain(func: Constraint.() -> Boolean) {
         constraint = func(
             Constraint(
                 data.event.data.newState,
@@ -72,7 +72,7 @@ data class StateListener(
         )
     }
 
-    inline fun execute(func: EventResult.() -> Unit) {
+    fun execute(func: EventResult.() -> Unit) {
         if (constraint) func(data)
     }
 
