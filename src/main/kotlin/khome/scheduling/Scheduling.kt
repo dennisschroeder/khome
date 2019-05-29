@@ -2,7 +2,6 @@ package khome.scheduling
 
 import java.util.*
 import java.time.ZoneId
-import khome.core.logger
 import java.time.LocalDate
 import kotlin.concurrent.*
 import khome.core.entities.Sun
