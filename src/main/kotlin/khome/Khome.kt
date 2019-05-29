@@ -40,6 +40,7 @@ class Khome {
          */
         var idCounter = AtomicInteger(10000)
 
+        @ObsoleteCoroutinesApi
         val callServiceContext = newSingleThreadContext("ServiceContext")
     }
 
@@ -105,6 +106,7 @@ class Khome {
     }
 }
 
+@ObsoleteCoroutinesApi
 suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
     coroutineScope {
         incoming.consumeEach { frame ->
