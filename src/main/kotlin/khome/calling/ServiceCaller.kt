@@ -10,6 +10,7 @@ import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
 
+@ObsoleteCoroutinesApi
 @Synchronized
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
     runBlocking {
@@ -26,11 +27,6 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
             logger.info { "Called  Service with: " + callService.toJson() }
         }
     }
-
-}
-
-fun ServiceCaller.entityId(entityId: String) {
-    serviceData = EntityId(entityId)
 }
 
 data class EntityId(override var entityId: String?) : ServiceDataInterface
@@ -44,7 +40,11 @@ data class ServiceCaller(
     var domain: DomainInterface?,
     var service: ServiceInterface?,
     var serviceData: ServiceDataInterface?
-) : MessageInterface
+) : MessageInterface {
+    fun entityId(entityId: String) {
+        serviceData = EntityId(entityId)
+    }
+}
 
 interface ServiceDataInterface {
     var entityId: String?
