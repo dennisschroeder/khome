@@ -1,5 +1,6 @@
 package khome.scheduling
 
+import khome.Khome.Companion.isSandBoxModeActive
 import java.util.*
 import java.time.ZoneId
 import java.time.LocalDate
@@ -9,7 +10,6 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
-import khome.listening.getStateValue
 import khome.listening.getEntityInstance
 import khome.core.LifeCycleHandlerInterface
 import khome.core.entities.inputDateTime.AbstractTimeEntity
@@ -79,7 +79,11 @@ inline fun runEveryAt(
     localDateTime: LocalDateTime,
     crossinline action: TimerTask.() -> Unit
 ): LifeCycleHandler {
-    val timer = fixedRateTimer("scheduler", true, localDateTime.toDate(), period, action)
+
+    val timer = when(isSandBoxModeActive()) {
+        true -> fixedRateTimer("scheduler", true, LocalDateTime.now().toDate(), period, action)
+        false -> fixedRateTimer("scheduler", true, localDateTime.toDate(), period, action)
+    }
 
     return LifeCycleHandler(timer)
 }
@@ -91,15 +95,20 @@ inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit
 
 inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val timer = Timer("scheduler", false)
-    timer.schedule(dateTime.toDate(), action)
+    when(isSandBoxModeActive()) {
+        true ->  timer.schedule(LocalDateTime.now().toDate(), action)
+        false ->  timer.schedule(dateTime.toDate(), action)
+    }
 
     return LifeCycleHandler(timer)
 }
 
-inline fun runOnceInSeconds(seconds: Int, crossinline callback: TimerTask.() -> Unit): LifeCycleHandler {
+inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val timer = Timer("scheduler", false)
-    timer.schedule(seconds * 1000L, callback)
-
+    when(isSandBoxModeActive()) {
+        true ->  timer.schedule(LocalDateTime.now().toDate(), action)
+        false ->  timer.schedule(seconds * 1000L, action)
+    }
     return LifeCycleHandler(timer)
 }
 
@@ -111,8 +120,7 @@ inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) 
 
 fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     val (hour, minute) = timeOfDay.split(":")
-    val startLocalDate = LocalDate.now().atTime(hour.toInt(), minute.toInt())
-    return startLocalDate
+    return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
 
 fun runEverySunRise(action: TimerTask.() -> Unit) {
@@ -139,9 +147,6 @@ fun nextSunrise() = getNextSunPosition("next_rising")
 
 fun nextSunset() = getNextSunPosition("next_setting")
 
-fun isSunUp() = getStateValue<String>(Sun) == "above_horizon"
-
-fun isSunDown() = getStateValue<String>(Sun) == "below_horizon"
 
 fun getNextSunPosition(nextPosition: String): LocalDateTime {
     val nextSunPositionChange = Sun.getAttributeValue<String>(nextPosition)

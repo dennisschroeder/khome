@@ -1,8 +1,8 @@
 package khome.core
 
-import khome.core.exceptions.InvalidAttributeValueTypeException
 import java.util.*
 import khome.core.exceptions.InvalidStateValueTypeException
+import khome.core.exceptions.InvalidAttributeValueTypeException
 
 data class EventResult(val id: Int, override val type: String, val event: Event) :
     MessageInterface {
@@ -20,7 +20,8 @@ data class State(val entityId: String, val lastChanged: Date, val state: Any, va
 
     inline fun <reified T> getAttribute(key: String): T {
         return attributes[key] as? T ?: throw InvalidAttributeValueTypeException(
-            "Attribute value for $key is of type: ${(attributes[key] ?: error("Key not valid")).javaClass.kotlin.simpleName}."
+            "Attribute value for $key is of type: ${(attributes[key]
+                ?: error("Key not valid")).javaClass.kotlin.simpleName}."
         )
     }
 }
@@ -38,4 +39,11 @@ data class StateResult(
     override val type: String,
     val success: Boolean,
     val result: Array<State>
+) : MessageInterface
+
+data class ServiceResult(
+    val id: Int,
+    override val type: String,
+    val success: Boolean,
+    val result: Map<String, Map<String, Any>>
 ) : MessageInterface

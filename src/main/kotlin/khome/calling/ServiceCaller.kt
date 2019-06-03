@@ -9,9 +9,12 @@ import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
+import khome.Khome.Companion.isSandBoxModeActive
+import khome.Khome.Companion.services
+import khome.calling.exceptions.DomainNotFoundException
+import khome.calling.exceptions.ServiceNotFoundException
 
 @ObsoleteCoroutinesApi
-@Synchronized
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
     runBlocking {
         withContext(callServiceContext) {
@@ -23,16 +26,28 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                 null
             ).apply(init)
 
-            callWebSocketApi(callService.toJson())
-            logger.info { "Called  Service with: " + callService.toJson() }
+            if (isSandBoxModeActive()) {
+                val domain = callService.domain.toString().toLowerCase()
+                val service = callService.service.toString().toLowerCase()
+
+                when {
+                    domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
+                    service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
+                }
+            } else {
+                callWebSocketApi(callService.toJson())
+                logger.info { "Called  Service with: " + callService.toJson() }
+            }
         }
     }
 }
 
 data class EntityId(override var entityId: String?) : ServiceDataInterface
 
-data class EntityIds(@SerializedName("entity_id") var entityIds: String, override var entityId: String?) :
-    ServiceDataInterface
+data class EntityIds(
+    @SerializedName("entity_id") var entityIds: String,
+    override var entityId: String?
+) : ServiceDataInterface
 
 data class ServiceCaller(
     private var id: Int,
@@ -57,3 +72,4 @@ interface DomainInterface
 enum class Domain : DomainInterface {
     COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY
 }
+

@@ -1,24 +1,28 @@
 package khome.core.entities
 
+import khome.Khome
 import khome.core.State
 import khome.listening.getState
-import khome.listening.getStateAttributes
-import khome.listening.exceptions.EntityStateNotFoundException
+import khome.core.entities.exceptions.EntityNotFoundException
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
 
-abstract class AbstractEntity(entityDomain: String, entityName: String) : EntityInterface {
-    override val domain: String = entityDomain
-    override val name: String = entityName
-    override val id: String get() = "$domain.$name"
-    override val state: State get() = getState(id)
-    override val attributes: Map<String, Any> get() =  getStateAttributes(id)
-    override val friendlyName: String = getAttributeValue("friendly_name")
+open class AbstractEntity<StateValueType>(override val domain: String, override val name: String) : EntityInterface {
+    final override val id: String get() = "$domain.$name"
+    override val state: State get() = getState(this)
 
-    inline fun <reified StateValueType> getStateValue(): StateValueType =
-        state.getValue<StateValueType>()
-            ?: throw throw EntityStateNotFoundException("No state for entity with id: $id found.")
+    init {
+        if (id !in Khome.states) throw EntityNotFoundException("The Entity with id: $id was not found.")
+    }
 
-    inline fun <reified AttributeValueType> getAttributeValue(name: String): AttributeValueType =
-        state.getAttribute(name)
+    override val attributes: Map<String, Any> get() = state.attributes
+    override val friendlyName: String get() = getAttributeValue("friendly_name")
+
+    @Suppress("UNCHECKED_CAST")
+    val stateValue: StateValueType get() = state.state as StateValueType
+
+    inline fun <reified AttributeValueType> getAttributeValue(key: String): AttributeValueType =
+        state.getAttribute(key)
             ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: $id and name: $name found.")
+
+
 }

@@ -4,10 +4,10 @@ import khome.core.entities.AbstractEntity
 import java.time.LocalDate
 
 abstract class AbstractDateEntity(name: String) :
-    AbstractEntity("input_datetime", name) {
+    AbstractEntity<String>("input_datetime", name) {
 
     val date get(): LocalDate {
-        val date = getStateValue<String>()
+        val date = stateValue
         return LocalDate.parse(date)
     }
 }

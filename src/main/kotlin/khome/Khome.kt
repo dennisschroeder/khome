@@ -10,11 +10,18 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
+import khome.Khome.Companion.activateSandBoxMode
+import khome.Khome.Companion.deactivateSandBoxMode
+import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.stateChangeEvents
 import khome.core.exceptions.EventStreamException
+import khome.scheduling.toDate
 import kotlinx.coroutines.channels.consumeEach
+import java.lang.Thread.sleep
+import java.time.LocalDateTime
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.logging.LogManager
+import kotlin.system.exitProcess
 
 fun initialize(init: Khome.() -> Unit): Khome {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
@@ -26,7 +33,8 @@ fun initialize(init: Khome.() -> Unit): Khome {
 
 class Khome {
     companion object {
-        val states = mutableMapOf<String, State>()
+        val states = hashMapOf<String, State>()
+        val services = hashMapOf<String, List<String>>()
         val stateChangeEvents = Event<EventResult>()
         val resultEvents = Event<Result>()
         val config = Configuration()
@@ -38,7 +46,13 @@ class Khome {
          *
          * @see "https://developers.home-assistant.io/docs/en/external_api_websocket.html#message-format"
          */
-        var idCounter = AtomicInteger(10000)
+        var idCounter = AtomicInteger(0)
+
+        private var sandboxMode = AtomicBoolean(false)
+
+        fun isSandBoxModeActive() = sandboxMode.get()
+        fun activateSandBoxMode() = sandboxMode.set(true)
+        fun deactivateSandBoxMode() = sandboxMode.set(false)
 
         @ObsoleteCoroutinesApi
         val callServiceContext = newSingleThreadContext("ServiceContext")
@@ -68,14 +82,15 @@ class Khome {
             ) {
                 val run = runCatching {
                     authenticate(config.accessToken)
+                    fetchAvailableServicesFromApi()
                     if (config.startStateStream) {
                         startStateStream()
                     }
                     if (successfullyStartedStateStream()) {
                         logResults()
                         reactOnStateChangeEvents()
+                        runIntegrityTest()
                         consumeStateChangesByTriggeringEvents()
-
                     } else {
                         throw EventStreamException("Could not subscribe to event stream!")
                     }
@@ -86,24 +101,99 @@ class Khome {
             }
         }
     }
+}
 
-    suspend inline fun <reified S> hasStateChangedAfterTime(entityId: String, time: Long): Boolean {
-        val presentState = states[entityId]?.getValue<S>()
-        delay(time)
-        val futureState = states[entityId]?.getValue<S>()
-        return presentState == futureState
+fun WebSocketSession.runIntegrityTest() {
+    activateSandBoxMode()
+    logger.info { "Testing the application:" }
+    println("###      Integrity testing started     ###")
+    val fails = AtomicInteger(0)
+    val now = LocalDateTime.now()
+    val events = states.map { (entityId, state) ->
+        async {
+            val data = EventResult.Event.Data(entityId, state, state)
+            val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
+            val eventResult = EventResult(idCounter.get(), "integrity_test", event)
+
+            val success = catchAllTests(entityId) {
+                stateChangeEvents(eventResult)
+            }
+
+            if (!success) fails.incrementAndGet()
+
+            entityId
+        }
     }
 
-    suspend inline fun <reified A> hasAttributeChangedAfterTime(
-        entityId: String,
-        time: Long,
-        attribute: String
-    ): Boolean {
-        val presentAttr = states[entityId]?.getAttribute<A>(attribute)
-        delay(time)
-        val futureAttr = states[entityId]?.getAttribute<A>(attribute)
-        return presentAttr == futureAttr
+    runBlocking {
+        events.awaitAll().forEach { entityId ->
+            stateChangeEvents.minus(entityId)
+        }
     }
+
+    val failCount = fails.get()
+    when {
+        failCount == 0 -> {
+            println(
+                """
+            +++ All tests passed the specifications +++
+            ###      Integrity testing finished     ###
+            """.trimIndent()
+            )
+            logger.info { "Application started" }
+        }
+        failCount > 0 -> {
+            println(
+                """
+
+                --- $failCount test(s) did not pass the specifications ---
+                ###      Integrity testing finished     ###
+            """.trimIndent()
+            )
+            logger.info { "Shutdown application" }
+            logger.info { "Good bye" }
+            exitProcess(1)
+        }
+    }
+    deactivateSandBoxMode()
+}
+
+inline fun catchAllTests(entityId: String, action: () -> Unit): Boolean {
+    try {
+        action()
+        return true
+    } catch (t: Throwable) {
+        println(
+            """
+
+                ---  [$entityId]  ---
+                Failed with message: ${t.message}
+                ${t.stackTrace[0]}
+                ---  [$entityId]  ---
+
+            """.trimIndent()
+
+        )
+        return false
+    }
+}
+
+inline fun <reified S> hasStateChangedAfterTime(entityId: String, time: Long): Boolean {
+    val presentState = states[entityId]?.getValue<S>()
+    sleep(time)
+    val futureState = states[entityId]?.getValue<S>()
+    return presentState == futureState
+}
+
+inline fun <reified A> hasAttributeChangedAfterTime(
+    entityId: String,
+    time: Long,
+    attribute: String
+): Boolean {
+    val presentAttr = states[entityId]?.getAttribute<A>(attribute)
+    sleep(time)
+    val futureAttr = states[entityId]?.getAttribute<A>(attribute)
+    return presentAttr == futureAttr
 }
 
 @ObsoleteCoroutinesApi
@@ -134,21 +224,28 @@ fun updateLocalStateStore(frame: Frame) {
     states[data.event.data.entityId] = data.event.data.newState
 }
 
-data class Configuration(
-    var host: String = "localhost",
-    var port: Int = 8123,
-    var accessToken: String = "<create one in home-assistant>",
-    var startStateStream: Boolean = true
-)
+suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
+    val payload = FetchServices(idCounter.incrementAndGet())
+    callWebSocketApi(payload.toJson())
+    val message = getMessage<ServiceResult>()
+
+    message.result.forEach { (domain, services) ->
+        val serviceCollection = mutableListOf<String>()
+        services.forEach { (name, _) ->
+            serviceCollection.add(name)
+        }
+        Khome.services[domain] = serviceCollection
+    }
+}
 
 suspend fun WebSocketSession.startStateStream() {
-    callWebSocketApi(FetchStates(1000).toJson())
+    callWebSocketApi(FetchStates(idCounter.incrementAndGet()).toJson())
     val message = getMessage<StateResult>()
 
     message.result.forEach {
         states[it.entityId] = it
     }
-    callWebSocketApi(ListenEvent(1100, eventType = "state_changed").toJson())
+    callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
 }
 
 suspend fun WebSocketSession.callWebSocketApi(content: String) = send(content)
@@ -158,7 +255,7 @@ suspend fun WebSocketSession.successfullyStartedStateStream() = getMessage<Resul
 fun logResults() {
     resultEvents += {
         logger.info { "Result-Id: ${it.id} | Success: ${it.success}" }
-        if (null != it.error) logger.error { "${it.error["code"]}: ${it.error["message"]}" }
+        if (it.error != null) logger.error { "${it.error["code"]}: ${it.error["message"]}" }
     }
 }
 
@@ -166,10 +263,5 @@ suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming
 
 inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
 
-data class ListenEvent(
-    val id: Int,
-    override val type: String = "subscribe_events",
-    val eventType: String
-) : MessageInterface
-
 data class FetchStates(val id: Int, override val type: String = "get_states") : MessageInterface
+data class FetchServices(val id: Int, override val type: String = "get_services") : MessageInterface
