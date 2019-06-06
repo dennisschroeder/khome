@@ -14,20 +14,18 @@ import khome.Khome.Companion.activateSandBoxMode
 import khome.Khome.Companion.deactivateSandBoxMode
 import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.stateChangeEvents
+import khome.Khome.Companion.timeBasedEvents
 import khome.core.exceptions.EventStreamException
 import khome.scheduling.toDate
 import kotlinx.coroutines.channels.consumeEach
 import java.lang.Thread.sleep
 import java.time.LocalDateTime
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
 fun initialize(init: Khome.() -> Unit): Khome {
-    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
-    System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "true")
-    System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, "yyyy-MM-dd HH:mm:ss")
-
     return Khome().apply(init)
 }
 
@@ -36,6 +34,7 @@ class Khome {
         val states = hashMapOf<String, State>()
         val services = hashMapOf<String, List<String>>()
         val stateChangeEvents = Event<EventResult>()
+        val timeBasedEvents = Event<String>()
         val resultEvents = Event<Result>()
         val config = Configuration()
 
@@ -63,6 +62,11 @@ class Khome {
 
     fun configure(init: Configuration.() -> Unit) {
         config.apply(init)
+
+        if (config.debugMode) System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
+        System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
+        System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
+        System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logFilePathAndName)
     }
 
     @KtorExperimentalAPI
@@ -89,7 +93,7 @@ class Khome {
                     if (successfullyStartedStateStream()) {
                         logResults()
                         reactOnStateChangeEvents()
-                        runIntegrityTest()
+                        if (config.runIntegrityTests) runIntegrityTest()
                         consumeStateChangesByTriggeringEvents()
                     } else {
                         throw EventStreamException("Could not subscribe to event stream!")
@@ -102,11 +106,13 @@ class Khome {
         }
     }
 }
-
+// ToDo("Refactor into several functions")
 fun WebSocketSession.runIntegrityTest() {
     activateSandBoxMode()
+
     logger.info { "Testing the application:" }
     println("###      Integrity testing started     ###")
+
     val fails = AtomicInteger(0)
     val now = LocalDateTime.now()
     val events = states.map { (entityId, state) ->
@@ -118,7 +124,6 @@ fun WebSocketSession.runIntegrityTest() {
             val success = catchAllTests(entityId) {
                 stateChangeEvents(eventResult)
             }
-
             if (!success) fails.incrementAndGet()
 
             entityId
@@ -129,6 +134,15 @@ fun WebSocketSession.runIntegrityTest() {
         events.awaitAll().forEach { entityId ->
             stateChangeEvents.minus(entityId)
         }
+    }
+
+    val timeBasedActions = timeBasedEvents.listeners.toTypedArray()
+
+    timeBasedActions.forEach { action ->
+        val success = catchAllTests("Timer") {
+            action.value.invoke("Integrity_test")
+        }
+        if (!success) fails.incrementAndGet()
     }
 
     val failCount = fails.get()
@@ -155,10 +169,11 @@ fun WebSocketSession.runIntegrityTest() {
             exitProcess(1)
         }
     }
+
     deactivateSandBoxMode()
 }
 
-inline fun catchAllTests(entityId: String, action: () -> Unit): Boolean {
+inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
     try {
         action()
         return true
@@ -166,10 +181,10 @@ inline fun catchAllTests(entityId: String, action: () -> Unit): Boolean {
         println(
             """
 
-                ---  [$entityId]  ---
+                ---  [$section]  ---
                 Failed with message: ${t.message}
                 ${t.stackTrace[0]}
-                ---  [$entityId]  ---
+                ---  [$section]  ---
 
             """.trimIndent()
 

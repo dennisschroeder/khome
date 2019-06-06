@@ -18,24 +18,24 @@ fun ServiceCaller.openCover(entityId: String) {
 
 inline fun <reified Entity : EntityInterface> ServiceCaller.closeCover() {
     val entity = getEntityInstance<Entity>()
-    closeCover(entity.id)
+    closeCover(entity)
 }
 
-fun ServiceCaller.closeCover(entityId: String) {
+fun ServiceCaller.closeCover(entity: EntityInterface) {
     cover {
-        this.entityId = entityId
+        entityId = entity.id
         service = CoverServices.CLOSE_COVER
     }
 }
 
 inline fun <reified Entity : EntityInterface> ServiceCaller.setCoverPositionTo(position: Int) {
     val entity = getEntityInstance<Entity>()
-    setCoverPositionTo(position, entity.id)
+    setCoverPositionTo(position, entity)
 }
 
-fun ServiceCaller.setCoverPositionTo(position: Int, entityId: String) {
+fun ServiceCaller.setCoverPositionTo(position: Int, entity: EntityInterface) {
     cover {
-        this.entityId = entityId
+        entityId = entity.id
         service = CoverServices.SET_COVER_POSITION
         this.position = position
     }

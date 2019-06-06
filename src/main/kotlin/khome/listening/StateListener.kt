@@ -1,12 +1,12 @@
 package khome.listening
 
-import khome.Khome.Companion.isSandBoxModeActive
 import java.util.*
 import khome.core.*
 import kotlin.reflect.KClass
 import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.stateChangeEvents
+import khome.Khome.Companion.isSandBoxModeActive
 import khome.listening.exceptions.EntityStateNotFoundException
 
 
@@ -69,7 +69,8 @@ data class StateListener(
     }
 
     fun execute(func: EventResult.() -> Unit) {
-        if (constraint) func(data)
+        if (constraint && !isSandBoxModeActive()) func(data)
+        if (isSandBoxModeActive()) func(data)
     }
 
     fun disable() = lifeCycleHandler.disable()
