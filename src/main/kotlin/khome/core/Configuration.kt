@@ -6,8 +6,8 @@ data class Configuration(
     var accessToken: String = "<create one in home-assistant>",
     var startStateStream: Boolean = true,
     var runIntegrityTests: Boolean = true,
-    var debugMode: Boolean = true,
+    var logLevel: String = "TRACE",
     var logTime: Boolean = true,
     var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",
-    var logFilePathAndName: String = "System.err"
+    var logOutput: String = "System.out"
 )
