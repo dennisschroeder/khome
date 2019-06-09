@@ -12,6 +12,7 @@ import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.activateSandBoxMode
 import khome.Khome.Companion.deactivateSandBoxMode
+import khome.Khome.Companion.errorResultEvents
 import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.timeBasedEvents
@@ -36,6 +37,7 @@ class Khome {
         val stateChangeEvents = Event<EventResult>()
         val timeBasedEvents = Event<String>()
         val resultEvents = Event<Result>()
+        val errorResultEvents = Event<ErrorResult>()
         val config = Configuration()
 
         /**
@@ -63,10 +65,10 @@ class Khome {
     fun configure(init: Configuration.() -> Unit) {
         config.apply(init)
 
-        if (config.debugMode) System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
         System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
         System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
-        System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logFilePathAndName)
+        System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
     }
 
     @KtorExperimentalAPI
@@ -92,6 +94,7 @@ class Khome {
                     }
                     if (successfullyStartedStateStream()) {
                         logResults()
+                        emitEventOnResultError()
                         reactOnStateChangeEvents()
                         if (config.runIntegrityTests) runIntegrityTest()
                         consumeStateChangesByTriggeringEvents()
@@ -106,6 +109,7 @@ class Khome {
         }
     }
 }
+
 // ToDo("Refactor into several functions")
 fun WebSocketSession.runIntegrityTest() {
     activateSandBoxMode()
@@ -163,7 +167,9 @@ fun WebSocketSession.runIntegrityTest() {
                 --- $failCount test(s) did not pass the specifications ---
                 ###      Integrity testing finished     ###
             """.trimIndent()
+
             )
+            logger.error { "--- $failCount test(s) fails ---" }
             logger.info { "Shutdown application" }
             logger.info { "Good bye" }
             exitProcess(1)
@@ -274,9 +280,17 @@ fun logResults() {
     }
 }
 
+fun emitEventOnResultError() {
+    resultEvents += {
+        if (it.error != null) errorResultEvents(ErrorResult(it.error["code"]!!, it.error["message"]!!))
+    }
+}
+
 suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming.receive().asObject()
 
 inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
 
 data class FetchStates(val id: Int, override val type: String = "get_states") : MessageInterface
 data class FetchServices(val id: Int, override val type: String = "get_services") : MessageInterface
+
+data class ErrorResult(val code: String, val message: String)
