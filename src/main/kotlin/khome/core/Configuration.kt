@@ -9,5 +9,6 @@ data class Configuration(
     var logLevel: String = "TRACE",
     var logTime: Boolean = true,
     var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",
-    var logOutput: String = "System.out"
+    var logOutput: String = "System.out",
+    var stateStoreCheckInterval: Long = 60000
 )

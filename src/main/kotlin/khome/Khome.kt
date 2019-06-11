@@ -10,6 +10,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
+import javafx.application.Application.launch
 import khome.Khome.Companion.activateSandBoxMode
 import khome.Khome.Companion.deactivateSandBoxMode
 import khome.Khome.Companion.errorResultEvents
@@ -17,6 +18,7 @@ import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.timeBasedEvents
 import khome.core.exceptions.EventStreamException
+import khome.scheduling.runEveryAt
 import khome.scheduling.toDate
 import kotlinx.coroutines.channels.consumeEach
 import java.lang.Thread.sleep
@@ -24,6 +26,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
+import kotlin.system.measureTimeMillis
 
 fun initialize(init: Khome.() -> Unit): Khome {
     return Khome().apply(init)
@@ -93,6 +96,9 @@ class Khome {
                     }
                     if (successfullyStartedStateStream()) {
                         reactOnStateChangeEvents()
+                        runEveryAt(config.stateStoreCheckInterval, LocalDateTime.now()) {
+                            launch { fetchStates() }
+                        }
                         if (config.runIntegrityTests) runIntegrityTest()
                         consumeStateChangesByTriggeringEvents()
                     } else {
@@ -224,7 +230,7 @@ suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
             when (type) {
                 "event" -> launch {
                     updateLocalStateStore(frame)
-                    triggerStateChangeEvent(frame)
+                    emitStateChangeEvent(frame)
                 }
                 "result" -> launch { resolveResultTypeAndEmitEvents(frame) }
                 else -> launch { logger.warn { "Could not classify message: $type" } }
@@ -235,18 +241,42 @@ suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
 
 private fun resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
+
     when {
-        !resultData.success -> emitEventOnResultErrorAndPrintLogMessage(resultData)
-        resultData.success -> triggerResultEvent(frame)
+        !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
+        resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
+        resultData.success && resultData.result is Map<*, *> -> {
+            emitResultEvent(frame)
+            logResults(resultData)
+        }
     }
-    logResults(resultData)
+}
+
+fun checkLocalStateStoreAndRefresh(frame: Frame) {
+    val states = frame.asObject<StateResult>()
+    var noneEqualStateCount = 0
+
+    logger.debug { " ###    Started local state store check     ###" }
+
+    states.result.forEach { state ->
+        if (Khome.states[state.entityId] != state) {
+            noneEqualStateCount++
+            logger.warn { "The state of ${state.entityId} is not in sync any more." }
+            Khome.states[state.entityId] = state
+            logger.warn { "The state has been refreshed." }
+        }
+    }
+
+    if (noneEqualStateCount < 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
+    logger.debug { " ###    Local state store check finished    ###" }
+
 }
 
 private fun logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
 
-private fun emitEventOnResultErrorAndPrintLogMessage(resultData: Result) {
+private fun emitResultErrorEventAndPrintLogMessage(resultData: Result) {
     val errorCode = resultData.error?.get("code")!!
     val errorMessage = resultData.error.get("message")!!
 
@@ -254,9 +284,9 @@ private fun emitEventOnResultErrorAndPrintLogMessage(resultData: Result) {
     logger.error { "$errorCode: $errorMessage" }
 }
 
-private fun triggerStateChangeEvent(frame: Frame) = stateChangeEvents(frame.asObject())
+private fun emitStateChangeEvent(frame: Frame) = stateChangeEvents(frame.asObject())
 
-private fun triggerResultEvent(frame: Frame) = resultEvents(frame.asObject())
+private fun emitResultEvent(frame: Frame) = resultEvents(frame.asObject())
 
 private fun updateLocalStateStore(frame: Frame) {
     val data = frame.asObject<EventResult>()
@@ -278,7 +308,7 @@ suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
 }
 
 suspend fun WebSocketSession.startStateStream() {
-    callWebSocketApi(FetchStates(idCounter.incrementAndGet()).toJson())
+    fetchStates()
     val message = getMessage<StateResult>()
 
     message.result.forEach {
@@ -287,13 +317,11 @@ suspend fun WebSocketSession.startStateStream() {
     callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
 }
 
+suspend fun WebSocketSession.fetchStates() = callWebSocketApi(FetchStates(idCounter.incrementAndGet()).toJson())
+
 suspend fun WebSocketSession.callWebSocketApi(content: String) = send(content)
 
 suspend fun WebSocketSession.successfullyStartedStateStream() = getMessage<Result>().success
-
-
-
-
 
 suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming.receive().asObject()
 
