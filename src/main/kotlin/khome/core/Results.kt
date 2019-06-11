@@ -31,7 +31,7 @@ data class Result(
     override val type: String,
     val success: Boolean,
     val error: Map<String, String>?,
-    val result: Map<String, String>?
+    val result: Any
 ) : MessageInterface
 
 data class StateResult(
