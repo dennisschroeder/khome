@@ -15,14 +15,14 @@ import khome.Khome.Companion.timeBasedEvents
 import khome.Khome.Companion.isSandBoxModeActive
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 
-inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: () -> Unit): LifeCycleHandler {
+inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
     val dayTime = determineDayTimeFromTimeEntity(entity)
 
     return runDailyAt(dayTime, action)
 }
 
-inline fun runDailyAt(timeOfDay: String, crossinline action: () -> Unit): LifeCycleHandler {
+inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val nextStartDate = startDate.plusDays(1)
     val nextExecution =
@@ -31,14 +31,14 @@ inline fun runDailyAt(timeOfDay: String, crossinline action: () -> Unit): LifeCy
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun <reified Entity : AbstractTimeEntity> runHourlyAt(crossinline action: () -> Unit): LifeCycleHandler {
+inline fun <reified Entity : AbstractTimeEntity> runHourlyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
     val dayTime = determineDayTimeFromTimeEntity(entity)
 
     return runHourlyAt(dayTime, action)
 }
 
-inline fun runHourlyAt(timeOfDay: String, crossinline action: () -> Unit): LifeCycleHandler {
+inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
     val hoursSinceStartDate = startDate.until(now, ChronoUnit.YEARS) + 1
@@ -50,14 +50,14 @@ inline fun runHourlyAt(timeOfDay: String, crossinline action: () -> Unit): LifeC
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun <reified Entity : AbstractTimeEntity> runMinutelyAt(crossinline action: () -> Unit): LifeCycleHandler {
+inline fun <reified Entity : AbstractTimeEntity> runMinutelyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
     val dayTime = determineDayTimeFromTimeEntity(entity)
 
     return runMinutelyAt(dayTime, action)
 }
 
-inline fun runMinutelyAt(timeOfDay: String, crossinline action: () -> Unit): LifeCycleHandler {
+inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
     val minutesSinceStartDate = startDate.until(now, ChronoUnit.MINUTES) + 1
@@ -78,29 +78,27 @@ fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): String {
 inline fun runEveryAt(
     period: Long,
     localDateTime: LocalDateTime,
-    crossinline action: () -> Unit
+    crossinline action: TimerTask.() -> Unit
 ): LifeCycleHandler {
 
-    timeBasedEvents += { action() }
+    val timerTask = timerTask(action)
+    timeBasedEvents += { action(timerTask) }
 
-    val timerTask = timerTask { action() }
     val timer = Timer("scheduler", false)
     if (!isSandBoxModeActive()) timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
-
     return LifeCycleHandler(timer)
 }
 
-inline fun runOnceAt(timeOfDay: String, crossinline action: () -> Unit): LifeCycleHandler {
+inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     return runOnceAt(startDate, action)
 }
 
-inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: () -> Unit): LifeCycleHandler {
-    timeBasedEvents += { action() }
+inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timerTask = timerTask(action)
+    timeBasedEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    val timerTask = timerTask { action() }
-
     if (!isSandBoxModeActive()) timer.schedule(timerTask, dateTime.toDate())
 
     return LifeCycleHandler(timer)
@@ -115,24 +113,23 @@ inline fun runEveryTimePeriodFor(
     val timer = runEveryAt(timePeriod, LocalDateTime.now()) {
         task()
         counter++
+        if (counter == executions) cancel()
     }
-    if (counter == executions) timer.cancel()
 
     return timer
 }
 
-
-inline fun runOnceInMinutes(minutes: Int, crossinline action: () -> Unit) =
+inline fun runOnceInMinutes(minutes: Int, crossinline action: TimerTask.() -> Unit) =
     runOnceInSeconds(minutes * 60, action)
 
-inline fun runOnceInHours(hours: Int, crossinline action: () -> Unit) =
+inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) =
     runOnceInSeconds((hours * 60) * 60, action)
 
-inline fun runOnceInSeconds(seconds: Int, crossinline action: () -> Unit): LifeCycleHandler {
-    timeBasedEvents += { action() }
+inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timerTask = timerTask(action)
+    timeBasedEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    val timerTask = timerTask { action() }
     if (!isSandBoxModeActive()) timer.schedule(timerTask, seconds * 1000L)
     return LifeCycleHandler(timer)
 }
@@ -142,7 +139,7 @@ fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
 
-fun runEverySunRise(action: () -> Unit) {
+fun runEverySunRise(action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
@@ -152,7 +149,7 @@ fun runEverySunRise(action: () -> Unit) {
     }
 }
 
-fun runEverySunSet(action: () -> Unit) {
+fun runEverySunSet(action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
