@@ -2,31 +2,29 @@ package khome
 
 import khome.core.*
 import kotlinx.coroutines.*
+import java.lang.Thread.sleep
+import java.time.LocalDateTime
 import io.ktor.http.HttpMethod
+import khome.scheduling.toDate
+import kotlin.system.exitProcess
 import io.ktor.client.HttpClient
 import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
+import khome.Khome.Companion.idCounter
 import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
-import javafx.application.Application.launch
-import khome.Khome.Companion.activateSandBoxMode
-import khome.Khome.Companion.deactivateSandBoxMode
-import khome.Khome.Companion.errorResultEvents
-import khome.Khome.Companion.idCounter
-import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.timeBasedEvents
-import khome.core.exceptions.EventStreamException
-import khome.scheduling.runEveryAt
-import khome.scheduling.toDate
+import khome.Khome.Companion.errorResultEvents
+import khome.Khome.Companion.stateChangeEvents
 import kotlinx.coroutines.channels.consumeEach
-import java.lang.Thread.sleep
-import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.system.exitProcess
-import kotlin.system.measureTimeMillis
+import khome.Khome.Companion.activateSandBoxMode
+import khome.core.exceptions.EventStreamException
+import khome.Khome.Companion.deactivateSandBoxMode
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 
 fun initialize(init: Khome.() -> Unit): Khome {
     return Khome().apply(init)
@@ -88,7 +86,7 @@ class Khome {
                 port = config.port,
                 path = path
             ) {
-                val run = runCatching {
+                try {
                     authenticate(config.accessToken)
                     fetchAvailableServicesFromApi()
                     if (config.startStateStream) {
@@ -96,17 +94,15 @@ class Khome {
                     }
                     if (successfullyStartedStateStream()) {
                         reactOnStateChangeEvents()
-                        runEveryAt(config.stateStoreCheckInterval, LocalDateTime.now()) {
-                            launch { fetchStates() }
-                        }
                         if (config.runIntegrityTests) runIntegrityTest()
                         consumeStateChangesByTriggeringEvents()
                     } else {
                         throw EventStreamException("Could not subscribe to event stream!")
                     }
-                }
-                run.onFailure {
-                    logger.error(it) { it.printStackTrace() }
+                } catch (e: ClosedReceiveChannelException) {
+                    logger.error(e) { "Connection was closed!" }
+                } catch (e: Throwable) {
+                    logger.error(e) { e.stackTrace }
                 }
             }
         }
@@ -267,7 +263,7 @@ fun checkLocalStateStoreAndRefresh(frame: Frame) {
         }
     }
 
-    if (noneEqualStateCount < 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
+    if (noneEqualStateCount > 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
     logger.debug { " ###    Local state store check finished    ###" }
 
 }
@@ -288,9 +284,10 @@ private fun emitStateChangeEvent(frame: Frame) = stateChangeEvents(frame.asObjec
 
 private fun emitResultEvent(frame: Frame) = resultEvents(frame.asObject())
 
-private fun updateLocalStateStore(frame: Frame) {
+suspend fun WebSocketSession.updateLocalStateStore(frame: Frame) {
     val data = frame.asObject<EventResult>()
-    states[data.event.data.entityId] = data.event.data.newState
+    if (states[data.event.data.entityId] == data.event.data.newState) fetchStates()
+    else states[data.event.data.entityId] = data.event.data.newState
 }
 
 suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
