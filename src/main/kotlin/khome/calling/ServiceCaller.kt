@@ -13,6 +13,8 @@ import khome.Khome.Companion.isSandBoxModeActive
 import khome.Khome.Companion.services
 import khome.calling.exceptions.DomainNotFoundException
 import khome.calling.exceptions.ServiceNotFoundException
+import khome.core.entities.EntityInterface
+import khome.listening.getEntityInstance
 
 @ObsoleteCoroutinesApi
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
@@ -56,8 +58,10 @@ data class ServiceCaller(
     var service: ServiceInterface?,
     var serviceData: ServiceDataInterface?
 ) : MessageInterface {
-    fun entityId(entityId: String) {
-        serviceData = EntityId(entityId)
+    inline fun <reified Entity: EntityInterface>entityId(entityId: String) {
+        val entity = getEntityInstance<Entity>()
+
+        serviceData = EntityId(entity.id)
     }
 }
 
