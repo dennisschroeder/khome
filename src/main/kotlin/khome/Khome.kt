@@ -80,30 +80,41 @@ class Khome {
     @ObsoleteCoroutinesApi
     fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
         runBlocking {
-            client.ws(
+            if (config.secure) client.ws(
                 method = method,
                 host = config.host,
                 port = config.port,
                 path = path
-            ) {
-                try {
-                    authenticate(config.accessToken)
-                    fetchAvailableServicesFromApi()
-                    if (config.startStateStream) startStateStream()
-                    reactOnStateChangeEvents()
-                    if (config.runIntegrityTests) runIntegrityTest()
-
-                    if (successfullyStartedStateStream()) consumeStateChangesByTriggeringEvents()
-                    else throw EventStreamException("Could not subscribe to event stream!")
-                } catch (e: ClosedReceiveChannelException) {
-                    logger.error(e) { "Connection was closed!" }
-                } catch (e: Throwable) {
-                    logger.error(e) { e.stackTrace }
-                }
-            }
+            ) { runApplication(config, reactOnStateChangeEvents) }
+            else client.wss(
+                method = method,
+                host = config.host,
+                port = config.port,
+                path = path
+            ) { runApplication(config, reactOnStateChangeEvents) }
         }
     }
 }
+
+private suspend fun DefaultClientWebSocketSession.runApplication(
+    config: Configuration,
+    reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
+) =
+    try {
+        authenticate(config.accessToken)
+        fetchAvailableServicesFromApi()
+        if (config.startStateStream) startStateStream()
+        reactOnStateChangeEvents()
+        if (config.runIntegrityTests) runIntegrityTest()
+
+        if (successfullyStartedStateStream()) consumeStateChangesByTriggeringEvents()
+        else throw EventStreamException("Could not subscribe to event stream!")
+    } catch (e: ClosedReceiveChannelException) {
+        logger.error(e) { "Connection was closed!" }
+    } catch (e: Throwable) {
+        logger.error(e) { e.stackTrace }
+    }
+
 
 // ToDo("Refactor into several functions")
 fun WebSocketSession.runIntegrityTest() {
