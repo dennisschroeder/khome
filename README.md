@@ -10,17 +10,19 @@ between your application and your Home-Assistant Server.
 
 Example:
 ```kotlin
-listenState("sensor.livingroom_luminance") {
+
+object LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
+object LivingRoomMoodLight : AbstractLightEntity("livingroom_mood") 
+
+listenState<LivingRoomLuminance> {
+
     constrain {
-        newState.get<Double>() ?: 0.0 <= 3.0
+        newState.getValue<Double>() <= 3.0
     }
 
-    action {
+    execute {
         callService {
-            light {
-                entityId = "light.livingroom_main"
-                service = "turn_on"
-            }
+            turnOn<LivingRoomMoodLight>()
         }
     }
 }
@@ -32,7 +34,7 @@ python execution environment for writing automation apps for Home-Assistant-home
 [AppDeamon@github](https://github.com/home-assistant/appdaemon) | [AppDeamon Documentation](https://appdaemon.readthedocs.io/en/latest/)
 
 ## Home Assistant
-
+ 
 HA is an open-source home-automation platform written in Python 3 that puts local control and privacy first. Powered by 
 a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.
 
@@ -151,6 +153,6 @@ change streaming. When all went as supposed, you should see the following output
 [main] INFO khome.core.Logger - Authenticated successfully.
 ```
 
-The `connect {}` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.wss() {}` function, which is the scope to receive from and send messages 
+The `connect()` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.ws()` function, which is the scope to receive from and send messages 
 to the websocket api. Inside the connect scope, you can use khome's ktor abstracted functions, or your very own, to build your smart home-automation's.
 
