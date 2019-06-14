@@ -89,16 +89,12 @@ class Khome {
                 try {
                     authenticate(config.accessToken)
                     fetchAvailableServicesFromApi()
-                    if (config.startStateStream) {
-                        startStateStream()
-                    }
-                    if (successfullyStartedStateStream()) {
-                        reactOnStateChangeEvents()
-                        if (config.runIntegrityTests) runIntegrityTest()
-                        consumeStateChangesByTriggeringEvents()
-                    } else {
-                        throw EventStreamException("Could not subscribe to event stream!")
-                    }
+                    if (config.startStateStream) startStateStream()
+                    reactOnStateChangeEvents()
+                    if (config.runIntegrityTests) runIntegrityTest()
+
+                    if (successfullyStartedStateStream()) consumeStateChangesByTriggeringEvents()
+                    else throw EventStreamException("Could not subscribe to event stream!")
                 } catch (e: ClosedReceiveChannelException) {
                     logger.error(e) { "Connection was closed!" }
                 } catch (e: Throwable) {
@@ -308,8 +304,8 @@ suspend fun WebSocketSession.startStateStream() {
     fetchStates()
     val message = getMessage<StateResult>()
 
-    message.result.forEach {
-        states[it.entityId] = it
+    message.result.forEach { state ->
+        states[state.entityId] = state
     }
     callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
 }
