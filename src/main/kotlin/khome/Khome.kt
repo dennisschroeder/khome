@@ -80,13 +80,13 @@ class Khome {
     @ObsoleteCoroutinesApi
     fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
         runBlocking {
-            if (config.secure) client.ws(
+            if (config.secure) client.wss(
                 method = method,
                 host = config.host,
                 port = config.port,
                 path = path
             ) { runApplication(config, reactOnStateChangeEvents) }
-            else client.wss(
+            else client.ws(
                 method = method,
                 host = config.host,
                 port = config.port,
