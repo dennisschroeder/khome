@@ -96,6 +96,7 @@ class Khome {
     }
 }
 
+@ObsoleteCoroutinesApi
 private suspend fun DefaultClientWebSocketSession.runApplication(
     config: Configuration,
     reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
@@ -106,7 +107,6 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
         if (config.startStateStream) startStateStream()
         reactOnStateChangeEvents()
         if (config.runIntegrityTests) runIntegrityTest()
-
         if (successfullyStartedStateStream()) consumeStateChangesByTriggeringEvents()
         else throw EventStreamException("Could not subscribe to event stream!")
     } catch (e: ClosedReceiveChannelException) {
@@ -117,13 +117,13 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 
 
 // ToDo("Refactor into several functions")
-fun WebSocketSession.runIntegrityTest() {
+private fun WebSocketSession.runIntegrityTest() {
     activateSandBoxMode()
 
     logger.info { "Testing the application:" }
     println("###      Integrity testing started     ###")
 
-    val fails = AtomicInteger(0)
+    val failCount = AtomicInteger(0)
     val now = LocalDateTime.now()
     val events = states.map { (entityId, state) ->
         async {
@@ -134,7 +134,7 @@ fun WebSocketSession.runIntegrityTest() {
             val success = catchAllTests(entityId) {
                 stateChangeEvents(eventResult)
             }
-            if (!success) fails.incrementAndGet()
+            if (!success) failCount.incrementAndGet()
 
             entityId
         }
@@ -152,12 +152,12 @@ fun WebSocketSession.runIntegrityTest() {
         val success = catchAllTests("Timer") {
             action.value.invoke("Integrity_test")
         }
-        if (!success) fails.incrementAndGet()
+        if (!success) failCount.incrementAndGet()
     }
 
-    val failCount = fails.get()
+    val failCountTotal = failCount.get()
     when {
-        failCount == 0 -> {
+        failCountTotal == 0 -> {
             println(
                 """
             +++ All tests passed the specifications +++
@@ -166,16 +166,16 @@ fun WebSocketSession.runIntegrityTest() {
             )
             logger.info { "Application started" }
         }
-        failCount > 0 -> {
+        failCountTotal > 0 -> {
             println(
                 """
 
-                --- $failCount test(s) did not pass the specifications ---
+                --- $failCountTotal test(s) did not pass the specifications ---
                 ###      Integrity testing finished     ###
             """.trimIndent()
 
             )
-            logger.error { "--- $failCount test(s) fails ---" }
+            logger.error { "--- $failCountTotal test(s) fails ---" }
             logger.info { "Shutdown application" }
             logger.info { "Good bye" }
             exitProcess(1)
@@ -185,7 +185,7 @@ fun WebSocketSession.runIntegrityTest() {
     deactivateSandBoxMode()
 }
 
-inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
+private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
     try {
         action()
         return true
