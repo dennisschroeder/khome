@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import khome.Khome.Companion.activateSandBoxMode
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.deactivateSandBoxMode
+import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 
 fun initialize(init: Khome.() -> Unit): Khome {
@@ -54,6 +55,11 @@ class Khome {
         fun isSandBoxModeActive() = sandboxMode.get()
         fun activateSandBoxMode() = sandboxMode.set(true)
         fun deactivateSandBoxMode() = sandboxMode.set(false)
+        fun runInSandBoxMode(action: () -> Unit) {
+            activateSandBoxMode()
+            action()
+            deactivateSandBoxMode()
+        }
 
         @ObsoleteCoroutinesApi
         val callServiceContext = newSingleThreadContext("ServiceContext")
@@ -117,8 +123,7 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 
 
 // ToDo("Refactor into several functions")
-private fun WebSocketSession.runIntegrityTest() {
-    activateSandBoxMode()
+private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
 
     logger.info { "Testing the application:" }
     println("###      Integrity testing started     ###")
@@ -181,8 +186,6 @@ private fun WebSocketSession.runIntegrityTest() {
             exitProcess(1)
         }
     }
-
-    deactivateSandBoxMode()
 }
 
 private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
