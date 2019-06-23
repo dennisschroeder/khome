@@ -1,21 +1,21 @@
 package khome.calling
 
-import khome.core.entities.EntityInterface
 import com.google.gson.annotations.SerializedName
+import khome.core.entities.cover.AbstractCoverEntity
 
-fun ServiceCaller.openCover(entityId: String) =
+fun ServiceCaller.openCover(entity: AbstractCoverEntity) =
     cover {
-        this.entityId = entityId
+        entityId = entity.id
         service = CoverServices.OPEN_COVER
     }
 
-fun ServiceCaller.closeCover(entity: EntityInterface) =
+fun ServiceCaller.closeCover(entity: AbstractCoverEntity) =
     cover {
         entityId = entity.id
         service = CoverServices.CLOSE_COVER
     }
 
-fun ServiceCaller.setCoverPositionTo(position: Int, entity: EntityInterface) =
+fun ServiceCaller.setCoverPositionTo(entity: AbstractCoverEntity, position: Int) =
     cover {
         entityId = entity.id
         service = CoverServices.SET_COVER_POSITION

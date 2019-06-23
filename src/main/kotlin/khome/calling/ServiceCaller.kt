@@ -38,7 +38,7 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                 }
             } else {
                 callWebSocketApi(callService.toJson())
-                logger.info { "Called  Service with: " + callService.toJson() }
+                logger.info { "Called Service with: " + callService.toJson() }
             }
         }
     }
