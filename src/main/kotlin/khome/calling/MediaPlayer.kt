@@ -1,70 +1,40 @@
 package khome.calling
 
-import khome.listening.getEntityInstance
 import khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity
 
-inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.setVolume(level: Float) {
-    val entity = getEntityInstance<Entity>()
-    setVolume(entity.id, level)
-}
-
-fun ServiceCaller.setVolume(entityId: String, level: Float) {
+fun ServiceCaller.setVolume(entity: AbstractMediaPlayerEntity, level: Float) =
     mediaPlayer {
-        this.entityId = entityId
+        entityId = entity.id
         service = MediaPlayerServices.VOLUME_SET
         volumeLevel = level
     }
-}
 
-inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.volumeDown() {
-    val entity = getEntityInstance<Entity>()
-    volumeDown(entity.id)
-}
 
-fun ServiceCaller.volumeDown(entityId: String) {
+fun ServiceCaller.volumeDown(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
-        this.entityId = entityId
+        entityId = entity.id
         service = MediaPlayerServices.VOLUME_DOWN
     }
-}
 
-inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.volumeUp() {
-    val entity = getEntityInstance<Entity>()
-    volumeUp(entity.id)
-}
-
-fun ServiceCaller.volumeUp(entityId: String) {
+fun ServiceCaller.volumeUp(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         this.entityId = entityId
         service = MediaPlayerServices.VOLUME_UP
     }
-}
 
-inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.unMute() {
-    val entity = getEntityInstance<Entity>()
-    unMute(entity.id)
-}
-
-fun ServiceCaller.unMute(entityId: String) {
+fun ServiceCaller.unMute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         this.entityId = entityId
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = false
     }
-}
 
-inline fun <reified Entity : AbstractMediaPlayerEntity> ServiceCaller.mute() {
-    val entity = getEntityInstance<Entity>()
-    mute(entity.id)
-}
-
-fun ServiceCaller.mute(entityId: String) {
+fun ServiceCaller.mute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         this.entityId = entityId
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = true
     }
-}
 
 fun ServiceCaller.mediaPlayer(init: MediaData.() -> Unit) {
     domain = Domain.MEDIA_PLAYER

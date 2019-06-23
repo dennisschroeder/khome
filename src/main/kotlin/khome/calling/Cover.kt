@@ -1,45 +1,26 @@
 package khome.calling
 
-import khome.listening.getEntityInstance
 import khome.core.entities.EntityInterface
 import com.google.gson.annotations.SerializedName
 
-inline fun <reified Entity : EntityInterface> ServiceCaller.openCover() {
-    val entity = getEntityInstance<Entity>()
-    openCover(entity.id)
-}
-
-fun ServiceCaller.openCover(entityId: String) {
+fun ServiceCaller.openCover(entityId: String) =
     cover {
         this.entityId = entityId
         service = CoverServices.OPEN_COVER
     }
-}
 
-inline fun <reified Entity : EntityInterface> ServiceCaller.closeCover() {
-    val entity = getEntityInstance<Entity>()
-    closeCover(entity)
-}
-
-fun ServiceCaller.closeCover(entity: EntityInterface) {
+fun ServiceCaller.closeCover(entity: EntityInterface) =
     cover {
         entityId = entity.id
         service = CoverServices.CLOSE_COVER
     }
-}
 
-inline fun <reified Entity : EntityInterface> ServiceCaller.setCoverPositionTo(position: Int) {
-    val entity = getEntityInstance<Entity>()
-    setCoverPositionTo(position, entity)
-}
-
-fun ServiceCaller.setCoverPositionTo(position: Int, entity: EntityInterface) {
+fun ServiceCaller.setCoverPositionTo(position: Int, entity: EntityInterface) =
     cover {
         entityId = entity.id
         service = CoverServices.SET_COVER_POSITION
         this.position = position
     }
-}
 
 fun ServiceCaller.cover(init: CoverData.() -> Unit) {
     domain = Domain.COVER
