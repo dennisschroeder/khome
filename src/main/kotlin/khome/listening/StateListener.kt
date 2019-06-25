@@ -9,12 +9,8 @@ import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.isSandBoxModeActive
 import khome.listening.exceptions.EntityStateNotFoundException
 
-
-inline fun <reified Entity : EntityInterface> listenState(crossinline callback: StateListener.() -> Unit): LifeCycleHandler {
-    val entity = getEntityInstance<Entity>()
-
-    return registerStateChangeEvent(entity, callback)
-}
+inline fun listenState(entity: EntityInterface, crossinline callback: StateListener.() -> Unit): LifeCycleHandler =
+    registerStateChangeEvent(entity, callback)
 
 inline fun <reified Entity : EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
 
@@ -76,16 +72,15 @@ data class StateListener(
     fun disable() = lifeCycleHandler.disable()
 }
 
-fun getState(entity: EntityInterface): State  {
-    return states[entity.id] ?: throw EntityStateNotFoundException("Could not fetch state object for entity: ${entity.id}")
+fun getState(entity: EntityInterface): State {
+    return states[entity.id]
+        ?: throw EntityStateNotFoundException("Could not fetch state object for entity: ${entity.id}")
 }
 
-inline fun <reified Entity : EntityInterface,  reified StateValueType> getStateValue(): StateValueType {
-    val entity = getEntityInstance<Entity>()
-    return entity.state.getValue()
-}
+inline fun <reified StateValueType> getStateValueFromEntity(entity: EntityInterface): StateValueType =
+    entity.state.getValue()
 
-inline fun <reified Entity : EntityInterface, reified AttributeValueType> getStateAttributes(key: String): AttributeValueType {
-    val entity = getEntityInstance<Entity>()
-    return entity.state.getAttribute(key)
-}
+inline fun <reified AttributeValueType> getStateAttributesFromEntity(
+    entity: EntityInterface,
+    key: String
+): AttributeValueType = entity.state.getAttribute(key)
