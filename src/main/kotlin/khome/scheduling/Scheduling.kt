@@ -14,6 +14,7 @@ import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.timeBasedEvents
 import khome.Khome.Companion.isSandBoxModeActive
 import khome.core.entities.inputDateTime.AbstractTimeEntity
+import java.lang.Thread.sleep
 
 inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val entity = getEntityInstance<Entity>()
@@ -163,13 +164,12 @@ fun nextSunrise() = getNextSunPosition("next_rising")
 
 fun nextSunset() = getNextSunPosition("next_setting")
 
-
-fun getNextSunPosition(nextPosition: String): LocalDateTime {
+private fun getNextSunPosition(nextPosition: String): LocalDateTime {
     val nextSunPositionChange = Sun.getAttributeValue<String>(nextPosition)
     return convertUtcToLocalDateTime(nextSunPositionChange)
 }
 
-fun convertUtcToLocalDateTime(utcDateTime: String): LocalDateTime {
+private fun convertUtcToLocalDateTime(utcDateTime: String): LocalDateTime {
     val offsetDateTime = OffsetDateTime.parse(utcDateTime)
     val zonedDateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault())
     return zonedDateTime.toLocalDateTime()
@@ -196,4 +196,11 @@ fun nowIsAfter(timeOfDay: String): Boolean {
 fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
     val now = LocalDateTime.now().toDate()
     return now.after(localDateTime.toDate())
+}
+
+fun runAfterDelay(millis: Long, action: () -> Unit) {
+    if (!isSandBoxModeActive()) {
+        sleep(millis)
+        action()
+    }
 }
