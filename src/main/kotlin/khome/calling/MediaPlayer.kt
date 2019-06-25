@@ -9,7 +9,6 @@ fun ServiceCaller.setVolume(entity: AbstractMediaPlayerEntity, level: Float) =
         volumeLevel = level
     }
 
-
 fun ServiceCaller.volumeDown(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         entityId = entity.id
@@ -18,20 +17,20 @@ fun ServiceCaller.volumeDown(entity: AbstractMediaPlayerEntity) =
 
 fun ServiceCaller.volumeUp(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
-        this.entityId = entityId
+        entityId = entity.id
         service = MediaPlayerServices.VOLUME_UP
     }
 
 fun ServiceCaller.unMute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
-        this.entityId = entityId
+        entityId = entity.id
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = false
     }
 
 fun ServiceCaller.mute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
-        this.entityId = entityId
+        entityId = entity.id
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = true
     }
