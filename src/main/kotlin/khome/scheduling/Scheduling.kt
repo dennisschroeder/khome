@@ -198,9 +198,7 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
     return now.after(localDateTime.toDate())
 }
 
-fun runAfterDelay(millis: Long, action: () -> Unit) {
-    if (!isSandBoxModeActive()) {
-        sleep(millis)
-        action()
-    }
+fun <T> runAfterDelay(millis: Long, action: () -> T): T {
+    if (!isSandBoxModeActive()) sleep(millis)
+    return action()
 }
