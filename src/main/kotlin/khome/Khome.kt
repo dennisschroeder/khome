@@ -16,15 +16,13 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.timeBasedEvents
+import khome.Khome.Companion.runInSandBoxMode
 import khome.Khome.Companion.errorResultEvents
 import khome.Khome.Companion.stateChangeEvents
 import kotlinx.coroutines.channels.consumeEach
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import khome.Khome.Companion.activateSandBoxMode
 import khome.core.exceptions.EventStreamException
-import khome.Khome.Companion.deactivateSandBoxMode
-import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 
 fun initialize(init: Khome.() -> Unit): Khome {
