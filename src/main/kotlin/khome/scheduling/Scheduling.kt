@@ -151,7 +151,7 @@ fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
 
-fun runEverySunRise(offsetInMinutes: String, action: TimerTask.() -> Unit) {
+fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
