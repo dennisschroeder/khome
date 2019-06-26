@@ -4,22 +4,24 @@ import java.util.*
 import java.time.ZoneId
 import java.time.LocalDate
 import kotlin.concurrent.*
-import khome.core.entities.Sun
+import java.lang.Thread.sleep
 import java.time.LocalDateTime
+import khome.core.entities.Sun
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
-import khome.listening.getEntityInstance
 import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.timeBasedEvents
 import khome.Khome.Companion.isSandBoxModeActive
 import khome.core.entities.inputDateTime.AbstractTimeEntity
-import java.lang.Thread.sleep
 
-inline fun <reified Entity : AbstractTimeEntity> runDailyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val entity = getEntityInstance<Entity>()
+inline fun runDailyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
+    return runDailyAt(timeOfDay, action)
+}
+
+inline fun runDailyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
-
     return runDailyAt(dayTime, action)
 }
 
@@ -32,10 +34,13 @@ inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Uni
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun <reified Entity : AbstractTimeEntity> runHourlyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val entity = getEntityInstance<Entity>()
-    val dayTime = determineDayTimeFromTimeEntity(entity)
+inline fun runHourlyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
+    return runHourlyAt(timeOfDay, action)
+}
 
+inline fun runHourlyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val dayTime = determineDayTimeFromTimeEntity(entity)
     return runHourlyAt(dayTime, action)
 }
 
@@ -51,10 +56,13 @@ inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Un
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun <reified Entity : AbstractTimeEntity> runMinutelyAt(crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
-    val entity = getEntityInstance<Entity>()
-    val dayTime = determineDayTimeFromTimeEntity(entity)
+inline fun runMinutelyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
+    return runMinutelyAt(timeOfDay, action)
+}
 
+inline fun runMinutelyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+    val dayTime = determineDayTimeFromTimeEntity(entity)
     return runMinutelyAt(dayTime, action)
 }
 
@@ -69,6 +77,9 @@ inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> 
 
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
+
+fun determineTimeOfDayFromLocalDateTime(localDateTime: LocalDateTime) =
+    "${localDateTime.hour}:${localDateTime.minute}"
 
 fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): String {
     val hour = timeEntity.time.hour
@@ -140,22 +151,36 @@ fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
 
-fun runEverySunRise(action: TimerTask.() -> Unit) {
+fun runEverySunRise(offsetInMinutes: String, action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
+    val offsetDirection = offsetInMinutes.first()
+    val minutes = offsetInMinutes.substring(1)
+
     runEveryAt(dailyPeriodInMillis, now) {
-        val nextSunrise = nextSunrise()
+        var nextSunrise = nextSunrise()
+        when(offsetDirection) {
+            '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
+            '-' -> nextSunrise = nextSunrise.minusMinutes(minutes.toLong())
+        }
         runOnceAt(nextSunrise, action)
     }
 }
 
-fun runEverySunSet(action: TimerTask.() -> Unit) {
+fun runEverySunSet(offsetInMinutes: String, action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
+    val offsetDirection = offsetInMinutes.first()
+    val minutes = offsetInMinutes.substring(1)
+
     runEveryAt(dailyPeriodInMillis, now) {
-        val nextSunset = nextSunset()
+        var nextSunset = nextSunset()
+        when(offsetDirection) {
+            '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
+            '-' -> nextSunset = nextSunset.minusMinutes(minutes.toLong())
+        }
         runOnceAt(nextSunset, action)
     }
 }
