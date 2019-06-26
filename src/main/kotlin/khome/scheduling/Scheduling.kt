@@ -168,7 +168,7 @@ fun runEverySunRise(offsetInMinutes: String, action: TimerTask.() -> Unit) {
     }
 }
 
-fun runEverySunSet(offsetInMinutes: String, action: TimerTask.() -> Unit) {
+fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
