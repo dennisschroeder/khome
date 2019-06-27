@@ -58,9 +58,7 @@ data class ServiceCaller(
     var service: ServiceInterface?,
     var serviceData: ServiceDataInterface?
 ) : MessageInterface {
-    inline fun <reified Entity: EntityInterface>entityId() {
-        val entity = getEntityInstance<Entity>()
-
+    fun entityId(entity: EntityInterface) {
         serviceData = EntityId(entity.id)
     }
 }
