@@ -159,7 +159,7 @@ fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit)
     val minutes = offsetInMinutes.substring(1)
 
     runEveryAt(dailyPeriodInMillis, now) {
-        var nextSunrise = nextSunrise()
+        var nextSunrise = Sun.nextSunrise
         when(offsetDirection) {
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
             '-' -> nextSunrise = nextSunrise.minusMinutes(minutes.toLong())
@@ -176,28 +176,13 @@ fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) 
     val minutes = offsetInMinutes.substring(1)
 
     runEveryAt(dailyPeriodInMillis, now) {
-        var nextSunset = nextSunset()
+        var nextSunset = Sun.nextSunset
         when(offsetDirection) {
             '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
             '-' -> nextSunset = nextSunset.minusMinutes(minutes.toLong())
         }
         runOnceAt(nextSunset, action)
     }
-}
-
-fun nextSunrise() = getNextSunPosition("next_rising")
-
-fun nextSunset() = getNextSunPosition("next_setting")
-
-private fun getNextSunPosition(nextPosition: String): LocalDateTime {
-    val nextSunPositionChange = Sun.getAttributeValue<String>(nextPosition)
-    return convertUtcToLocalDateTime(nextSunPositionChange)
-}
-
-private fun convertUtcToLocalDateTime(utcDateTime: String): LocalDateTime {
-    val offsetDateTime = OffsetDateTime.parse(utcDateTime)
-    val zonedDateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault())
-    return zonedDateTime.toLocalDateTime()
 }
 
 class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
@@ -224,6 +209,7 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
 }
 
 fun <T> runAfterDelay(millis: Long, action: () -> T): T {
-    if (!isSandBoxModeActive()) sleep(millis)
+    if (!isSandBoxModeActive())
+        sleep(millis)
     return action()
 }
