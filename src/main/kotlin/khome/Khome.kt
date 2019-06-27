@@ -50,9 +50,9 @@ class Khome {
 
         private var sandboxMode = AtomicBoolean(false)
 
-        fun isSandBoxModeActive() = sandboxMode.get()
-        fun activateSandBoxMode() = sandboxMode.set(true)
-        fun deactivateSandBoxMode() = sandboxMode.set(false)
+        val isSandBoxModeActive get() = sandboxMode.get()
+        private fun activateSandBoxMode() = sandboxMode.set(true)
+        private fun deactivateSandBoxMode() = sandboxMode.set(false)
         fun runInSandBoxMode(action: () -> Unit) {
             activateSandBoxMode()
             action()

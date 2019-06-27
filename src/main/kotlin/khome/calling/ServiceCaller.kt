@@ -28,7 +28,7 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                 null
             ).apply(init)
 
-            if (isSandBoxModeActive()) {
+            if (isSandBoxModeActive) {
                 val domain = callService.domain.toString().toLowerCase()
                 val service = callService.service.toString().toLowerCase()
 

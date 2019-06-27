@@ -7,7 +7,6 @@ import kotlin.concurrent.*
 import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import khome.core.entities.Sun
-import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import khome.core.LifeCycleHandlerInterface
@@ -97,7 +96,7 @@ inline fun runEveryAt(
     timeBasedEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive()) timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
+    if (!isSandBoxModeActive) timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
     return LifeCycleHandler(timer)
 }
 
@@ -111,7 +110,7 @@ inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -
     timeBasedEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive()) timer.schedule(timerTask, dateTime.toDate())
+    if (!isSandBoxModeActive) timer.schedule(timerTask, dateTime.toDate())
 
     return LifeCycleHandler(timer)
 }
@@ -142,7 +141,7 @@ inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Un
     timeBasedEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive()) timer.schedule(timerTask, seconds * 1000L)
+    if (!isSandBoxModeActive) timer.schedule(timerTask, seconds * 1000L)
     return LifeCycleHandler(timer)
 }
 
@@ -209,7 +208,7 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
 }
 
 fun <T> runAfterDelay(millis: Long, action: () -> T): T {
-    if (!isSandBoxModeActive())
+    if (!isSandBoxModeActive)
         sleep(millis)
     return action()
 }

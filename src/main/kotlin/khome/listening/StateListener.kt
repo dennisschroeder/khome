@@ -48,11 +48,11 @@ data class StateListener(
     val lifeCycleHandler: LifeCycleHandler
 ) {
     inline fun runInTesting(action: () -> Unit) {
-        if (isSandBoxModeActive()) action()
+        if (isSandBoxModeActive) action()
     }
 
     inline fun excludeFromTesting(action: () -> Unit) {
-        if (!isSandBoxModeActive()) action()
+        if (!isSandBoxModeActive) action()
     }
 
     fun constrain(func: Constraint.() -> Boolean) {
@@ -65,8 +65,8 @@ data class StateListener(
     }
 
     fun execute(func: EventResult.() -> Unit) {
-        if (constraint && !isSandBoxModeActive()) func(data)
-        if (isSandBoxModeActive()) func(data)
+        if (constraint && !isSandBoxModeActive) func(data)
+        if (isSandBoxModeActive) func(data)
     }
 
     fun disable() = lifeCycleHandler.disable()
