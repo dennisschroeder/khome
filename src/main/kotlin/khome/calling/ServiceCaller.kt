@@ -5,16 +5,16 @@ import khome.core.logger
 import kotlinx.coroutines.*
 import khome.core.serializer
 import khome.core.MessageInterface
+import khome.Khome.Companion.services
 import khome.Khome.Companion.idCounter
+import khome.Khome.Companion.entityLock
+import khome.core.entities.EntityInterface
 import khome.Khome.Companion.callServiceContext
+import khome.Khome.Companion.isSandBoxModeActive
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
-import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.services
 import khome.calling.exceptions.DomainNotFoundException
 import khome.calling.exceptions.ServiceNotFoundException
-import khome.core.entities.EntityInterface
-import khome.listening.getEntityInstance
 
 @ObsoleteCoroutinesApi
 fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
@@ -28,17 +28,22 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                 null
             ).apply(init)
 
-            if (isSandBoxModeActive) {
-                val domain = callService.domain.toString().toLowerCase()
-                val service = callService.service.toString().toLowerCase()
+            when {
+                isSandBoxModeActive -> {
+                    val domain = callService.domain.toString().toLowerCase()
+                    val service = callService.service.toString().toLowerCase()
 
-                when {
-                    domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
-                    service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
+                    when {
+                        domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
+                        service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
+                    }
                 }
-            } else {
-                callWebSocketApi(callService.toJson())
-                logger.info { "Called Service with: " + callService.toJson() }
+                entityLock hasLocked callService.serviceData?.entityId!! ->
+                    logger.info { "${callService.serviceData!!.entityId} is locked." }
+                else -> {
+                    callWebSocketApi(callService.toJson())
+                    logger.info { "Called Service with: " + callService.toJson() }
+                }
             }
         }
     }

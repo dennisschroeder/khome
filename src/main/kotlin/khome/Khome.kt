@@ -38,6 +38,7 @@ class Khome {
         val resultEvents = Event<Result>()
         val errorResultEvents = Event<ErrorResult>()
         val config = Configuration()
+        val entityLock = Lock<String>()
 
         /**
          * Since the Homeassistant web socket API needs an incrementing
@@ -108,10 +109,13 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
     try {
         authenticate(config.accessToken)
         fetchAvailableServicesFromApi()
-        if (config.startStateStream) startStateStream()
+        if (config.startStateStream)
+            startStateStream()
         reactOnStateChangeEvents()
-        if (config.runIntegrityTests) runIntegrityTest()
-        if (successfullyStartedStateStream()) consumeStateChangesByTriggeringEvents()
+        if (config.runIntegrityTests)
+            runIntegrityTest()
+        if (successfullyStartedStateStream())
+            consumeStateChangesByTriggeringEvents()
         else throw EventStreamException("Could not subscribe to event stream!")
     } catch (e: ClosedReceiveChannelException) {
         logger.error(e) { "Connection was closed!" }

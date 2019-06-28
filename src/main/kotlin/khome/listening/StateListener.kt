@@ -48,11 +48,13 @@ data class StateListener(
     val lifeCycleHandler: LifeCycleHandler
 ) {
     inline fun runInTesting(action: () -> Unit) {
-        if (isSandBoxModeActive) action()
+        if (isSandBoxModeActive)
+            action()
     }
 
     inline fun excludeFromTesting(action: () -> Unit) {
-        if (!isSandBoxModeActive) action()
+        if (!isSandBoxModeActive)
+            action()
     }
 
     fun constrain(func: Constraint.() -> Boolean) {
