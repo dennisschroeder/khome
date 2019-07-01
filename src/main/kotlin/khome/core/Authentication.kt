@@ -8,7 +8,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 suspend fun WebSocketSession.authenticate(token: String) {
     val initMessage = getMessage<AuthResponse>()
 
-    if (initMessage.authRequired()) {
+    if (initMessage.authRequired) {
         logger.info("Authentication required!")
         val authMessage = Auth(accessToken = token).toJson()
         logger.info("Sending authentication message.")
@@ -19,7 +19,7 @@ suspend fun WebSocketSession.authenticate(token: String) {
 
     val authResponse = runCatching { incoming.receive().asObject<AuthResponse>() }
     authResponse.onFailure { logger.error { it.printStackTrace() } }
-    authResponse.onSuccess { if (it.isAuthenticated()) logger.info { "Authenticated successfully." } }
+    authResponse.onSuccess { if (it.isAuthenticated) logger.info { "Authenticated successfully." } }
 }
 
 data class Auth(
@@ -30,7 +30,7 @@ data class Auth(
 data class AuthResponse(
     override val type: String,
     val haVersion: String
-) : MessageInterface
-
-fun AuthResponse.authRequired() = type == "auth_required"
-fun AuthResponse.isAuthenticated() = type == "auth_ok"
+) : MessageInterface {
+    val authRequired get() = type == "auth_required"
+    val isAuthenticated get() = type == "auth_ok"
+}
