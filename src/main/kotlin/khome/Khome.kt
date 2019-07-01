@@ -2,7 +2,6 @@ package khome
 
 import khome.core.*
 import kotlinx.coroutines.*
-import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import io.ktor.http.HttpMethod
 import khome.scheduling.toDate
@@ -11,19 +10,21 @@ import io.ktor.client.HttpClient
 import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
+import khome.Khome.Companion.services
 import khome.Khome.Companion.idCounter
+import khome.Khome.Companion.connected
 import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.timeBasedEvents
 import khome.Khome.Companion.runInSandBoxMode
 import khome.Khome.Companion.errorResultEvents
+import khome.Khome.Companion.reconnect
 import khome.Khome.Companion.stateChangeEvents
 import kotlinx.coroutines.channels.consumeEach
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import khome.core.exceptions.EventStreamException
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 
 fun initialize(init: Khome.() -> Unit): Khome {
     return Khome().apply(init)
@@ -31,6 +32,8 @@ fun initialize(init: Khome.() -> Unit): Khome {
 
 class Khome {
     companion object {
+        var connected = false
+
         val states = hashMapOf<String, State>()
         val services = hashMapOf<String, List<String>>()
         val stateChangeEvents = Event<EventResult>()
@@ -39,6 +42,22 @@ class Khome {
         val errorResultEvents = Event<ErrorResult>()
         val config = Configuration()
         val entityLock = Lock<String>()
+
+        private fun resetApplicationState() {
+            states.clear()
+            services.clear()
+            stateChangeEvents.clear()
+            timeBasedEvents.clear()
+            resultEvents.clear()
+            errorResultEvents.clear()
+            entityLock.unLockAll()
+            deactivateSandBoxMode()
+        }
+
+        fun reconnect() {
+            resetApplicationState()
+            connected = false
+        }
 
         /**
          * Since the Homeassistant web socket API needs an incrementing
@@ -85,18 +104,26 @@ class Khome {
     @ObsoleteCoroutinesApi
     fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
         runBlocking {
-            if (config.secure) client.wss(
-                method = method,
-                host = config.host,
-                port = config.port,
-                path = path
-            ) { runApplication(config, reactOnStateChangeEvents) }
-            else client.ws(
-                method = method,
-                host = config.host,
-                port = config.port,
-                path = path
-            ) { runApplication(config, reactOnStateChangeEvents) }
+            while (!connected) {
+                delay(2000)
+                try {
+                    if (config.secure) client.wss(
+                        method = method,
+                        host = config.host,
+                        port = config.port,
+                        path = path
+                    ) { runApplication(config, reactOnStateChangeEvents) }
+                    else client.ws(
+                        method = method,
+                        host = config.host,
+                        port = config.port,
+                        path = path
+                    ) { runApplication(config, reactOnStateChangeEvents) }
+                } catch (e: Throwable) {
+                    logger.error { e.message }
+                    reconnect()
+                }
+            }
         }
     }
 }
@@ -117,10 +144,8 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
         if (successfullyStartedStateStream())
             consumeStateChangesByTriggeringEvents()
         else throw EventStreamException("Could not subscribe to event stream!")
-    } catch (e: ClosedReceiveChannelException) {
-        logger.error(e) { "Connection was closed!" }
     } catch (e: Throwable) {
-        logger.error(e) { e.stackTrace }
+        logger.error(e) { e.message }
     }
 
 
@@ -210,38 +235,25 @@ private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
     }
 }
 
-inline fun <reified S> hasStateChangedAfterTime(entityId: String, time: Long): Boolean {
-    val presentState = states[entityId]?.getValue<S>()
-    sleep(time)
-    val futureState = states[entityId]?.getValue<S>()
-    return presentState == futureState
-}
-
-inline fun <reified A> hasAttributeChangedAfterTime(
-    entityId: String,
-    time: Long,
-    attribute: String
-): Boolean {
-    val presentAttr = states[entityId]?.getAttribute<A>(attribute)
-    sleep(time)
-    val futureAttr = states[entityId]?.getAttribute<A>(attribute)
-    return presentAttr == futureAttr
-}
-
 @ObsoleteCoroutinesApi
 suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
     coroutineScope {
         incoming.consumeEach { frame ->
-            val message = frame.asObject<Map<String, Any>>()
-            val type = message["type"]
+            try {
+                val message = frame.asObject<Map<String, Any>>()
+                val type = message["type"]
 
-            when (type) {
-                "event" -> launch {
-                    updateLocalStateStore(frame)
-                    emitStateChangeEvent(frame)
+                when (type) {
+                    "event" -> launch {
+                        updateLocalStateStore(frame)
+                        emitStateChangeEvent(frame)
+                    }
+                    "result" -> launch { resolveResultTypeAndEmitEvents(frame) }
+                    else -> launch { logger.warn { "Could not classify message: $type" } }
                 }
-                "result" -> launch { resolveResultTypeAndEmitEvents(frame) }
-                else -> launch { logger.warn { "Could not classify message: $type" } }
+            } catch (e: Throwable) {
+                logger.info { e.message }
+                reconnect()
             }
         }
     }
@@ -338,5 +350,5 @@ inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>
 
 data class FetchStates(val id: Int, override val type: String = "get_states") : MessageInterface
 data class FetchServices(val id: Int, override val type: String = "get_services") : MessageInterface
-
+data class Ping(val id: Int, override val type: String = "ping") : MessageInterface
 data class ErrorResult(val code: String, val message: String)
