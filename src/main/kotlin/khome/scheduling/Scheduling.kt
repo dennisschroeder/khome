@@ -10,8 +10,9 @@ import khome.core.entities.Sun
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import khome.core.LifeCycleHandlerInterface
-import khome.Khome.Companion.timeBasedEvents
+import khome.Khome.Companion.schedulerTestEvents
 import khome.Khome.Companion.isSandBoxModeActive
+import khome.Khome.Companion.schedulerCancelEvents
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 
 inline fun runDailyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
@@ -93,11 +94,15 @@ inline fun runEveryAt(
 ): LifeCycleHandler {
 
     val timerTask = timerTask(action)
-    timeBasedEvents += { action(timerTask) }
+    schedulerTestEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive) timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
-    return LifeCycleHandler(timer)
+    if (!isSandBoxModeActive)
+        timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
+    val lifeCycleHandler = LifeCycleHandler(timer)
+    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+
+    return lifeCycleHandler
 }
 
 inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
@@ -107,12 +112,16 @@ inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit
 
 inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
-    timeBasedEvents += { action(timerTask) }
+    schedulerTestEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive) timer.schedule(timerTask, dateTime.toDate())
+    if (!isSandBoxModeActive)
+        timer.schedule(timerTask, dateTime.toDate())
 
-    return LifeCycleHandler(timer)
+    val lifeCycleHandler = LifeCycleHandler(timer)
+    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+
+    return lifeCycleHandler
 }
 
 inline fun runEveryTimePeriodFor(
@@ -138,11 +147,16 @@ inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) 
 
 inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
-    timeBasedEvents += { action(timerTask) }
+    schedulerTestEvents += { action(timerTask) }
 
     val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive) timer.schedule(timerTask, seconds * 1000L)
-    return LifeCycleHandler(timer)
+    if (!isSandBoxModeActive)
+        timer.schedule(timerTask, seconds * 1000L)
+
+    val lifeCycleHandler = LifeCycleHandler(timer)
+    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+
+    return lifeCycleHandler
 }
 
 fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
@@ -159,7 +173,7 @@ fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit)
 
     runEveryAt(dailyPeriodInMillis, now) {
         var nextSunrise = Sun.nextSunrise
-        when(offsetDirection) {
+        when (offsetDirection) {
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
             '-' -> nextSunrise = nextSunrise.minusMinutes(minutes.toLong())
         }
@@ -176,7 +190,7 @@ fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) 
 
     runEveryAt(dailyPeriodInMillis, now) {
         var nextSunset = Sun.nextSunset
-        when(offsetDirection) {
+        when (offsetDirection) {
             '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
             '-' -> nextSunset = nextSunset.minusMinutes(minutes.toLong())
         }

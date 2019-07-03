@@ -7,7 +7,6 @@ import khome.core.serializer
 import khome.core.MessageInterface
 import khome.Khome.Companion.services
 import khome.Khome.Companion.idCounter
-import khome.Khome.Companion.entityLock
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.callServiceContext
 import khome.Khome.Companion.isSandBoxModeActive
@@ -38,8 +37,6 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                         service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
                     }
                 }
-                entityLock hasLocked callService.serviceData?.entityId!! ->
-                    logger.info { "${callService.serviceData!!.entityId} is locked." }
                 else -> {
                     callWebSocketApi(callService.toJson())
                     logger.info { "Called Service with: " + callService.toJson() }

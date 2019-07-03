@@ -1,0 +1,35 @@
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location:khome$asObject(io.ktor.http.cio.websocket.Frame)khome/io.ktor.http.cio.websocket.-frame/as-object.html
+$dokka.location:khome$callWebSocketApi(io.ktor.http.cio.websocket.WebSocketSession, kotlin.String)khome/io.ktor.http.cio.websocket.-web-socket-session/call-web-socket-api.html
+$dokka.location:khome$consumeStateChangesByTriggeringEvents(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/consume-state-changes-by-triggering-events.html
+$dokka.location:khome$fetchAvailableServicesFromApi(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/fetch-available-services-from-api.html
+$dokka.location:khome$fetchStates(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/fetch-states.html
+$dokka.location:khome$getMessage(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/get-message.html
+$dokka.location:khome$startStateStream(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/start-state-stream.html
+$dokka.location:khome$successfullyStartedStateStream(io.ktor.http.cio.websocket.WebSocketSession)khome/io.ktor.http.cio.websocket.-web-socket-session/successfully-started-state-stream.html
+$dokka.location:khome$updateLocalStateStore(io.ktor.http.cio.websocket.WebSocketSession, io.ktor.http.cio.websocket.Frame)khome/io.ktor.http.cio.websocket.-web-socket-session/update-local-state-store.html
+$dokka.location:khome.calling$callService(io.ktor.http.cio.websocket.WebSocketSession, kotlin.Function1((khome.calling.ServiceCaller, kotlin.Unit)))khome.calling/io.ktor.http.cio.websocket.-web-socket-session/call-service.html
+$dokka.location:khome.core$authenticate(io.ktor.http.cio.websocket.WebSocketSession, kotlin.String)khome.core/io.ktor.http.cio.websocket.-web-socket-session/authenticate.html
+$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text)khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
+$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text, kotlin.reflect.KClass((khome.core.toObject.M)))khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
+$dokka.location:khome.scheduling$toDate(java.time.LocalDateTime)khome.scheduling/java.time.-local-date-time/to-date.html
+khome
+khome.calling
+khome.calling.exceptions
+khome.core
+khome.core.entities
+khome.core.entities.binarySensors
+khome.core.entities.cover
+khome.core.entities.deviceTracker
+khome.core.entities.exceptions
+khome.core.entities.inputBoolean
+khome.core.entities.inputDateTime
+khome.core.entities.light
+khome.core.entities.mediaPlayer
+khome.core.entities.sensors
+khome.core.entities.switchEntity
+khome.core.exceptions
+khome.listening
+khome.listening.exceptions
+khome.scheduling

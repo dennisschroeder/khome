@@ -10,51 +10,98 @@ import io.ktor.client.HttpClient
 import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
-import khome.Khome.Companion.services
 import khome.Khome.Companion.idCounter
-import khome.Khome.Companion.connected
+import khome.Khome.Companion.reconnect
 import io.ktor.util.KtorExperimentalAPI
 import khome.Khome.Companion.resultEvents
 import io.ktor.client.features.websocket.*
-import khome.Khome.Companion.timeBasedEvents
 import khome.Khome.Companion.runInSandBoxMode
 import khome.Khome.Companion.errorResultEvents
-import khome.Khome.Companion.reconnect
 import khome.Khome.Companion.stateChangeEvents
 import kotlinx.coroutines.channels.consumeEach
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import khome.Khome.Companion.schedulerTestEvents
 import khome.core.exceptions.EventStreamException
 
+/**
+ * The main entry point to start your application
+ *
+ * @param init The type safe builder function to access the receiver
+ * @return instance of Khome class instantiated with default values.
+ */
 fun initialize(init: Khome.() -> Unit): Khome {
     return Khome().apply(init)
 }
 
+/**
+ * The main application Class.
+ * Serves with all the tools necessary for the application to run.
+ *
+ * @author Dennis Schröder
+ */
 class Khome {
     companion object {
+        /**
+         * Indicates if a connection has been established.
+         */
         var connected = false
 
+        /**
+         * The local state store. Serves as a cache for states.
+         */
         val states = hashMapOf<String, State>()
+
+        /**
+         * A local list of available home assistant services. Needed for the integrity testing feature.
+         */
         val services = hashMapOf<String, List<String>>()
+
+        /**
+         * List of registered callbacks triggered by state change events.
+         */
         val stateChangeEvents = Event<EventResult>()
-        val timeBasedEvents = Event<String>()
+
+        /**
+         * List of registered scheduler callbacks triggered only by the integrity testing feature.
+         */
+        val schedulerTestEvents = Event<String>()
+
+        /**
+         * List of registered scheduler-cancel callbacks only triggered by [reconnect] function.
+         */
+        val schedulerCancelEvents = Event<String>()
+
+        /**
+         * List of registered result callbacks triggered by result messages from the websocket api.
+         */
         val resultEvents = Event<Result>()
+
+        /**
+         * List of registered error-result-callbacks triggered by error result messages from the websocket api.
+         */
         val errorResultEvents = Event<ErrorResult>()
-        val config = Configuration()
-        val entityLock = Lock<String>()
+
+        private val config = Configuration()
 
         private fun resetApplicationState() {
             states.clear()
             services.clear()
             stateChangeEvents.clear()
-            timeBasedEvents.clear()
+            schedulerTestEvents.clear()
+            schedulerCancelEvents.clear()
             resultEvents.clear()
             errorResultEvents.clear()
-            entityLock.unLockAll()
             deactivateSandBoxMode()
         }
 
+        private fun cancelAllScheduledCallbacks() = schedulerCancelEvents("Restarted")
+
+        /**
+         * Reconnects to the home assistant websocket api
+         */
         fun reconnect() {
+            cancelAllScheduledCallbacks()
             resetApplicationState()
             connected = false
         }
@@ -70,6 +117,10 @@ class Khome {
 
         private var sandboxMode = AtomicBoolean(false)
 
+        /**
+         * In sandbox mode, all websocket api calls are intercepted.
+         * This mode is needed by the integrity testing feature.
+         */
         val isSandBoxModeActive get() = sandboxMode.get()
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
@@ -79,6 +130,10 @@ class Khome {
             deactivateSandBoxMode()
         }
 
+        /**
+         *  A single thread context needed to run all websocket api calls
+         *  @see khome.calling.callService
+         */
         @ObsoleteCoroutinesApi
         val callServiceContext = newSingleThreadContext("ServiceContext")
     }
@@ -86,6 +141,13 @@ class Khome {
     private val method = HttpMethod.Get
     private val path = "/api/websocket"
 
+    /**
+     * Configure your Khome instance. See all available properties in
+     * the [Configuration] data class.
+     *
+     * @param init Lamba with receiver to configure Khome
+     * @see Configuration
+     */
     fun configure(init: Configuration.() -> Unit) {
         config.apply(init)
 
@@ -100,6 +162,16 @@ class Khome {
         install(WebSockets)
     }
 
+    /**
+     * The connect function is the window to your home assistant instance.
+     * Basically it is an wrapper of the ktor websocket client function.
+     * Inside the closure that you have to pass in the connect function, you can register
+     * state change based or time based callbacks, call external api´s , or do whatever you`l like.
+     *
+     * @see khome.calling
+     * @see khome.scheduling
+     *
+     */
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
     fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
@@ -107,13 +179,15 @@ class Khome {
             while (!connected) {
                 delay(2000)
                 try {
-                    if (config.secure) client.wss(
+                    if (config.secure)
+                        client.wss(
                         method = method,
                         host = config.host,
                         port = config.port,
                         path = path
                     ) { runApplication(config, reactOnStateChangeEvents) }
-                    else client.ws(
+                    else
+                        client.ws(
                         method = method,
                         host = config.host,
                         port = config.port,
@@ -132,24 +206,24 @@ class Khome {
 private suspend fun DefaultClientWebSocketSession.runApplication(
     config: Configuration,
     reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
-) =
-    try {
-        authenticate(config.accessToken)
-        fetchAvailableServicesFromApi()
-        if (config.startStateStream)
-            startStateStream()
-        reactOnStateChangeEvents()
-        if (config.runIntegrityTests)
-            runIntegrityTest()
-        if (successfullyStartedStateStream())
-            consumeStateChangesByTriggeringEvents()
-        else throw EventStreamException("Could not subscribe to event stream!")
-    } catch (e: Throwable) {
-        logger.error(e) { e.message }
-    }
+) {
+    authenticate(config.accessToken)
+    fetchAvailableServicesFromApi()
 
+    if (config.startStateStream)
+        startStateStream()
 
-// ToDo("Refactor into several functions")
+    reactOnStateChangeEvents()
+
+    if (config.runIntegrityTests)
+        runIntegrityTest()
+
+    if (successfullyStartedStateStream())
+        consumeStateChangesByTriggeringEvents()
+    else
+        throw EventStreamException("Could not subscribe to event stream!")
+}
+
 private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
 
     logger.info { "Testing the application:" }
@@ -178,7 +252,7 @@ private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
         }
     }
 
-    val timeBasedActions = timeBasedEvents.listeners.toTypedArray()
+    val timeBasedActions = schedulerTestEvents.listeners.toTypedArray()
 
     timeBasedActions.forEach { action ->
         val success = catchAllTests("Timer") {
@@ -253,6 +327,7 @@ suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
                 }
             } catch (e: Throwable) {
                 logger.info { e.message }
+                close(e)
                 reconnect()
             }
         }

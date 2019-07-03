@@ -1,0 +1,187 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Khome - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">Khome</a><br/>
+<br/>
+<h1>Khome</h1>
+<code><span class="keyword">class </span><span class="identifier">Khome</span></code>
+<p>The main application Class.
+Serves with all the tools necessary for the application to run.</p>
+<p><strong>Author</strong><br/>
+Dennis Schröder</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Khome</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>The main application Class.
+Serves with all the tools necessary for the application to run.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="configure.html">configure</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">configure</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$configure(kotlin.Function1((khome.core.Configuration, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-configuration/index.html"><span class="identifier">Configuration</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Configure your Khome instance. See all available properties in
+the <a href="../../khome.core/-configuration/index.html">Configuration</a> data class.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="connect.html">connect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">connect</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$connect(kotlin.coroutines.SuspendFunction1((io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Unit)))/reactOnStateChangeEvents">reactOnStateChangeEvents</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">DefaultClientWebSocketSession</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The connect function is the window to your home assistant instance.
+Basically it is an wrapper of the ktor websocket client function.
+Inside the closure that you have to pass in the connect function, you can register
+state change based or time based callbacks, call external api´s , or do whatever you`l like.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="call-service-context.html">callServiceContext</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">callServiceContext</span><span class="symbol">: </span><span class="identifier">ExecutorCoroutineDispatcher</span></code>
+<p>A single thread context needed to run all websocket api calls</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="connected.html">connected</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">connected</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Indicates if a connection has been established.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="error-result-events.html">errorResultEvents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">errorResultEvents</span><span class="symbol">: </span><a href="../../khome.core/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="../-error-result/index.html"><span class="identifier">ErrorResult</span></a><span class="symbol">&gt;</span></code>
+<p>List of registered error-result-callbacks triggered by error result messages from the websocket api.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="id-counter.html">idCounter</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">idCounter</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/AtomicInteger.html"><span class="identifier">AtomicInteger</span></a></code>
+<p>Since the Homeassistant web socket API needs an incrementing
+id when calling it, we need to provide the callService feature
+with such an id.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-sand-box-mode-active.html">isSandBoxModeActive</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isSandBoxModeActive</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>In sandbox mode, all websocket api calls are intercepted.
+This mode is needed by the integrity testing feature.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="result-events.html">resultEvents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">resultEvents</span><span class="symbol">: </span><a href="../../khome.core/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="../../khome.core/-result/index.html"><span class="identifier">Result</span></a><span class="symbol">&gt;</span></code>
+<p>List of registered result callbacks triggered by result messages from the websocket api.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scheduler-cancel-events.html">schedulerCancelEvents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">schedulerCancelEvents</span><span class="symbol">: </span><a href="../../khome.core/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code>
+<p>List of registered scheduler-cancel callbacks only triggered by <a href="reconnect.html">reconnect</a> function.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scheduler-test-events.html">schedulerTestEvents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">schedulerTestEvents</span><span class="symbol">: </span><a href="../../khome.core/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code>
+<p>List of registered scheduler callbacks triggered only by the integrity testing feature.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="services.html">services</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">services</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
+<p>A local list of available home assistant services. Needed for the integrity testing feature.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="state-change-events.html">stateChangeEvents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">stateChangeEvents</span><span class="symbol">: </span><a href="../../khome.core/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">&gt;</span></code>
+<p>List of registered callbacks triggered by state change events.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="states.html">states</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">states</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../../khome.core/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&gt;</span></code>
+<p>The local state store. Serves as a cache for states.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="reconnect.html">reconnect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">reconnect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Reconnects to the home assistant websocket api</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="run-in-sand-box-mode.html">runInSandBoxMode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">runInSandBoxMode</span><span class="symbol">(</span><span class="identifier" id="khome.Khome.Companion$runInSandBoxMode(kotlin.Function0((kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

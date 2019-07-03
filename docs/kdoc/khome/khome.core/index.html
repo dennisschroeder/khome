@@ -1,0 +1,158 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.core - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.core</a><br/>
+<br/>
+<h2>Package khome.core</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-auth/index.html">Auth</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Auth</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-auth-response/index.html">AuthResponse</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AuthResponse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-configuration/index.html">Configuration</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Configuration</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-event/index.html">Event</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Event</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/-mutable-entry/index.html"><span class="identifier">MutableEntry</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="-handler.html"><span class="identifier">Handler</span></a><span class="symbol">&lt;</span><a href="-event/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-event-result/index.html">EventResult</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EventResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-life-cycle-handler-interface/index.html">LifeCycleHandlerInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LifeCycleHandlerInterface</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-listen-event/index.html">ListenEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-lock/index.html">Lock</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Lock</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-message-interface/index.html">MessageInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MessageInterface</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-result/index.html">Result</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Result</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-service-result/index.html">ServiceResult</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state/index.html">State</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-result/index.html">StateResult</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Type Aliases</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-handler.html">Handler</a></p>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">Handler</span><span class="symbol">&lt;</span><span class="identifier">EventType</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="identifier">Consumer</span><span class="symbol">&lt;</span><a href="-handler.html#EventType"><span class="identifier">EventType</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="io.ktor.http.cio.websocket.-frame.-text/index.html">io.ktor.http.cio.websocket.Frame.Text</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="io.ktor.http.cio.websocket.-web-socket-session/index.html">io.ktor.http.cio.websocket.WebSocketSession</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="logger.html">logger</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">logger</span><span class="symbol">: </span><span class="identifier">KLogger</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="serializer.html">serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">serializer</span><span class="symbol">: </span><span class="identifier">Gson</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

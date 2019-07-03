@@ -14,7 +14,7 @@ Example:
 object LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
 object LivingRoomMoodLight : AbstractLightEntity("livingroom_mood") 
 
-listenState<LivingRoomLuminance> {
+listenState(LivingRoomLuminance) {
 
     constrain {
         newState.getValue<Double>() <= 3.0
@@ -22,7 +22,7 @@ listenState<LivingRoomLuminance> {
 
     execute {
         callService {
-            turnOn<LivingRoomMoodLight>()
+            turnOn(LivingRoomMoodLight)
         }
     }
 }
@@ -120,6 +120,7 @@ initialize { // this: Khome
         host = "localhost"
         port = 8123
         accessToken = "Your super secret token"
+        secure = false
      }
 }
 ```
@@ -132,6 +133,8 @@ initialize { // this: Khome
 
 - **accessToken**: String <br> You need to create a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token).
 You can do so within the Lovelace ui. Just go to your user profile, scroll to the bottom and generate one.
+
+- **secure**: Boolean <br> If you want to establish a secure websocket connection, you need to set this parameter to true (defaults to false).
 
 #### Connect to the web socket api
 
