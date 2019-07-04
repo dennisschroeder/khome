@@ -1,15 +1,15 @@
 package khome.listening
 
-import khome.Khome
-import khome.core.LifeCycleHandlerInterface
-import khome.core.entities.EntityInterface
 import khome.core.logger
 import khome.scheduling.runOnceInMinutes
 import khome.scheduling.runOnceInSeconds
+import khome.core.entities.EntityInterface
+import khome.core.LifeCycleHandlerInterface
+import khome.Khome.Companion.unsubscribeStateChangeEvent
 
 class LifeCycleHandler(handle: String, entityId: EntityInterface) : LifeCycleHandlerInterface {
     override val lazyCancellation: Unit by lazy {
-        Khome.stateChangeEvents.minusAssign(handle)
+        unsubscribeStateChangeEvent(handle)
         logger.info { "Subscription to ${entityId.id} disabled." }
     }
 

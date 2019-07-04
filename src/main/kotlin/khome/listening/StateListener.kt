@@ -5,11 +5,11 @@ import khome.core.*
 import kotlin.reflect.KClass
 import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
-import khome.Khome.Companion.stateChangeEvents
 import khome.Khome.Companion.isSandBoxModeActive
+import khome.Khome.Companion.subscribeStateChangeEvent
 import khome.listening.exceptions.EntityStateNotFoundException
 
-inline fun listenState(entity: EntityInterface, crossinline callback: StateListener.() -> Unit): LifeCycleHandler =
+fun listenState(entity: EntityInterface, callback: StateListener.() -> Unit): LifeCycleHandler =
     registerStateChangeEvent(entity, callback)
 
 inline fun <reified Entity : EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
@@ -18,19 +18,19 @@ inline fun <reified Entity : EntityInterface> getEntityInstance(type: KClass<Ent
     return type.objectInstance as Entity
 }
 
-inline fun registerStateChangeEvent(
+internal inline fun registerStateChangeEvent(
     entity: EntityInterface,
     crossinline callback: StateListener.() -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
     val lifeCycleHandler = LifeCycleHandler(handle, entity)
 
-    stateChangeEvents[handle] = {
-        if (it.event.data.entityId == entity.id) {
+    subscribeStateChangeEvent(handle) {
+        if (event.data.entityId == entity.id) {
             val stateListener = StateListener(
                 entityId = entity.id,
                 handle = handle,
-                data = it,
+                data = this,
                 constraint = true,
                 lifeCycleHandler = lifeCycleHandler
             )
@@ -47,12 +47,12 @@ data class StateListener(
     private var constraint: Boolean,
     val lifeCycleHandler: LifeCycleHandler
 ) {
-    inline fun runInTesting(action: () -> Unit) {
+    fun runInTesting(action: () -> Unit) {
         if (isSandBoxModeActive)
             action()
     }
 
-    inline fun excludeFromTesting(action: () -> Unit) {
+    fun excludeFromTesting(action: () -> Unit) {
         if (!isSandBoxModeActive)
             action()
     }

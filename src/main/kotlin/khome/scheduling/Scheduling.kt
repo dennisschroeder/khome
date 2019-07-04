@@ -12,20 +12,20 @@ import java.util.concurrent.TimeUnit
 import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.schedulerTestEvents
 import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.schedulerCancelEvents
+import khome.Khome.Companion.subscribeSchedulerCancelEvents
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 
-inline fun runDailyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runDailyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runDailyAt(timeOfDay, action)
 }
 
-inline fun runDailyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runDailyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runDailyAt(dayTime, action)
 }
 
-inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val nextStartDate = startDate.plusDays(1)
     val nextExecution =
@@ -34,17 +34,17 @@ inline fun runDailyAt(timeOfDay: String, crossinline action: TimerTask.() -> Uni
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun runHourlyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runHourlyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runHourlyAt(timeOfDay, action)
 }
 
-inline fun runHourlyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runHourlyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runHourlyAt(dayTime, action)
 }
 
-inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
     val hoursSinceStartDate = startDate.until(now, ChronoUnit.YEARS) + 1
@@ -56,17 +56,17 @@ inline fun runHourlyAt(timeOfDay: String, crossinline action: TimerTask.() -> Un
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-inline fun runMinutelyAt(localDateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runMinutelyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runMinutelyAt(timeOfDay, action)
 }
 
-inline fun runMinutelyAt(entity: AbstractTimeEntity, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runMinutelyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runMinutelyAt(dayTime, action)
 }
 
-inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runMinutelyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
     val minutesSinceStartDate = startDate.until(now, ChronoUnit.MINUTES) + 1
@@ -78,19 +78,19 @@ inline fun runMinutelyAt(timeOfDay: String, crossinline action: TimerTask.() -> 
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
-fun determineTimeOfDayFromLocalDateTime(localDateTime: LocalDateTime) =
+private fun determineTimeOfDayFromLocalDateTime(localDateTime: LocalDateTime) =
     "${localDateTime.hour}:${localDateTime.minute}"
 
-fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): String {
+private fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): String {
     val hour = timeEntity.time.hour
     val minute = timeEntity.time.minute
     return "$hour:$minute"
 }
 
-inline fun runEveryAt(
+fun runEveryAt(
     period: Long,
     localDateTime: LocalDateTime,
-    crossinline action: TimerTask.() -> Unit
+    action: TimerTask.() -> Unit
 ): LifeCycleHandler {
 
     val timerTask = timerTask(action)
@@ -100,17 +100,17 @@ inline fun runEveryAt(
     if (!isSandBoxModeActive)
         timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
     val lifeCycleHandler = LifeCycleHandler(timer)
-    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
 
     return lifeCycleHandler
 }
 
-inline fun runOnceAt(timeOfDay: String, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runOnceAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     return runOnceAt(startDate, action)
 }
 
-inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runOnceAt(dateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
     schedulerTestEvents += { action(timerTask) }
 
@@ -119,7 +119,7 @@ inline fun runOnceAt(dateTime: LocalDateTime, crossinline action: TimerTask.() -
         timer.schedule(timerTask, dateTime.toDate())
 
     val lifeCycleHandler = LifeCycleHandler(timer)
-    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
 
     return lifeCycleHandler
 }
@@ -139,13 +139,13 @@ inline fun runEveryTimePeriodFor(
     return timer
 }
 
-inline fun runOnceInMinutes(minutes: Int, crossinline action: TimerTask.() -> Unit) =
+fun runOnceInMinutes(minutes: Int, action: TimerTask.() -> Unit) =
     runOnceInSeconds(minutes * 60, action)
 
-inline fun runOnceInHours(hours: Int, crossinline action: TimerTask.() -> Unit) =
+fun runOnceInHours(hours: Int, action: TimerTask.() -> Unit) =
     runOnceInSeconds((hours * 60) * 60, action)
 
-inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Unit): LifeCycleHandler {
+fun runOnceInSeconds(seconds: Int, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
     schedulerTestEvents += { action(timerTask) }
 
@@ -154,12 +154,12 @@ inline fun runOnceInSeconds(seconds: Int, crossinline action: TimerTask.() -> Un
         timer.schedule(timerTask, seconds * 1000L)
 
     val lifeCycleHandler = LifeCycleHandler(timer)
-    schedulerCancelEvents += { lifeCycleHandler.cancel() }
+    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
 
     return lifeCycleHandler
 }
 
-fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
+private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     val (hour, minute) = timeOfDay.split(":")
     return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
@@ -208,7 +208,7 @@ class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
     fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 }
 
-fun LocalDateTime.toDate(): Date = Date
+internal fun LocalDateTime.toDate(): Date = Date
     .from(atZone(ZoneId.systemDefault()).toInstant())
 
 fun nowIsAfter(timeOfDay: String): Boolean {
@@ -221,6 +221,10 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
     return now.after(localDateTime.toDate())
 }
 
+/**
+ * Delays the execution of an action. Is actually a wrapper around Kotlin's [sleep] function,
+ * but does not delay running in sandbox mode.
+ */
 fun <T> runAfterDelay(millis: Long, action: () -> T): T {
     if (!isSandBoxModeActive)
         sleep(millis)

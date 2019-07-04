@@ -20,42 +20,9 @@
 </tr>
 </tbody>
 </table>
-<h3>Extensions for External Classes</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="java.time.-local-date-time/index.html">java.time.LocalDateTime</a></p>
-</td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
 <h3>Functions</h3>
 <table>
 <tbody>
-<tr>
-<td>
-<p><a href="create-local-date-time-from-time-of-day-as-string.html">createLocalDateTimeFromTimeOfDayAsString</a></p>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">createLocalDateTimeFromTimeOfDayAsString</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$createLocalDateTimeFromTimeOfDayAsString(kotlin.String)/timeOfDay">timeOfDay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">LocalDateTime</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="determine-day-time-from-time-entity.html">determineDayTimeFromTimeEntity</a></p>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">determineDayTimeFromTimeEntity</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$determineDayTimeFromTimeEntity(khome.core.entities.inputDateTime.AbstractTimeEntity)/timeEntity">timeEntity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities.input-date-time/-abstract-time-entity/index.html"><span class="identifier">AbstractTimeEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="determine-time-of-day-from-local-date-time.html">determineTimeOfDayFromLocalDateTime</a></p>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">determineTimeOfDayFromLocalDateTime</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$determineTimeOfDayFromLocalDateTime(java.time.LocalDateTime)/localDateTime">localDateTime</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
 <tr>
 <td>
 <p><a href="now-is-after.html">nowIsAfter</a></p>
@@ -69,7 +36,10 @@
 <p><a href="run-after-delay.html">runAfterDelay</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">runAfterDelay</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$runAfterDelay(kotlin.Long, kotlin.Function0((khome.scheduling.runAfterDelay.T)))/millis">millis</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.scheduling$runAfterDelay(kotlin.Long, kotlin.Function0((khome.scheduling.runAfterDelay.T)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="run-after-delay.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="run-after-delay.html#T"><span class="identifier">T</span></a></code></td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">runAfterDelay</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$runAfterDelay(kotlin.Long, kotlin.Function0((khome.scheduling.runAfterDelay.T)))/millis">millis</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.scheduling$runAfterDelay(kotlin.Long, kotlin.Function0((khome.scheduling.runAfterDelay.T)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="run-after-delay.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="run-after-delay.html#T"><span class="identifier">T</span></a></code>
+<p>Delays the execution of an action. Is actually a wrapper around Kotlin's <a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Thread.html#sleep(long)">sleep</a> function,
+but does not delay running in sandbox mode.</p>
+</td>
 </tr>
 <tr>
 <td>

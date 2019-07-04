@@ -9,18 +9,6 @@
 <br/>
 <h1>MessageInterface</h1>
 <code><span class="keyword">interface </span><span class="identifier">MessageInterface</span></code>
-<h3>Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="type.html">type</a></p>
-</td>
-<td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-</tbody>
-</table>
 <h3>Functions</h3>
 <table>
 <tbody>
@@ -38,20 +26,6 @@
 <tbody>
 <tr>
 <td>
-<p><a href="../-auth/index.html">Auth</a></p>
-</td>
-<td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Auth</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="../-auth-response/index.html">AuthResponse</a></p>
-</td>
-<td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AuthResponse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
-</tr>
-<tr>
-<td>
 <p><a href="../-event-result/index.html">EventResult</a></p>
 </td>
 <td>
@@ -59,31 +33,10 @@
 </tr>
 <tr>
 <td>
-<p><a href="../../khome/-fetch-services/index.html">FetchServices</a></p>
-</td>
-<td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FetchServices</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="../../khome/-fetch-states/index.html">FetchStates</a></p>
-</td>
-<td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FetchStates</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
-</tr>
-<tr>
-<td>
 <p><a href="../-listen-event/index.html">ListenEvent</a></p>
 </td>
 <td>
 <code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="../../khome/-ping/index.html">Ping</a></p>
-</td>
-<td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Ping</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -97,7 +50,9 @@
 <p><a href="../../khome.calling/-service-caller/index.html">ServiceCaller</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MessageInterface</span></a></code>
+<p>The base class to build the payload for home-assistant websocket api calls.</p>
+</td>
 </tr>
 <tr>
 <td>

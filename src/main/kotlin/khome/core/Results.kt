@@ -4,7 +4,7 @@ import java.util.*
 import khome.core.exceptions.InvalidStateValueTypeException
 import khome.core.exceptions.InvalidAttributeValueTypeException
 
-data class EventResult(val id: Int, override val type: String, val event: Event) :
+data class EventResult(val id: Int, val type: String, val event: Event) :
     MessageInterface {
     data class Event(val eventType: String, val data: Data, val timeFired: Date, val origin: String) {
         data class Data(val entityId: String, val oldState: State, val newState: State)
@@ -28,7 +28,7 @@ data class State(val entityId: String, val lastChanged: Date, val state: Any, va
 
 data class Result(
     val id: Int,
-    override val type: String,
+    val type: String,
     val success: Boolean,
     val error: Map<String, String>?,
     val result: Any
@@ -36,14 +36,14 @@ data class Result(
 
 data class StateResult(
     val id: Int,
-    override val type: String,
+    val type: String,
     val success: Boolean,
     val result: Array<State>
 ) : MessageInterface
 
 data class ServiceResult(
     val id: Int,
-    override val type: String,
+    val type: String,
     val success: Boolean,
     val result: Map<String, Map<String, Any>>
 ) : MessageInterface

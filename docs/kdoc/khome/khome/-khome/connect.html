@@ -12,10 +12,10 @@
 <code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">fun </span><span class="identifier">connect</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$connect(kotlin.coroutines.SuspendFunction1((io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Unit)))/reactOnStateChangeEvents">reactOnStateChangeEvents</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">DefaultClientWebSocketSession</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>The connect function is the window to your home assistant instance.
 Basically it is an wrapper of the ktor websocket client function.
-Inside the closure that you have to pass in the connect function, you can register
-state change based or time based callbacks, call external api´s , or do whatever you`l like.</p>
+Inside the closure that you have to pass in, you can register
+state change based or time change based callbacks, call external api´s , or do whatever you`l like.</p>
 <p><strong>See Also</strong><br/>
-<p><a href="../../khome.calling/index.html">khome.calling</a></p>
+<p><a href="../../khome.listening/listen-state.html">khome.listening.listenState</a></p>
 <p><a href="../../khome.scheduling/index.html">khome.scheduling</a></p>
 </p>
 </BODY>

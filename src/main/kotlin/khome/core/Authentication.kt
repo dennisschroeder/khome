@@ -5,7 +5,7 @@ import io.ktor.http.cio.websocket.WebSocketSession
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @ObsoleteCoroutinesApi
-suspend fun WebSocketSession.authenticate(token: String) {
+internal suspend fun WebSocketSession.authenticate(token: String) {
     val initMessage = getMessage<AuthResponse>()
 
     if (initMessage.authRequired) {
@@ -22,13 +22,13 @@ suspend fun WebSocketSession.authenticate(token: String) {
     authResponse.onSuccess { if (it.isAuthenticated) logger.info { "Authenticated successfully." } }
 }
 
-data class Auth(
-    override val type: String = "auth",
+private data class Auth(
+    val type: String = "auth",
     val accessToken: String
 ) : MessageInterface
 
-data class AuthResponse(
-    override val type: String,
+private data class AuthResponse(
+    val type: String,
     val haVersion: String
 ) : MessageInterface {
     val authRequired get() = type == "auth_required"
