@@ -60,7 +60,7 @@ fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandle
 }
 
 /**
- * Run a [TimerTask] as hourly routine starting at a specific date time
+ * Runs a [TimerTask] as hourly routine starting at a specific date time
  *
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
@@ -73,7 +73,7 @@ fun runHourlyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): Lif
 }
 
 /**
- * Run a [TimerTask] as hourly routine starting at a specific date time
+ * Runs a [TimerTask] as hourly routine starting at a specific date time
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
  * @param action A TimerTask extension function
@@ -86,7 +86,7 @@ fun runHourlyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeC
 }
 
 /**
- * Run a [TimerTask] as hourly routine starting at a specific date time
+ * Runs a [TimerTask] as hourly routine starting at a specific date time
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
  * @param action A TimerTask extension function
@@ -106,7 +106,7 @@ fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandl
 }
 
 /**
- * Run a [TimerTask] as minutely routine starting at a specific date time
+ * Runs a [TimerTask] as minutely routine starting at a specific date time
  *
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
@@ -119,7 +119,7 @@ fun runMinutelyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): L
 }
 
 /**
- * Run a [TimerTask] as minutely routine starting at a specific date time
+ * Runs a [TimerTask] as minutely routine starting at a specific date time
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
  * @param action A TimerTask extension function
@@ -132,7 +132,7 @@ fun runMinutelyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): Lif
 }
 
 /**
- * Run a [TimerTask] as minutely routine starting at a specific date time
+ * Runs a [TimerTask] as minutely routine starting at a specific date time
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
  * @param action A TimerTask extension function
@@ -161,13 +161,32 @@ private fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): Stri
 }
 
 /**
- * Run a [TimerTask] as periodically routine starting at a specific date time
+ * Runs a [TimerTask] periodically for a given number of times
+ *
+ * @param period A period of time between execution of the [TimerTask] in milliseconds
+ * @param executions The number of executions
+ * @param action A TimerTask extension function.
+ */
+inline fun runEveryTimePeriodFor(
+    period: Long,
+    executions: Int,
+    crossinline action: () -> Unit
+): LifeCycleHandler {
+    var counter = 0
+    return runEveryAt(period, LocalDateTime.now()) {
+        action()
+        counter++
+        if (counter == executions) cancel()
+    }
+}
+
+/**
+ * Runs a [TimerTask] as periodically routine starting at a specific date time
  *
  * @param period A period of time between execution of the [TimerTask] in milliseconds
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
  * @return [LifeCycleHandler]
- *
  */
 fun runEveryAt(
     period: Long,
@@ -188,7 +207,7 @@ fun runEveryAt(
 }
 
 /**
- * Run a [TimerTask] once at a specific date time
+ * Runs a [TimerTask] once at a specific date time
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the [TimerTask] gets executed.
  * @param action A TimerTask extension function
@@ -200,7 +219,7 @@ fun runOnceAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler
 }
 
 /**
- * Run a [TimerTask] once at a specific date time.
+ * Runs a [TimerTask] once at a specific date time.
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the [TimerTask] gets executed.
  * @param action A TimerTask extension function.
@@ -212,7 +231,7 @@ fun runOnceAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCyc
 }
 
 /**
- * Run a [TimerTask] once at a specific date time.
+ * Runs a [TimerTask] once at a specific date time.
  *
  * @param localDateTime A local date time object representing the time the routine starts.
  * @param action A TimerTask extension function.
@@ -232,27 +251,33 @@ fun runOnceAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeC
     return lifeCycleHandler
 }
 
-inline fun runEveryTimePeriodFor(
-    timePeriod: Long,
-    executions: Int,
-    crossinline task: () -> Unit
-): LifeCycleHandler {
-    var counter = 0
-    val timer = runEveryAt(timePeriod, LocalDateTime.now()) {
-        task()
-        counter++
-        if (counter == executions) cancel()
-    }
-
-    return timer
-}
-
-fun runOnceInMinutes(minutes: Int, action: TimerTask.() -> Unit) =
-    runOnceInSeconds(minutes * 60, action)
-
+/**
+ * Runs a [TimerTask] once in Hours after the function was called
+ *
+ * @param hours The time in minutes when the [TimerTask] will be executed once
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
 fun runOnceInHours(hours: Int, action: TimerTask.() -> Unit) =
     runOnceInSeconds((hours * 60) * 60, action)
 
+/**
+ * Runs a [TimerTask] once in minutes after the function was called
+ *
+ * @param minutes The time in minutes when the [TimerTask] will be executed once
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
+fun runOnceInMinutes(minutes: Int, action: TimerTask.() -> Unit) =
+    runOnceInSeconds(minutes * 60, action)
+
+/**
+ * Runs a [TimerTask] once in Seconds after the function was called
+ *
+ * @param seconds The time in minutes when the [TimerTask] will be executed once
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
 fun runOnceInSeconds(seconds: Int, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
     subscribeSchedulerTestEvent { action(timerTask) }
@@ -272,14 +297,21 @@ private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDa
     return LocalDate.now().atTime(hour.toInt(), minute.toInt())
 }
 
-fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) {
+/**
+ * Runs a [TimerTask]  at sunrise.
+ *
+ * @param offsetInMinutes Define an offset for the execution time. Prefix an - for negative and + for positive offset.
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
+fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit): LifeCycleHandler {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     val offsetDirection = offsetInMinutes.first()
     val minutes = offsetInMinutes.substring(1)
 
-    runEveryAt(dailyPeriodInMillis, now) {
+    return runEveryAt(dailyPeriodInMillis, now) {
         var nextSunrise = Sun.nextSunrise
         when (offsetDirection) {
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
@@ -289,14 +321,21 @@ fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit)
     }
 }
 
-fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) {
+/**
+ * Runs a [TimerTask]  at sunset.
+ *
+ * @param offsetInMinutes Define an offset for the execution time. Prefix an - for negative and + for positive offset
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
+fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit): LifeCycleHandler {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     val offsetDirection = offsetInMinutes.first()
     val minutes = offsetInMinutes.substring(1)
 
-    runEveryAt(dailyPeriodInMillis, now) {
+    return runEveryAt(dailyPeriodInMillis, now) {
         var nextSunset = Sun.nextSunset
         when (offsetDirection) {
             '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
@@ -306,13 +345,32 @@ fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit) 
     }
 }
 
+/**
+ * The LifeCycleHandler is the return value for every scheduling function.
+ * It enables to handle the lifecycle of the scheduled [TimerTask].
+ */
 class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
     override val lazyCancellation by lazy {
         timer.cancel()
     }
 
+    /**
+     * Immediately cancel the scheduled task
+     */
     fun cancel() = lazyCancellation
+
+    /**
+     * Cancel scheduled task in configurable amount of seconds.
+     *
+     * @param seconds The amount of seconds till the scheduled task should be canceled
+     */
     fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
+
+    /**
+     * Cancel scheduled task in configurable amount of minutes.
+     *
+     * @param minutes The amount of minutes till the scheduled task should be canceled
+     */
     fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 }
 
@@ -324,6 +382,11 @@ fun nowIsAfter(timeOfDay: String): Boolean {
     return nowIsAfter(timeOfDayDate)
 }
 
+/**
+ * Check if now (the time the function is executed) is after a given date time.
+ *
+ * @param localDateTime The value to check against.
+ */
 fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
     val now = LocalDateTime.now().toDate()
     return now.after(localDateTime.toDate())
@@ -333,6 +396,7 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
  * Delays the execution of an action. Is actually a wrapper around Kotlin's [sleep] function,
  * but does not delay running in sandbox mode.
  *
+ * @param T The type of the return value of the action parameter, which is also the return type of this function.
  * @param millis The delay time in milliseconds
  * @param action An lambda function that gets executed after the delay
  *
