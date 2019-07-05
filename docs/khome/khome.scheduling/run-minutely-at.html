@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>runMinutelyAt - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="index.html">khome.scheduling</a>&nbsp;/&nbsp;<a href="./run-minutely-at.html">runMinutelyAt</a><br/>
+<br/>
+<h1>runMinutelyAt</h1>
+<a name="khome.scheduling$runMinutelyAt(java.time.LocalDateTime, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">runMinutelyAt</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$runMinutelyAt(java.time.LocalDateTime, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/localDateTime">localDateTime</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.scheduling$runMinutelyAt(java.time.LocalDateTime, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html"><span class="identifier">TimerTask</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code>
+<p>Run a <a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html">TimerTask</a> as minutely routine starting at a specific date time</p>
+<h3>Parameters</h3>
+<p><a name="localDateTime"></a>
+<code>localDateTime</code> - A local date time object representing the time the routine starts</p>
+<p><a name="action"></a>
+<code>action</code> - A TimerTask extension function</p>
+<p><strong>Return</strong><br/>
+<a href="-life-cycle-handler/index.html">LifeCycleHandler</a></p>
+<a name="khome.scheduling$runMinutelyAt(khome.core.entities.inputDateTime.AbstractTimeEntity, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">runMinutelyAt</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$runMinutelyAt(khome.core.entities.inputDateTime.AbstractTimeEntity, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities.input-date-time/-abstract-time-entity/index.html"><span class="identifier">AbstractTimeEntity</span></a><span class="symbol">, </span><span class="identifier" id="khome.scheduling$runMinutelyAt(khome.core.entities.inputDateTime.AbstractTimeEntity, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html"><span class="identifier">TimerTask</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code>
+<p>Run a <a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html">TimerTask</a> as minutely routine starting at a specific date time</p>
+<h3>Parameters</h3>
+<p><a name="entity"></a>
+<code>entity</code> - An entity object that inherits from <a href="../khome.core.entities.input-date-time/-abstract-time-entity/index.html">AbstractTimeEntity</a> representing the time the routine starts</p>
+<p><a name="action"></a>
+<code>action</code> - A TimerTask extension function</p>
+<p><strong>Return</strong><br/>
+<a href="-life-cycle-handler/index.html">LifeCycleHandler</a></p>
+<a name="khome.scheduling$runMinutelyAt(kotlin.String, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">runMinutelyAt</span><span class="symbol">(</span><span class="identifier" id="khome.scheduling$runMinutelyAt(kotlin.String, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/timeOfDay">timeOfDay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.scheduling$runMinutelyAt(kotlin.String, kotlin.Function1((java.util.TimerTask, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html"><span class="identifier">TimerTask</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code>
+<p>Run a <a href="https://docs.oracle.com/javase/6/docs/api/java/util/TimerTask.html">TimerTask</a> as minutely routine starting at a specific date time</p>
+<h3>Parameters</h3>
+<p><a name="timeOfDay"></a>
+<code>timeOfDay</code> - A string with the hour and minutes ("14:00") when to start the routine starts</p>
+<p><a name="action"></a>
+<code>action</code> - A TimerTask extension function</p>
+<p><strong>Return</strong><br/>
+<a href="-life-cycle-handler/index.html">LifeCycleHandler</a></p>
+</BODY>
+</HTML>

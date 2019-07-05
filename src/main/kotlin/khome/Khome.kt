@@ -6,7 +6,9 @@ import java.time.LocalDateTime
 import io.ktor.http.HttpMethod
 import khome.scheduling.toDate
 import kotlin.system.exitProcess
+import khome.calling.FetchStates
 import io.ktor.client.HttpClient
+import khome.calling.FetchServices
 import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
@@ -14,18 +16,17 @@ import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.reconnect
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
-import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitResultEvent
-import khome.Khome.Companion.emitStateChangeEvent
 import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.consumeEach
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import khome.Khome.Companion.schedulerTestEvents
-import khome.Khome.Companion.unsubscribeStateChangeEvent
-import khome.calling.FetchServices
-import khome.calling.FetchStates
+import khome.Khome.Companion.emitErrorResultEvent
+import khome.Khome.Companion.emitStateChangeEvent
+import khome.Khome.Companion.schedulerTestEventListeners
 import khome.core.exceptions.EventStreamException
+import khome.Khome.Companion.unsubscribeStateChangeEvent
 
 /**
  * The main entry point to start your application
@@ -67,7 +68,9 @@ class Khome {
         /**
          * SCHEDULER TEST EVENTS
          */
-        val schedulerTestEvents = Event<String>()
+        private val schedulerTestEvents = Event<String>()
+
+        internal val schedulerTestEventListeners get() = schedulerTestEvents.listeners
 
         internal fun subscribeSchedulerTestEvent(handle: String? = null, callback: String.() -> Unit) {
             if (handle == null)
@@ -300,9 +303,7 @@ private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
         }
     }
 
-    val timeBasedActions = schedulerTestEvents.listeners.toTypedArray()
-
-    timeBasedActions.forEach { action ->
+    schedulerTestEventListeners.forEach { action ->
         val success = catchAllTests("Timer") {
             action.value.invoke("Integrity_test")
         }
