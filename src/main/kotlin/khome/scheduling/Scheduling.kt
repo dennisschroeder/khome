@@ -10,21 +10,46 @@ import khome.core.entities.Sun
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import khome.core.LifeCycleHandlerInterface
-import khome.Khome.Companion.schedulerTestEvents
 import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.subscribeSchedulerCancelEvents
+import khome.Khome.Companion.subscribeSchedulerTestEvent
 import khome.core.entities.inputDateTime.AbstractTimeEntity
+import khome.Khome.Companion.subscribeSchedulerCancelEvents
 
+
+/**
+ * Runs a [TimerTask] as daily routine starting at a specific date time
+ *
+ * @param localDateTime A local date time object representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runDailyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runDailyAt(timeOfDay, action)
 }
 
+/**
+ * Runs a [TimerTask] as daily routine starting at a specific date time that gets extracted from an entity object
+ *
+ * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runDailyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runDailyAt(dayTime, action)
 }
 
+/**
+ * Runs a [TimerTask] as daily routine starting at a specific date time
+ *
+ * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val nextStartDate = startDate.plusDays(1)
@@ -34,16 +59,40 @@ fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandle
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
+/**
+ * Run a [TimerTask] as hourly routine starting at a specific date time
+ *
+ * @param localDateTime A local date time object representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runHourlyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runHourlyAt(timeOfDay, action)
 }
 
+/**
+ * Run a [TimerTask] as hourly routine starting at a specific date time
+ *
+ * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runHourlyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runHourlyAt(dayTime, action)
 }
 
+/**
+ * Run a [TimerTask] as hourly routine starting at a specific date time
+ *
+ * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
@@ -56,16 +105,40 @@ fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandl
     return runEveryAt(periodInMilliseconds, nextExecution, action)
 }
 
+/**
+ * Run a [TimerTask] as minutely routine starting at a specific date time
+ *
+ * @param localDateTime A local date time object representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runMinutelyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runMinutelyAt(timeOfDay, action)
 }
 
+/**
+ * Run a [TimerTask] as minutely routine starting at a specific date time
+ *
+ * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runMinutelyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runMinutelyAt(dayTime, action)
 }
 
+/**
+ * Run a [TimerTask] as minutely routine starting at a specific date time
+ *
+ * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runMinutelyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
@@ -87,6 +160,15 @@ private fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): Stri
     return "$hour:$minute"
 }
 
+/**
+ * Run a [TimerTask] as periodically routine starting at a specific date time
+ *
+ * @param period A period of time between execution of the [TimerTask] in milliseconds
+ * @param localDateTime A local date time object representing the time the routine starts
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ *
+ */
 fun runEveryAt(
     period: Long,
     localDateTime: LocalDateTime,
@@ -94,7 +176,7 @@ fun runEveryAt(
 ): LifeCycleHandler {
 
     val timerTask = timerTask(action)
-    schedulerTestEvents += { action(timerTask) }
+    subscribeSchedulerTestEvent { action(timerTask) }
 
     val timer = Timer("scheduler", false)
     if (!isSandBoxModeActive)
@@ -105,18 +187,44 @@ fun runEveryAt(
     return lifeCycleHandler
 }
 
+/**
+ * Run a [TimerTask] once at a specific date time
+ *
+ * @param timeOfDay A string with the hour and minutes ("14:00") when to start the [TimerTask] gets executed.
+ * @param action A TimerTask extension function
+ * @return [LifeCycleHandler]
+ */
 fun runOnceAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     return runOnceAt(startDate, action)
 }
 
-fun runOnceAt(dateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
+/**
+ * Run a [TimerTask] once at a specific date time.
+ *
+ * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the [TimerTask] gets executed.
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
+fun runOnceAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
+    val dayTime = determineDayTimeFromTimeEntity(entity)
+    return runOnceAt(dayTime, action)
+}
+
+/**
+ * Run a [TimerTask] once at a specific date time.
+ *
+ * @param localDateTime A local date time object representing the time the routine starts.
+ * @param action A TimerTask extension function.
+ * @return [LifeCycleHandler]
+ */
+fun runOnceAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
-    schedulerTestEvents += { action(timerTask) }
+    subscribeSchedulerTestEvent { action(timerTask) }
 
     val timer = Timer("scheduler", false)
     if (!isSandBoxModeActive)
-        timer.schedule(timerTask, dateTime.toDate())
+        timer.schedule(timerTask, localDateTime.toDate())
 
     val lifeCycleHandler = LifeCycleHandler(timer)
     subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
@@ -147,7 +255,7 @@ fun runOnceInHours(hours: Int, action: TimerTask.() -> Unit) =
 
 fun runOnceInSeconds(seconds: Int, action: TimerTask.() -> Unit): LifeCycleHandler {
     val timerTask = timerTask(action)
-    schedulerTestEvents += { action(timerTask) }
+    subscribeSchedulerTestEvent { action(timerTask) }
 
     val timer = Timer("scheduler", false)
     if (!isSandBoxModeActive)
@@ -224,6 +332,10 @@ fun nowIsAfter(localDateTime: LocalDateTime): Boolean {
 /**
  * Delays the execution of an action. Is actually a wrapper around Kotlin's [sleep] function,
  * but does not delay running in sandbox mode.
+ *
+ * @param millis The delay time in milliseconds
+ * @param action An lambda function that gets executed after the delay
+ *
  */
 fun <T> runAfterDelay(millis: Long, action: () -> T): T {
     if (!isSandBoxModeActive)

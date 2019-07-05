@@ -31,7 +31,7 @@ dependencies {
 
 dokka {
     outputFormat = 'html'
-    outputDirectory = "docs/kdoc"
+    outputDirectory = "docs"
 }
 
 compileKotlin {
