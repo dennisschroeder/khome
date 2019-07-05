@@ -1,0 +1,24 @@
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location:khome.calling$callService(io.ktor.http.cio.websocket.WebSocketSession, kotlin.Function1((khome.calling.ServiceCaller, kotlin.Unit)))khome.calling/io.ktor.http.cio.websocket.-web-socket-session/call-service.html
+$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text)khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
+$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text, kotlin.reflect.KClass((khome.core.toObject.M)))khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
+khome
+khome.calling
+khome.calling.exceptions
+khome.core
+khome.core.entities
+khome.core.entities.binarySensors
+khome.core.entities.cover
+khome.core.entities.deviceTracker
+khome.core.entities.exceptions
+khome.core.entities.inputBoolean
+khome.core.entities.inputDateTime
+khome.core.entities.light
+khome.core.entities.mediaPlayer
+khome.core.entities.sensors
+khome.core.entities.switchEntity
+khome.core.exceptions
+khome.listening
+khome.listening.exceptions
+khome.scheduling

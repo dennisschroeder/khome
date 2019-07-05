@@ -8,6 +8,7 @@ import io.ktor.http.cio.websocket.readText
 import kotlin.reflect.KClass
 
 val serializer = GsonBuilder()
+    .setPrettyPrinting()
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
     .create()!!
 

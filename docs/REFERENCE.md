@@ -75,7 +75,6 @@ You can do so within the Lovelace ui. Just go to your user profile, scroll to th
 
 - **startStateStream**: Boolean <br> If you only want to use Khome to send messages and don't want to react on state changes, set this to false to avoid an overhead. <br>Default: `true`
 
-
 ### 2. Listening
 ... coming soon.
 ### 3. Calling

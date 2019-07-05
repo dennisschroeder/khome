@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StateListener - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.listening</a>&nbsp;/&nbsp;<a href="./index.html">StateListener</a><br/>
+<br/>
+<h1>StateListener</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateListener</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">StateListener</span><span class="symbol">(</span><span class="identifier" id="khome.listening.StateListener$<init>(kotlin.String, kotlin.String, khome.core.EventResult, kotlin.Boolean, khome.listening.LifeCycleHandler)/entityId">entityId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening.StateListener$<init>(kotlin.String, kotlin.String, khome.core.EventResult, kotlin.Boolean, khome.listening.LifeCycleHandler)/handle">handle</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening.StateListener$<init>(kotlin.String, kotlin.String, khome.core.EventResult, kotlin.Boolean, khome.listening.LifeCycleHandler)/data">data</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening.StateListener$<init>(kotlin.String, kotlin.String, khome.core.EventResult, kotlin.Boolean, khome.listening.LifeCycleHandler)/constraint">constraint</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening.StateListener$<init>(kotlin.String, kotlin.String, khome.core.EventResult, kotlin.Boolean, khome.listening.LifeCycleHandler)/lifeCycleHandler">lifeCycleHandler</span><span class="symbol">:</span>&nbsp;<a href="../-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="data.html">data</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">data</span><span class="symbol">: </span><a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="entity-id.html">entityId</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">entityId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="handle.html">handle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">handle</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="life-cycle-handler.html">lifeCycleHandler</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lifeCycleHandler</span><span class="symbol">: </span><a href="../-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="constrain.html">constrain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">constrain</span><span class="symbol">(</span><span class="identifier" id="khome.listening.StateListener$constrain(kotlin.Function1((khome.listening.Constraint, kotlin.Boolean)))/func">func</span><span class="symbol">:</span>&nbsp;<a href="../-constraint/index.html"><span class="identifier">Constraint</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="disable.html">disable</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">disable</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="exclude-from-testing.html">excludeFromTesting</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">excludeFromTesting</span><span class="symbol">(</span><span class="identifier" id="khome.listening.StateListener$excludeFromTesting(kotlin.Function0((kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="execute.html">execute</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">execute</span><span class="symbol">(</span><span class="identifier" id="khome.listening.StateListener$execute(kotlin.Function1((khome.core.EventResult, kotlin.Unit)))/func">func</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="run-in-testing.html">runInTesting</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">runInTesting</span><span class="symbol">(</span><span class="identifier" id="khome.listening.StateListener$runInTesting(kotlin.Function0((kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

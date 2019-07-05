@@ -1,18 +1,19 @@
 package khome.core
+
+import java.util.*
 import java.util.function.Consumer
 
 typealias Handler<EventType> = Consumer<EventType>
-
 internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
 
 class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
 
-    private val list = LinkedHashMap<String, Handler<T>>()
+    private val list = Collections.synchronizedMap(LinkedHashMap<String, Handler<T>>())
 
     private var nextUnnamedIndex = 0L
 
     val size: Int @JvmName("size") get() = list.size
-    val listeners: MutableCollection<MutableMap.MutableEntry<String, Handler<T>>> get() = list.entries
+    val listeners get() = list.entries
 
     fun clear() = list.clear()
 

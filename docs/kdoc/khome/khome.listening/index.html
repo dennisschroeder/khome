@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.listening - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.listening</a><br/>
+<br/>
+<h2>Package khome.listening</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-constraint/index.html">Constraint</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Constraint</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-life-cycle-handler/index.html">LifeCycleHandler</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LifeCycleHandler</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core/-life-cycle-handler-interface/index.html"><span class="identifier">LifeCycleHandlerInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-listener/index.html">StateListener</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateListener</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-entity-instance.html">getEntityInstance</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Entity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">&gt;</span> <span class="identifier">getEntityInstance</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="get-entity-instance.html#Entity"><span class="identifier">Entity</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Entity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">&gt;</span> <span class="identifier">getEntityInstance</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getEntityInstance(kotlin.reflect.KClass((khome.listening.getEntityInstance.Entity)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html"><span class="identifier">KClass</span></a><span class="symbol">&lt;</span><a href="get-entity-instance.html#Entity"><span class="identifier">Entity</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="get-entity-instance.html#Entity"><span class="identifier">Entity</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-state.html">getState</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getState</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getState(khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.core/-state/index.html"><span class="identifier">State</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-state-attributes-from-entity.html">getStateAttributesFromEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">AttributeValueType</span><span class="symbol">&gt;</span> <span class="identifier">getStateAttributesFromEntity</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getStateAttributesFromEntity(khome.core.entities.EntityInterface, kotlin.String)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening$getStateAttributesFromEntity(khome.core.entities.EntityInterface, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-state-attributes-from-entity.html#AttributeValueType"><span class="identifier">AttributeValueType</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-state-value-from-entity.html">getStateValueFromEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">StateValueType</span><span class="symbol">&gt;</span> <span class="identifier">getStateValueFromEntity</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getStateValueFromEntity(khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-state-value-from-entity.html#StateValueType"><span class="identifier">StateValueType</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="listen-state.html">listenState</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">listenState</span><span class="symbol">(</span><span class="identifier" id="khome.listening$listenState(khome.core.entities.EntityInterface, kotlin.Function1((khome.listening.StateListener, kotlin.Unit)))/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening$listenState(khome.core.entities.EntityInterface, kotlin.Function1((khome.listening.StateListener, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<a href="-state-listener/index.html"><span class="identifier">StateListener</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
