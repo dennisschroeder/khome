@@ -377,6 +377,11 @@ class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
 internal fun LocalDateTime.toDate(): Date = Date
     .from(atZone(ZoneId.systemDefault()).toInstant())
 
+/**
+ * Check if now (the time the function is executed) is after a given date time.
+ *
+ * @param timeOfDay A string with the hour and minutes ("14:00") when to start the [TimerTask] gets executed.
+ */
 fun nowIsAfter(timeOfDay: String): Boolean {
     val timeOfDayDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     return nowIsAfter(timeOfDayDate)
