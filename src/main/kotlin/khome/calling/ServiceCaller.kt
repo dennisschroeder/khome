@@ -44,8 +44,6 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
                         domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
                         service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
                     }
-
-                    logger.info { "Would have called Service with: " + callService.toJson() }
                 }
                 else -> {
                     callWebSocketApi(callService.toJson())
@@ -58,7 +56,7 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
 
 internal data class EntityId(override var entityId: String?) : ServiceDataInterface
 
-data class EntityIds(
+internal data class EntityIds(
     @SerializedName("entity_id") var entityIds: String,
     override var entityId: String?
 ) : ServiceDataInterface
