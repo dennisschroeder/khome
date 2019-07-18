@@ -16,6 +16,7 @@ import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.reconnect
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
+import khome.Khome.Companion.connected
 import khome.Khome.Companion.emitResultEvent
 import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.consumeEach
@@ -24,9 +25,12 @@ import java.util.concurrent.atomic.AtomicInteger
 import khome.Khome.Companion.schedulerTestEvents
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
+import khome.Khome.Companion.isSandBoxModeActive
 import khome.Khome.Companion.schedulerTestEventListeners
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.unsubscribeStateChangeEvent
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * The main entry point to start your application
@@ -104,7 +108,7 @@ class Khome {
          */
         private val resultEvents = Event<Result>()
 
-        internal fun subscribeResultEvent(handle: String?, callback: Result.() -> Unit) {
+        internal fun subscribeResultEvent(handle: String? = null, callback: Result.() -> Unit) {
             if (handle == null)
                 resultEvents += callback
             else
@@ -120,7 +124,7 @@ class Khome {
          */
         private val errorResultEvents = Event<ErrorResult>()
 
-        internal fun subscribeErrorResultEvent(handle: String?, callback: ErrorResult.() -> Unit) {
+        internal fun subscribeErrorResultEvent(handle: String? = null, callback: ErrorResult.() -> Unit) {
             if (handle == null)
                 errorResultEvents += callback
             else
@@ -217,7 +221,7 @@ class Khome {
     /**
      * The connect function is the window to your home assistant instance.
      * Basically it is an wrapper of the ktor websocket client function.
-     * Inside the closure that you have to pass in, you can register
+     * Inside the lambda, that you have to pass in, you can register
      * state change based or time change based callbacks, call external api´s , or do whatever you`l like.
      *
      * @see khome.listening.listenState
@@ -277,7 +281,7 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 }
 
 private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
-    logger.info { "Testing the application:" }
+    logger.info { "Testing the application" }
     println("###      Integrity testing started     ###")
 
     val failCount = AtomicInteger(0)
@@ -303,12 +307,12 @@ private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
         }
     }
 
-    schedulerTestEventListeners.forEach { action ->
-        val success = catchAllTests("Timer") {
-            action.value.invoke("Integrity_test")
-        }
-        if (!success) failCount.incrementAndGet()
-    }
+//    schedulerTestEventListeners.forEach { action ->
+//        val success = catchAllTests("Timer") {
+//            action.value.invoke("Integrity_test")
+//        }
+//        if (!success) failCount.incrementAndGet()
+//    }
 
     val failCountTotal = failCount.get()
     when {
@@ -370,12 +374,15 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
                     "event" -> launch {
                         updateLocalStateStore(frame)
                         emitStateChangeEvent(frame.asObject())
+                        logger.debug { frame.asObject() }
                     }
-                    "result" -> launch { resolveResultTypeAndEmitEvents(frame) }
+                    "result" -> launch {
+                        resolveResultTypeAndEmitEvents(frame)
+                    }
                     else -> launch { logger.warn { "Could not classify message: $type" } }
                 }
             } catch (e: Throwable) {
-                logger.info { e.message }
+                logger.error { e.message }
                 close(e)
                 reconnect()
             }
@@ -399,7 +406,7 @@ private fun checkLocalStateStoreAndRefresh(frame: Frame) {
     val states = frame.asObject<StateResult>()
     var noneEqualStateCount = 0
 
-    logger.debug { " ###    Started local state store check     ###" }
+    logger.info { " ###    Started local state store check     ###" }
 
     states.result.forEach { state ->
         if (Khome.states[state.entityId] != state) {
@@ -411,7 +418,7 @@ private fun checkLocalStateStoreAndRefresh(frame: Frame) {
     }
 
     if (noneEqualStateCount > 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
-    logger.debug { " ###    Local state store check finished    ###" }
+    logger.info { " ###    Local state store check finished    ###" }
 
 }
 
@@ -442,6 +449,7 @@ private suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
         val serviceCollection = mutableListOf<String>()
         services.forEach { (name, _) ->
             serviceCollection.add(name)
+            logger.debug { "Fetched service: $name from domain: $domain" }
         }
         Khome.services[domain] = serviceCollection
     }
@@ -453,6 +461,7 @@ private suspend fun WebSocketSession.startStateStream() {
 
     message.result.forEach { state ->
         states[state.entityId] = state
+        logger.debug { "Fetched state with data: $state" }
     }
     callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
 }
