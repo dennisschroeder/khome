@@ -69,7 +69,6 @@ internal data class EntityIds(
  * @property domain One of the from Khome supported domains [Domain].
  * @property service One of the services that are available for the given [domain].
  * @property serviceData ServiceData object to send context data that fits to the given [service].
- *
  */
 data class ServiceCaller(
     private var id: Int,
@@ -109,6 +108,6 @@ interface ServiceDataInterface {
  * Domains that are supported from Khome
  */
 enum class Domain : DomainInterface {
-    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY
+    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
 }
 
