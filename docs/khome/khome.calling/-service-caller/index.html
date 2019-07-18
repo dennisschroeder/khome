@@ -116,7 +116,11 @@ This function serves the needs for that.</p>
 <p><a href="../light.html">light</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">light</span><span class="symbol">(</span><span class="identifier" id="khome.calling$light(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.LightData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-light-data/index.html"><span class="identifier">LightData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">light</span><span class="symbol">(</span><span class="identifier" id="khome.calling$light(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.LightData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-light-data/index.html"><span class="identifier">LightData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The service call builder for the domain light. Pass an lambda with receiver
+to have access to the <a href="../-light-data/index.html">LightData</a> class to configure the payload sent to the
+home-assistant websocket api. See also the <a href="https://www.home-assistant.io/components/light/">home-assistant documentation</a></p>
+</td>
 </tr>
 <tr>
 <td>
@@ -151,7 +155,10 @@ This function serves the needs for that.</p>
 <p><a href="../restart-home-assistant.html">restartHomeAssistant</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">restartHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">restartHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Restarts the home-assistant instance.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -172,28 +179,40 @@ This function serves the needs for that.</p>
 <p><a href="../stop-home-assistant.html">stopHomeAssistant</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">stopHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">stopHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Stops the home-assistant instance.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../toggle.html">toggle</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">toggle</span><span class="symbol">(</span><span class="identifier" id="khome.calling$toggle(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">toggle</span><span class="symbol">(</span><span class="identifier" id="khome.calling$toggle(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Toggles an entity that is capable of being turned on and off.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../turn-off.html">turnOff</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOff(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOff(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Turns off an entity that is capable of being turned off.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../turn-on.html">turnOn</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOn(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOn(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Turns on an entity that is capable of being turned on.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -207,14 +226,20 @@ This function serves the needs for that.</p>
 <p><a href="../update-entities.html">updateEntities</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntities</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="khome.calling$updateEntities(khome.calling.ServiceCaller, kotlin.Array((khome.core.entities.EntityInterface)))/entities">entities</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntities</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="khome.calling$updateEntities(khome.calling.ServiceCaller, kotlin.Array((khome.core.entities.EntityInterface)))/entities">entities</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates a bunch of entities.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../update-entity.html">updateEntity</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntity</span><span class="symbol">(</span><span class="identifier" id="khome.calling$updateEntity(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntity</span><span class="symbol">(</span><span class="identifier" id="khome.calling$updateEntity(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates an entity..
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
 </tr>
 <tr>
 <td>
