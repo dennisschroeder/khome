@@ -2,6 +2,7 @@ package khome.core
 
 import khome.*
 import io.ktor.http.cio.websocket.WebSocketSession
+import khome.Khome.Companion.connected
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @ObsoleteCoroutinesApi
@@ -19,7 +20,11 @@ internal suspend fun WebSocketSession.authenticate(token: String) {
 
     val authResponse = runCatching { incoming.receive().asObject<AuthResponse>() }
     authResponse.onFailure { logger.error { it.printStackTrace() } }
-    authResponse.onSuccess { if (it.isAuthenticated) logger.info { "Authenticated successfully." } }
+    authResponse.onSuccess {
+        if (it.isAuthenticated)
+            logger.info { "Authenticated successfully." }
+            connected = true
+    }
 }
 
 private data class Auth(
