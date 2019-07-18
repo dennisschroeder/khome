@@ -15,7 +15,6 @@ import khome.Khome.Companion.subscribeSchedulerTestEvent
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 import khome.Khome.Companion.subscribeSchedulerCancelEvents
 
-
 /**
  * Runs a [TimerTask] as daily routine starting at a specific date time
  *
@@ -193,7 +192,6 @@ fun runEveryAt(
     localDateTime: LocalDateTime,
     action: TimerTask.() -> Unit
 ): LifeCycleHandler {
-
     val timerTask = timerTask(action)
     subscribeSchedulerTestEvent { action(timerTask) }
 
@@ -350,6 +348,9 @@ fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit):
  * It enables to handle the lifecycle of the scheduled [TimerTask].
  */
 class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
+    /**
+     * The delegation of the cancel method to the lazy execution
+     */
     override val lazyCancellation by lazy {
         timer.cancel()
     }
