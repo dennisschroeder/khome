@@ -17,13 +17,11 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "io.ktor:ktor-client-core:$ktor_version"
     implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-cio:$ktor_version"
     implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
-    implementation "io.ktor:ktor-client-websocket:$ktor_version"
     implementation "org.slf4j:slf4j-simple:1.7.26"
     implementation "io.github.microutils:kotlin-logging:1.6.24"
     testImplementation"org.junit.jupiter:junit-jupiter:5.4.2"
