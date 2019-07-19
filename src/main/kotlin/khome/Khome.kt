@@ -9,6 +9,7 @@ import kotlin.system.exitProcess
 import khome.calling.FetchStates
 import io.ktor.client.HttpClient
 import khome.calling.FetchServices
+import kotlin.collections.ArrayList
 import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
@@ -16,21 +17,15 @@ import khome.Khome.Companion.idCounter
 import khome.Khome.Companion.reconnect
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
-import khome.Khome.Companion.connected
 import khome.Khome.Companion.emitResultEvent
 import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.consumeEach
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import khome.Khome.Companion.schedulerTestEvents
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
-import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.schedulerTestEventListeners
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.unsubscribeStateChangeEvent
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * The main entry point to start your application
@@ -50,7 +45,6 @@ fun initialize(init: Khome.() -> Unit): Khome {
  */
 class Khome {
     companion object {
-        internal var connected = false
         internal val states = hashMapOf<String, State>()
         internal val services = hashMapOf<String, List<String>>()
         private val stateChangeEvents = Event<EventResult>()
@@ -151,9 +145,8 @@ class Khome {
         private fun cancelAllScheduledCallbacks() = schedulerCancelEvents("Restarted")
 
         internal fun reconnect() {
-            cancelAllScheduledCallbacks()
+            // cancelAllScheduledCallbacks()
             resetApplicationState()
-            connected = false
         }
 
         /**
@@ -232,7 +225,7 @@ class Khome {
     @ObsoleteCoroutinesApi
     fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
         runBlocking {
-            while (!connected) {
+            while (true) {
                 delay(2000)
                 try {
                     if (config.secure)
@@ -382,9 +375,8 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
                     else -> launch { logger.warn { "Could not classify message: $type" } }
                 }
             } catch (e: Throwable) {
-                logger.error { e.message }
                 close(e)
-                reconnect()
+                logger.error { e.message }
             }
         }
     }
