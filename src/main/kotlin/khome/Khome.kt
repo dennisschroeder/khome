@@ -14,7 +14,6 @@ import io.ktor.http.cio.websocket.*
 import khome.Khome.Companion.states
 import io.ktor.client.engine.cio.CIO
 import khome.Khome.Companion.idCounter
-import khome.Khome.Companion.reconnect
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.emitResultEvent
@@ -24,6 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
+import khome.Khome.Companion.schedulerTestEventListeners
+import khome.Khome.Companion.stateListenerCount
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.unsubscribeStateChangeEvent
 
@@ -45,13 +46,18 @@ fun initialize(init: Khome.() -> Unit): Khome {
  */
 class Khome {
     companion object {
+        internal var dirty = false
         internal val states = hashMapOf<String, State>()
         internal val services = hashMapOf<String, List<String>>()
-        private val stateChangeEvents = Event<EventResult>()
 
         /**
          * STATE CHANGE EVENTS
          */
+
+        private val stateChangeEvents = Event<EventResult>()
+
+        internal val stateListenerCount get() = stateChangeEvents.listeners.size
+
         internal fun subscribeStateChangeEvent(handle: String? = null, callback: EventResult.() -> Unit) {
             if (handle == null)
                 stateChangeEvents += callback
@@ -145,8 +151,10 @@ class Khome {
         private fun cancelAllScheduledCallbacks() = schedulerCancelEvents("Restarted")
 
         internal fun reconnect() {
-            // cancelAllScheduledCallbacks()
+            logger.debug { "Reconnecting and therefore resetting the application state" }
+            dirty = true
             resetApplicationState()
+            cancelAllScheduledCallbacks()
         }
 
         /**
@@ -223,10 +231,10 @@ class Khome {
      */
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
+    fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) =
         runBlocking {
             while (true) {
-                delay(2000)
+                if (dirty) delay(config.reConnectionPeriod)
                 try {
                     if (config.secure)
                         client.wss(
@@ -248,7 +256,7 @@ class Khome {
                 }
             }
         }
-    }
+
 }
 
 @ObsoleteCoroutinesApi
@@ -267,9 +275,10 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
     if (config.runIntegrityTests)
         runIntegrityTest()
 
-    if (successfullyStartedStateStream())
+    if (successfullyStartedStateStream()) {
+        logger.debug { "$stateListenerCount callbacks registered" }
         consumeStateChangesByTriggeringEvents()
-    else
+    } else
         throw EventStreamException("Could not subscribe to event stream!")
 }
 
@@ -280,6 +289,7 @@ private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
     val failCount = AtomicInteger(0)
     val now = LocalDateTime.now()
     val events = states.map { (entityId, state) ->
+
         async {
             val data = EventResult.Event.Data(entityId, state, state)
             val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
@@ -367,12 +377,17 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
                     "event" -> launch {
                         updateLocalStateStore(frame)
                         emitStateChangeEvent(frame.asObject())
-                        logger.debug { frame.asObject() }
+                        logger.debug { "$stateListenerCount callbacks registered" }
+                        logger.debug {
+                            """
+                            ${frame.asObject<EventResult>().event.data.entityId}: OldState: ${frame.asObject<EventResult>().event.data.oldState.getValue<Any>()} || NewState: ${frame.asObject<EventResult>().event.data.newState.getValue<Any>()}
+                            """.trimIndent()
+                        }
                     }
                     "result" -> launch {
                         resolveResultTypeAndEmitEvents(frame)
                     }
-                    else -> launch { logger.warn { "Could not classify message: $type" } }
+                    else -> logger.warn { "Could not classify message: $type" }
                 }
             } catch (e: Throwable) {
                 close(e)
@@ -384,6 +399,7 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
 
 private fun resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
+    logger.debug { "Result: $resultData" }
     when {
         !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
         resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
@@ -398,7 +414,7 @@ private fun checkLocalStateStoreAndRefresh(frame: Frame) {
     val states = frame.asObject<StateResult>()
     var noneEqualStateCount = 0
 
-    logger.info { " ###    Started local state store check     ###" }
+    logger.info { " ###    Started local state store check    ###" }
 
     states.result.forEach { state ->
         if (Khome.states[state.entityId] != state) {
@@ -435,26 +451,29 @@ private suspend fun WebSocketSession.updateLocalStateStore(frame: Frame) {
 private suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
     val payload = FetchServices(idCounter.incrementAndGet())
     callWebSocketApi(payload.toJson())
-    val message = getMessage<ServiceResult>()
 
-    message.result.forEach { (domain, services) ->
-        val serviceCollection = mutableListOf<String>()
-        services.forEach { (name, _) ->
-            serviceCollection.add(name)
-            logger.debug { "Fetched service: $name from domain: $domain" }
+    consumeMessage<ServiceResult>()
+        .result
+        .forEach { (domain, services) ->
+            val serviceCollection = mutableListOf<String>()
+            services.forEach { (name, _) ->
+                serviceCollection.add(name)
+                logger.debug { "Fetched service: $name from domain: $domain" }
+            }
+            Khome.services[domain] = serviceCollection
         }
-        Khome.services[domain] = serviceCollection
-    }
 }
 
 private suspend fun WebSocketSession.startStateStream() {
     fetchStates()
-    val message = getMessage<StateResult>()
 
-    message.result.forEach { state ->
-        states[state.entityId] = state
-        logger.debug { "Fetched state with data: $state" }
-    }
+    consumeMessage<StateResult>()
+        .result
+        .forEach { state ->
+            states[state.entityId] = state
+            logger.debug { "Fetched state with data: $state" }
+        }
+
     callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
 }
 
@@ -462,8 +481,8 @@ private suspend fun WebSocketSession.fetchStates() = callWebSocketApi(FetchState
 
 internal suspend fun WebSocketSession.callWebSocketApi(content: String) = send(content)
 
-private suspend fun WebSocketSession.successfullyStartedStateStream() = getMessage<Result>().success
+private suspend fun WebSocketSession.successfullyStartedStateStream() = consumeMessage<Result>().success
 
-internal suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming.receive().asObject()
+internal suspend inline fun <reified M : Any> WebSocketSession.consumeMessage(): M = incoming.receive().asObject()
 
 internal inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()

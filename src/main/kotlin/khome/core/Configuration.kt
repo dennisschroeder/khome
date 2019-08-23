@@ -10,5 +10,6 @@ data class Configuration(
     var logLevel: String = "INFO",
     var logTime: Boolean = true,
     var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",
-    var logOutput: String = "System.out"
+    var logOutput: String = "System.out",
+    var reConnectionPeriod: Long = 30000
 )

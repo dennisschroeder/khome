@@ -8,7 +8,7 @@ internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
 
 class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
 
-    private val list = Collections.synchronizedMap(LinkedHashMap<String, Handler<T>>())
+    private val list = LinkedHashMap<String, Handler<T>>()
 
     private var nextUnnamedIndex = 0L
 
@@ -47,6 +47,9 @@ class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
     @JvmName("handle")
     operator fun invoke(data: T) {
         for ((_, value) in this) value(data)
+        logger.info {
+            "Invoked subscribed function with data: $data"
+        }
     }
 
 }
