@@ -27,6 +27,7 @@ import khome.Khome.Companion.schedulerTestEventListeners
 import khome.Khome.Companion.stateListenerCount
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.unsubscribeStateChangeEvent
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * The main entry point to start your application
@@ -46,7 +47,7 @@ fun initialize(init: Khome.() -> Unit): Khome {
  */
 class Khome {
     companion object {
-        internal var dirty = false
+        private var dirty = false
         internal val states = hashMapOf<String, State>()
         internal val services = hashMapOf<String, List<String>>()
 
@@ -231,32 +232,23 @@ class Khome {
      */
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) =
-        runBlocking {
-            while (true) {
-                if (dirty) delay(config.reConnectionPeriod)
-                try {
-                    if (config.secure)
-                        client.wss(
-                            method = method,
-                            host = config.host,
-                            port = config.port,
-                            path = path
-                        ) { runApplication(config, reactOnStateChangeEvents) }
-                    else
-                        client.ws(
-                            method = method,
-                            host = config.host,
-                            port = config.port,
-                            path = path
-                        ) { runApplication(config, reactOnStateChangeEvents) }
-                } catch (e: Throwable) {
-                    logger.error { e.message }
-                    reconnect()
-                }
-            }
+    suspend fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) =
+        coroutineScope {
+            if (config.secure)
+                client.wss(
+                    method = method,
+                    host = config.host,
+                    port = config.port,
+                    path = path
+                ) { runApplication(config, reactOnStateChangeEvents) }
+            else
+                client.ws(
+                    method = method,
+                    host = config.host,
+                    port = config.port,
+                    path = path
+                ) { runApplication(config, reactOnStateChangeEvents) }
         }
-
 }
 
 @ObsoleteCoroutinesApi
@@ -282,7 +274,7 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
         throw EventStreamException("Could not subscribe to event stream!")
 }
 
-private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
+private fun runIntegrityTest() = runInSandBoxMode {
     logger.info { "Testing the application" }
     println("###      Integrity testing started     ###")
 
@@ -290,32 +282,29 @@ private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
     val now = LocalDateTime.now()
     val events = states.map { (entityId, state) ->
 
-        async {
-            val data = EventResult.Event.Data(entityId, state, state)
-            val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
-            val eventResult = EventResult(idCounter.get(), "integrity_test", event)
+        val data = EventResult.Event.Data(entityId, state, state)
+        val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
+        val eventResult = EventResult(idCounter.get(), "integrity_test", event)
 
-            val success = catchAllTests(entityId) {
-                emitStateChangeEvent(eventResult)
-            }
-            if (!success) failCount.incrementAndGet()
-
-            entityId
+        val success = catchAllTests(entityId) {
+            emitStateChangeEvent(eventResult)
         }
+        if (!success) failCount.incrementAndGet()
+
+        entityId
+
     }
 
-    runBlocking {
-        events.awaitAll().forEach { entityId ->
-            unsubscribeStateChangeEvent(entityId)
-        }
+    events.forEach { entityId ->
+        unsubscribeStateChangeEvent(entityId)
     }
 
-//    schedulerTestEventListeners.forEach { action ->
-//        val success = catchAllTests("Timer") {
-//            action.value.invoke("Integrity_test")
-//        }
-//        if (!success) failCount.incrementAndGet()
-//    }
+    schedulerTestEventListeners.forEach { action ->
+        val success = catchAllTests("Timer") {
+            action.value.invoke("Integrity_test")
+        }
+        if (!success) failCount.incrementAndGet()
+    }
 
     val failCountTotal = failCount.get()
     when {
@@ -366,33 +355,26 @@ private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
 }
 
 @ObsoleteCoroutinesApi
-private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
-    coroutineScope {
-        incoming.consumeEach { frame ->
-            try {
-                val message = frame.asObject<Map<String, Any>>()
-                val type = message["type"]
+private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
+    incoming.consumeEach { frame ->
+        val message = frame.asObject<Map<String, Any>>()
+        val type = message["type"]
 
-                when (type) {
-                    "event" -> launch {
-                        updateLocalStateStore(frame)
-                        emitStateChangeEvent(frame.asObject())
-                        logger.debug { "$stateListenerCount callbacks registered" }
-                        logger.debug {
-                            """
+        when (type) {
+            "event" -> launch {
+                updateLocalStateStore(frame)
+                emitStateChangeEvent(frame.asObject())
+                logger.debug { "$stateListenerCount callbacks registered" }
+                logger.debug {
+                    """
                             ${frame.asObject<EventResult>().event.data.entityId}: OldState: ${frame.asObject<EventResult>().event.data.oldState.getValue<Any>()} || NewState: ${frame.asObject<EventResult>().event.data.newState.getValue<Any>()}
                             """.trimIndent()
-                        }
-                    }
-                    "result" -> launch {
-                        resolveResultTypeAndEmitEvents(frame)
-                    }
-                    else -> logger.warn { "Could not classify message: $type" }
                 }
-            } catch (e: Throwable) {
-                close(e)
-                logger.error { e.message }
             }
+            "result" -> launch {
+                resolveResultTypeAndEmitEvents(frame)
+            }
+            else -> logger.warn { "Could not classify message: $type" }
         }
     }
 }
@@ -466,7 +448,6 @@ private suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
 
 private suspend fun WebSocketSession.startStateStream() {
     fetchStates()
-
     consumeMessage<StateResult>()
         .result
         .forEach { state ->
