@@ -24,35 +24,34 @@ import khome.calling.exceptions.ServiceNotFoundException
  * @see ServiceCaller
  */
 @ObsoleteCoroutinesApi
-fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
-    runBlocking {
-        withContext(callServiceContext) {
-            val callService = ServiceCaller(
-                idCounter.incrementAndGet(),
-                "call_service",
-                null,
-                null,
-                null
-            ).apply(init)
+fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) = launch {
+    withContext(callServiceContext) {
+        val callService = ServiceCaller(
+            idCounter.incrementAndGet(),
+            "call_service",
+            null,
+            null,
+            null
+        ).apply(init)
 
-            when {
-                isSandBoxModeActive -> {
-                    val domain = callService.domain.toString().toLowerCase()
-                    val service = callService.service.toString().toLowerCase()
+        when {
+            isSandBoxModeActive -> {
+                val domain = callService.domain.toString().toLowerCase()
+                val service = callService.service.toString().toLowerCase()
 
-                    when {
-                        domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
-                        service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
-                    }
+                when {
+                    domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
+                    service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
                 }
-                else -> {
-                    callWebSocketApi(callService.toJson())
-                    logger.info { "Called Service with: " + callService.toJson() }
-                }
+            }
+            else -> {
+                callWebSocketApi(callService.toJson())
+                logger.info { "Called Service with: " + callService.toJson() }
             }
         }
     }
 }
+
 
 internal data class EntityId(override var entityId: String?) : ServiceDataInterface
 

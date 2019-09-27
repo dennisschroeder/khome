@@ -23,11 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
-import khome.Khome.Companion.schedulerTestEventListeners
 import khome.Khome.Companion.stateListenerCount
 import khome.core.exceptions.EventStreamException
+import khome.Khome.Companion.schedulerTestEventListeners
+import khome.Khome.Companion.stateChangeTestEventListeners
 import khome.Khome.Companion.unsubscribeStateChangeEvent
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * The main entry point to start your application
@@ -69,6 +69,20 @@ class Khome {
         internal fun unsubscribeStateChangeEvent(handle: String) = stateChangeEvents.minus(handle)
 
         internal fun emitStateChangeEvent(eventData: EventResult) = stateChangeEvents(eventData)
+
+        /**
+         * StateChange TEST EVENTS
+         */
+         private val stateChangeTestEvents = Event<EventResult>()
+
+        internal val stateChangeTestEventListeners get() = schedulerTestEvents.listeners
+
+        internal fun subscribeStateChangeTestEvent(handle: String? = null, callback: EventResult.() -> Unit) {
+            if (handle == null)
+                stateChangeTestEvents += callback
+            else
+                stateChangeTestEvents[handle] = callback
+        }
 
         /**
          * SCHEDULER TEST EVENTS
@@ -279,24 +293,13 @@ private fun runIntegrityTest() = runInSandBoxMode {
     println("###      Integrity testing started     ###")
 
     val failCount = AtomicInteger(0)
-    val now = LocalDateTime.now()
-    val events = states.map { (entityId, state) ->
 
-        val data = EventResult.Event.Data(entityId, state, state)
-        val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
-        val eventResult = EventResult(idCounter.get(), "integrity_test", event)
-
-        val success = catchAllTests(entityId) {
-            emitStateChangeEvent(eventResult)
+    stateChangeTestEventListeners.forEach { action ->
+        val success = catchAllTests("Listener") {
+            action.value.invoke("Integrity_test")
         }
         if (!success) failCount.incrementAndGet()
 
-        entityId
-
-    }
-
-    events.forEach { entityId ->
-        unsubscribeStateChangeEvent(entityId)
     }
 
     schedulerTestEventListeners.forEach { action ->
@@ -361,7 +364,7 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() = c
         val type = message["type"]
 
         when (type) {
-            "event" -> launch {
+            "event" -> {
                 updateLocalStateStore(frame)
                 emitStateChangeEvent(frame.asObject())
                 logger.debug { "$stateListenerCount callbacks registered" }
@@ -371,7 +374,7 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() = c
                             """.trimIndent()
                 }
             }
-            "result" -> launch {
+            "result" -> {
                 resolveResultTypeAndEmitEvents(frame)
             }
             else -> logger.warn { "Could not classify message: $type" }

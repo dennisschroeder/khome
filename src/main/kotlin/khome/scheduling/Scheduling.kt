@@ -14,6 +14,10 @@ import khome.Khome.Companion.isSandBoxModeActive
 import khome.Khome.Companion.subscribeSchedulerTestEvent
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 import khome.Khome.Companion.subscribeSchedulerCancelEvents
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowViaChannel
 
 /**
  * Runs a [TimerTask] as daily routine starting at a specific date time
@@ -315,6 +319,7 @@ fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit)
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
             '-' -> nextSunrise = nextSunrise.minusMinutes(minutes.toLong())
         }
+
         runOnceAt(nextSunrise, action)
     }
 }

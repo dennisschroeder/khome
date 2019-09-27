@@ -7,6 +7,7 @@ import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.isSandBoxModeActive
 import khome.Khome.Companion.subscribeStateChangeEvent
+import khome.Khome.Companion.subscribeStateChangeTestEvent
 import khome.listening.exceptions.EntityStateNotFoundException
 
 fun listenState(entity: EntityInterface, callback: StateListener.() -> Unit): LifeCycleHandler =
@@ -67,6 +68,7 @@ data class StateListener(
     }
 
     fun execute(func: EventResult.() -> Unit) {
+        subscribeStateChangeTestEvent(callback = func)
         if (constraint && !isSandBoxModeActive) func(data)
         if (isSandBoxModeActive) func(data)
     }
