@@ -24,8 +24,7 @@ import khome.calling.exceptions.ServiceNotFoundException
  * @see ServiceCaller
  */
 @ObsoleteCoroutinesApi
-fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) = launch {
-    withContext(callServiceContext) {
+fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) = launch(callServiceContext) {
         val callService = ServiceCaller(
             idCounter.incrementAndGet(),
             "call_service",
@@ -50,7 +49,6 @@ fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) = launch {
             }
         }
     }
-}
 
 
 internal data class EntityId(override var entityId: String?) : ServiceDataInterface
