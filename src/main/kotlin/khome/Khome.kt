@@ -2,10 +2,7 @@ package khome
 
 import khome.core.*
 import kotlinx.coroutines.*
-import java.time.LocalDateTime
 import io.ktor.http.HttpMethod
-import khome.scheduling.toDate
-import kotlin.system.exitProcess
 import khome.calling.FetchStates
 import io.ktor.client.HttpClient
 import khome.calling.FetchServices
@@ -17,17 +14,13 @@ import khome.Khome.Companion.idCounter
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
 import khome.Khome.Companion.emitResultEvent
-import khome.Khome.Companion.runInSandBoxMode
 import kotlinx.coroutines.channels.consumeEach
+import khome.Khome.Companion.stateListenerCount
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
-import khome.Khome.Companion.stateListenerCount
-import khome.core.exceptions.EventStreamException
-import khome.Khome.Companion.schedulerTestEventListeners
-import khome.Khome.Companion.stateChangeTestEventListeners
-import khome.Khome.Companion.unsubscribeStateChangeEvent
 
 /**
  * The main entry point to start your application
@@ -69,38 +62,6 @@ class Khome {
         internal fun unsubscribeStateChangeEvent(handle: String) = stateChangeEvents.minus(handle)
 
         internal fun emitStateChangeEvent(eventData: EventResult) = stateChangeEvents(eventData)
-
-        /**
-         * StateChange TEST EVENTS
-         */
-         private val stateChangeTestEvents = Event<EventResult>()
-
-        internal val stateChangeTestEventListeners get() = schedulerTestEvents.listeners
-
-        internal fun subscribeStateChangeTestEvent(handle: String? = null, callback: EventResult.() -> Unit) {
-            if (handle == null)
-                stateChangeTestEvents += callback
-            else
-                stateChangeTestEvents[handle] = callback
-        }
-
-        /**
-         * SCHEDULER TEST EVENTS
-         */
-        private val schedulerTestEvents = Event<String>()
-
-        internal val schedulerTestEventListeners get() = schedulerTestEvents.listeners
-
-        internal fun subscribeSchedulerTestEvent(handle: String? = null, callback: String.() -> Unit) {
-            if (handle == null)
-                schedulerTestEvents += callback
-            else
-                schedulerTestEvents[handle] = callback
-        }
-
-        internal fun unsubscribeSchedulerTestEvent(handle: String) = schedulerTestEvents.minus(handle)
-
-        internal fun emitSchedulerTestEvent(eventData: String) = schedulerTestEvents(eventData)
 
         /**
          * SCHEDULER CANCEL EVENTS
@@ -155,15 +116,20 @@ class Khome {
         private fun resetApplicationState() {
             states.clear()
             services.clear()
-            stateChangeEvents.clear()
-            schedulerTestEvents.clear()
-            schedulerCancelEvents.clear()
             resultEvents.clear()
             errorResultEvents.clear()
+            stateChangeEvents.clear()
+            schedulerCancelEvents.clear()
             deactivateSandBoxMode()
         }
 
-        private fun cancelAllScheduledCallbacks() = schedulerCancelEvents("Restarted")
+        private fun cancelAllScheduledCallbacks() =
+            schedulerCancelEvents
+                .listeners
+                .forEach { action ->
+                    action.value.invoke("Cancel all scheduled callbacks")
+
+                }
 
         internal fun reconnect() {
             logger.debug { "Reconnecting and therefore resetting the application state" }
@@ -186,19 +152,6 @@ class Khome {
         internal val isSandBoxModeActive get() = sandboxMode.get()
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
-
-        /**
-         * Call some action in an sand box mode. The sand box mode allows you to
-         * act like you would call the hass websocket api but without actually calling it,
-         * by using [khome.calling.callService]. Use this to do some testing or playing around.
-         *
-         * The call service payload will be printed to the logs.
-         */
-        fun runInSandBoxMode(action: () -> Unit) {
-            activateSandBoxMode()
-            action()
-            deactivateSandBoxMode()
-        }
 
         /**
          *  A single thread context needed to run all websocket api calls in.
@@ -278,83 +231,11 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 
     reactOnStateChangeEvents()
 
-    if (config.runIntegrityTests)
-        runIntegrityTest()
-
     if (successfullyStartedStateStream()) {
         logger.debug { "$stateListenerCount callbacks registered" }
         consumeStateChangesByTriggeringEvents()
     } else
         throw EventStreamException("Could not subscribe to event stream!")
-}
-
-private fun runIntegrityTest() = runInSandBoxMode {
-    logger.info { "Testing the application" }
-    println("###      Integrity testing started     ###")
-
-    val failCount = AtomicInteger(0)
-
-    stateChangeTestEventListeners.forEach { action ->
-        val success = catchAllTests("Listener") {
-            action.value.invoke("Integrity_test")
-        }
-        if (!success) failCount.incrementAndGet()
-
-    }
-
-    schedulerTestEventListeners.forEach { action ->
-        val success = catchAllTests("Timer") {
-            action.value.invoke("Integrity_test")
-        }
-        if (!success) failCount.incrementAndGet()
-    }
-
-    val failCountTotal = failCount.get()
-    when {
-        failCountTotal == 0 -> {
-            println(
-                """
-            +++ All tests passed the specifications +++
-            ###      Integrity testing finished     ###
-            """.trimIndent()
-            )
-            logger.info { "Application started" }
-        }
-        failCountTotal > 0 -> {
-            println(
-                """
-
-                --- $failCountTotal test(s) did not pass the specifications ---
-                ###      Integrity testing finished     ###
-            """.trimIndent()
-
-            )
-            logger.error { "--- $failCountTotal test(s) fails ---" }
-            logger.info { "Shutdown application" }
-            logger.info { "Good bye" }
-            exitProcess(1)
-        }
-    }
-}
-
-private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
-    try {
-        action()
-        return true
-    } catch (t: Throwable) {
-        println(
-            """
-
-                ---  [$section]  ---
-                Failed with message: ${t.message}
-                ${t.stackTrace[0]}
-                ---  [$section]  ---
-
-            """.trimIndent()
-
-        )
-        return false
-    }
 }
 
 @ObsoleteCoroutinesApi

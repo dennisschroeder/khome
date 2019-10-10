@@ -6,14 +6,16 @@ import khome.scheduling.runOnceInSeconds
 import khome.core.entities.EntityInterface
 import khome.core.LifeCycleHandlerInterface
 import khome.Khome.Companion.unsubscribeStateChangeEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class LifeCycleHandler(handle: String, entityId: EntityInterface) : LifeCycleHandlerInterface {
-    override val lazyCancellation: Unit by lazy {
-        unsubscribeStateChangeEvent(handle)
-        logger.info { "Subscription to ${entityId.id} disabled." }
+class LifeCycleHandler(val handle: String, val entityId: EntityInterface) : LifeCycleHandlerInterface, CoroutineScope by CoroutineScope(Dispatchers.Default) {
+    override fun cancel() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun disable() = lazyCancellation
-    fun disableInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
-    fun disableInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
+    fun disable() = unsubscribeStateChangeEvent(handle)
+    fun disableInSeconds(seconds: Long) = launch { runOnceInSeconds(seconds) { disable() } }
+    fun disableInMinutes(minutes: Long) = launch { runOnceInMinutes(minutes) { disable() } }
 }

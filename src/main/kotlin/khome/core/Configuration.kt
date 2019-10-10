@@ -6,7 +6,6 @@ data class Configuration(
     var accessToken: String = "<create one in home-assistant>",
     var secure: Boolean = false,
     var startStateStream: Boolean = true,
-    var runIntegrityTests: Boolean = true,
     var logLevel: String = "INFO",
     var logTime: Boolean = true,
     var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",

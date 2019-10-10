@@ -3,29 +3,27 @@ package khome.scheduling
 import java.util.*
 import java.time.ZoneId
 import java.time.LocalDate
-import kotlin.concurrent.*
+import kotlinx.coroutines.*
 import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import khome.core.entities.Sun
+import khome.core.scheduledTask
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
-import khome.core.LifeCycleHandlerInterface
+import khome.core.scheduledPeriodicTask
 import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.subscribeSchedulerTestEvent
 import khome.core.entities.inputDateTime.AbstractTimeEntity
-import khome.Khome.Companion.subscribeSchedulerCancelEvents
 
 /**
  * Runs a [TimerTask] as daily routine starting at a specific date time
  *
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runDailyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
-    val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
-    return runDailyAt(timeOfDay, action)
+suspend fun runDailyAt(timeOfDay: String, action: suspend CoroutineScope.() -> Unit) {
+    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+    return runDailyAt(startDate, action)
 }
 
 /**
@@ -33,10 +31,9 @@ fun runDailyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): Life
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runDailyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runDailyAt(entity: AbstractTimeEntity, action: suspend CoroutineScope.() -> Unit) {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runDailyAt(dayTime, action)
 }
@@ -46,16 +43,16 @@ fun runDailyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCy
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
-    val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
+suspend fun runDailyAt(localDateTime: LocalDateTime, action: suspend CoroutineScope.() -> Unit) {
+
+    val startDate = localDateTime
     val nextStartDate = startDate.plusDays(1)
     val nextExecution =
-        if (nowIsAfter(timeOfDay)) nextStartDate else startDate
+        if (nowIsAfter(localDateTime)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.DAYS.toMillis(1)
-    return runEveryAt(periodInMilliseconds, nextExecution, action)
+    return runEveryAt(nextExecution, periodInMilliseconds, action)
 }
 
 /**
@@ -63,10 +60,9 @@ fun runDailyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandle
  *
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runHourlyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runHourlyAt(localDateTime: LocalDateTime, action: suspend CoroutineScope.() -> Unit) {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runHourlyAt(timeOfDay, action)
 }
@@ -76,10 +72,9 @@ fun runHourlyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): Lif
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runHourlyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runHourlyAt(entity: AbstractTimeEntity, action: suspend CoroutineScope.() -> Unit) {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runHourlyAt(dayTime, action)
 }
@@ -89,19 +84,18 @@ fun runHourlyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeC
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runHourlyAt(timeOfDay: String, action: suspend CoroutineScope.() -> Unit) {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
-    val hoursSinceStartDate = startDate.until(now, ChronoUnit.YEARS) + 1
+    val hoursSinceStartDate = startDate.until(now, ChronoUnit.HOURS) + 1
     val nextStartDate = startDate.plusHours(hoursSinceStartDate)
     val nextExecution =
         if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.HOURS.toMillis(1)
 
-    return runEveryAt(periodInMilliseconds, nextExecution, action)
+    return runEveryAt(nextExecution, periodInMilliseconds, action)
 }
 
 /**
@@ -109,10 +103,9 @@ fun runHourlyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandl
  *
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runMinutelyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runMinutelyAt(localDateTime: LocalDateTime, action: suspend CoroutineScope.() -> Unit) {
     val timeOfDay = determineTimeOfDayFromLocalDateTime(localDateTime)
     return runMinutelyAt(timeOfDay, action)
 }
@@ -122,10 +115,9 @@ fun runMinutelyAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): L
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runMinutelyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runMinutelyAt(entity: AbstractTimeEntity, action: suspend CoroutineScope.() -> Unit) {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runMinutelyAt(dayTime, action)
 }
@@ -135,10 +127,9 @@ fun runMinutelyAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): Lif
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  *
  */
-fun runMinutelyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runMinutelyAt(timeOfDay: String, action: suspend CoroutineScope.() -> Unit) {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     val now = LocalDateTime.now()
     val minutesSinceStartDate = startDate.until(now, ChronoUnit.MINUTES) + 1
@@ -147,7 +138,7 @@ fun runMinutelyAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHan
         if (nowIsAfter(timeOfDay)) nextStartDate else startDate
     val periodInMilliseconds = TimeUnit.MINUTES.toMillis(1)
 
-    return runEveryAt(periodInMilliseconds, nextExecution, action)
+    return runEveryAt(nextExecution, periodInMilliseconds, action)
 }
 
 private fun determineTimeOfDayFromLocalDateTime(localDateTime: LocalDateTime) =
@@ -166,13 +157,13 @@ private fun determineDayTimeFromTimeEntity(timeEntity: AbstractTimeEntity): Stri
  * @param executions The number of executions
  * @param action A TimerTask extension function.
  */
-inline fun runEveryTimePeriodFor(
+suspend fun runEveryTimePeriodFor(
     period: Long,
     executions: Int,
-    crossinline action: () -> Unit
-): LifeCycleHandler {
+    action: suspend () -> Unit
+) {
     var counter = 0
-    return runEveryAt(period, LocalDateTime.now()) {
+    return runEveryAt(LocalDateTime.now(), period) {
         action()
         counter++
         if (counter == executions) cancel()
@@ -185,33 +176,21 @@ inline fun runEveryTimePeriodFor(
  * @param period A period of time between execution of the [TimerTask] in milliseconds
  * @param localDateTime A local date time object representing the time the routine starts
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
  */
-fun runEveryAt(
-    period: Long,
+suspend fun runEveryAt(
     localDateTime: LocalDateTime,
-    action: TimerTask.() -> Unit
-): LifeCycleHandler {
-    val timerTask = timerTask(action)
-    subscribeSchedulerTestEvent { action(timerTask) }
-
-    val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive)
-        timer.scheduleAtFixedRate(timerTask, localDateTime.toDate(), period)
-    val lifeCycleHandler = LifeCycleHandler(timer)
-    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
-
-    return lifeCycleHandler
-}
+    period: Long,
+    action: suspend CoroutineScope.() -> Unit
+): Unit = scheduledPeriodicTask(localDateTime, period, Dispatchers.Default, action)
 
 /**
  * Runs a [TimerTask] once at a specific date time
  *
  * @param timeOfDay A string with the hour and minutes ("14:00") when to start the [TimerTask] gets executed.
  * @param action A TimerTask extension function
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun <T> runOnceAt(timeOfDay: String, action: suspend CoroutineScope.() -> T): T {
     val startDate = createLocalDateTimeFromTimeOfDayAsString(timeOfDay)
     return runOnceAt(startDate, action)
 }
@@ -221,9 +200,9 @@ fun runOnceAt(timeOfDay: String, action: TimerTask.() -> Unit): LifeCycleHandler
  *
  * @param entity An entity object that inherits from [AbstractTimeEntity] representing the time the [TimerTask] gets executed.
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun <T> runOnceAt(entity: AbstractTimeEntity, action: suspend CoroutineScope.() -> T): T {
     val dayTime = determineDayTimeFromTimeEntity(entity)
     return runOnceAt(dayTime, action)
 }
@@ -233,30 +212,21 @@ fun runOnceAt(entity: AbstractTimeEntity, action: TimerTask.() -> Unit): LifeCyc
  *
  * @param localDateTime A local date time object representing the time the routine starts.
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceAt(localDateTime: LocalDateTime, action: TimerTask.() -> Unit): LifeCycleHandler {
-    val timerTask = timerTask(action)
-    subscribeSchedulerTestEvent { action(timerTask) }
-
-    val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive)
-        timer.schedule(timerTask, localDateTime.toDate())
-
-    val lifeCycleHandler = LifeCycleHandler(timer)
-    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
-
-    return lifeCycleHandler
-}
+suspend fun <T> runOnceAt(
+    localDateTime: LocalDateTime,
+    action: suspend CoroutineScope.() -> T
+): T = scheduledTask(localDateTime, Dispatchers.Default, action)
 
 /**
  * Runs a [TimerTask] once in Hours after the function was called
  *
  * @param hours The time in minutes when the [TimerTask] will be executed once
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceInHours(hours: Int, action: TimerTask.() -> Unit) =
+suspend fun runOnceInHours(hours: Long, action: suspend CoroutineScope.() -> Unit) =
     runOnceInSeconds((hours * 60) * 60, action)
 
 /**
@@ -264,9 +234,9 @@ fun runOnceInHours(hours: Int, action: TimerTask.() -> Unit) =
  *
  * @param minutes The time in minutes when the [TimerTask] will be executed once
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceInMinutes(minutes: Int, action: TimerTask.() -> Unit) =
+suspend fun <T> runOnceInMinutes(minutes: Long, action: suspend CoroutineScope.() -> T): T =
     runOnceInSeconds(minutes * 60, action)
 
 /**
@@ -274,21 +244,13 @@ fun runOnceInMinutes(minutes: Int, action: TimerTask.() -> Unit) =
  *
  * @param seconds The time in minutes when the [TimerTask] will be executed once
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runOnceInSeconds(seconds: Int, action: TimerTask.() -> Unit): LifeCycleHandler {
-    val timerTask = timerTask(action)
-    subscribeSchedulerTestEvent { action(timerTask) }
+suspend fun <T> runOnceInSeconds(
+    seconds: Long,
+    action: suspend CoroutineScope.() -> T
+): T = scheduledTask(seconds * 1000, Dispatchers.Default, action)
 
-    val timer = Timer("scheduler", false)
-    if (!isSandBoxModeActive)
-        timer.schedule(timerTask, seconds * 1000L)
-
-    val lifeCycleHandler = LifeCycleHandler(timer)
-    subscribeSchedulerCancelEvents { lifeCycleHandler.cancel() }
-
-    return lifeCycleHandler
-}
 
 private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     val (hour, minute) = timeOfDay.split(":")
@@ -300,16 +262,19 @@ private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDa
  *
  * @param offsetInMinutes Define an offset for the execution time. Prefix an - for negative and + for positive offset.
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runEverySunRise(
+    offsetInMinutes: String = "_",
+    action: suspend CoroutineScope.() -> Unit
+) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     val offsetDirection = offsetInMinutes.first()
     val minutes = offsetInMinutes.substring(1)
 
-    return runEveryAt(dailyPeriodInMillis, now) {
+    runEveryAt(now, dailyPeriodInMillis) {
         var nextSunrise = Sun.nextSunrise
         when (offsetDirection) {
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
@@ -325,16 +290,16 @@ fun runEverySunRise(offsetInMinutes: String = "_", action: TimerTask.() -> Unit)
  *
  * @param offsetInMinutes Define an offset for the execution time. Prefix an - for negative and + for positive offset
  * @param action A TimerTask extension function.
- * @return [LifeCycleHandler]
+ * @return [Job]
  */
-fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit): LifeCycleHandler {
+suspend fun runEverySunSet(offsetInMinutes: String = "_", action: suspend CoroutineScope.() -> Unit) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
     val offsetDirection = offsetInMinutes.first()
     val minutes = offsetInMinutes.substring(1)
 
-    return runEveryAt(dailyPeriodInMillis, now) {
+    runEveryAt(now, dailyPeriodInMillis) {
         var nextSunset = Sun.nextSunset
         when (offsetDirection) {
             '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
@@ -342,38 +307,6 @@ fun runEverySunSet(offsetInMinutes: String = "_", action: TimerTask.() -> Unit):
         }
         runOnceAt(nextSunset, action)
     }
-}
-
-/**
- * The LifeCycleHandler is the return value for every scheduling function.
- * It enables to handle the lifecycle of the scheduled [TimerTask].
- */
-class LifeCycleHandler(private val timer: Timer) : LifeCycleHandlerInterface {
-    /**
-     * The delegation of the cancel method to the lazy execution
-     */
-    override val lazyCancellation by lazy {
-        timer.cancel()
-    }
-
-    /**
-     * Immediately cancel the scheduled task
-     */
-    fun cancel() = lazyCancellation
-
-    /**
-     * Cancel scheduled task in configurable amount of seconds.
-     *
-     * @param seconds The amount of seconds till the scheduled task should be canceled
-     */
-    fun cancelInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
-
-    /**
-     * Cancel scheduled task in configurable amount of minutes.
-     *
-     * @param minutes The amount of minutes till the scheduled task should be canceled
-     */
-    fun cancelInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
 }
 
 internal fun LocalDateTime.toDate(): Date = Date
