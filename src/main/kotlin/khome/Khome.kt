@@ -21,6 +21,11 @@ import java.util.concurrent.atomic.AtomicInteger
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
+import org.koin.core.KoinApplication
+import org.koin.core.logger.Level
+import org.koin.core.module.Module
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 /**
  * The main entry point to start your application
@@ -43,6 +48,14 @@ class Khome {
         private var dirty = false
         internal val states = hashMapOf<String, State>()
         internal val services = hashMapOf<String, List<String>>()
+
+        /**
+         * The Khome encapsulated Koin context
+         * https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
+         */
+
+        internal var koinApp: KoinApplication? = null
+        internal var entitiesModule: Module? = null
 
         /**
          * STATE CHANGE EVENTS
@@ -182,6 +195,9 @@ class Khome {
         System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
     }
 
+    fun declareEntities(entityDeclarations: Module.() -> Unit) =
+        module(createdAtStart = true, moduleDeclaration = entityDeclarations).let { entitiesModule = it }
+
     @KtorExperimentalAPI
     private val client = HttpClient(CIO).config {
         install(WebSockets)
@@ -228,6 +244,11 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 
     if (config.startStateStream)
         startStateStream()
+
+    Khome.koinApp = koinApplication {
+        printLogger(Level.DEBUG)
+        Khome.entitiesModule?.let { modules(it) }
+    }
 
     reactOnStateChangeEvents()
 
