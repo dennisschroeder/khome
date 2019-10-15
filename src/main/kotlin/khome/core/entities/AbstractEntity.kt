@@ -7,7 +7,7 @@ import khome.listening.getState
 import khome.core.entities.exceptions.EntityNotFoundException
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
 
-open class AbstractEntity<StateValueType>(
+abstract class AbstractEntity<StateValueType>(
     override val domain: String,
     override val name: String
 ) : KhomeKoinComponent(), EntityInterface {

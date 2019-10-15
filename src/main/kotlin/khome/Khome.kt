@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
+import khome.Khome.Companion.koinApp
 import org.koin.core.KoinApplication
 import org.koin.core.logger.Level
 import org.koin.core.module.Module
@@ -245,10 +246,10 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
     if (config.startStateStream)
         startStateStream()
 
-    Khome.koinApp = koinApplication {
+    koinApp = koinApplication {
         printLogger(Level.DEBUG)
         Khome.entitiesModule?.let { modules(it) }
-    }
+    }.createEagerInstances()
 
     reactOnStateChangeEvents()
 
