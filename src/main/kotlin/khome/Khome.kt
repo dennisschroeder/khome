@@ -130,31 +130,6 @@ class Khome {
 
         private val config = Configuration()
 
-        private fun resetApplicationState() {
-            states.clear()
-            services.clear()
-            resultEvents.clear()
-            errorResultEvents.clear()
-            stateChangeEvents.clear()
-            schedulerCancelEvents.clear()
-            deactivateSandBoxMode()
-        }
-
-        private fun cancelAllScheduledCallbacks() =
-            schedulerCancelEvents
-                .listeners
-                .forEach { action ->
-                    action.value.invoke("Cancel all scheduled callbacks")
-
-                }
-
-        internal fun reconnect() {
-            logger.debug { "Reconnecting and therefore resetting the application state" }
-            dirty = true
-            resetApplicationState()
-            cancelAllScheduledCallbacks()
-        }
-
         /**
          * Since the Homeassistant web socket API needs an incrementing
          * id when calling it, we need to provide the callService feature
@@ -199,7 +174,7 @@ class Khome {
         System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
     }
 
-    fun declareEntities(entityDeclarations: Module.() -> Unit) =
+    fun beans(entityDeclarations: Module.() -> Unit) =
         module(createdAtStart = true, moduleDeclaration = entityDeclarations).let { entitiesModule = it }
 
     @KtorExperimentalAPI
