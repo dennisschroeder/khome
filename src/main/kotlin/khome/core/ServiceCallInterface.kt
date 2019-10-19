@@ -1,5 +1,6 @@
 package khome.core
 
-interface MessageInterface {
+interface ServiceCallInterface {
+    var id: Int
     fun toJson(): String = serializer.toJson(this)
 }

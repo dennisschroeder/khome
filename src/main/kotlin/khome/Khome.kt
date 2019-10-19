@@ -21,6 +21,15 @@ import java.util.concurrent.atomic.AtomicInteger
 import khome.core.exceptions.EventStreamException
 import khome.Khome.Companion.emitErrorResultEvent
 import khome.Khome.Companion.emitStateChangeEvent
+import khome.Khome.Companion.koinApp
+import khome.Khome.Companion.services
+import khome.calling.Exceptions.DomainNotFoundException
+import khome.calling.ServiceCaller
+import org.koin.core.KoinApplication
+import org.koin.core.logger.Level
+import org.koin.core.module.Module
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 /**
  * The main entry point to start your application
@@ -43,6 +52,14 @@ class Khome {
         private var dirty = false
         internal val states = hashMapOf<String, State>()
         internal val services = hashMapOf<String, List<String>>()
+
+        /**
+         * The Khome encapsulated Koin context
+         * https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
+         */
+
+        internal var koinApp: KoinApplication? = null
+        internal var entitiesModule: Module? = null
 
         /**
          * STATE CHANGE EVENTS
@@ -113,31 +130,6 @@ class Khome {
 
         private val config = Configuration()
 
-        private fun resetApplicationState() {
-            states.clear()
-            services.clear()
-            resultEvents.clear()
-            errorResultEvents.clear()
-            stateChangeEvents.clear()
-            schedulerCancelEvents.clear()
-            deactivateSandBoxMode()
-        }
-
-        private fun cancelAllScheduledCallbacks() =
-            schedulerCancelEvents
-                .listeners
-                .forEach { action ->
-                    action.value.invoke("Cancel all scheduled callbacks")
-
-                }
-
-        internal fun reconnect() {
-            logger.debug { "Reconnecting and therefore resetting the application state" }
-            dirty = true
-            resetApplicationState()
-            cancelAllScheduledCallbacks()
-        }
-
         /**
          * Since the Homeassistant web socket API needs an incrementing
          * id when calling it, we need to provide the callService feature
@@ -181,6 +173,9 @@ class Khome {
         System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
         System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
     }
+
+    fun beans(entityDeclarations: Module.() -> Unit) =
+        module(createdAtStart = true, moduleDeclaration = entityDeclarations).let { entitiesModule = it }
 
     @KtorExperimentalAPI
     private val client = HttpClient(CIO).config {
@@ -228,6 +223,11 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 
     if (config.startStateStream)
         startStateStream()
+
+    koinApp = koinApplication {
+        printLogger(Level.DEBUG)
+        Khome.entitiesModule?.let { modules(it) }
+    }
 
     reactOnStateChangeEvents()
 

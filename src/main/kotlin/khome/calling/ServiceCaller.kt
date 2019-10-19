@@ -10,6 +10,10 @@ import khome.core.entities.EntityInterface
 import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
+import khome.Khome.Companion.services
+import khome.calling.Exceptions.DomainNotFoundException
+import khome.core.dependencyInjection.KhomeKoinComponent
+import javax.management.ServiceNotFoundException
 
 /**
  * A function to build an [ServiceCaller] object, which is the base
@@ -20,23 +24,16 @@ import io.ktor.http.cio.websocket.WebSocketSession
  * @see ServiceCaller
  */
 @ObsoleteCoroutinesApi
-fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) = launch(callServiceContext) {
-        val callService = ServiceCaller(
-            idCounter.incrementAndGet(),
-            "call_service",
-            null,
-            null,
-            null
-        ).apply(init)
-
-    callWebSocketApi(callService.toJson())
-    logger.info { "Called Service with: " + callService.toJson() }
-    }
+fun WebSocketSession.callService(payload: ServiceCaller) = launch(callServiceContext) {
+    payload.id = idCounter.incrementAndGet()
+    callWebSocketApi(payload.toJson())
+    logger.info { "Called Service with: " + payload.toJson() }
+}
 
 
-internal data class EntityId(override var entityId: String?) : ServiceDataInterface
+open class EntityId(override var entityId: String?) : ServiceDataInterface
 
-internal data class EntityIds(
+data class EntityIds(
     @SerializedName("entity_id") var entityIds: String,
     override var entityId: String?
 ) : ServiceDataInterface
@@ -50,13 +47,13 @@ internal data class EntityIds(
  * @property service One of the services that are available for the given [domain].
  * @property serviceData ServiceData object to send context data that fits to the given [service].
  */
-data class ServiceCaller(
-    private var id: Int,
-    private val type: String = "call_service",
-    var domain: DomainInterface?,
-    var service: ServiceInterface?,
-    var serviceData: ServiceDataInterface?
-) : MessageInterface {
+abstract class ServiceCaller : KhomeKoinComponent(), MessageInterface {
+    var id: Int = 0
+    private val type: String = "call_service"
+    abstract var domain: DomainInterface
+    abstract var service: ServiceInterface
+    abstract var serviceData: ServiceDataInterface
+
     /**
      * Some services only need an entity id as context data.
      * This function serves the needs for that.
