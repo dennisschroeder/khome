@@ -9,4 +9,4 @@ abstract class KhomeKoinComponent : KoinComponent {
     override fun getKoin(): Koin = Khome.koinApp?.koin!!
 }
 
-inline fun <reified T>getEntity():T = object : KhomeKoinComponent() {}.get()
+inline fun <reified T>ref():T = object : KhomeKoinComponent() {}.get()
