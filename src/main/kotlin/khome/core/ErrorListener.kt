@@ -1,5 +1,5 @@
 package khome.core
 
-import khome.Khome.Companion.subscribeErrorResultEvent
+import khome.Khome.Companion.failureResponseEvents
 
-fun listenCallServiceError(action: ErrorResult.() -> Unit) = subscribeErrorResultEvent(callback= action)
+fun listenCallServiceError(action: ErrorResult.() -> Unit) = failureResponseEvents.subscribe(callback= action)

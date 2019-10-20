@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.subscribeStateChangeEvent
+import khome.Khome.Companion.stateChangeEvents
 import khome.listening.exceptions.EntityStateNotFoundException
 
 fun listenState(entity: EntityInterface, callback: StateListener.() -> Unit): LifeCycleHandler =
@@ -25,7 +25,7 @@ internal inline fun registerStateChangeEvent(
     val handle = UUID.randomUUID().toString()
     val lifeCycleHandler = LifeCycleHandler(handle, entity)
 
-    subscribeStateChangeEvent(handle) {
+    stateChangeEvents.subscribe(handle) {
         if (event.data.entityId == entity.id) {
             val stateListener = StateListener(
                 entityId = entity.id,

@@ -10,10 +10,7 @@ import khome.core.entities.EntityInterface
 import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.cio.websocket.WebSocketSession
-import khome.Khome.Companion.services
-import khome.calling.Exceptions.DomainNotFoundException
-import khome.core.dependencyInjection.KhomeKoinComponent
-import javax.management.ServiceNotFoundException
+import khome.core.dependencyInjection.KhomePublicKoinComponent
 
 /**
  * A function to build an [ServiceCaller] object, which is the base
@@ -47,7 +44,7 @@ data class EntityIds(
  * @property service One of the services that are available for the given [domain].
  * @property serviceData ServiceData object to send context data that fits to the given [service].
  */
-abstract class ServiceCaller : KhomeKoinComponent(), MessageInterface {
+abstract class ServiceCaller : KhomePublicKoinComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
     abstract var domain: DomainInterface

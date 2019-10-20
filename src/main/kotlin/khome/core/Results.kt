@@ -11,7 +11,8 @@ data class EventResult(val id: Int, val type: String, val event: Event) :
     }
 }
 
-data class State(val entityId: String, val lastChanged: Date, val state: Any, val attributes: Map<String, Any>) {
+data class State(val entityId: String, val lastChanged: Date, val state: Any, val attributes: Map<String, Any>) :
+    MessageInterface {
     inline fun <reified T> getValue(): T {
         if (state !is T) throw InvalidStateValueTypeException("State value is of type: ${state.javaClass.kotlin.simpleName}.")
 

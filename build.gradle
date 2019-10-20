@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.dennisschroeder'
-version '0.1.0-FEATURE-KOIN'
+version '0.1.0-MODULIZE'
 
 repositories {
     mavenLocal()

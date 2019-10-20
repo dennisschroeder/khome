@@ -13,23 +13,30 @@ import io.ktor.client.engine.cio.CIO
 import khome.Khome.Companion.idCounter
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.client.features.websocket.*
-import khome.Khome.Companion.emitResultEvent
 import kotlinx.coroutines.channels.consumeEach
-import khome.Khome.Companion.stateListenerCount
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import khome.core.exceptions.EventStreamException
-import khome.Khome.Companion.emitErrorResultEvent
-import khome.Khome.Companion.emitStateChangeEvent
-import khome.Khome.Companion.koinApp
-import khome.Khome.Companion.services
-import khome.calling.Exceptions.DomainNotFoundException
-import khome.calling.ServiceCaller
-import org.koin.core.KoinApplication
+import khome.Khome.Companion.failureResponseEvents
+import khome.Khome.Companion.stateChangeEvents
+import khome.Khome.Companion.successResponseEvents
+import khome.core.dependencyInjection.KhomeInternalKoinComponent
+import khome.core.dependencyInjection.KhomeInternalKoinContext
+import khome.core.dependencyInjection.KhomePublicKoinContext
+import khome.core.dependencyInjection.internalRef
+import khome.core.eventHandling.*
+import khome.core.eventHandling.StateChangeEvents
+import khome.core.eventHandling.SuccessResponseEvents
+import org.koin.core.get
+import org.koin.core.inject
 import org.koin.core.logger.Level
 import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import java.lang.IllegalStateException
+
+internal typealias ServiceContext = ExecutorCoroutineDispatcher
+internal typealias CallerID = AtomicInteger
 
 /**
  * The main entry point to start your application
@@ -37,7 +44,25 @@ import org.koin.dsl.module
  * @param init The type safe builder function to access the receiver
  * @return instance of Khome class instantiated with default values.
  */
+@ObsoleteCoroutinesApi
 fun initialize(init: Khome.() -> Unit): Khome {
+    KhomeInternalKoinContext.internalModule = module(createdAtStart = true) {
+        single { StateStore() }
+        single { ServiceStore() }
+        single { StateChangeEvents() }
+        single { SuccessResponseEvents() }
+        single { FailureResponseEvents() }
+        single { newSingleThreadContext("ServiceContext") }
+        single { AtomicInteger(0) }
+        single<ConfigurationInterface>(override = true) { Configuration() }
+    }
+
+    KhomeInternalKoinContext.application = koinApplication {
+        printLogger(Level.DEBUG)
+        val internalModule = checkNotNull(KhomeInternalKoinContext.internalModule) { "No KoinApplication found" }
+        modules(internalModule)
+    }
+
     return Khome().apply(init)
 }
 
@@ -48,87 +73,14 @@ fun initialize(init: Khome.() -> Unit): Khome {
  * @author Dennis Schröder
  */
 class Khome {
-    companion object {
-        private var dirty = false
-        internal val states = hashMapOf<String, State>()
-        internal val services = hashMapOf<String, List<String>>()
+    internal companion object : KhomeInternalKoinComponent() {
+        internal val states = get<StateStore>()
+        internal val services = get<ServiceStore>()
+        internal val stateChangeEvents = get<StateChangeEvents>()
+        internal val successResponseEvents = get<SuccessResponseEvents>()
+        internal val failureResponseEvents =   get<FailureResponseEvents>()
 
-        /**
-         * The Khome encapsulated Koin context
-         * https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
-         */
-
-        internal var koinApp: KoinApplication? = null
-        internal var entitiesModule: Module? = null
-
-        /**
-         * STATE CHANGE EVENTS
-         */
-
-        private val stateChangeEvents = Event<EventResult>()
-
-        internal val stateListenerCount get() = stateChangeEvents.listeners.size
-
-        internal fun subscribeStateChangeEvent(handle: String? = null, callback: EventResult.() -> Unit) {
-            if (handle == null)
-                stateChangeEvents += callback
-            else
-                stateChangeEvents[handle] = callback
-        }
-
-        internal fun unsubscribeStateChangeEvent(handle: String) = stateChangeEvents.minus(handle)
-
-        internal fun emitStateChangeEvent(eventData: EventResult) = stateChangeEvents(eventData)
-
-        /**
-         * SCHEDULER CANCEL EVENTS
-         */
-        private val schedulerCancelEvents = Event<String>()
-
-        internal fun subscribeSchedulerCancelEvents(handle: String? = null, callback: String.() -> Unit) {
-            if (handle == null)
-                schedulerCancelEvents += callback
-            else
-                schedulerCancelEvents[handle] = callback
-        }
-
-        internal fun unsubscribeSchedulerCancelEvents(handle: String) = schedulerCancelEvents.minus(handle)
-
-        internal fun emitSchedulerCancelEvents(eventData: String) = schedulerCancelEvents(eventData)
-
-        /**
-         * RESULT EVENTS
-         */
-        private val resultEvents = Event<Result>()
-
-        internal fun subscribeResultEvent(handle: String? = null, callback: Result.() -> Unit) {
-            if (handle == null)
-                resultEvents += callback
-            else
-                resultEvents[handle] = callback
-        }
-
-        internal fun unsubscribeResultEvent(handle: String) = resultEvents.minusAssign(handle)
-
-        internal fun emitResultEvent(eventData: Result) = resultEvents(eventData)
-
-        /**
-         * ERROR RESULT EVENTS
-         */
-        private val errorResultEvents = Event<ErrorResult>()
-
-        internal fun subscribeErrorResultEvent(handle: String? = null, callback: ErrorResult.() -> Unit) {
-            if (handle == null)
-                errorResultEvents += callback
-            else
-                errorResultEvents[handle] = callback
-        }
-
-        internal fun unsubscribeErrorResultEvent(handle: String) = errorResultEvents.minusAssign(handle)
-
-        internal fun emitErrorResultEvent(eventData: ErrorResult) = errorResultEvents(eventData)
-
-        private val config = Configuration()
+        private val config = get<ConfigurationInterface>()
 
         /**
          * Since the Homeassistant web socket API needs an incrementing
@@ -137,7 +89,7 @@ class Khome {
          *
          * @see "https://developers.home-assistant.io/docs/en/external_api_websocket.html#message-format"
          */
-        internal var idCounter = AtomicInteger(0)
+        internal var idCounter = internalRef<CallerID>()
 
         private var sandboxMode = AtomicBoolean(false)
 
@@ -152,7 +104,7 @@ class Khome {
          *  @see khome.calling.callService
          */
         @ObsoleteCoroutinesApi
-        internal val callServiceContext = newSingleThreadContext("ServiceContext")
+        internal val callServiceContext = get<ServiceContext>()
     }
 
     private val method = HttpMethod.Get
@@ -165,7 +117,7 @@ class Khome {
      * @param init Lamba with receiver to configure Khome
      * @see Configuration
      */
-    fun configure(init: Configuration.() -> Unit) {
+    fun configure(init: ConfigurationInterface.() -> Unit) {
         config.apply(init)
 
         System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
@@ -175,7 +127,10 @@ class Khome {
     }
 
     fun beans(entityDeclarations: Module.() -> Unit) =
-        module(createdAtStart = true, moduleDeclaration = entityDeclarations).let { entitiesModule = it }
+        module(
+            createdAtStart = true,
+            moduleDeclaration = entityDeclarations
+        ).let { KhomePublicKoinContext.publicModule = it }
 
     @KtorExperimentalAPI
     private val client = HttpClient(CIO).config {
@@ -215,7 +170,7 @@ class Khome {
 
 @ObsoleteCoroutinesApi
 private suspend fun DefaultClientWebSocketSession.runApplication(
-    config: Configuration,
+    config: ConfigurationInterface,
     reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
 ) {
     authenticate(config.accessToken)
@@ -224,15 +179,16 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
     if (config.startStateStream)
         startStateStream()
 
-    koinApp = koinApplication {
+    KhomePublicKoinContext.application = koinApplication {
         printLogger(Level.DEBUG)
-        Khome.entitiesModule?.let { modules(it) }
+        KhomePublicKoinContext.publicModule?.let { modules(it) }
+            ?: throw IllegalStateException("Public module not initiated")
     }
 
     reactOnStateChangeEvents()
 
     if (successfullyStartedStateStream()) {
-        logger.debug { "$stateListenerCount callbacks registered" }
+        logger.debug { "${stateChangeEvents.stateListenerCount} callbacks registered" }
         consumeStateChangesByTriggeringEvents()
     } else
         throw EventStreamException("Could not subscribe to event stream!")
@@ -247,8 +203,8 @@ private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() = c
         when (type) {
             "event" -> {
                 updateLocalStateStore(frame)
-                emitStateChangeEvent(frame.asObject())
-                logger.debug { "$stateListenerCount callbacks registered" }
+                stateChangeEvents.emit(frame.asObject())
+                logger.debug { "${stateChangeEvents.stateListenerCount} callbacks registered" }
                 logger.debug {
                     """
                             ${frame.asObject<EventResult>().event.data.entityId}: OldState: ${frame.asObject<EventResult>().event.data.oldState.getValue<Any>()} || NewState: ${frame.asObject<EventResult>().event.data.newState.getValue<Any>()}
@@ -270,8 +226,8 @@ private fun resolveResultTypeAndEmitEvents(frame: Frame) {
         !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
         resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
         resultData.success -> {
-            emitResultEvent(frame.asObject())
-            logResults(resultData)
+            successResponseEvents.subscribe { logResults(resultData) }
+            successResponseEvents.emit(frame.asObject())
         }
     }
 }
@@ -304,8 +260,8 @@ private fun emitResultErrorEventAndPrintLogMessage(resultData: Result) {
     val errorCode = resultData.error?.get("code")!!
     val errorMessage = resultData.error.get("message")!!
 
-    emitErrorResultEvent(ErrorResult(errorCode, errorMessage))
-    logger.error { "$errorCode: $errorMessage" }
+    failureResponseEvents.subscribe { logger.error { "$errorCode: $errorMessage" } }
+    failureResponseEvents.emit(ErrorResult(errorCode, errorMessage))
 }
 
 private suspend fun WebSocketSession.updateLocalStateStore(frame: Frame) {
@@ -321,12 +277,10 @@ private suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
     consumeMessage<ServiceResult>()
         .result
         .forEach { (domain, services) ->
-            val serviceCollection = mutableListOf<String>()
             services.forEach { (name, _) ->
-                serviceCollection.add(name)
+                Khome.services[domain] = listOf(name)
                 logger.debug { "Fetched service: $name from domain: $domain" }
             }
-            Khome.services[domain] = serviceCollection
         }
 }
 
@@ -336,7 +290,7 @@ private suspend fun WebSocketSession.startStateStream() {
         .result
         .forEach { state ->
             states[state.entityId] = state
-            logger.debug { "Fetched state with data: $state" }
+            logger.debug { "Fetched state with data: ${states[state.entityId]}" }
         }
 
     callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())

@@ -2,21 +2,25 @@ package khome.core.entities
 
 import khome.Khome
 import khome.core.State
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.StateStore
+import khome.core.dependencyInjection.KhomePublicKoinComponent
+import khome.core.dependencyInjection.internalRef
 import khome.listening.getState
 import khome.core.entities.exceptions.EntityNotFoundException
+import khome.core.logger
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
 
 abstract class AbstractEntity<StateValueType>(
     override val domain: String,
     override val name: String
-) : KhomeKoinComponent(), EntityInterface {
+) : KhomePublicKoinComponent(), EntityInterface {
 
     final override val id: String get() = "$domain.$name"
     override val state: State get() = getState(this)
+    private val stateStore = internalRef<StateStore>()
 
     init {
-        if (id !in Khome.states) throw EntityNotFoundException("The Entity with id: $id was not found.")
+        if (id !in stateStore) throw EntityNotFoundException("The Entity with id: $id was not found.")
     }
 
     override val attributes: Map<String, Any> get() = state.attributes
