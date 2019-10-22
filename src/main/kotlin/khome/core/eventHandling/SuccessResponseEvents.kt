@@ -1,7 +1,6 @@
 package khome.core.eventHandling
 
 import khome.core.Result
-import khome.core.dependencyInjection.internalRef
 
 internal class SuccessResponseEvents : Event<Result>(), EventInterface<Result> {
 

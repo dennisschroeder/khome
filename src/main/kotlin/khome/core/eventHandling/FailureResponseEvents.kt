@@ -1,8 +1,6 @@
 package khome.core.eventHandling
 
 import khome.core.ErrorResult
-import khome.core.Result
-import khome.core.dependencyInjection.internalRef
 
 internal class FailureResponseEvents : Event<ErrorResult>(), EventInterface<ErrorResult> {
 
