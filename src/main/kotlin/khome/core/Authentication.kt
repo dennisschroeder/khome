@@ -1,12 +1,13 @@
 package khome.core
 
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import khome.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import io.ktor.http.cio.websocket.WebSocketSession
 import kotlin.system.exitProcess
 
 @ObsoleteCoroutinesApi
-internal suspend fun WebSocketSession.authenticate(token: String) {
+internal suspend fun DefaultClientWebSocketSession.authenticate(token: String) {
     val initMessage = consumeMessage<AuthResponse>()
 
     if (initMessage.authRequired) {
