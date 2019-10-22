@@ -9,7 +9,9 @@ import khome.Khome.Companion.idCounter
 import khome.core.entities.EntityInterface
 import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.http.cio.websocket.WebSocketSession
+import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomePublicKoinComponent
 
 /**
@@ -20,19 +22,18 @@ import khome.core.dependencyInjection.KhomePublicKoinComponent
  *
  * @see ServiceCaller
  */
-@ObsoleteCoroutinesApi
-fun WebSocketSession.callService(payload: ServiceCaller) = launch(callServiceContext) {
+@KtorExperimentalAPI
+fun DefaultClientWebSocketSession.callService(payload: ServiceCaller) = launch(callServiceContext) {
     payload.id = idCounter.incrementAndGet()
     callWebSocketApi(payload.toJson())
     logger.info { "Called Service with: " + payload.toJson() }
 }
 
-
-open class EntityId(override var entityId: String?) : ServiceDataInterface
+data class EntityId(override var entityId: String?) : ServiceDataInterface
 
 data class EntityIds(
     @SerializedName("entity_id") var entityIds: String,
-    override var entityId: String?
+    @Transient override var entityId: String?
 ) : ServiceDataInterface
 
 /**
@@ -50,14 +51,6 @@ abstract class ServiceCaller : KhomePublicKoinComponent(), MessageInterface {
     abstract var domain: DomainInterface
     abstract var service: ServiceInterface
     abstract var serviceData: ServiceDataInterface
-
-    /**
-     * Some services only need an entity id as context data.
-     * This function serves the needs for that.
-     */
-    fun entityId(entity: EntityInterface) {
-        serviceData = EntityId(entity.id)
-    }
 }
 
 /**
