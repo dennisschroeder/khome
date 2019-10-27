@@ -1,21 +1,20 @@
 package khome.listening
 
-import khome.core.logger
-import khome.scheduling.runOnceInMinutes
-import khome.scheduling.runOnceInSeconds
+import io.ktor.util.KtorExperimentalAPI
 import khome.core.entities.EntityInterface
 import khome.core.LifeCycleHandlerInterface
-import khome.Khome.Companion.unsubscribeStateChangeEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.eventHandling.StateChangeEvents
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.core.inject
 
-class LifeCycleHandler(val handle: String, val entityId: EntityInterface) : LifeCycleHandlerInterface, CoroutineScope by CoroutineScope(Dispatchers.Default) {
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
+class LifeCycleHandler(val handle: String, val entityId: EntityInterface) : LifeCycleHandlerInterface, KhomeKoinComponent() {
+    private val stateChangeEvents: StateChangeEvents by inject()
     override fun cancel() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun disable() = unsubscribeStateChangeEvent(handle)
-    fun disableInSeconds(seconds: Long) = launch { runOnceInSeconds(seconds) { disable() } }
-    fun disableInMinutes(minutes: Long) = launch { runOnceInMinutes(minutes) { disable() } }
+    fun disable() = stateChangeEvents.unsubscribe(handle)
 }

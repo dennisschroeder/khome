@@ -1,14 +1,26 @@
 package khome.core
 
-data class Configuration(
-    var host: String = "localhost",
-    var port: Int = 8123,
-    var accessToken: String = "<create one in home-assistant>",
-    var secure: Boolean = false,
-    var startStateStream: Boolean = true,
-    var logLevel: String = "INFO",
-    var logTime: Boolean = true,
-    var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",
-    var logOutput: String = "System.out",
-    var reConnectionPeriod: Long = 30000
-)
+abstract class Configuration(
+    override var host: String = "localhost",
+    override var port: Int = 8123,
+    override var accessToken: String = "<create one in home-assistant>",
+    override var secure: Boolean = false,
+    override var startStateStream: Boolean = true,
+    override var logLevel: String = "INFO",
+    override var logTime: Boolean = true,
+    override var logTimeFormat: String = "yyyy-MM-dd HH:mm:ss",
+    override var logOutput: String = "System.out"
+) : ConfigurationInterface
+
+
+interface ConfigurationInterface {
+    var host: String
+    var port: Int
+    var accessToken: String
+    var secure: Boolean
+    var startStateStream: Boolean
+    var logLevel: String
+    var logTime: Boolean
+    var logTimeFormat: String
+    var logOutput: String
+}

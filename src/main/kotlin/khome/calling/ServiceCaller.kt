@@ -5,15 +5,10 @@ import khome.core.logger
 import kotlinx.coroutines.*
 import khome.core.serializer
 import khome.core.MessageInterface
-import khome.Khome.Companion.idCounter
-import khome.core.entities.EntityInterface
-import khome.Khome.Companion.callServiceContext
 import com.google.gson.annotations.SerializedName
-import io.ktor.http.cio.websocket.WebSocketSession
-import khome.Khome.Companion.services
-import khome.calling.Exceptions.DomainNotFoundException
-import khome.core.dependencyInjection.KhomeKoinComponent
-import javax.management.ServiceNotFoundException
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.ktor.util.KtorExperimentalAPI
+import khome.core.dependencyInjection.*
 
 /**
  * A function to build an [ServiceCaller] object, which is the base
@@ -24,18 +19,22 @@ import javax.management.ServiceNotFoundException
  * @see ServiceCaller
  */
 @ObsoleteCoroutinesApi
-fun WebSocketSession.callService(payload: ServiceCaller) = launch(callServiceContext) {
-    payload.id = idCounter.incrementAndGet()
-    callWebSocketApi(payload.toJson())
-    logger.info { "Called Service with: " + payload.toJson() }
+@KtorExperimentalAPI
+inline fun <reified CallType: ServiceCaller>DefaultClientWebSocketSession.callService() {
+    val servicePayload: CallType by inject()
+    val serviceCoroutineContext: ServiceCoroutineContext by inject()
+    launch(serviceCoroutineContext) {
+        servicePayload.id = get<CallerID>().incrementAndGet()
+        callWebSocketApi(servicePayload.toJson())
+        logger.info { "Called Service with: " + servicePayload.toJson() }
+    }
 }
 
-
-open class EntityId(override var entityId: String?) : ServiceDataInterface
+data class EntityId(override var entityId: String?) : ServiceDataInterface
 
 data class EntityIds(
     @SerializedName("entity_id") var entityIds: String,
-    override var entityId: String?
+    @Transient override var entityId: String?
 ) : ServiceDataInterface
 
 /**
@@ -47,20 +46,14 @@ data class EntityIds(
  * @property service One of the services that are available for the given [domain].
  * @property serviceData ServiceData object to send context data that fits to the given [service].
  */
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
 abstract class ServiceCaller : KhomeKoinComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
     abstract var domain: DomainInterface
     abstract var service: ServiceInterface
     abstract var serviceData: ServiceDataInterface
-
-    /**
-     * Some services only need an entity id as context data.
-     * This function serves the needs for that.
-     */
-    fun entityId(entity: EntityInterface) {
-        serviceData = EntityId(entity.id)
-    }
 }
 
 /**

@@ -1,4 +1,4 @@
-package khome.core
+package khome.core.eventHandling
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
@@ -6,16 +6,16 @@ import java.util.function.Consumer
 typealias Handler<EventType> = Consumer<EventType>
 internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
 
-class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
+open class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
 
     private val list = ConcurrentHashMap<String, Handler<T>>()
 
     private var nextUnnamedIndex = 0L
 
     val size: Int @JvmName("size") get() = list.size
-    val listeners get() = list.entries
+    internal val listeners get() = list.entries
 
-    fun clear() = list.clear()
+    internal fun clear() = list.clear()
 
     override operator fun iterator() = list.iterator()
 
