@@ -2,12 +2,14 @@ package khome.core.dependencyInjection
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeClient
-import khome.core.*
+import khome.core.ConfigurationInterface
+import khome.core.DefaultConfiguration
 import khome.core.ServiceStore
 import khome.core.StateStore
 import khome.core.eventHandling.FailureResponseEvents
 import khome.core.eventHandling.StateChangeEvents
 import khome.core.eventHandling.SuccessResponseEvents
+import khome.core.logger
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
@@ -16,8 +18,6 @@ import org.koin.core.logger.Level
 import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
-import java.io.File
-import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
 internal typealias ServiceCoroutineContext = ExecutorCoroutineDispatcher

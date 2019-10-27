@@ -8,7 +8,7 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">Khome</a><br/>
 <br/>
 <h1>Khome</h1>
-<code><span class="keyword">class </span><span class="identifier">Khome</span></code>
+<code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">class </span><span class="identifier">Khome</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core.dependency-injection/-khome-koin-component/index.html"><span class="identifier">KhomeKoinComponent</span></a></code>
 <p>The main application Class.
 Serves all the tools necessary for the application to run.</p>
 <p><strong>Author</strong><br/>
@@ -33,41 +33,56 @@ Serves all the tools necessary for the application to run.</p>
 <tbody>
 <tr>
 <td>
+<p><a href="beans.html">beans</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">beans</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$beans(kotlin.Function1((org.koin.core.module.Module, kotlin.Unit)))/beanDeclarations">beanDeclarations</span><span class="symbol">:</span>&nbsp;<span class="identifier">Module</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">KoinApplication</span></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="configure.html">configure</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">configure</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$configure(kotlin.Function1((khome.core.Configuration, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-configuration/index.html"><span class="identifier">Configuration</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">configure</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$configure(kotlin.Function1((khome.core.ConfigurationInterface, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-configuration-interface/index.html"><span class="identifier">ConfigurationInterface</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Configure your Khome instance. See all available properties in
 the <a href="../../khome.core/-configuration/index.html">Configuration</a> data class.</p>
 </td>
 </tr>
 <tr>
 <td>
-<p><a href="connect.html">connect</a></p>
+<p><a href="connect-and-run.html">connectAndRun</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">connect</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$connect(kotlin.coroutines.SuspendFunction1((io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Unit)))/reactOnStateChangeEvents">reactOnStateChangeEvents</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">DefaultClientWebSocketSession</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">connectAndRun</span><span class="symbol">(</span><span class="identifier" id="khome.Khome$connectAndRun(kotlin.coroutines.SuspendFunction1((io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Unit)))/reactOnStateChangeEvents">reactOnStateChangeEvents</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">DefaultClientWebSocketSession</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>The connect function is the window to your home assistant instance.
 Basically it is an wrapper of the ktor websocket client function.
-Inside the closure that you have to pass in, you can register
+Inside the lambda, that you have to pass in, you can register
 state change based or time change based callbacks, call external api´s , or do whatever you`l like.</p>
 </td>
 </tr>
 </tbody>
 </table>
-<h3>Companion Object Functions</h3>
+<h3>Inherited Functions</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="run-in-sand-box-mode.html">runInSandBoxMode</a></p>
+<p><a href="../../khome.core.dependency-injection/-khome-koin-component/get-koin.html">getKoin</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">runInSandBoxMode</span><span class="symbol">(</span><span class="identifier" id="khome.Khome.Companion$runInSandBoxMode(kotlin.Function0((kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
-<p>Call some action in an sand box mode. The sand box mode allows you to
-act like you would call the hass websocket api but without actually calling it,
-by using <a href="../../khome.calling/io.ktor.http.cio.websocket.-web-socket-session/call-service.html">khome.calling.callService</a>. Use this to do some testing or playing around.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getKoin</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Koin</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="is-sand-box-mode-active.html">isSandBoxModeActive</a></p>
 </td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isSandBoxModeActive</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 </tbody>
 </table>

@@ -36,6 +36,5 @@ abstract class AbstractEntity<StateValueType>(
         state.getAttribute(key)
             ?: throw EntityStateAttributeNotFoundException("No state attribute for entity with name: $id and name: $name found.")
 
-    override fun toString()= id
-
+    override fun toString() = id
 }

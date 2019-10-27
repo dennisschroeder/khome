@@ -20,4 +20,3 @@ internal class ServiceStore : Iterable<MutableMap.MutableEntry<String, List<Stri
 
     internal fun clear() = list.clear()
 }
-

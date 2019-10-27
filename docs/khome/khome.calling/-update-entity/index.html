@@ -1,0 +1,246 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UpdateEntity - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.calling</a>&nbsp;/&nbsp;<a href="./index.html">UpdateEntity</a><br/>
+<br/>
+<h1>UpdateEntity</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">UpdateEntity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">UpdateEntity</span><span class="symbol">(</span><span class="identifier" id="khome.calling.UpdateEntity$<init>(khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="domain.html">domain</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">domain</span><span class="symbol">: </span><a href="../-domain-interface.html"><span class="identifier">DomainInterface</span></a></code>
+<p>One of the from Khome supported domains <a href="../-domain/index.html">Domain</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="service.html">service</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">service</span><span class="symbol">: </span><a href="../-service-interface.html"><span class="identifier">ServiceInterface</span></a></code>
+<p>One of the services that are available for the given <a href="../-service-caller/domain.html">domain</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="service-data.html">serviceData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">serviceData</span><span class="symbol">: </span><a href="../-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code>
+<p>ServiceData object to send context data that fits to the given <a href="../-service-caller/service.html">service</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-service-caller/id.html">id</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../close-cover.html">closeCover</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">closeCover</span><span class="symbol">(</span><span class="identifier" id="khome.calling$closeCover(khome.calling.ServiceCaller, khome.core.entities.cover.AbstractCoverEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.cover/-abstract-cover-entity/index.html"><span class="identifier">AbstractCoverEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../cover.html">cover</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">cover</span><span class="symbol">(</span><span class="identifier" id="khome.calling$cover(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.CoverData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-cover-data/index.html"><span class="identifier">CoverData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../covers.html">covers</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">covers</span><span class="symbol">(</span><span class="identifier" id="khome.calling$covers(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.CoversData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-covers-data/index.html"><span class="identifier">CoversData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../create-persistent-notification.html">createPersistentNotification</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">createPersistentNotification</span><span class="symbol">(</span><span class="identifier" id="khome.calling$createPersistentNotification(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.PersistentNotificationMessage, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-persistent-notification-message/index.html"><span class="identifier">PersistentNotificationMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../light.html">light</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">light</span><span class="symbol">(</span><span class="identifier" id="khome.calling$light(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.LightData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-light-data/index.html"><span class="identifier">LightData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>The service call builder for the domain light. Pass an lambda with receiver
+to have access to the <a href="../-light-data/index.html">LightData</a> class to configure the payload sent to the
+home-assistant websocket api. See also the <a href="https://www.home-assistant.io/components/light/">home-assistant documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../media-player.html">mediaPlayer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">mediaPlayer</span><span class="symbol">(</span><span class="identifier" id="khome.calling$mediaPlayer(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.MediaData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-media-data/index.html"><span class="identifier">MediaData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../mute.html">mute</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">mute</span><span class="symbol">(</span><span class="identifier" id="khome.calling$mute(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../notify.html">notify</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">notify</span><span class="symbol">(</span><span class="identifier" id="khome.calling$notify(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.NotifierMessage, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-notifier-message/index.html"><span class="identifier">NotifierMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../open-cover.html">openCover</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">openCover</span><span class="symbol">(</span><span class="identifier" id="khome.calling$openCover(khome.calling.ServiceCaller, khome.core.entities.cover.AbstractCoverEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.cover/-abstract-cover-entity/index.html"><span class="identifier">AbstractCoverEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../restart-home-assistant.html">restartHomeAssistant</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">restartHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Restarts the home-assistant instance.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../set-cover-position-to.html">setCoverPositionTo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">setCoverPositionTo</span><span class="symbol">(</span><span class="identifier" id="khome.calling$setCoverPositionTo(khome.calling.ServiceCaller, khome.core.entities.cover.AbstractCoverEntity, kotlin.Int)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.cover/-abstract-cover-entity/index.html"><span class="identifier">AbstractCoverEntity</span></a><span class="symbol">, </span><span class="identifier" id="khome.calling$setCoverPositionTo(khome.calling.ServiceCaller, khome.core.entities.cover.AbstractCoverEntity, kotlin.Int)/position">position</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../set-volume.html">setVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">setVolume</span><span class="symbol">(</span><span class="identifier" id="khome.calling$setVolume(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity, kotlin.Float)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">, </span><span class="identifier" id="khome.calling$setVolume(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity, kotlin.Float)/level">level</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../stop-home-assistant.html">stopHomeAssistant</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">stopHomeAssistant</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Stops the home-assistant instance.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../toggle.html">toggle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">toggle</span><span class="symbol">(</span><span class="identifier" id="khome.calling$toggle(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Toggles an entity that is capable of being turned on and off.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../turn-off.html">turnOff</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOff(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Turns off an entity that is capable of being turned off.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../turn-on.html">turnOn</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="identifier" id="khome.calling$turnOn(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Turns on an entity that is capable of being turned on.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../un-mute.html">unMute</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">unMute</span><span class="symbol">(</span><span class="identifier" id="khome.calling$unMute(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../update-entities.html">updateEntities</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntities</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="khome.calling$updateEntities(khome.calling.ServiceCaller, kotlin.Array((khome.core.entities.EntityInterface)))/entities">entities</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates a bunch of entities.
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../update-entity.html">updateEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">updateEntity</span><span class="symbol">(</span><span class="identifier" id="khome.calling$updateEntity(khome.calling.ServiceCaller, khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates an entity..
+More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that</a> in the official home-assistant documentation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../volume-down.html">volumeDown</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">volumeDown</span><span class="symbol">(</span><span class="identifier" id="khome.calling$volumeDown(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../volume-up.html">volumeUp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">volumeUp</span><span class="symbol">(</span><span class="identifier" id="khome.calling$volumeUp(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,9 +1,11 @@
 package khome.scheduling
 
-import java.util.*
+import java.util.Date
 import java.time.ZoneId
 import java.time.LocalDate
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Dispatchers
 import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import khome.core.entities.Sun
@@ -250,7 +252,6 @@ suspend fun <T> runOnceInSeconds(
     seconds: Long,
     action: suspend CoroutineScope.() -> T
 ): T = scheduledTask(seconds * 1000, Dispatchers.Default, action)
-
 
 private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDateTime {
     val (hour, minute) = timeOfDay.split(":")

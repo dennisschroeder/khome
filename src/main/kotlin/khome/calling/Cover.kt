@@ -51,6 +51,6 @@ data class CoversData(
     var position: Int?
 ) : ServiceDataInterface
 
-enum class CoverServices : ServiceInterface{
+enum class CoverServices : ServiceInterface {
     OPEN_COVER, CLOSE_COVER, SET_COVER_POSITION
 }

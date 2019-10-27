@@ -16,4 +16,3 @@ internal class SuccessResponseEvents : Event<Result>(), EventInterface<Result> {
 
     override fun emit(eventData: Result) = this(eventData)
 }
-

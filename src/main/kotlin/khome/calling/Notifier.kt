@@ -24,5 +24,5 @@ data class NotifierMessage(
 interface NotifierDataInterface
 
 enum class NotifierServices : ServiceInterface {
-     NOTIFY
+    NOTIFY
 }

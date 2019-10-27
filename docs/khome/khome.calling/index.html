@@ -52,10 +52,26 @@
 </tr>
 <tr>
 <td>
+<p><a href="-entity-id/index.html">EntityId</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EntityId</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-entity-ids/index.html">EntityIds</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EntityIds</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="-light-data/index.html">LightData</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">LightData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">LightData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code>
+<p>The light context data class</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -101,10 +117,24 @@
 </tr>
 <tr>
 <td>
+<p><a href="-persistent-notification-message/index.html">PersistentNotificationMessage</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PersistentNotificationMessage</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-persistent-notification-service/index.html">PersistentNotificationService</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PersistentNotificationService</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-interface.html"><span class="identifier">ServiceInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="-service-caller/index.html">ServiceCaller</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core/-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.dependency-injection/-khome-koin-component/index.html"><span class="identifier">KhomeKoinComponent</span></a><span class="symbol">, </span><a href="../khome.core/-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code>
 <p>The base class to build the payload for home-assistant websocket api calls.</p>
 </td>
 </tr>
@@ -126,6 +156,41 @@
 <p>Main entry point to create own service enum classes</p>
 </td>
 </tr>
+<tr>
+<td>
+<p><a href="-toggle/index.html">Toggle</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Toggle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-turn-off/index.html">TurnOff</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TurnOff</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-turn-on/index.html">TurnOn</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TurnOn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-update-entities/index.html">UpdateEntities</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">UpdateEntities</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-update-entity/index.html">UpdateEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">UpdateEntity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
 </tbody>
 </table>
 <h3>Extensions for External Classes</h3>
@@ -133,7 +198,7 @@
 <tbody>
 <tr>
 <td>
-<p><a href="io.ktor.http.cio.websocket.-web-socket-session/index.html">io.ktor.http.cio.websocket.WebSocketSession</a></p>
+<p><a href="io.ktor.client.features.websocket.-default-client-web-socket-session/index.html">io.ktor.client.features.websocket.DefaultClientWebSocketSession</a></p>
 </td>
 <td>
 </td>
@@ -163,6 +228,13 @@
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">covers</span><span class="symbol">(</span><span class="identifier" id="khome.calling$covers(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.CoversData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-covers-data/index.html"><span class="identifier">CoversData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="create-persistent-notification.html">createPersistentNotification</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">createPersistentNotification</span><span class="symbol">(</span><span class="identifier" id="khome.calling$createPersistentNotification(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.PersistentNotificationMessage, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-persistent-notification-message/index.html"><span class="identifier">PersistentNotificationMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
