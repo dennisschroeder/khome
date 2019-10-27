@@ -8,7 +8,6 @@ internal interface ServiceStoreInterface {
     operator fun set(domain: String, services: List<String>): Unit
     operator fun get(domain: String) = list[domain]
     operator fun contains(domain: String): Boolean
-    fun clear()
 }
 
 internal class ServiceStore : Iterable<MutableMap.MutableEntry<String, List<String>>>, ServiceStoreInterface {
@@ -19,6 +18,6 @@ internal class ServiceStore : Iterable<MutableMap.MutableEntry<String, List<Stri
     }
     override operator fun contains(domain: String) = list.containsKey(domain)
 
-    override fun clear() = list.clear()
+    internal fun clear() = list.clear()
 }
 

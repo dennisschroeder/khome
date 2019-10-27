@@ -13,9 +13,9 @@ open class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
     private var nextUnnamedIndex = 0L
 
     val size: Int @JvmName("size") get() = list.size
-    val listeners get() = list.entries
+    internal val listeners get() = list.entries
 
-    fun clear() = list.clear()
+    internal fun clear() = list.clear()
 
     override operator fun iterator() = list.iterator()
 

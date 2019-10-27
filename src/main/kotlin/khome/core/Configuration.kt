@@ -1,6 +1,6 @@
 package khome.core
 
-data class Configuration(
+abstract class Configuration(
     override var host: String = "localhost",
     override var port: Int = 8123,
     override var accessToken: String = "<create one in home-assistant>",

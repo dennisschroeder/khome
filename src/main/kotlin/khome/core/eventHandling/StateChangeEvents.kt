@@ -2,7 +2,7 @@ package khome.core.eventHandling
 
 import khome.core.EventResult
 
-internal class StateChangeEvents : Event<EventResult>(), EventInterface<EventResult> {
+class StateChangeEvents : Event<EventResult>(), EventInterface<EventResult> {
     override val stateListenerCount get() = this.listeners.size
     override fun subscribe(handle: String?, callback: EventResult.() -> Unit) {
         if (handle == null)

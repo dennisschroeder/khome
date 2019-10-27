@@ -1,82 +1,29 @@
 package khome.listening
 
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import java.util.*
-import khome.core.*
-import kotlin.reflect.KClass
-import khome.Khome.Companion.states
 import khome.core.entities.EntityInterface
-import khome.Khome.Companion.isSandBoxModeActive
-import khome.Khome.Companion.stateChangeEvents
-import khome.listening.exceptions.EntityStateNotFoundException
+import khome.core.dependencyInjection.get
+import khome.core.dependencyInjection.inject
+import khome.core.eventHandling.StateChangeEvents
 
-fun listenState(entity: EntityInterface, callback: StateListener.() -> Unit): LifeCycleHandler =
-    registerStateChangeEvent(entity, callback)
+inline fun <reified Entity: EntityInterface> DefaultClientWebSocketSession.onStateChange(crossinline callback: Entity.() -> Unit) = registerStateChangeEvent(callback)
 
-inline fun <reified Entity : EntityInterface> getEntityInstance() = getEntityInstance(Entity::class)
-
-inline fun <reified Entity : EntityInterface> getEntityInstance(type: KClass<Entity>): Entity {
-    return type.objectInstance as Entity
-}
-
-internal inline fun registerStateChangeEvent(
-    entity: EntityInterface,
-    crossinline callback: StateListener.() -> Unit
+inline fun <reified Entity : EntityInterface>DefaultClientWebSocketSession.registerStateChangeEvent(
+    crossinline callback: Entity.() -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
+    val entity = get<Entity>()
+
     val lifeCycleHandler = LifeCycleHandler(handle, entity)
+    val stateChangeEvents : StateChangeEvents by inject()
 
     stateChangeEvents.subscribe(handle) {
         if (event.data.entityId == entity.id) {
-            val stateListener = StateListener(
-                entityId = entity.id,
-                handle = handle,
-                data = this,
-                constraint = true,
-                lifeCycleHandler = lifeCycleHandler
-            )
-            stateListener.apply(callback)
+           callback(entity)
         }
     }
     return lifeCycleHandler
-}
-
-data class StateListener(
-    val entityId: String,
-    val handle: String,
-    val data: EventResult,
-    private var constraint: Boolean,
-    val lifeCycleHandler: LifeCycleHandler
-) {
-    fun runInTesting(action: () -> Unit) {
-        if (isSandBoxModeActive)
-            action()
-    }
-
-    fun excludeFromTesting(action: () -> Unit) {
-        if (!isSandBoxModeActive)
-            action()
-    }
-
-    fun constrain(func: Constraint.() -> Boolean) {
-        constraint = func(
-            Constraint(
-                data.event.data.newState,
-                data.event.data.oldState
-            )
-        )
-    }
-
-    fun execute(func: EventResult.() -> Unit) {
-        if (constraint && !isSandBoxModeActive) func(data)
-        if (isSandBoxModeActive) func(data)
-    }
-
-    fun disable() = lifeCycleHandler.disable()
-}
-
-fun getState(entity: EntityInterface): State {
-    return states[entity.id]
-        ?: throw EntityStateNotFoundException("Could not fetch state object for entity: ${entity.id}")
 }
 
 inline fun <reified StateValueType> getStateValueFromEntity(entity: EntityInterface): StateValueType =
