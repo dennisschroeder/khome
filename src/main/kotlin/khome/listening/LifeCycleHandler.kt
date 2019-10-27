@@ -13,7 +13,7 @@ import org.koin.core.inject
 class LifeCycleHandler(val handle: String, val entityId: EntityInterface) : LifeCycleHandlerInterface, KhomeKoinComponent() {
     private val stateChangeEvents: StateChangeEvents by inject()
     override fun cancel() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     fun disable() = stateChangeEvents.unsubscribe(handle)

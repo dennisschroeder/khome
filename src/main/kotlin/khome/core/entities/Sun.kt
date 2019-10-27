@@ -4,7 +4,6 @@ import java.time.ZoneId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-
 object Sun : AbstractEntity<String>("sun", "sun") {
     val isUp get() = state.getValue<String>() == "above_horizon"
     val isDown get() = state.getValue<String>() == "below_horizon"

@@ -12,7 +12,6 @@ abstract class Configuration(
     override var logOutput: String = "System.out"
 ) : ConfigurationInterface
 
-
 interface ConfigurationInterface {
     var host: String
     var port: Int

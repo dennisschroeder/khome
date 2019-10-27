@@ -48,5 +48,4 @@ open class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
     operator fun invoke(data: T) {
         for ((_, value) in this) value(data)
     }
-
 }

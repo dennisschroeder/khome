@@ -20,4 +20,3 @@ inline fun <reified T> DefaultClientWebSocketSession.get(): T = object : KhomeKo
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 inline fun <reified T> DefaultClientWebSocketSession.inject(): Lazy<T> = object : KhomeKoinComponent() {}.inject()
-

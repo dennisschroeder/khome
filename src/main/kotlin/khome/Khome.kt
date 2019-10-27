@@ -1,24 +1,41 @@
 package khome
 
-import khome.core.*
-import kotlinx.coroutines.*
-import khome.calling.FetchStates
-import khome.calling.FetchServices
-import kotlin.collections.ArrayList
-import io.ktor.http.cio.websocket.*
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.client.features.websocket.*
-import kotlinx.coroutines.channels.consumeEach
-import java.util.concurrent.atomic.AtomicBoolean
-import khome.core.exceptions.EventStreamException
-import khome.core.dependencyInjection.*
+import khome.calling.FetchServices
+import khome.calling.FetchStates
+import khome.core.ConfigurationInterface
+import khome.core.ErrorResult
+import khome.core.EventResult
+import khome.core.ListenEvent
+import khome.core.Result
+import khome.core.ServiceResult
+import khome.core.ServiceStore
+import khome.core.StateResult
+import khome.core.StateStore
+import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
+import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeKoinContext
+import khome.core.dependencyInjection.get
+import khome.core.dependencyInjection.inject
+import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.eventHandling.FailureResponseEvents
 import khome.core.eventHandling.StateChangeEvents
 import khome.core.eventHandling.SuccessResponseEvents
+import khome.core.exceptions.EventStreamException
+import khome.core.logger
+import khome.core.toObject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.coroutineScope
 import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The main entry point to start your application
@@ -49,7 +66,6 @@ class Khome : KhomeKoinComponent() {
         val isSandBoxModeActive get() = sandboxMode.get()
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
-
     }
 
     /**
@@ -60,12 +76,12 @@ class Khome : KhomeKoinComponent() {
      * @see Configuration
      */
     fun configure(init: ConfigurationInterface.() -> Unit) {
-        val config : ConfigurationInterface by inject()
+        val config: ConfigurationInterface by inject()
         config.apply(init)
     }
 
     fun beans(beanDeclarations: Module.() -> Unit) =
-       loadKhomeModule(module(override = true, moduleDeclaration = beanDeclarations))
+        loadKhomeModule(module(override = true, moduleDeclaration = beanDeclarations))
 
     /**
      * The connect function is the window to your home assistant instance.
@@ -179,12 +195,10 @@ private fun DefaultClientWebSocketSession.checkLocalStateStoreAndRefresh(frame: 
 
     if (noneEqualStateCount > 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
     logger.info { " ###    Local state store check finished    ###" }
-
 }
 
 private fun DefaultClientWebSocketSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
-
 
 private fun DefaultClientWebSocketSession.emitResultErrorEventAndPrintLogMessage(resultData: Result) {
     val errorCode = resultData.error?.get("code")!!

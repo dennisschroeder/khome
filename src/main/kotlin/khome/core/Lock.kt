@@ -1,6 +1,6 @@
 package khome.core
 
-import java.util.*
+import java.util.Collections
 
 open class Lock<T> {
 

@@ -8,10 +8,10 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.calling</a>&nbsp;/&nbsp;<a href="./index.html">ServiceCaller</a><br/>
 <br/>
 <h1>ServiceCaller</h1>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code>
+<code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core.dependency-injection/-khome-koin-component/index.html"><span class="identifier">KhomeKoinComponent</span></a><span class="symbol">, </span><a href="../../khome.core/-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code>
 <p>The base class to build the payload for home-assistant websocket api calls.</p>
 <p><strong>See Also</strong><br/>
-<p><a href="../io.ktor.http.cio.websocket.-web-socket-session/call-service.html">callService</a></p>
+<p><a href="../io.ktor.client.features.websocket.-default-client-web-socket-session/call-service.html">callService</a></p>
 <p><a href="../-service-data-interface/index.html">ServiceDataInterface</a></p>
 </p>
 <h3>Constructors</h3>
@@ -22,7 +22,7 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">ServiceCaller</span><span class="symbol">(</span><span class="identifier" id="khome.calling.ServiceCaller$<init>(kotlin.Int, kotlin.String, khome.calling.DomainInterface, khome.calling.ServiceInterface, khome.calling.ServiceDataInterface)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="khome.calling.ServiceCaller$<init>(kotlin.Int, kotlin.String, khome.calling.DomainInterface, khome.calling.ServiceInterface, khome.calling.ServiceDataInterface)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;"call_service"<span class="symbol">, </span><span class="identifier" id="khome.calling.ServiceCaller$<init>(kotlin.Int, kotlin.String, khome.calling.DomainInterface, khome.calling.ServiceInterface, khome.calling.ServiceDataInterface)/domain">domain</span><span class="symbol">:</span>&nbsp;<a href="../-domain-interface.html"><span class="identifier">DomainInterface</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="khome.calling.ServiceCaller$<init>(kotlin.Int, kotlin.String, khome.calling.DomainInterface, khome.calling.ServiceInterface, khome.calling.ServiceDataInterface)/service">service</span><span class="symbol">:</span>&nbsp;<a href="../-service-interface.html"><span class="identifier">ServiceInterface</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="khome.calling.ServiceCaller$<init>(kotlin.Int, kotlin.String, khome.calling.DomainInterface, khome.calling.ServiceInterface, khome.calling.ServiceDataInterface)/serviceData">serviceData</span><span class="symbol">:</span>&nbsp;<a href="../-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a><span class="symbol">?</span><span class="symbol">)</span></code>
+<code><span class="identifier">ServiceCaller</span><span class="symbol">(</span><span class="symbol">)</span></code>
 <p>The base class to build the payload for home-assistant websocket api calls.</p>
 </td>
 </tr>
@@ -36,16 +36,23 @@
 <p><a href="domain.html">domain</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">domain</span><span class="symbol">: </span><a href="../-domain-interface.html"><span class="identifier">DomainInterface</span></a><span class="symbol">?</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">domain</span><span class="symbol">: </span><a href="../-domain-interface.html"><span class="identifier">DomainInterface</span></a></code>
 <p>One of the from Khome supported domains <a href="../-domain/index.html">Domain</a>.</p>
 </td>
+</tr>
+<tr>
+<td>
+<p><a href="id.html">id</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="service.html">service</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">service</span><span class="symbol">: </span><a href="../-service-interface.html"><span class="identifier">ServiceInterface</span></a><span class="symbol">?</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">service</span><span class="symbol">: </span><a href="../-service-interface.html"><span class="identifier">ServiceInterface</span></a></code>
 <p>One of the services that are available for the given <a href="domain.html">domain</a>.</p>
 </td>
 </tr>
@@ -54,23 +61,8 @@
 <p><a href="service-data.html">serviceData</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">serviceData</span><span class="symbol">: </span><a href="../-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a><span class="symbol">?</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">serviceData</span><span class="symbol">: </span><a href="../-service-data-interface/index.html"><span class="identifier">ServiceDataInterface</span></a></code>
 <p>ServiceData object to send context data that fits to the given <a href="service.html">service</a>.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="entity-id.html">entityId</a></p>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">entityId</span><span class="symbol">(</span><span class="identifier" id="khome.calling.ServiceCaller$entityId(khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
-<p>Some services only need an entity id as context data.
-This function serves the needs for that.</p>
 </td>
 </tr>
 </tbody>
@@ -78,6 +70,13 @@ This function serves the needs for that.</p>
 <h3>Inherited Functions</h3>
 <table>
 <tbody>
+<tr>
+<td>
+<p><a href="../../khome.core.dependency-injection/-khome-koin-component/get-koin.html">getKoin</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getKoin</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Koin</span></code></td>
+</tr>
 <tr>
 <td>
 <p><a href="../../khome.core/-message-interface/to-json.html">toJson</a></p>
@@ -110,6 +109,13 @@ This function serves the needs for that.</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">covers</span><span class="symbol">(</span><span class="identifier" id="khome.calling$covers(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.CoversData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-covers-data/index.html"><span class="identifier">CoversData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../create-persistent-notification.html">createPersistentNotification</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">createPersistentNotification</span><span class="symbol">(</span><span class="identifier" id="khome.calling$createPersistentNotification(khome.calling.ServiceCaller, kotlin.Function1((khome.calling.PersistentNotificationMessage, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-persistent-notification-message/index.html"><span class="identifier">PersistentNotificationMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -254,6 +260,46 @@ More on <a href="https://www.home-assistant.io/docs/scripts/service-calls/">that
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">.</span><span class="identifier">volumeUp</span><span class="symbol">(</span><span class="identifier" id="khome.calling$volumeUp(khome.calling.ServiceCaller, khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core.entities.media-player/-abstract-media-player-entity/index.html"><span class="identifier">AbstractMediaPlayerEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-toggle/index.html">Toggle</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Toggle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-turn-off/index.html">TurnOff</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TurnOff</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-turn-on/index.html">TurnOn</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TurnOn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-update-entities/index.html">UpdateEntities</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">UpdateEntities</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ServiceCaller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-update-entity/index.html">UpdateEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">UpdateEntity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ServiceCaller</span></a></code></td>
 </tr>
 </tbody>
 </table>

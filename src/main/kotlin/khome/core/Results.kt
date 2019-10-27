@@ -1,6 +1,6 @@
 package khome.core
 
-import java.util.*
+import java.util.Date
 import khome.core.exceptions.InvalidStateValueTypeException
 import khome.core.exceptions.InvalidAttributeValueTypeException
 

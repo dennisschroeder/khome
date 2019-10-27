@@ -1,9 +1,10 @@
 package khome.core
 
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
-import khome.*
+import khome.consumeMessage
+import khome.callWebSocketApi
+import khome.asObject
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import io.ktor.http.cio.websocket.WebSocketSession
 import kotlin.system.exitProcess
 
 @ObsoleteCoroutinesApi

@@ -18,7 +18,6 @@ abstract class TurnOn(entity: EntityInterface) : ServiceCaller() {
     override var domain: DomainInterface = Domain.HOMEASSISTANT
     override var service: ServiceInterface = HomeAssistantServices.TURN_ON
     override var serviceData: ServiceDataInterface = EntityId(entity.id)
-
 }
 
 /**
@@ -37,7 +36,6 @@ abstract class TurnOff(entity: EntityInterface) : ServiceCaller() {
     override var domain: DomainInterface = Domain.HOMEASSISTANT
     override var service: ServiceInterface = HomeAssistantServices.TURN_OFF
     override var serviceData: ServiceDataInterface = EntityId(entity.id)
-
 }
 
 /**
@@ -56,7 +54,6 @@ abstract class Toggle(entity: EntityInterface) : ServiceCaller() {
     override var domain: DomainInterface = Domain.HOMEASSISTANT
     override var service: ServiceInterface = HomeAssistantServices.TOGGLE
     override var serviceData: ServiceDataInterface = EntityId(entity.id)
-
 }
 
 /**
@@ -75,7 +72,6 @@ abstract class UpdateEntity(entity: EntityInterface) : ServiceCaller() {
     override var domain: DomainInterface = Domain.HOMEASSISTANT
     override var service: ServiceInterface = HomeAssistantServices.UPDATE_ENTITY
     override var serviceData: ServiceDataInterface = EntityId(entity.id)
-
 }
 
 /**
@@ -94,7 +90,6 @@ abstract class UpdateEntities(vararg entities: EntityInterface) : ServiceCaller(
     override var domain: DomainInterface = Domain.HOMEASSISTANT
     override var service: ServiceInterface = HomeAssistantServices.UPDATE_ENTITY
     override var serviceData: ServiceDataInterface = EntityIds(listOf(*entities).joinToString(","), null)
-
 }
 
 /**
