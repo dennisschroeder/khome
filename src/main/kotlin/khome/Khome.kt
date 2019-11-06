@@ -12,9 +12,9 @@ import khome.core.EventResult
 import khome.core.ListenEvent
 import khome.core.Result
 import khome.core.ServiceResult
-import khome.core.ServiceStore
+import khome.core.ServiceStoreInterface
 import khome.core.StateResult
-import khome.core.StateStore
+import khome.core.StateStoreInterface
 import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
@@ -32,6 +32,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.get
 import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -70,10 +71,10 @@ class Khome : KhomeKoinComponent() {
 
     /**
      * Configure your Khome instance. See all available properties in
-     * the [Configuration] data class.
+     * the [ConfigurationInterface] data class.
      *
-     * @param init Lamba with receiver to configure Khome
-     * @see Configuration
+     * @param init Lambda with receiver to configure Khome
+     * @see [ConfigurationInterface]
      */
     fun configure(init: ConfigurationInterface.() -> Unit) {
         val config: ConfigurationInterface by inject()
@@ -96,13 +97,13 @@ class Khome : KhomeKoinComponent() {
     @ExperimentalCoroutinesApi
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    suspend fun connectAndRun(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) =
+    suspend fun connectAndRun(listeners: suspend DefaultClientWebSocketSession.() -> Unit) =
         coroutineScope {
-            val client: KhomeClient by inject()
-            client.startSession {
-                configureLogger(get())
-                runApplication(get(), reactOnStateChangeEvents)
-            }
+            get<KhomeClient>()
+                .startSession {
+                    configureLogger(get())
+                    runApplication(get(), listeners)
+                }
         }
 }
 
@@ -113,46 +114,46 @@ private fun DefaultClientWebSocketSession.configureLogger(config: ConfigurationI
     System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
 }
 
+@KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 private suspend fun DefaultClientWebSocketSession.runApplication(
     config: ConfigurationInterface,
-    reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
+    listeners: suspend DefaultClientWebSocketSession.() -> Unit
 ) {
     authenticate(get())
-    fetchAvailableServicesFromApi()
 
-    if (config.startStateStream)
-        startStateStream()
+    fetchServices(get())
+    storeServices(consumeMessage(), get())
 
-    reactOnStateChangeEvents()
+    if (config.startStateStream) {
+        fetchStates(get())
+        storeStates(consumeMessage(), get())
+        subscribeStateChanges(get())
+    }
+
+    listeners()
 
     if (successfullyStartedStateStream()) {
-        val stateChangeEvents: StateChangeEvents by inject()
-        logger.debug { "${stateChangeEvents.count()} callbacks registered" }
         consumeStateChangesByTriggeringEvents()
     } else
         throw EventStreamException("Could not subscribe to event stream!")
 }
 
+@KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 private suspend fun DefaultClientWebSocketSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
+    val stateChangeEvents: StateChangeEvents by inject()
+
     incoming.consumeEach { frame ->
         val message = frame.asObject<Map<String, Any>>()
         val type = message["type"]
-        val stateChangeEvents: StateChangeEvents by inject()
 
         when (type) {
             "event" -> {
-                updateLocalStateStore(frame)
+                updateLocalStateStore(frame, get())
                 stateChangeEvents.emit(frame.asObject())
-                logger.debug { "${stateChangeEvents.count()} callbacks registered" }
-                logger.debug {
-                    """
-                            ${frame.asObject<EventResult>().event.data.entityId}: OldState: ${frame.asObject<EventResult>().event.data.oldState.getValue<Any>()} || NewState: ${frame.asObject<EventResult>().event.data.newState.getValue<Any>()}
-                            """.trimIndent()
-                }
             }
             "result" -> {
                 resolveResultTypeAndEmitEvents(frame)
@@ -179,7 +180,7 @@ private fun DefaultClientWebSocketSession.resolveResultTypeAndEmitEvents(frame: 
 private fun DefaultClientWebSocketSession.checkLocalStateStoreAndRefresh(frame: Frame) {
     val states = frame.asObject<StateResult>()
     var noneEqualStateCount = 0
-    val stateStore: StateStore by inject()
+    val stateStore: StateStoreInterface by inject()
 
     logger.info { " ###    Started local state store check    ###" }
 
@@ -201,28 +202,29 @@ private fun DefaultClientWebSocketSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
 private fun DefaultClientWebSocketSession.emitResultErrorEventAndPrintLogMessage(resultData: Result) {
-    val errorCode = resultData.error?.get("code")!!
-    val errorMessage = resultData.error.get("message")!!
+    val errorCode = resultData.error?.let { it["code"] }!!
+    val errorMessage = resultData.error.let { it["message"] }!!
 
     val failureResponseEvents: FailureResponseEvents by inject()
     failureResponseEvents.emit(ErrorResult(errorCode, errorMessage))
     logger.error { "$errorCode: $errorMessage" }
 }
 
-private suspend fun DefaultClientWebSocketSession.updateLocalStateStore(frame: Frame) {
+private fun DefaultClientWebSocketSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
     val data = frame.asObject<EventResult>()
-    val states: StateStore by inject()
-    if (states[data.event.data.entityId] == data.event.data.newState) fetchStates()
-    else states[data.event.data.entityId] = data.event.data.newState
+    data.event.data.newState?.let { stateStore[data.event.data.entityId] = it }
 }
 
-private suspend fun DefaultClientWebSocketSession.fetchAvailableServicesFromApi() {
-    val callerId: CallerID by inject()
-    val payload = FetchServices(callerId.incrementAndGet())
+internal suspend fun DefaultClientWebSocketSession.fetchServices(id: CallerID) {
+    val payload = FetchServices(id.incrementAndGet())
     callWebSocketApi(payload.toJson())
+}
 
-    val serviceStore: ServiceStore by inject()
-    consumeMessage<ServiceResult>()
+internal fun DefaultClientWebSocketSession.storeServices(
+    serviceResult: ServiceResult,
+    serviceStore: ServiceStoreInterface
+) =
+    serviceResult
         .result
         .forEach { (domain, services) ->
             services.forEach { (name, _) ->
@@ -230,24 +232,19 @@ private suspend fun DefaultClientWebSocketSession.fetchAvailableServicesFromApi(
                 logger.debug { "Fetched service: $name from domain: $domain" }
             }
         }
-}
 
-private suspend fun DefaultClientWebSocketSession.startStateStream() {
-    fetchStates()
-    val states: StateStore by inject()
-    consumeMessage<StateResult>()
-        .result
+internal suspend fun DefaultClientWebSocketSession.subscribeStateChanges(id: CallerID) =
+    callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = "state_changed").toJson())
+
+internal fun DefaultClientWebSocketSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
+    stateResults.result
         .forEach { state ->
-            states[state.entityId] = state
-            logger.debug { "Fetched state with data: ${states[state.entityId]}" }
+            stateStore[state.entityId] = state
+            logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
         }
 
-    val callerId: CallerID by inject()
-    callWebSocketApi(ListenEvent(callerId.incrementAndGet(), eventType = "state_changed").toJson())
-}
-
-private suspend fun DefaultClientWebSocketSession.fetchStates() =
-    callWebSocketApi(FetchStates(get<CallerID>().incrementAndGet()).toJson())
+internal suspend fun DefaultClientWebSocketSession.fetchStates(id: CallerID) =
+    callWebSocketApi(FetchStates(id.incrementAndGet()).toJson())
 
 suspend fun DefaultClientWebSocketSession.callWebSocketApi(content: String) = send(content)
 

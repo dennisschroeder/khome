@@ -27,6 +27,7 @@ val ktorVersion: String by project
 val koinVersion: String by project
 val mockkVersion: String by project
 val jupiterVersion: String by project
+val assertVerion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -43,7 +44,8 @@ dependencies {
         exclude(group = "junit")
     }
     testImplementation("io.mockk:mockk:$mockkVersion")
-    testCompile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    compile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    testCompile("com.willowtreeapps.assertk:assertk-jvm:$assertVerion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
 

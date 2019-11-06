@@ -1,13 +1,13 @@
 package khome.core
 
-import java.util.Date
-import khome.core.exceptions.InvalidStateValueTypeException
 import khome.core.exceptions.InvalidAttributeValueTypeException
+import khome.core.exceptions.InvalidStateValueTypeException
+import java.util.Date
 
 data class EventResult(val id: Int, val type: String, val event: Event) :
     MessageInterface {
     data class Event(val eventType: String, val data: Data, val timeFired: Date, val origin: String) {
-        data class Data(val entityId: String, val oldState: State, val newState: State)
+        data class Data(val entityId: String, val oldState: State?, val newState: State?)
     }
 }
 

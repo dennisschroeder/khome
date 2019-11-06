@@ -2,7 +2,7 @@ package khome.core.entities
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
-import khome.core.StateStore
+import khome.core.StateStoreInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.exceptions.EntityNotFoundException
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
@@ -16,10 +16,11 @@ abstract class AbstractEntity<StateValueType>(
     override val domain: String,
     override val name: String
 ) : KhomeKoinComponent(), EntityInterface {
-    private val stateStore: StateStore by inject()
+    private val stateStore: StateStoreInterface by inject()
     final override val id: String get() = "$domain.$name"
-    override val state: State get() = stateStore[id]
-        ?: throw EntityStateNotFoundException("Could not fetch state object for entity: $id")
+    override val state: State
+        get() = stateStore[id]
+            ?: throw EntityStateNotFoundException("Could not fetch state object for entity: $id")
 
     init {
         if (id !in stateStore) throw EntityNotFoundException("The Entity with id: $id was not found.")

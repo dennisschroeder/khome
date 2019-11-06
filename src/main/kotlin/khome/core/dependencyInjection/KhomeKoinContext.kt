@@ -5,7 +5,10 @@ import khome.KhomeClient
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.ServiceStore
+import khome.core.ServiceStoreInterface
 import khome.core.StateStore
+import khome.core.StateStoreInterface
+import khome.core.entities.Sun
 import khome.core.eventHandling.FailureResponseEvents
 import khome.core.eventHandling.StateChangeEvents
 import khome.core.eventHandling.SuccessResponseEvents
@@ -35,8 +38,8 @@ object KhomeKoinContext {
 
     private var internalModule: Module =
         module {
-            single { StateStore() }
-            single { ServiceStore() }
+            single<StateStoreInterface> { StateStore() }
+            single<ServiceStoreInterface> { ServiceStore() }
             single { StateChangeEvents() }
             single { SuccessResponseEvents() }
             single { FailureResponseEvents() }
@@ -44,6 +47,7 @@ object KhomeKoinContext {
             single { AtomicInteger(0) }
             single<ConfigurationInterface> { DefaultConfiguration() }
             single { KhomeClient(get()) }
+            single { Sun() }
         }
 
     fun startKoinApplication() {
