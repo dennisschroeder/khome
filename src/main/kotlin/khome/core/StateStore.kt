@@ -2,7 +2,7 @@ package khome.core
 
 import java.util.concurrent.ConcurrentHashMap
 
-internal interface StateStoreInterface {
+interface StateStoreInterface {
     val list: ConcurrentHashMap<String, State>
     val listenerCount: Int
 

@@ -1,20 +1,20 @@
 package khome.scheduling
 
-import java.util.Date
-import java.time.ZoneId
-import java.time.LocalDate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.Dispatchers
-import java.lang.Thread.sleep
-import java.time.LocalDateTime
-import khome.core.entities.Sun
-import khome.core.scheduledTask
-import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
-import khome.core.scheduledPeriodicTask
 import khome.Khome.Companion.isSandBoxModeActive
+import khome.core.entities.Sun
 import khome.core.entities.inputDateTime.AbstractTimeEntity
+import khome.core.scheduledPeriodicTask
+import khome.core.scheduledTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import java.lang.Thread.sleep
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 /**
  * Runs a [TimerTask] as daily routine starting at a specific date time
@@ -267,6 +267,7 @@ private fun createLocalDateTimeFromTimeOfDayAsString(timeOfDay: String): LocalDa
  */
 suspend fun runEverySunRise(
     offsetInMinutes: String = "_",
+    sun: Sun,
     action: suspend CoroutineScope.() -> Unit
 ) {
     val now = LocalDateTime.now()
@@ -276,7 +277,7 @@ suspend fun runEverySunRise(
     val minutes = offsetInMinutes.substring(1)
 
     runEveryAt(now, dailyPeriodInMillis) {
-        var nextSunrise = Sun.nextSunrise
+        var nextSunrise = sun.nextSunrise
         when (offsetDirection) {
             '+' -> nextSunrise = nextSunrise.plusMinutes(minutes.toLong())
             '-' -> nextSunrise = nextSunrise.minusMinutes(minutes.toLong())
@@ -293,7 +294,11 @@ suspend fun runEverySunRise(
  * @param action A TimerTask extension function.
  * @return [Job]
  */
-suspend fun runEverySunSet(offsetInMinutes: String = "_", action: suspend CoroutineScope.() -> Unit) {
+suspend fun runEverySunSet(
+    offsetInMinutes: String = "_",
+    sun: Sun,
+    action: suspend CoroutineScope.() -> Unit)
+{
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 
@@ -301,7 +306,7 @@ suspend fun runEverySunSet(offsetInMinutes: String = "_", action: suspend Corout
     val minutes = offsetInMinutes.substring(1)
 
     runEveryAt(now, dailyPeriodInMillis) {
-        var nextSunset = Sun.nextSunset
+        var nextSunset = sun.nextSunset
         when (offsetDirection) {
             '+' -> nextSunset = nextSunset.plusMinutes(minutes.toLong())
             '-' -> nextSunset = nextSunset.minusMinutes(minutes.toLong())

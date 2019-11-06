@@ -11,7 +11,7 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.core.ConfigurationInterface
 
 @KtorExperimentalAPI
-internal class KhomeClient(private val config: ConfigurationInterface) {
+class KhomeClient(private val config: ConfigurationInterface) {
 
     private val httpClient = HttpClient(CIO).config { install(WebSockets) }
 

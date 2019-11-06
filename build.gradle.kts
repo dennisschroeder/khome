@@ -44,7 +44,7 @@ dependencies {
         exclude(group = "junit")
     }
     testImplementation("io.mockk:mockk:$mockkVersion")
-    testCompile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    compile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     testCompile("com.willowtreeapps.assertk:assertk-jvm:$assertVerion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
