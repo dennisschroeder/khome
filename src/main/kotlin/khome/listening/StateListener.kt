@@ -1,16 +1,16 @@
 package khome.listening
 
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
-import java.util.UUID
+import khome.KhomeSession
 import khome.core.entities.EntityInterface
-import khome.core.dependencyInjection.get
-import khome.core.dependencyInjection.inject
 import khome.core.eventHandling.StateChangeEvents
+import org.koin.core.get
+import org.koin.core.inject
+import java.util.UUID
 
-inline fun <reified Entity : EntityInterface> DefaultClientWebSocketSession.onStateChange(crossinline callback: Entity.() -> Unit) =
+inline fun <reified Entity : EntityInterface> KhomeSession.onStateChange(crossinline callback: Entity.() -> Unit) =
     registerStateChangeEvent(callback)
 
-inline fun <reified Entity : EntityInterface> DefaultClientWebSocketSession.registerStateChangeEvent(
+inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEvent(
     crossinline callback: Entity.() -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()

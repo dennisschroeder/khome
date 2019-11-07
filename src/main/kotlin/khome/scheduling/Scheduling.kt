@@ -297,8 +297,8 @@ suspend fun runEverySunRise(
 suspend fun runEverySunSet(
     offsetInMinutes: String = "_",
     sun: Sun,
-    action: suspend CoroutineScope.() -> Unit)
-{
+    action: suspend CoroutineScope.() -> Unit
+) {
     val now = LocalDateTime.now()
     val dailyPeriodInMillis = TimeUnit.DAYS.toMillis(1)
 

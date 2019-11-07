@@ -12,4 +12,3 @@ class TestConfiguration : Configuration() {
         "5hlQ3T9QmIoxoPAxyLqGs"
     override var logLevel = "DEBUG"
 }
-
