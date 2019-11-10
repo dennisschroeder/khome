@@ -1,7 +1,6 @@
 package khome
 
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
@@ -24,7 +23,6 @@ import khome.core.eventHandling.StateChangeEvents
 import khome.core.eventHandling.SuccessResponseEvents
 import khome.core.exceptions.EventStreamException
 import khome.core.logger
-import khome.core.toObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -104,7 +102,7 @@ class Khome : KhomeKoinComponent() {
         }
 }
 
-private fun KhomeSession.configureLogger(config: ConfigurationInterface) {
+internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
     System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
     System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
@@ -224,10 +222,13 @@ internal fun KhomeSession.storeServices(
     serviceResult
         .result
         .forEach { (domain, services) ->
+            logger.debug { "$domain: $services" }
+            val serviceList = mutableListOf<String>()
             services.forEach { (name, _) ->
-                serviceStore[domain] = listOf(name)
+                serviceList += name
                 logger.debug { "Fetched service: $name from domain: $domain" }
             }
+            serviceStore[domain] = serviceList
         }
 
 internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
@@ -243,8 +244,4 @@ internal fun KhomeSession.storeStates(stateResults: StateResult, stateStore: Sta
 internal suspend fun KhomeSession.fetchStates(id: CallerID) =
     callWebSocketApi(FetchStates(id.incrementAndGet()).toJson())
 
-suspend fun KhomeSession.callWebSocketApi(content: String) = send(content)
-
 private suspend fun KhomeSession.successfullyStartedStateStream() = consumeMessage<Result>().success
-
-internal inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()

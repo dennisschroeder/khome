@@ -2,8 +2,6 @@ package khome.core
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
-import khome.asObject
-import khome.callWebSocketApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.system.exitProcess
 

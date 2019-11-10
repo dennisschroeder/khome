@@ -11,20 +11,31 @@ data class EventResult(val id: Int, val type: String, val event: Event) :
     }
 }
 
-data class State(val entityId: String, val lastChanged: Date, val state: Any, val attributes: Map<String, Any>) :
-    MessageInterface {
+data class State(
+    override val entityId: String,
+    override val lastChanged: Date,
+    override val state: Any,
+    override val attributes: Map<String, Any>
+) :
+    StateInterface {
     inline fun <reified T> getValue(): T {
-        if (state !is T) throw InvalidStateValueTypeException("State value is of type: ${state.javaClass.kotlin.simpleName}.")
-
+        if (state !is T) throw InvalidStateValueTypeException("State value is of type: ${state::class}.")
         return state
     }
 
     inline fun <reified T> getAttribute(key: String): T {
         return attributes[key] as? T ?: throw InvalidAttributeValueTypeException(
             "Attribute value for $key is of type: ${(attributes[key]
-                ?: error("Key not valid")).javaClass.kotlin.simpleName}."
+                ?: error("Key not valid"))::class}."
         )
     }
+}
+
+interface StateInterface : MessageInterface {
+    val entityId: String
+    val lastChanged: Date
+    val state: Any
+    val attributes: Map<String, Any>
 }
 
 data class Result(

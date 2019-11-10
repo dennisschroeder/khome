@@ -4,7 +4,6 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
 import khome.core.StateStoreInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.entities.exceptions.EntityNotFoundException
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
 import khome.listening.exceptions.EntityStateNotFoundException
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -21,10 +20,6 @@ abstract class AbstractEntity<StateValueType>(
     override val state: State
         get() = stateStore[id]
             ?: throw EntityStateNotFoundException("Could not fetch state object for entity: $id")
-
-    init {
-        if (id !in stateStore) throw EntityNotFoundException("The Entity with id: $id was not found.")
-    }
 
     override val attributes: Map<String, Any> get() = state.attributes
     override val friendlyName: String get() = getAttributeValue("friendly_name")

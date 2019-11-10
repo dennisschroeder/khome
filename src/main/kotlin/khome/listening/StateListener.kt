@@ -1,17 +1,19 @@
 package khome.listening
 
 import khome.KhomeSession
+import khome.core.State
+import khome.core.StateInterface
 import khome.core.entities.EntityInterface
 import khome.core.eventHandling.StateChangeEvents
 import org.koin.core.get
 import org.koin.core.inject
 import java.util.UUID
 
-inline fun <reified Entity : EntityInterface> KhomeSession.onStateChange(crossinline callback: Entity.() -> Unit) =
+inline fun <reified Entity : EntityInterface> KhomeSession.onStateChange(crossinline callback: Entity.(OldState?) -> Unit) =
     registerStateChangeEvent(callback)
 
 inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEvent(
-    crossinline callback: Entity.() -> Unit
+    crossinline callback: Entity.(OldState?) -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
     val entity = get<Entity>()
@@ -21,16 +23,10 @@ inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEv
 
     stateChangeEvents.subscribe(handle) {
         if (event.data.entityId == entity.id) {
-            callback(entity)
+            callback(entity, OldState(event.data.oldState!!))
         }
     }
     return lifeCycleHandler
 }
 
-inline fun <reified StateValueType> getStateValueFromEntity(entity: EntityInterface): StateValueType =
-    entity.state.getValue()
-
-inline fun <reified AttributeValueType> getStateAttributesFromEntity(
-    entity: EntityInterface,
-    key: String
-): AttributeValueType = entity.state.getAttribute(key)
+class OldState(private val delegate: State) : StateInterface by delegate

@@ -3,13 +3,11 @@ package khome.calling
 import com.google.gson.annotations.SerializedName
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
-import khome.callWebSocketApi
 import khome.core.MessageInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.dependencyInjection.ServiceCoroutineContext
 import khome.core.logger
-import khome.core.serializer
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.get
@@ -76,12 +74,11 @@ interface ServiceInterface
  */
 interface ServiceDataInterface {
     var entityId: String?
-    fun toJson(): String = serializer.toJson(this)
 }
 
 /**
  * Domains that are supported from Khome
  */
 enum class Domain : DomainInterface {
-    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
+    COVER, LIGHT, HOME_ASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
 }

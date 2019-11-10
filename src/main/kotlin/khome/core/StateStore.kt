@@ -1,9 +1,9 @@
 package khome.core
 
-import java.util.concurrent.ConcurrentHashMap
+import java.util.Collections
 
 interface StateStoreInterface {
-    val list: ConcurrentHashMap<String, State>
+    val list: Map<String, State>
     val listenerCount: Int
 
     operator fun set(entityId: String, state: State): Unit
@@ -15,7 +15,7 @@ interface StateStoreInterface {
 internal class StateStore : Iterable<MutableMap.MutableEntry<String, State>>, StateStoreInterface {
     override val listenerCount: Int
         get() = list.size
-    override val list = ConcurrentHashMap<String, State>()
+    override val list: MutableMap<String, State> = Collections.synchronizedMap(HashMap<String, State>())
     override operator fun iterator() = list.iterator()
     override operator fun set(entityId: String, state: State) {
         list[entityId] = state
