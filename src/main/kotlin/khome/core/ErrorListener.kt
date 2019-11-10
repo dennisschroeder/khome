@@ -1,7 +1,12 @@
 package khome.core
 
-import khome.core.dependencyInjection.KhomeKoinComponent
+import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeSession
 import khome.core.eventHandling.FailureResponseEvents
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 
-fun listenCallServiceError(action: ErrorResult.() -> Unit) = object : KhomeKoinComponent() {}.get<FailureResponseEvents>().subscribe(callback = action)
+@ObsoleteCoroutinesApi
+@KtorExperimentalAPI
+fun KhomeSession.listenCallServiceError(action: ErrorResult.() -> Unit) =
+    get<FailureResponseEvents>().subscribe(callback = action)

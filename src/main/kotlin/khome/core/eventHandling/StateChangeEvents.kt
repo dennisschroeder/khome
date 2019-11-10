@@ -12,6 +12,5 @@ class StateChangeEvents : Event<EventResult>(), EventInterface<EventResult> {
     }
 
     override fun unsubscribe(handle: String) = this.minus(handle)
-
     override fun emit(eventData: EventResult) = this(eventData)
 }

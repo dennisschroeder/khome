@@ -1,8 +1,6 @@
 package khome
 
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
@@ -19,15 +17,12 @@ import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.dependencyInjection.KhomeKoinContext
-import khome.core.dependencyInjection.get
-import khome.core.dependencyInjection.inject
 import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.eventHandling.FailureResponseEvents
 import khome.core.eventHandling.StateChangeEvents
 import khome.core.eventHandling.SuccessResponseEvents
 import khome.core.exceptions.EventStreamException
 import khome.core.logger
-import khome.core.toObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -97,7 +92,7 @@ class Khome : KhomeKoinComponent() {
     @ExperimentalCoroutinesApi
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    suspend fun connectAndRun(listeners: suspend DefaultClientWebSocketSession.() -> Unit) =
+    suspend fun connectAndRun(listeners: suspend KhomeSession.() -> Unit) =
         coroutineScope {
             get<KhomeClient>()
                 .startSession {
@@ -107,7 +102,7 @@ class Khome : KhomeKoinComponent() {
         }
 }
 
-private fun DefaultClientWebSocketSession.configureLogger(config: ConfigurationInterface) {
+internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
     System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
     System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
     System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
@@ -117,9 +112,9 @@ private fun DefaultClientWebSocketSession.configureLogger(config: ConfigurationI
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-private suspend fun DefaultClientWebSocketSession.runApplication(
+private suspend fun KhomeSession.runApplication(
     config: ConfigurationInterface,
-    listeners: suspend DefaultClientWebSocketSession.() -> Unit
+    listeners: suspend KhomeSession.() -> Unit
 ) {
     authenticate(get())
 
@@ -143,7 +138,7 @@ private suspend fun DefaultClientWebSocketSession.runApplication(
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-private suspend fun DefaultClientWebSocketSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
+private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
     val stateChangeEvents: StateChangeEvents by inject()
 
     incoming.consumeEach { frame ->
@@ -163,7 +158,7 @@ private suspend fun DefaultClientWebSocketSession.consumeStateChangesByTriggerin
     }
 }
 
-private fun DefaultClientWebSocketSession.resolveResultTypeAndEmitEvents(frame: Frame) {
+private fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
     logger.debug { "Result: $resultData" }
     when {
@@ -177,7 +172,7 @@ private fun DefaultClientWebSocketSession.resolveResultTypeAndEmitEvents(frame: 
     }
 }
 
-private fun DefaultClientWebSocketSession.checkLocalStateStoreAndRefresh(frame: Frame) {
+private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
     val states = frame.asObject<StateResult>()
     var noneEqualStateCount = 0
     val stateStore: StateStoreInterface by inject()
@@ -198,10 +193,10 @@ private fun DefaultClientWebSocketSession.checkLocalStateStoreAndRefresh(frame: 
     logger.info { " ###    Local state store check finished    ###" }
 }
 
-private fun DefaultClientWebSocketSession.logResults(resultData: Result) =
+private fun KhomeSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
-private fun DefaultClientWebSocketSession.emitResultErrorEventAndPrintLogMessage(resultData: Result) {
+private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Result) {
     val errorCode = resultData.error?.let { it["code"] }!!
     val errorMessage = resultData.error.let { it["message"] }!!
 
@@ -210,47 +205,43 @@ private fun DefaultClientWebSocketSession.emitResultErrorEventAndPrintLogMessage
     logger.error { "$errorCode: $errorMessage" }
 }
 
-private fun DefaultClientWebSocketSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
+private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
     val data = frame.asObject<EventResult>()
     data.event.data.newState?.let { stateStore[data.event.data.entityId] = it }
 }
 
-internal suspend fun DefaultClientWebSocketSession.fetchServices(id: CallerID) {
+internal suspend fun KhomeSession.fetchServices(id: CallerID) {
     val payload = FetchServices(id.incrementAndGet())
     callWebSocketApi(payload.toJson())
 }
 
-internal fun DefaultClientWebSocketSession.storeServices(
+internal fun KhomeSession.storeServices(
     serviceResult: ServiceResult,
     serviceStore: ServiceStoreInterface
 ) =
     serviceResult
         .result
         .forEach { (domain, services) ->
+            logger.debug { "$domain: $services" }
+            val serviceList = mutableListOf<String>()
             services.forEach { (name, _) ->
-                serviceStore[domain] = listOf(name)
+                serviceList += name
                 logger.debug { "Fetched service: $name from domain: $domain" }
             }
+            serviceStore[domain] = serviceList
         }
 
-internal suspend fun DefaultClientWebSocketSession.subscribeStateChanges(id: CallerID) =
+internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
     callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = "state_changed").toJson())
 
-internal fun DefaultClientWebSocketSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
+internal fun KhomeSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
     stateResults.result
         .forEach { state ->
             stateStore[state.entityId] = state
             logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
         }
 
-internal suspend fun DefaultClientWebSocketSession.fetchStates(id: CallerID) =
+internal suspend fun KhomeSession.fetchStates(id: CallerID) =
     callWebSocketApi(FetchStates(id.incrementAndGet()).toJson())
 
-suspend fun DefaultClientWebSocketSession.callWebSocketApi(content: String) = send(content)
-
-private suspend fun DefaultClientWebSocketSession.successfullyStartedStateStream() = consumeMessage<Result>().success
-
-internal suspend inline fun <reified M : Any> DefaultClientWebSocketSession.consumeMessage(): M =
-    incoming.receive().asObject()
-
-internal inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
+private suspend fun KhomeSession.successfullyStartedStateStream() = consumeMessage<Result>().success

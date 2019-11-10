@@ -1,5 +1,7 @@
 package khome.core.dependencyInjection
 
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeClient
 import khome.core.ConfigurationInterface
@@ -38,6 +40,11 @@ object KhomeKoinContext {
 
     private var internalModule: Module =
         module {
+            single { GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()!!
+            }
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
             single { StateChangeEvents() }

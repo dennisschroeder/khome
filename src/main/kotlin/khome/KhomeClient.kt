@@ -2,7 +2,6 @@ package khome
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.ws
 import io.ktor.client.features.websocket.wss
@@ -19,8 +18,8 @@ class KhomeClient(private val config: ConfigurationInterface) {
     private val path = "/api/websocket"
     private val isSecure: Boolean = config.secure
 
-    suspend fun startSession(block: suspend DefaultClientWebSocketSession.() -> Unit) = when (isSecure) {
-        true -> httpClient.wss(method = method, host = config.host, port = config.port, path = path, block = block)
-        false -> httpClient.ws(method = method, host = config.host, port = config.port, path = path, block = block)
+    suspend fun startSession(block: suspend KhomeSession.() -> Unit) = when (isSecure) {
+        true -> httpClient.wss(method = method, host = config.host, port = config.port, path = path, block = { block( KhomeSession(this) ) })
+        false -> httpClient.ws(method = method, host = config.host, port = config.port, path = path, block = { block( KhomeSession(this) ) })
     }
 }
