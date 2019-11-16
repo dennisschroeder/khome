@@ -11,9 +11,9 @@ import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
 import khome.core.entities.Sun
-import khome.core.eventHandling.FailureResponseEvents
-import khome.core.eventHandling.StateChangeEvents
-import khome.core.eventHandling.SuccessResponseEvents
+import khome.core.eventHandling.Event
+import khome.core.eventHandling.FailureResponseEvent
+import khome.core.eventHandling.StateChangeEvent
 import khome.core.logger
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -47,9 +47,8 @@ object KhomeKoinContext {
             }
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
-            single { StateChangeEvents() }
-            single { SuccessResponseEvents() }
-            single { FailureResponseEvents() }
+            single { StateChangeEvent(Event()) }
+            single { FailureResponseEvent(Event()) }
             single { newSingleThreadContext("ServiceContext") }
             single { AtomicInteger(0) }
             single<ConfigurationInterface> { DefaultConfiguration() }

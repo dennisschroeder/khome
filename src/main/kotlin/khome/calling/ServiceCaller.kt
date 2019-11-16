@@ -5,7 +5,7 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.core.MessageInterface
 import khome.core.dependencyInjection.CallerID
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.ServiceCoroutineContext
 import khome.core.logger
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -51,7 +51,7 @@ data class EntityIds(
  */
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-abstract class ServiceCaller : KhomeKoinComponent(), MessageInterface {
+abstract class ServiceCaller : KhomeComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
     abstract var domain: DomainInterface

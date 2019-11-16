@@ -3,7 +3,7 @@ package khome.core.entities
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
 import khome.core.StateStoreInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeComponent
 import khome.listening.exceptions.EntityStateAttributeNotFoundException
 import khome.listening.exceptions.EntityStateNotFoundException
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -14,7 +14,7 @@ import org.koin.core.inject
 abstract class AbstractEntity<StateValueType>(
     override val domain: String,
     override val name: String
-) : KhomeKoinComponent(), EntityInterface {
+) : KhomeComponent(), EntityInterface {
     private val stateStore: StateStoreInterface by inject()
     final override val id: String get() = "$domain.$name"
     override val state: State

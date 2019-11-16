@@ -5,8 +5,9 @@ import java.util.function.Consumer
 
 typealias Handler<EventType> = Consumer<EventType>
 internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
+typealias EventIterator<T> = Iterable<MutableMap.MutableEntry<String, Handler<T>>>
 
-open class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
+open class Event<T> : EventIterator<T> {
 
     private val list = ConcurrentHashMap<String, Handler<T>>()
 

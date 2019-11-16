@@ -6,9 +6,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import assertk.assertions.isSuccess
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.ServiceStore
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.dependencyInjection.KhomeKoinContext
+import khome.core.dependencyInjection.KhomeTestComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
@@ -19,11 +17,7 @@ import org.junit.jupiter.api.TestInstance
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class ServiceStoreTest : KhomeKoinComponent() {
-
-    init {
-        KhomeKoinContext.startKoinApplication()
-    }
+internal class ServiceStoreTest : KhomeTestComponent() {
 
     private val serviceList = listOf("turn_on", "turn_off", "toggle", "stop", "start")
 

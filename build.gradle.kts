@@ -84,6 +84,11 @@ tasks.withType<Test> {
 }
 
 tasks {
+    check {
+        dependsOn(test)
+        finalizedBy(jacocoTestReport, jacocoTestCoverageVerification, printCoverage)
+    }
+
     jacocoTestReport {
         reports {
             xml.isEnabled = true

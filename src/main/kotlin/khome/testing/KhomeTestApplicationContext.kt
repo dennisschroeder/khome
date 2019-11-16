@@ -6,7 +6,7 @@ import khome.configureLogger
 import khome.core.ServiceStoreInterface
 import khome.core.StateStoreInterface
 import khome.core.authenticate
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.KhomeKoinContext
 import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.entities.AbstractEntity
@@ -24,7 +24,7 @@ import org.koin.dsl.module
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-abstract class KhomeTestApplicationContext : KhomeKoinComponent() {
+abstract class KhomeTestApplicationContext : KhomeComponent() {
 
     init {
         KhomeKoinContext.startKoinApplication()

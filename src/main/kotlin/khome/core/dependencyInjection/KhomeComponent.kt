@@ -7,6 +7,12 @@ import org.koin.core.KoinComponent
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-abstract class KhomeKoinComponent : KoinComponent {
+abstract class KhomeComponent : KoinComponent {
     override fun getKoin(): Koin = checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
+}
+
+abstract class KhomeTestComponent : KhomeComponent() {
+    init {
+        KhomeKoinContext.startKoinApplication()
+    }
 }
