@@ -15,12 +15,11 @@ import khome.core.StateResult
 import khome.core.StateStoreInterface
 import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.KhomeKoinContext
 import khome.core.dependencyInjection.loadKhomeModule
-import khome.core.eventHandling.FailureResponseEvents
-import khome.core.eventHandling.StateChangeEvents
-import khome.core.eventHandling.SuccessResponseEvents
+import khome.core.eventHandling.FailureResponseEvent
+import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
 import khome.core.logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,7 +54,7 @@ fun khomeApplication(init: Khome.() -> Unit): Khome {
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-class Khome : KhomeKoinComponent() {
+class Khome : KhomeComponent() {
     companion object {
         private var sandboxMode = AtomicBoolean(false)
 
@@ -139,7 +138,7 @@ private suspend fun KhomeSession.runApplication(
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
-    val stateChangeEvents: StateChangeEvents by inject()
+    val stateChangeEvent: StateChangeEvent by inject()
 
     incoming.consumeEach { frame ->
         val message = frame.asObject<Map<String, Any>>()
@@ -148,7 +147,7 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
         when (type) {
             "event" -> {
                 updateLocalStateStore(frame, get())
-                stateChangeEvents.emit(frame.asObject())
+                stateChangeEvent.emit(frame.asObject())
             }
             "result" -> {
                 resolveResultTypeAndEmitEvents(frame)
@@ -165,8 +164,6 @@ private fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
         !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
         resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
         resultData.success -> {
-            val successResponseEvents: SuccessResponseEvents by inject()
-            successResponseEvents.emit(frame.asObject())
             logResults(resultData)
         }
     }
@@ -200,8 +197,8 @@ private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Resu
     val errorCode = resultData.error?.let { it["code"] }!!
     val errorMessage = resultData.error.let { it["message"] }!!
 
-    val failureResponseEvents: FailureResponseEvents by inject()
-    failureResponseEvents.emit(ErrorResult(errorCode, errorMessage))
+    val failureResponseEvent: FailureResponseEvent by inject()
+    failureResponseEvent.emit(ErrorResult(errorCode, errorMessage))
     logger.error { "$errorCode: $errorMessage" }
 }
 

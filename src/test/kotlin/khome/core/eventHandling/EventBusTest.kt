@@ -17,6 +17,15 @@ import org.junit.jupiter.api.TestInstance
 class EventBusTest {
 
     @Test
+    fun `assert callback was added with plus assign`() {
+        val testEvent = Event<String>()
+        testEvent += {
+            logger.debug { it }
+        }
+        assertThat(testEvent.size).isEqualTo(1)
+    }
+
+    @Test
     fun `assert callback was added`() {
         val testEvent = Event<String>()
         testEvent += {
@@ -46,7 +55,7 @@ class EventBusTest {
             testValueOne = it
         }
 
-        testEvent["handle"] = {
+        testEvent["handler"] = {
             testValueTwo = it
         }
 
@@ -76,18 +85,18 @@ class EventBusTest {
         assertThat(testEvent.listeners.find { it.key == "handle" }).isNull()
     }
 
-   @Test
-   fun `assert that all callbacks were removed`() {
-       val testEvent = Event<String>()
-       testEvent["handle"] = {
-           logger.debug { it }
-       }
+    @Test
+    fun `assert that all callbacks were removed`() {
+        val testEvent = Event<String>()
+        testEvent["handle"] = {
+            logger.debug { it }
+        }
 
-       testEvent += {
-           logger.debug { it }
-       }
+        testEvent += {
+            logger.debug { it }
+        }
 
-       testEvent.clear()
-       assertThat(testEvent.listeners).isEmpty()
-   }
+        testEvent.clear()
+        assertThat(testEvent.listeners).isEmpty()
+    }
 }

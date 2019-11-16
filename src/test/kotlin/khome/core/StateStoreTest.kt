@@ -6,8 +6,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.google.gson.Gson
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.dependencyInjection.KhomeKoinContext
+import khome.core.dependencyInjection.KhomeTestComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
@@ -19,11 +18,7 @@ import org.koin.core.get
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class StateStoreTest : KhomeKoinComponent() {
-
-    init {
-        KhomeKoinContext.startKoinApplication()
-    }
+internal class StateStoreTest : KhomeTestComponent() {
 
     private val stateJson = """
             {

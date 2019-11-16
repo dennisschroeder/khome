@@ -4,7 +4,7 @@ import khome.KhomeSession
 import khome.core.State
 import khome.core.StateInterface
 import khome.core.entities.EntityInterface
-import khome.core.eventHandling.StateChangeEvents
+import khome.core.eventHandling.StateChangeEvent
 import org.koin.core.get
 import org.koin.core.inject
 import java.util.UUID
@@ -19,9 +19,9 @@ inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEv
     val entity = get<Entity>()
 
     val lifeCycleHandler = LifeCycleHandler(handle, entity)
-    val stateChangeEvents: StateChangeEvents by inject()
+    val stateChangeEvent: StateChangeEvent by inject()
 
-    stateChangeEvents.subscribe(handle) {
+    stateChangeEvent.subscribe(handle) {
         if (event.data.entityId == entity.id) {
             callback(entity, OldState(event.data.oldState!!))
         }

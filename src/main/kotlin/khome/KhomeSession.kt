@@ -9,14 +9,14 @@ import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.ServiceDataInterface
 import khome.core.MessageInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.dependencyInjection.KhomeComponent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 import kotlin.reflect.KClass
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class KhomeSession(delegate: DefaultClientWebSocketSession) : KhomeKoinComponent(), WebSocketSession by delegate {
+class KhomeSession(delegate: DefaultClientWebSocketSession) : KhomeComponent(), WebSocketSession by delegate {
     suspend fun callWebSocketApi(message: String) = send(message)
     suspend inline fun <reified M : Any> consumeMessage(): M = incoming.receive().asObject()
     inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
