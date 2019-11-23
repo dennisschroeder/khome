@@ -1,3 +1,5 @@
+https://github.com/dennisschroeder/khome/workflows/ci-workflow.yaml/badge.svg
+
 # Khome
 
 Khome is a smart home-automation library for **Home Assistant**, written in Kotlin. It makes heavy usage of the **Kotlin-DSL** 
