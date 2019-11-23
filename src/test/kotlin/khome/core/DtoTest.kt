@@ -111,7 +111,6 @@ internal class DtoTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-
         // Note that [Gson] can not defer between Int, Floats and Doubles in maps.
         // Therefore we need to expect all Ints in Maps as Double/Float values.
         private val attributes = mapOf(
@@ -291,6 +290,5 @@ internal class DtoTest : KhomeTestComponent() {
             val serviceResult: ServiceResult = get<ObjectMapper>().fromJson(serviceResultJson)
             assertThat(serviceResult).isDataClassEqualTo(expectedResult)
         }
-
     }
 }
