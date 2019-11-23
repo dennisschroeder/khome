@@ -5,7 +5,6 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
 import khome.core.ConfigurationInterface
-import khome.core.ErrorResult
 import khome.core.EventResult
 import khome.core.ListenEvent
 import khome.core.Result
@@ -161,7 +160,7 @@ private fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
     logger.debug { "Result: $resultData" }
     when {
-        !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
+        !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData, get())
         resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
         resultData.success -> {
             logResults(resultData)
@@ -193,13 +192,9 @@ private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
 private fun KhomeSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
-private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Result) {
-    val errorCode = resultData.error?.let { it["code"] }!!
-    val errorMessage = resultData.error.let { it["message"] }!!
-
-    val failureResponseEvent: FailureResponseEvent by inject()
-    failureResponseEvent.emit(ErrorResult(errorCode, errorMessage))
-    logger.error { "$errorCode: $errorMessage" }
+private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Result, failureResponseEvent: FailureResponseEvent) {
+    failureResponseEvent.emit(resultData)
+    logger.error { "{CallId: ${resultData.id}] errorCode: ${resultData.error!!.code} ${resultData.error.message}" }
 }
 
 private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {

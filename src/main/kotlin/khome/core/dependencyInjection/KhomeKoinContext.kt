@@ -15,6 +15,8 @@ import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.logger
+import khome.core.mapping.ObjectMapper
+import khome.core.mapping.OffsetDateTimeAdapter
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
@@ -23,6 +25,7 @@ import org.koin.core.logger.Level
 import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import java.time.OffsetDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
 internal typealias ServiceCoroutineContext = ExecutorCoroutineDispatcher
@@ -40,11 +43,14 @@ object KhomeKoinContext {
 
     private var internalModule: Module =
         module {
-            single { GsonBuilder()
-                .setPrettyPrinting()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create()!!
+            single {
+                GsonBuilder()
+                    .setPrettyPrinting()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
+                    .create()!!
             }
+            single { ObjectMapper(get()) }
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
             single { StateChangeEvent(Event()) }

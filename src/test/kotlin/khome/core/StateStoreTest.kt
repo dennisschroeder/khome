@@ -4,9 +4,9 @@ import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
-import com.google.gson.Gson
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
@@ -66,8 +66,8 @@ internal class StateStoreTest : KhomeTestComponent() {
                 }
             }
         """.trimIndent()
-    private val state: State = get<Gson>().fromJson(stateJson, State::class.java)
-    private val newState: State = get<Gson>().fromJson(newStateJson, State::class.java)
+    private val state: State = get<ObjectMapper>().fromJson(stateJson)
+    private val newState: State = get<ObjectMapper>().fromJson(newStateJson)
 
     @Test
     fun `assert StateStore returns injected State by entity id`() {

@@ -29,6 +29,7 @@ val mockkVersion: String by project
 val jupiterVersion: String by project
 val assertVersion: String by project
 val dataBobVersion: String by project
+val jsonAssertVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -47,6 +48,8 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     compile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     testCompile("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
+    testCompile("org.skyscreamer:jsonassert:$jsonAssertVersion")
+
     testImplementation("io.github.daviddenton:databob.kotlin:$dataBobVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
