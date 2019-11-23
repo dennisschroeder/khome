@@ -1,5 +1,5 @@
 name: Run Tests before merging
-on:[push, pull_request]
+on: [push, pull_request]
 
 jobs:
   test:
