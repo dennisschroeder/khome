@@ -1,5 +1,5 @@
 
-![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Run%20Tests%20before%20merging/badge.svg)
+![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
 
 # Khome
 
