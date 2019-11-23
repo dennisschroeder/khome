@@ -23,19 +23,14 @@
 <p><a href="-life-cycle-handler/index.html">LifeCycleHandler</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">LifeCycleHandler</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core/-life-cycle-handler-interface/index.html"><span class="identifier">LifeCycleHandlerInterface</span></a><span class="symbol">, </span><a href="../khome.core.dependency-injection/-khome-koin-component/index.html"><span class="identifier">KhomeKoinComponent</span></a></code></td>
+<code><span class="keyword">class </span><span class="identifier">LifeCycleHandler</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core/-life-cycle-handler-interface/index.html"><span class="identifier">LifeCycleHandlerInterface</span></a><span class="symbol">, </span><a href="../khome.core.dependency-injection/-khome-component/index.html"><span class="identifier">KhomeComponent</span></a></code></td>
 </tr>
-</tbody>
-</table>
-<h3>Extensions for External Classes</h3>
-<table>
-<tbody>
 <tr>
 <td>
-<p><a href="io.ktor.client.features.websocket.-default-client-web-socket-session/index.html">io.ktor.client.features.websocket.DefaultClientWebSocketSession</a></p>
+<p><a href="-old-state/index.html">OldState</a></p>
 </td>
 <td>
-</td>
+<code><span class="keyword">class </span><span class="identifier">OldState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core/-state-interface/index.html"><span class="identifier">StateInterface</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -44,17 +39,17 @@
 <tbody>
 <tr>
 <td>
-<p><a href="get-state-attributes-from-entity.html">getStateAttributesFromEntity</a></p>
+<p><a href="on-state-change.html">onStateChange</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">AttributeValueType</span><span class="symbol">&gt;</span> <span class="identifier">getStateAttributesFromEntity</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getStateAttributesFromEntity(khome.core.entities.EntityInterface, kotlin.String)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">, </span><span class="identifier" id="khome.listening$getStateAttributesFromEntity(khome.core.entities.EntityInterface, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-state-attributes-from-entity.html#AttributeValueType"><span class="identifier">AttributeValueType</span></a></code></td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Entity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-session/index.html"><span class="identifier">KhomeSession</span></a><span class="symbol">.</span><span class="identifier">onStateChange</span><span class="symbol">(</span><span class="identifier" id="khome.listening$onStateChange(khome.KhomeSession, kotlin.Function2((khome.listening.onStateChange.Entity, khome.listening.OldState, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<a href="on-state-change.html#Entity"><span class="identifier">Entity</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="-old-state/index.html"><span class="identifier">OldState</span></a><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="get-state-value-from-entity.html">getStateValueFromEntity</a></p>
+<p><a href="register-state-change-event.html">registerStateChangeEvent</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">StateValueType</span><span class="symbol">&gt;</span> <span class="identifier">getStateValueFromEntity</span><span class="symbol">(</span><span class="identifier" id="khome.listening$getStateValueFromEntity(khome.core.entities.EntityInterface)/entity">entity</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-state-value-from-entity.html#StateValueType"><span class="identifier">StateValueType</span></a></code></td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Entity</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-session/index.html"><span class="identifier">KhomeSession</span></a><span class="symbol">.</span><span class="identifier">registerStateChangeEvent</span><span class="symbol">(</span><span class="identifier" id="khome.listening$registerStateChangeEvent(khome.KhomeSession, kotlin.Function2((khome.listening.registerStateChangeEvent.Entity, khome.listening.OldState, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<a href="register-state-change-event.html#Entity"><span class="identifier">Entity</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="-old-state/index.html"><span class="identifier">OldState</span></a><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-life-cycle-handler/index.html"><span class="identifier">LifeCycleHandler</span></a></code></td>
 </tr>
 </tbody>
 </table>

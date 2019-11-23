@@ -134,7 +134,7 @@
 <p><a href="-service-caller/index.html">ServiceCaller</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.dependency-injection/-khome-koin-component/index.html"><span class="identifier">KhomeKoinComponent</span></a><span class="symbol">, </span><a href="../khome.core/-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.core.dependency-injection/-khome-component/index.html"><span class="identifier">KhomeComponent</span></a><span class="symbol">, </span><a href="../khome.core/-message-interface.html"><span class="identifier">MessageInterface</span></a></code>
 <p>The base class to build the payload for home-assistant websocket api calls.</p>
 </td>
 </tr>
@@ -193,21 +193,21 @@
 </tr>
 </tbody>
 </table>
-<h3>Extensions for External Classes</h3>
+<h3>Functions</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="io.ktor.client.features.websocket.-default-client-web-socket-session/index.html">io.ktor.client.features.websocket.DefaultClientWebSocketSession</a></p>
+<p><a href="call-service.html">callService</a></p>
 </td>
 <td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">CallType</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-caller/index.html"><span class="identifier">ServiceCaller</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-session/index.html"><span class="identifier">KhomeSession</span></a><span class="symbol">.</span><span class="identifier">callService</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>A function to build an <a href="-service-caller/index.html">ServiceCaller</a> object, which is the base
+to all <a href="https://www.home-assistant.io/">home-assistant</a> websocket api calls.
+The ServiceCaller object is then serialized and send to the websocket api.
+<a href="https://developers.home-assistant.io/docs/en/external_api_websocket.html">Home-Assistant Websocket-Api</a>.</p>
 </td>
 </tr>
-</tbody>
-</table>
-<h3>Functions</h3>
-<table>
-<tbody>
 <tr>
 <td>
 <p><a href="close-cover.html">closeCover</a></p>

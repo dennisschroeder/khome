@@ -5,7 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.google.gson.Gson
-import khome.core.ErrorResult
+import khome.core.Result
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.logger
 import org.junit.jupiter.api.Test
@@ -19,7 +19,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event`() {
         val failureResponseEvents = FailureResponseEvent(Event())
         failureResponseEvents.subscribe {
-            logger.debug { message }
+            logger.debug { error!!.message }
         }
 
         assertThat(failureResponseEvents.listenerCount).isEqualTo(1)
@@ -29,7 +29,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event with handle`() {
         val failureResponseEvents = FailureResponseEvent(Event())
         failureResponseEvents.subscribe("handle") {
-            logger.debug { message }
+            logger.debug { error!!.message }
         }
 
         assertThat(failureResponseEvents.find { it.key == "handle" }).isNotNull()
@@ -38,7 +38,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     @Test
     fun `assert that subscribed event callback was fired`() {
         val failureResponseEvents = FailureResponseEvent(Event())
-        var testValue: ErrorResult? = null
+        var testValue: Result? = null
         failureResponseEvents.subscribe {
             testValue = this
         }
@@ -55,7 +55,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-        val errorResult = get<Gson>().fromJson(errorResultJson, ErrorResult::class.java)
+        val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
 
         assertThat(errorResult).isEqualTo(testValue)
@@ -64,8 +64,8 @@ class FailureResponseEventTest : KhomeTestComponent() {
     @Test
     fun `assert that subscribed event callbacks were fired`() {
         val failureResponseEvents = FailureResponseEvent(Event())
-        var testValueOne: ErrorResult? = null
-        var testValueTwo: ErrorResult? = null
+        var testValueOne: Result? = null
+        var testValueTwo: Result? = null
         failureResponseEvents.subscribe {
             testValueOne = this
         }
@@ -86,7 +86,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-        val errorResult = get<Gson>().fromJson(errorResultJson, ErrorResult::class.java)
+        val errorResult: Result = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
 
         assertThat(errorResult).isEqualTo(testValueOne)
@@ -96,8 +96,8 @@ class FailureResponseEventTest : KhomeTestComponent() {
     @Test
     fun `assert that unsubscribing was successful`() {
         val failureResponseEvents = FailureResponseEvent(Event())
-        var testValueOne: ErrorResult? = null
-        var testValueTwo: ErrorResult? = null
+        var testValueOne: Result? = null
+        var testValueTwo: Result? = null
         failureResponseEvents.subscribe {
             testValueOne = this
         }
@@ -118,7 +118,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-        val errorResult = get<Gson>().fromJson(errorResultJson, ErrorResult::class.java)
+        val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.unsubscribe("handle")
         failureResponseEvents.emit(errorResult)
 

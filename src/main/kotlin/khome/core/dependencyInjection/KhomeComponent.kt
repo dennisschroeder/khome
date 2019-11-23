@@ -11,6 +11,8 @@ abstract class KhomeComponent : KoinComponent {
     override fun getKoin(): Koin = checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
 
+@ObsoleteCoroutinesApi
+@KtorExperimentalAPI
 abstract class KhomeTestComponent : KhomeComponent() {
     init {
         KhomeKoinContext.startKoinApplication()

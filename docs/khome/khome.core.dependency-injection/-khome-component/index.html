@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>KhomeComponent - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core.dependencyInjection</a>&nbsp;/&nbsp;<a href="./index.html">KhomeComponent</a><br/>
+<br/>
+<h1>KhomeComponent</h1>
+<code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">KhomeComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">KoinComponent</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">KhomeComponent</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-koin.html">getKoin</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getKoin</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Koin</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../khome.core.entities/-abstract-entity/index.html">AbstractEntity</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">AbstractEntity</span><span class="symbol">&lt;</span><span class="identifier">StateValueType</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a><span class="symbol">, </span><a href="../../khome.core.entities/-entity-interface/index.html"><span class="identifier">EntityInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome/-khome/index.html">Khome</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Khome</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a></code>
+<p>The main application Class.
+Serves all the tools necessary for the application to run.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome/-khome-session/index.html">KhomeSession</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">KhomeSession</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a><span class="symbol">, </span><span class="identifier">WebSocketSession</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-khome-test-component/index.html">KhomeTestComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">KhomeTestComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.listening/-life-cycle-handler/index.html">LifeCycleHandler</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LifeCycleHandler</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-life-cycle-handler-interface/index.html"><span class="identifier">LifeCycleHandlerInterface</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">KhomeComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.core.mapping/-object-mapper/index.html">ObjectMapper</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ObjectMapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a><span class="symbol">, </span><a href="../../khome.core.mapping/-object-mapper-interface.html"><span class="identifier">ObjectMapperInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.calling/-service-caller/index.html">ServiceCaller</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ServiceCaller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">KhomeComponent</span></a><span class="symbol">, </span><a href="../../khome.core/-message-interface.html"><span class="identifier">MessageInterface</span></a></code>
+<p>The base class to build the payload for home-assistant websocket api calls.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

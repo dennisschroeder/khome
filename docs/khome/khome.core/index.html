@@ -44,7 +44,7 @@
 <p><a href="-event-result/index.html">EventResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EventResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EventResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -58,18 +58,11 @@
 <p><a href="-listen-event/index.html">ListenEvent</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-lock/index.html">Lock</a></p>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Lock</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-message-interface/index.html">MessageInterface</a></p>
+<p><a href="-message-interface.html">MessageInterface</a></p>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">MessageInterface</span></code></td>
@@ -79,7 +72,7 @@
 <p><a href="-result/index.html">Result</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Result</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Result</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -93,33 +86,42 @@
 <p><a href="-service-result/index.html">ServiceResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-service-store-interface/index.html">ServiceStoreInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ServiceStoreInterface</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-state/index.html">State</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-state-interface/index.html"><span class="identifier">StateInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-interface/index.html">StateInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StateInterface</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-state-result/index.html">StateResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
-</tbody>
-</table>
-<h3>Extensions for External Classes</h3>
-<table>
-<tbody>
 <tr>
 <td>
-<p><a href="io.ktor.http.cio.websocket.-frame.-text/index.html">io.ktor.http.cio.websocket.Frame.Text</a></p>
+<p><a href="-state-store-interface/index.html">StateStoreInterface</a></p>
 </td>
 <td>
-</td>
+<code><span class="keyword">interface </span><span class="identifier">StateStoreInterface</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -132,13 +134,6 @@
 </td>
 <td>
 <code><span class="keyword">val </span><span class="identifier">logger</span><span class="symbol">: </span><span class="identifier">KLogger</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="serializer.html">serializer</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">serializer</span><span class="symbol">: </span><span class="identifier">Gson</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -157,7 +152,7 @@
 <p><a href="listen-call-service-error.html">listenCallServiceError</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">listenCallServiceError</span><span class="symbol">(</span><span class="identifier" id="khome.core$listenCallServiceError(kotlin.Function1((khome.core.ErrorResult, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="-error-result/index.html"><span class="identifier">ErrorResult</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-session/index.html"><span class="identifier">KhomeSession</span></a><span class="symbol">.</span><span class="identifier">listenCallServiceError</span><span class="symbol">(</span><span class="identifier" id="khome.core$listenCallServiceError(khome.KhomeSession, kotlin.Function1((khome.core.Result, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="-result/index.html"><span class="identifier">Result</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

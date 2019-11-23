@@ -1,13 +1,6 @@
 $dokka.format:html
 $dokka.linkExtension:html
-$dokka.location:khome$callWebSocketApi(io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.String)khome/io.ktor.client.features.websocket.-default-client-web-socket-session/call-web-socket-api.html
-$dokka.location:khome.calling$callService(io.ktor.client.features.websocket.DefaultClientWebSocketSession)khome.calling/io.ktor.client.features.websocket.-default-client-web-socket-session/call-service.html
-$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text)khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
-$dokka.location:khome.core$toObject(io.ktor.http.cio.websocket.Frame.Text, kotlin.reflect.KClass((khome.core.toObject.M)))khome.core/io.ktor.http.cio.websocket.-frame.-text/to-object.html
-$dokka.location:khome.core.dependencyInjection$get(io.ktor.client.features.websocket.DefaultClientWebSocketSession)khome.core.dependency-injection/io.ktor.client.features.websocket.-default-client-web-socket-session/get.html
-$dokka.location:khome.core.dependencyInjection$inject(io.ktor.client.features.websocket.DefaultClientWebSocketSession)khome.core.dependency-injection/io.ktor.client.features.websocket.-default-client-web-socket-session/inject.html
-$dokka.location:khome.listening$onStateChange(io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Function1((khome.listening.onStateChange.Entity, kotlin.Unit)))khome.listening/io.ktor.client.features.websocket.-default-client-web-socket-session/on-state-change.html
-$dokka.location:khome.listening$registerStateChangeEvent(io.ktor.client.features.websocket.DefaultClientWebSocketSession, kotlin.Function1((khome.listening.registerStateChangeEvent.Entity, kotlin.Unit)))khome.listening/io.ktor.client.features.websocket.-default-client-web-socket-session/register-state-change-event.html
+
 khome
 khome.calling
 khome.calling.Exceptions
@@ -26,6 +19,8 @@ khome.core.entities.sensors
 khome.core.entities.switchEntity
 khome.core.eventHandling
 khome.core.exceptions
+khome.core.mapping
 khome.listening
 khome.listening.exceptions
 khome.scheduling
+khome.testing

@@ -4,10 +4,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import com.google.gson.Gson
 import khome.core.EventResult
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.logger
+import khome.core.mapping.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
@@ -89,7 +89,7 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult = get<Gson>().fromJson(eventResultJson, EventResult::class.java)
+        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.emit(eventResult)
         assertThat(eventResult).isEqualTo(testValue)
@@ -154,7 +154,7 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult = get<Gson>().fromJson(eventResultJson, EventResult::class.java)
+        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.emit(eventResult)
         assertThat(eventResult).isEqualTo(testValueOne)
@@ -220,7 +220,7 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult = get<Gson>().fromJson(eventResultJson, EventResult::class.java)
+        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.unsubscribe("handle")
         stateChangeEvent.emit(eventResult)
