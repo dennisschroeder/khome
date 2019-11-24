@@ -37,7 +37,7 @@ internal class DtoTest : KhomeTestComponent() {
         @Test
         fun `assert that error response json is correctly mapped`() {
             val result: Result = get<ObjectMapper>().fromJson(resultJson)
-            assertThat(result).isDataClassEqualTo(expectedResult)
+            assertThat(result).isEqualTo(expectedResult)
         }
     }
 
@@ -111,7 +111,6 @@ internal class DtoTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-
         // Note that [Gson] can not defer between Int, Floats and Doubles in maps.
         // Therefore we need to expect all Ints in Maps as Double/Float values.
         private val attributes = mapOf(
@@ -126,12 +125,12 @@ internal class DtoTest : KhomeTestComponent() {
         private val state =
             State("light.bed_light", OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"), "on", attributes, OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"))
 
-        private val expectedResult = Result(13, "result", true, null, listOf(state))
+        private val expectedResult = StateResult(13, "result", true, arrayOf(state))
 
         @Test
         fun `assert that error response json is correctly mapped`() {
-            val result: Result = get<ObjectMapper>().fromJson(resultJson)
-            assertThat(result).isEqualTo(expectedResult)
+            val result: StateResult = get<ObjectMapper>().fromJson(resultJson)
+            assertThat(result.result).isEqualTo(expectedResult.result)
         }
     }
 
@@ -291,6 +290,5 @@ internal class DtoTest : KhomeTestComponent() {
             val serviceResult: ServiceResult = get<ObjectMapper>().fromJson(serviceResultJson)
             assertThat(serviceResult).isDataClassEqualTo(expectedResult)
         }
-
     }
 }

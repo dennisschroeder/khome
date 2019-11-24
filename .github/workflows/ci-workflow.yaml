@@ -1,0 +1,9 @@
+name: Latest push
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: MrRamych/gradle-actions/openjdk-11@3.1
