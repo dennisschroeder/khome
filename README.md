@@ -79,7 +79,7 @@ repositories {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.dennisschroeder:khome:master-SNAPSHOT'
+    implementation 'com.github.dennisschroeder:khome:0.1.0-SNAPSHOT'
 }
 ```
 
