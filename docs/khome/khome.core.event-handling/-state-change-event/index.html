@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StateChangeEvent - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core.eventHandling</a>&nbsp;/&nbsp;<a href="./index.html">StateChangeEvent</a><br/>
+<br/>
+<h1>StateChangeEvent</h1>
+<code><span class="keyword">class </span><span class="identifier">StateChangeEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/-mutable-entry/index.html"><span class="identifier">MutableEntry</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../-handler.html"><span class="identifier">Handler</span></a><span class="symbol">&lt;</span><a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">EventInterface</span><span class="symbol">&lt;</span><a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">StateChangeEvent</span><span class="symbol">(</span><span class="identifier" id="khome.core.eventHandling.StateChangeEvent$<init>(khome.core.eventHandling.Event((khome.core.EventResult)))/delegate">delegate</span><span class="symbol">:</span>&nbsp;<a href="../-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="listener-count.html">listenerCount</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">listenerCount</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="emit.html">emit</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">emit</span><span class="symbol">(</span><span class="identifier" id="khome.core.eventHandling.StateChangeEvent$emit(khome.core.EventResult)/eventData">eventData</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="subscribe.html">subscribe</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">subscribe</span><span class="symbol">(</span><span class="identifier" id="khome.core.eventHandling.StateChangeEvent$subscribe(kotlin.String, kotlin.Function1((khome.core.EventResult, kotlin.Unit)))/handle">handle</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="khome.core.eventHandling.StateChangeEvent$subscribe(kotlin.String, kotlin.Function1((khome.core.EventResult, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<a href="../../khome.core/-event-result/index.html"><span class="identifier">EventResult</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unsubscribe.html">unsubscribe</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unsubscribe</span><span class="symbol">(</span><span class="identifier" id="khome.core.eventHandling.StateChangeEvent$unsubscribe(kotlin.String)/handle">handle</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

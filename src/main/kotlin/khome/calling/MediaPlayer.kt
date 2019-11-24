@@ -62,5 +62,5 @@ enum class MediaContentType {
 }
 
 enum class MediaPlayerServices : ServiceInterface {
-    TURN_ON, TURN_OFF, TOGGLE, VOLUME_UP, VOLUME_DOWN, VOLUME_SET, VOLUME_MUTE, PLAY_MEDIA, BAR
+    TURN_ON, TURN_OFF, TOGGLE, VOLUME_UP, VOLUME_DOWN, VOLUME_SET, VOLUME_MUTE, PLAY_MEDIA
 }

@@ -8,7 +8,7 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core</a>&nbsp;/&nbsp;<a href="./index.html">State</a><br/>
 <br/>
 <h1>State</h1>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span></code>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-state-interface/index.html"><span class="identifier">StateInterface</span></a></code>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -17,7 +17,7 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">State</span><span class="symbol">(</span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.util.Date, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)))/entityId">entityId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.util.Date, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)))/lastChanged">lastChanged</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.util.Date, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)))/state">state</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.util.Date, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)))/attributes">attributes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+<code><span class="identifier">State</span><span class="symbol">(</span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/entityId">entityId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/lastChanged">lastChanged</span><span class="symbol">:</span>&nbsp;<span class="identifier">OffsetDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/state">state</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/attributes">attributes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/lastUpdated">lastUpdated</span><span class="symbol">:</span>&nbsp;<span class="identifier">OffsetDateTime</span><span class="symbol">)</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -43,7 +43,14 @@
 <p><a href="last-changed.html">lastChanged</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">lastChanged</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a></code></td>
+<code><span class="keyword">val </span><span class="identifier">lastChanged</span><span class="symbol">: </span><span class="identifier">OffsetDateTime</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="last-updated.html">lastUpdated</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lastUpdated</span><span class="symbol">: </span><span class="identifier">OffsetDateTime</span></code></td>
 </tr>
 <tr>
 <td>

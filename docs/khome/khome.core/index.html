@@ -16,21 +16,49 @@
 <p><a href="-configuration/index.html">Configuration</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Configuration</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Configuration</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-configuration-interface/index.html"><span class="identifier">ConfigurationInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-configuration-interface/index.html">ConfigurationInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ConfigurationInterface</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-data/index.html">Data</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Data</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-default-configuration/index.html">DefaultConfiguration</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DefaultConfiguration</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-configuration/index.html"><span class="identifier">Configuration</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-error-result/index.html">ErrorResult</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ErrorResult</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-event/index.html">Event</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">Event</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/-mutable-entry/index.html"><span class="identifier">MutableEntry</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="-handler.html"><span class="identifier">Handler</span></a><span class="symbol">&lt;</span><a href="-event/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Event</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-event-result/index.html">EventResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EventResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EventResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -44,18 +72,11 @@
 <p><a href="-listen-event/index.html">ListenEvent</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ListenEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-lock/index.html">Lock</a></p>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Lock</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-message-interface/index.html">MessageInterface</a></p>
+<p><a href="-message-interface.html">MessageInterface</a></p>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">MessageInterface</span></code></td>
@@ -65,52 +86,56 @@
 <p><a href="-result/index.html">Result</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Result</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Result</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-service-call-interface/index.html">ServiceCallInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ServiceCallInterface</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-service-result/index.html">ServiceResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ServiceResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-service-store-interface/index.html">ServiceStoreInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ServiceStoreInterface</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-state/index.html">State</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-state-interface/index.html"><span class="identifier">StateInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-interface/index.html">StateInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StateInterface</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-state-result/index.html">StateResult</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface/index.html"><span class="identifier">MessageInterface</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateResult</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-message-interface.html"><span class="identifier">MessageInterface</span></a></code></td>
 </tr>
-</tbody>
-</table>
-<h3>Type Aliases</h3>
-<table>
-<tbody>
 <tr>
 <td>
-<p><a href="-handler.html">Handler</a></p>
+<p><a href="-state-store-interface/index.html">StateStoreInterface</a></p>
 </td>
 <td>
-<code><span class="keyword">typealias </span><span class="identifier">Handler</span><span class="symbol">&lt;</span><span class="identifier">EventType</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="identifier">Consumer</span><span class="symbol">&lt;</span><a href="-handler.html#EventType"><span class="identifier">EventType</span></a><span class="symbol">&gt;</span></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Extensions for External Classes</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="io.ktor.http.cio.websocket.-frame.-text/index.html">io.ktor.http.cio.websocket.Frame.Text</a></p>
-</td>
-<td>
-</td>
+<code><span class="keyword">interface </span><span class="identifier">StateStoreInterface</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -124,12 +149,47 @@
 <td>
 <code><span class="keyword">val </span><span class="identifier">logger</span><span class="symbol">: </span><span class="identifier">KLogger</span></code></td>
 </tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
 <tr>
 <td>
-<p><a href="serializer.html">serializer</a></p>
+<p><a href="calc-time-delta-in-millis.html">calcTimeDeltaInMillis</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">serializer</span><span class="symbol">: </span><span class="identifier">Gson</span></code></td>
+<code><span class="keyword">fun </span><span class="identifier">calcTimeDeltaInMillis</span><span class="symbol">(</span><span class="identifier" id="khome.core$calcTimeDeltaInMillis(java.time.LocalDateTime, java.time.LocalDateTime)/timeA">timeA</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.core$calcTimeDeltaInMillis(java.time.LocalDateTime, java.time.LocalDateTime)/timeB">timeB</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="listen-call-service-error.html">listenCallServiceError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-session/index.html"><span class="identifier">KhomeSession</span></a><span class="symbol">.</span><span class="identifier">listenCallServiceError</span><span class="symbol">(</span><span class="identifier" id="khome.core$listenCallServiceError(khome.KhomeSession, kotlin.Function1((khome.core.Result, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<a href="-result/index.html"><span class="identifier">Result</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="periodic-task.html">periodicTask</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">periodicTask</span><span class="symbol">(</span><span class="identifier" id="khome.core$periodicTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/period">period</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.core$periodicTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EmptyCoroutineContext<span class="symbol">, </span><span class="identifier" id="khome.core$periodicTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/task">task</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scheduled-periodic-task.html">scheduledPeriodicTask</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">scheduledPeriodicTask</span><span class="symbol">(</span><span class="identifier" id="khome.core$scheduledPeriodicTask(java.time.LocalDateTime, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/time">time</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(java.time.LocalDateTime, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/period">period</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(java.time.LocalDateTime, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EmptyCoroutineContext<span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(java.time.LocalDateTime, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/task">task</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">scheduledPeriodicTask</span><span class="symbol">(</span><span class="identifier" id="khome.core$scheduledPeriodicTask(kotlin.Long, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/time">time</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(kotlin.Long, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/period">period</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(kotlin.Long, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EmptyCoroutineContext<span class="symbol">, </span><span class="identifier" id="khome.core$scheduledPeriodicTask(kotlin.Long, kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, kotlin.Unit)))/task">task</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scheduled-task.html">scheduledTask</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">scheduledTask</span><span class="symbol">(</span><span class="identifier" id="khome.core$scheduledTask(java.time.LocalDateTime, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/time">time</span><span class="symbol">:</span>&nbsp;<span class="identifier">LocalDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledTask(java.time.LocalDateTime, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EmptyCoroutineContext<span class="symbol">, </span><span class="identifier" id="khome.core$scheduledTask(java.time.LocalDateTime, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/task">task</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="scheduled-task.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="scheduled-task.html#T"><span class="identifier">T</span></a></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">scheduledTask</span><span class="symbol">(</span><span class="identifier" id="khome.core$scheduledTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/time">time</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="khome.core$scheduledTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EmptyCoroutineContext<span class="symbol">, </span><span class="identifier" id="khome.core$scheduledTask(kotlin.Long, kotlin.coroutines.CoroutineContext, kotlin.coroutines.SuspendFunction1((kotlinx.coroutines.CoroutineScope, khome.core.scheduledTask.T)))/task">task</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="scheduled-task.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="scheduled-task.html#T"><span class="identifier">T</span></a></code></td>
 </tr>
 </tbody>
 </table>

@@ -1,5 +1,12 @@
 package khome.calling
 
+/**
+ * The service call builder for the domain light. Pass an lambda with receiver
+ * to have access to the [LightData] class to configure the payload sent to the
+ * home-assistant websocket api. See also the [home-assistant documentation](https://www.home-assistant.io/components/light/)
+ *
+ * @receiver [LightData]
+ */
 fun ServiceCaller.light(init: LightData.() -> Unit) {
     domain = Domain.LIGHT
     serviceData = LightData(
@@ -18,6 +25,9 @@ fun ServiceCaller.light(init: LightData.() -> Unit) {
     ).apply(init)
 }
 
+/**
+ * The light context data class
+ */
 data class LightData(
     override var entityId: String?,
     var transition: Int?,

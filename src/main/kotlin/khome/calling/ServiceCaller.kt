@@ -1,19 +1,17 @@
 package khome.calling
 
-import khome.*
-import khome.core.logger
-import kotlinx.coroutines.*
-import khome.core.serializer
-import khome.core.MessageInterface
-import khome.Khome.Companion.services
-import khome.Khome.Companion.idCounter
-import khome.core.entities.EntityInterface
-import khome.Khome.Companion.callServiceContext
-import khome.Khome.Companion.isSandBoxModeActive
 import com.google.gson.annotations.SerializedName
-import io.ktor.http.cio.websocket.WebSocketSession
-import khome.calling.exceptions.DomainNotFoundException
-import khome.calling.exceptions.ServiceNotFoundException
+import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeSession
+import khome.core.MessageInterface
+import khome.core.dependencyInjection.CallerID
+import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.ServiceCoroutineContext
+import khome.core.logger
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
+import org.koin.core.get
+import org.koin.core.inject
 
 /**
  * A function to build an [ServiceCaller] object, which is the base
@@ -24,43 +22,22 @@ import khome.calling.exceptions.ServiceNotFoundException
  * @see ServiceCaller
  */
 @ObsoleteCoroutinesApi
-fun WebSocketSession.callService(init: ServiceCaller.() -> Unit) {
-    runBlocking {
-        withContext(callServiceContext) {
-            val callService = ServiceCaller(
-                idCounter.incrementAndGet(),
-                "call_service",
-                null,
-                null,
-                null
-            ).apply(init)
-
-            when {
-                isSandBoxModeActive -> {
-                    val domain = callService.domain.toString().toLowerCase()
-                    val service = callService.service.toString().toLowerCase()
-
-                    when {
-                        domain !in services -> throw DomainNotFoundException("$domain is not an registered domain in homeassistant")
-                        service !in services[domain]!! -> throw ServiceNotFoundException("$service is not an available service under $domain in homeassistant")
-                    }
-
-                    logger.info { "Would have called Service with: " + callService.toJson() }
-                }
-                else -> {
-                    callWebSocketApi(callService.toJson())
-                    logger.info { "Called Service with: " + callService.toJson() }
-                }
-            }
-        }
+@KtorExperimentalAPI
+inline fun <reified CallType : ServiceCaller> KhomeSession.callService() {
+    val servicePayload: CallType by inject()
+    val serviceCoroutineContext: ServiceCoroutineContext by inject()
+    launch(serviceCoroutineContext) {
+        servicePayload.id = get<CallerID>().incrementAndGet()
+        callWebSocketApi(servicePayload.toJson())
+        logger.info { "Called Service with: " + servicePayload.toJson() }
     }
 }
 
-internal data class EntityId(override var entityId: String?) : ServiceDataInterface
+data class EntityId(override var entityId: String?) : ServiceDataInterface
 
 data class EntityIds(
     @SerializedName("entity_id") var entityIds: String,
-    override var entityId: String?
+    @Transient override var entityId: String?
 ) : ServiceDataInterface
 
 /**
@@ -71,22 +48,15 @@ data class EntityIds(
  * @property domain One of the from Khome supported domains [Domain].
  * @property service One of the services that are available for the given [domain].
  * @property serviceData ServiceData object to send context data that fits to the given [service].
- *
  */
-data class ServiceCaller(
-    private var id: Int,
-    private val type: String = "call_service",
-    var domain: DomainInterface?,
-    var service: ServiceInterface?,
-    var serviceData: ServiceDataInterface?
-) : MessageInterface {
-    /**
-     * Some services only need an entity id as context data.
-     * This function serves the needs for that.
-     */
-    fun entityId(entity: EntityInterface) {
-        serviceData = EntityId(entity.id)
-    }
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
+abstract class ServiceCaller : KhomeComponent(), MessageInterface {
+    var id: Int = 0
+    private val type: String = "call_service"
+    abstract var domain: DomainInterface
+    abstract var service: ServiceInterface
+    abstract var serviceData: ServiceDataInterface
 }
 
 /**
@@ -104,13 +74,11 @@ interface ServiceInterface
  */
 interface ServiceDataInterface {
     var entityId: String?
-    fun toJson(): String = serializer.toJson(this)
 }
 
 /**
  * Domains that are supported from Khome
  */
 enum class Domain : DomainInterface {
-    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY
+    COVER, LIGHT, HOME_ASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
 }
-

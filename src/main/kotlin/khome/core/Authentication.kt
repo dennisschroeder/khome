@@ -1,25 +1,40 @@
 package khome.core
 
-import khome.*
-import io.ktor.http.cio.websocket.WebSocketSession
+import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeSession
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlin.system.exitProcess
 
+@KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-internal suspend fun WebSocketSession.authenticate(token: String) {
-    val initMessage = getMessage<AuthResponse>()
+internal suspend fun KhomeSession.authenticate(configuration: ConfigurationInterface) {
+    val initMessage = consumeMessage<AuthResponse>()
 
     if (initMessage.authRequired) {
         logger.info("Authentication required!")
-        val authMessage = Auth(accessToken = token).toJson()
+        val authMessage = Auth(accessToken = configuration.accessToken).toJson()
         logger.info("Sending authentication message.")
         callWebSocketApi(authMessage)
     } else {
         logger.info("No authentication required!")
     }
 
-    val authResponse = runCatching { incoming.receive().asObject<AuthResponse>() }
-    authResponse.onFailure { logger.error { it.printStackTrace() } }
-    authResponse.onSuccess { if (it.isAuthenticated) logger.info { "Authenticated successfully." } }
+    val authResponse =
+        runCatching {
+            incoming.receive().asObject<AuthResponse>()
+        }
+
+    authResponse.onFailure { logger.error { it.message } }
+    authResponse.onSuccess {
+        when {
+            it.isAuthenticated -> logger.info { "Authenticated successfully." }
+            it.authFailed -> {
+                logger.error { "Authentication failed due to invalid credentials." }
+                exitProcess(1)
+            }
+            else -> logger.error { "Something wen´t wrong. Cannot establish a connection." }
+        }
+    }
 }
 
 private data class Auth(
@@ -33,4 +48,5 @@ private data class AuthResponse(
 ) : MessageInterface {
     val authRequired get() = type == "auth_required"
     val isAuthenticated get() = type == "auth_ok"
+    val authFailed get() = type == "auth_invalid"
 }

@@ -1,32 +1,35 @@
 package khome
 
-import khome.core.*
-import kotlinx.coroutines.*
-import java.time.LocalDateTime
-import io.ktor.http.HttpMethod
-import khome.scheduling.toDate
-import kotlin.system.exitProcess
-import khome.calling.FetchStates
-import io.ktor.client.HttpClient
-import khome.calling.FetchServices
-import io.ktor.http.cio.websocket.*
-import khome.Khome.Companion.states
-import io.ktor.client.engine.cio.CIO
-import khome.Khome.Companion.idCounter
-import khome.Khome.Companion.reconnect
+import io.ktor.http.cio.websocket.Frame
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.client.features.websocket.*
-import khome.Khome.Companion.emitResultEvent
-import khome.Khome.Companion.runInSandBoxMode
-import kotlinx.coroutines.channels.consumeEach
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
-import khome.Khome.Companion.schedulerTestEvents
-import khome.Khome.Companion.emitErrorResultEvent
-import khome.Khome.Companion.emitStateChangeEvent
-import khome.Khome.Companion.schedulerTestEventListeners
+import khome.calling.FetchServices
+import khome.calling.FetchStates
+import khome.core.ConfigurationInterface
+import khome.core.EventResult
+import khome.core.ListenEvent
+import khome.core.Result
+import khome.core.ServiceResult
+import khome.core.ServiceStoreInterface
+import khome.core.StateResult
+import khome.core.StateStoreInterface
+import khome.core.authenticate
+import khome.core.dependencyInjection.CallerID
+import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.KhomeKoinContext
+import khome.core.dependencyInjection.loadKhomeModule
+import khome.core.eventHandling.FailureResponseEvent
+import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
-import khome.Khome.Companion.unsubscribeStateChangeEvent
+import khome.core.logger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.coroutineScope
+import org.koin.core.get
+import org.koin.core.inject
+import org.koin.core.module.Module
+import org.koin.dsl.module
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The main entry point to start your application
@@ -34,7 +37,11 @@ import khome.Khome.Companion.unsubscribeStateChangeEvent
  * @param init The type safe builder function to access the receiver
  * @return instance of Khome class instantiated with default values.
  */
-fun initialize(init: Khome.() -> Unit): Khome {
+
+@ObsoleteCoroutinesApi
+@KtorExperimentalAPI
+fun khomeApplication(init: Khome.() -> Unit): Khome {
+    KhomeKoinContext.startKoinApplication()
     return Khome().apply(init)
 }
 
@@ -44,425 +51,189 @@ fun initialize(init: Khome.() -> Unit): Khome {
  *
  * @author Dennis Schröder
  */
-class Khome {
+@ObsoleteCoroutinesApi
+@KtorExperimentalAPI
+class Khome : KhomeComponent() {
     companion object {
-        internal var connected = false
-        internal val states = hashMapOf<String, State>()
-        internal val services = hashMapOf<String, List<String>>()
-        private val stateChangeEvents = Event<EventResult>()
-
-        /**
-         * STATE CHANGE EVENTS
-         */
-        internal fun subscribeStateChangeEvent(handle: String? = null, callback: EventResult.() -> Unit) {
-            if (handle == null)
-                stateChangeEvents += callback
-            else
-                stateChangeEvents[handle] = callback
-        }
-
-        internal fun unsubscribeStateChangeEvent(handle: String) = stateChangeEvents.minus(handle)
-
-        internal fun emitStateChangeEvent(eventData: EventResult) = stateChangeEvents(eventData)
-
-        /**
-         * SCHEDULER TEST EVENTS
-         */
-        private val schedulerTestEvents = Event<String>()
-
-        internal val schedulerTestEventListeners get() = schedulerTestEvents.listeners
-
-        internal fun subscribeSchedulerTestEvent(handle: String? = null, callback: String.() -> Unit) {
-            if (handle == null)
-                schedulerTestEvents += callback
-            else
-                schedulerTestEvents[handle] = callback
-        }
-
-        internal fun unsubscribeSchedulerTestEvent(handle: String) = schedulerTestEvents.minus(handle)
-
-        internal fun emitSchedulerTestEvent(eventData: String) = schedulerTestEvents(eventData)
-
-        /**
-         * SCHEDULER CANCEL EVENTS
-         */
-        private val schedulerCancelEvents = Event<String>()
-
-        internal fun subscribeSchedulerCancelEvents(handle: String? = null, callback: String.() -> Unit) {
-            if (handle == null)
-                schedulerCancelEvents += callback
-            else
-                schedulerCancelEvents[handle] = callback
-        }
-
-        internal fun unsubscribeSchedulerCancelEvents(handle: String) = schedulerCancelEvents.minus(handle)
-
-        internal fun emitSchedulerCancelEvents(eventData: String) = schedulerCancelEvents(eventData)
-
-        /**
-         * RESULT EVENTS
-         */
-        private val resultEvents = Event<Result>()
-
-        internal fun subscribeResultEvent(handle: String?, callback: Result.() -> Unit) {
-            if (handle == null)
-                resultEvents += callback
-            else
-                resultEvents[handle] = callback
-        }
-
-        internal fun unsubscribeResultEvent(handle: String) = resultEvents.minusAssign(handle)
-
-        internal fun emitResultEvent(eventData: Result) = resultEvents(eventData)
-
-        /**
-         * ERROR RESULT EVENTS
-         */
-        private val errorResultEvents = Event<ErrorResult>()
-
-        internal fun subscribeErrorResultEvent(handle: String?, callback: ErrorResult.() -> Unit) {
-            if (handle == null)
-                errorResultEvents += callback
-            else
-                errorResultEvents[handle] = callback
-        }
-
-        internal fun unsubscribeErrorResultEvent(handle: String) = errorResultEvents.minusAssign(handle)
-
-        internal fun emitErrorResultEvent(eventData: ErrorResult) = errorResultEvents(eventData)
-
-        private val config = Configuration()
-
-        private fun resetApplicationState() {
-            states.clear()
-            services.clear()
-            stateChangeEvents.clear()
-            schedulerTestEvents.clear()
-            schedulerCancelEvents.clear()
-            resultEvents.clear()
-            errorResultEvents.clear()
-            deactivateSandBoxMode()
-        }
-
-        private fun cancelAllScheduledCallbacks() = schedulerCancelEvents("Restarted")
-
-        internal fun reconnect() {
-            cancelAllScheduledCallbacks()
-            resetApplicationState()
-            connected = false
-        }
-
-        /**
-         * Since the Homeassistant web socket API needs an incrementing
-         * id when calling it, we need to provide the callService feature
-         * with such an id.
-         *
-         * @see "https://developers.home-assistant.io/docs/en/external_api_websocket.html#message-format"
-         */
-        internal var idCounter = AtomicInteger(0)
-
         private var sandboxMode = AtomicBoolean(false)
 
-        internal val isSandBoxModeActive get() = sandboxMode.get()
+        val isSandBoxModeActive get() = sandboxMode.get()
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
-
-        /**
-         * Call some action in an sand box mode. The sand box mode allows you to
-         * act like you would call the hass websocket api but without actually calling it,
-         * by using [khome.calling.callService]. Use this to do some testing or playing around.
-         *
-         * The call service payload will be printed to the logs.
-         */
-        fun runInSandBoxMode(action: () -> Unit) {
-            activateSandBoxMode()
-            action()
-            deactivateSandBoxMode()
-        }
-
-        /**
-         *  A single thread context needed to run all websocket api calls in.
-         *  Since api calls has to have an incrementing id, it is necessary to make
-         *  the calls threadsafe.
-         *  @see khome.calling.callService
-         */
-        @ObsoleteCoroutinesApi
-        internal val callServiceContext = newSingleThreadContext("ServiceContext")
     }
-
-    private val method = HttpMethod.Get
-    private val path = "/api/websocket"
 
     /**
      * Configure your Khome instance. See all available properties in
-     * the [Configuration] data class.
+     * the [ConfigurationInterface] data class.
      *
-     * @param init Lamba with receiver to configure Khome
-     * @see Configuration
+     * @param init Lambda with receiver to configure Khome
+     * @see [ConfigurationInterface]
      */
-    fun configure(init: Configuration.() -> Unit) {
+    fun configure(init: ConfigurationInterface.() -> Unit) {
+        val config: ConfigurationInterface by inject()
         config.apply(init)
-
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
-        System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
-        System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
-        System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
     }
 
-    @KtorExperimentalAPI
-    private val client = HttpClient(CIO).config {
-        install(WebSockets)
-    }
+    fun beans(beanDeclarations: Module.() -> Unit) =
+        loadKhomeModule(module(override = true, moduleDeclaration = beanDeclarations))
 
     /**
      * The connect function is the window to your home assistant instance.
      * Basically it is an wrapper of the ktor websocket client function.
-     * Inside the closure that you have to pass in, you can register
+     * Inside the lambda, that you have to pass in, you can register
      * state change based or time change based callbacks, call external api´s , or do whatever you`l like.
      *
-     * @see khome.listening.listenState
+     * @see khome.listening.onStateChange
      * @see khome.scheduling
      *
      */
+    @ExperimentalCoroutinesApi
     @KtorExperimentalAPI
     @ObsoleteCoroutinesApi
-    fun connect(reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit) {
-        runBlocking {
-            while (!connected) {
-                delay(2000)
-                try {
-                    if (config.secure)
-                        client.wss(
-                            method = method,
-                            host = config.host,
-                            port = config.port,
-                            path = path
-                        ) { runApplication(config, reactOnStateChangeEvents) }
-                    else
-                        client.ws(
-                            method = method,
-                            host = config.host,
-                            port = config.port,
-                            path = path
-                        ) { runApplication(config, reactOnStateChangeEvents) }
-                } catch (e: Throwable) {
-                    logger.error { e.message }
-                    reconnect()
+    suspend fun connectAndRun(listeners: suspend KhomeSession.() -> Unit) =
+        coroutineScope {
+            get<KhomeClient>()
+                .startSession {
+                    configureLogger(get())
+                    runApplication(get(), listeners)
                 }
-            }
         }
-    }
 }
 
+internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
+    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
+    System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
+    System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
+    System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
+}
+
+@KtorExperimentalAPI
+@ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-private suspend fun DefaultClientWebSocketSession.runApplication(
-    config: Configuration,
-    reactOnStateChangeEvents: suspend DefaultClientWebSocketSession.() -> Unit
+private suspend fun KhomeSession.runApplication(
+    config: ConfigurationInterface,
+    listeners: suspend KhomeSession.() -> Unit
 ) {
-    authenticate(config.accessToken)
-    fetchAvailableServicesFromApi()
+    authenticate(get())
 
-    if (config.startStateStream)
-        startStateStream()
+    fetchServices(get())
+    storeServices(consumeMessage(), get())
 
-    reactOnStateChangeEvents()
+    if (config.startStateStream) {
+        fetchStates(get())
+        storeStates(consumeMessage(), get())
+        subscribeStateChanges(get())
+    }
 
-    if (config.runIntegrityTests)
-        runIntegrityTest()
+    listeners()
 
-    if (successfullyStartedStateStream())
+    if (successfullyStartedStateStream()) {
         consumeStateChangesByTriggeringEvents()
-    else
+    } else
         throw EventStreamException("Could not subscribe to event stream!")
 }
 
-private fun WebSocketSession.runIntegrityTest() = runInSandBoxMode {
-    logger.info { "Testing the application:" }
-    println("###      Integrity testing started     ###")
-
-    val failCount = AtomicInteger(0)
-    val now = LocalDateTime.now()
-    val events = states.map { (entityId, state) ->
-        async {
-            val data = EventResult.Event.Data(entityId, state, state)
-            val event = EventResult.Event("integrity_test_event", data, now.toDate(), "local")
-            val eventResult = EventResult(idCounter.get(), "integrity_test", event)
-
-            val success = catchAllTests(entityId) {
-                emitStateChangeEvent(eventResult)
-            }
-            if (!success) failCount.incrementAndGet()
-
-            entityId
-        }
-    }
-
-    runBlocking {
-        events.awaitAll().forEach { entityId ->
-            unsubscribeStateChangeEvent(entityId)
-        }
-    }
-
-    schedulerTestEventListeners.forEach { action ->
-        val success = catchAllTests("Timer") {
-            action.value.invoke("Integrity_test")
-        }
-        if (!success) failCount.incrementAndGet()
-    }
-
-    val failCountTotal = failCount.get()
-    when {
-        failCountTotal == 0 -> {
-            println(
-                """
-            +++ All tests passed the specifications +++
-            ###      Integrity testing finished     ###
-            """.trimIndent()
-            )
-            logger.info { "Application started" }
-        }
-        failCountTotal > 0 -> {
-            println(
-                """
-
-                --- $failCountTotal test(s) did not pass the specifications ---
-                ###      Integrity testing finished     ###
-            """.trimIndent()
-
-            )
-            logger.error { "--- $failCountTotal test(s) fails ---" }
-            logger.info { "Shutdown application" }
-            logger.info { "Good bye" }
-            exitProcess(1)
-        }
-    }
-}
-
-private inline fun catchAllTests(section: String, action: () -> Unit): Boolean {
-    try {
-        action()
-        return true
-    } catch (t: Throwable) {
-        println(
-            """
-
-                ---  [$section]  ---
-                Failed with message: ${t.message}
-                ${t.stackTrace[0]}
-                ---  [$section]  ---
-
-            """.trimIndent()
-
-        )
-        return false
-    }
-}
-
+@KtorExperimentalAPI
+@ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-private suspend fun WebSocketSession.consumeStateChangesByTriggeringEvents() {
-    coroutineScope {
-        incoming.consumeEach { frame ->
-            try {
-                val message = frame.asObject<Map<String, Any>>()
-                val type = message["type"]
+private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = coroutineScope {
+    val stateChangeEvent: StateChangeEvent by inject()
 
-                when (type) {
-                    "event" -> launch {
-                        updateLocalStateStore(frame)
-                        emitStateChangeEvent(frame.asObject())
-                    }
-                    "result" -> launch { resolveResultTypeAndEmitEvents(frame) }
-                    else -> launch { logger.warn { "Could not classify message: $type" } }
-                }
-            } catch (e: Throwable) {
-                logger.info { e.message }
-                close(e)
-                reconnect()
+    incoming.consumeEach { frame ->
+        val message = frame.asObject<Map<String, Any>>()
+        val type = message["type"]
+
+        when (type) {
+            "event" -> {
+                updateLocalStateStore(frame, get())
+                stateChangeEvent.emit(frame.asObject())
             }
+            "result" -> {
+                resolveResultTypeAndEmitEvents(frame)
+            }
+            else -> logger.warn { "Could not classify message: $type" }
         }
     }
 }
 
-private fun resolveResultTypeAndEmitEvents(frame: Frame) {
+private fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
+    logger.debug { "Result: $resultData" }
     when {
-        !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData)
+        !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData, get())
         resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
         resultData.success -> {
-            emitResultEvent(frame.asObject())
             logResults(resultData)
         }
     }
 }
 
-private fun checkLocalStateStoreAndRefresh(frame: Frame) {
+private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
     val states = frame.asObject<StateResult>()
     var noneEqualStateCount = 0
+    val stateStore: StateStoreInterface by inject()
 
-    logger.debug { " ###    Started local state store check     ###" }
+    logger.info { " ###    Started local state store check    ###" }
 
     states.result.forEach { state ->
-        if (Khome.states[state.entityId] != state) {
+
+        if (stateStore[state.entityId] != state) {
             noneEqualStateCount++
             logger.warn { "The state of ${state.entityId} is not in sync any more." }
-            Khome.states[state.entityId] = state
+            stateStore[state.entityId] = state
             logger.warn { "The state has been refreshed." }
         }
     }
 
     if (noneEqualStateCount > 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
-    logger.debug { " ###    Local state store check finished    ###" }
-
+    logger.info { " ###    Local state store check finished    ###" }
 }
 
-private fun logResults(resultData: Result) =
+private fun KhomeSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
-
-private fun emitResultErrorEventAndPrintLogMessage(resultData: Result) {
-    val errorCode = resultData.error?.get("code")!!
-    val errorMessage = resultData.error.get("message")!!
-
-    emitErrorResultEvent(ErrorResult(errorCode, errorMessage))
-    logger.error { "$errorCode: $errorMessage" }
+private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Result, failureResponseEvent: FailureResponseEvent) {
+    failureResponseEvent.emit(resultData)
+    logger.error { "{CallId: ${resultData.id}] errorCode: ${resultData.error!!.code} ${resultData.error.message}" }
 }
 
-private suspend fun WebSocketSession.updateLocalStateStore(frame: Frame) {
+private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
     val data = frame.asObject<EventResult>()
-    if (states[data.event.data.entityId] == data.event.data.newState) fetchStates()
-    else states[data.event.data.entityId] = data.event.data.newState
+    data.event.data.newState?.let { stateStore[data.event.data.entityId] = it }
 }
 
-private suspend fun WebSocketSession.fetchAvailableServicesFromApi() {
-    val payload = FetchServices(idCounter.incrementAndGet())
+internal suspend fun KhomeSession.fetchServices(id: CallerID) {
+    val payload = FetchServices(id.incrementAndGet())
     callWebSocketApi(payload.toJson())
-    val message = getMessage<ServiceResult>()
+}
 
-    message.result.forEach { (domain, services) ->
-        val serviceCollection = mutableListOf<String>()
-        services.forEach { (name, _) ->
-            serviceCollection.add(name)
+internal fun KhomeSession.storeServices(
+    serviceResult: ServiceResult,
+    serviceStore: ServiceStoreInterface
+) =
+    serviceResult
+        .result
+        .forEach { (domain, services) ->
+            logger.debug { "$domain: $services" }
+            val serviceList = mutableListOf<String>()
+            services.forEach { (name, _) ->
+                serviceList += name
+                logger.debug { "Fetched service: $name from domain: $domain" }
+            }
+            serviceStore[domain] = serviceList
         }
-        Khome.services[domain] = serviceCollection
-    }
-}
 
-private suspend fun WebSocketSession.startStateStream() {
-    fetchStates()
-    val message = getMessage<StateResult>()
+internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
+    callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = "state_changed").toJson())
 
-    message.result.forEach { state ->
-        states[state.entityId] = state
-    }
-    callWebSocketApi(ListenEvent(idCounter.incrementAndGet(), eventType = "state_changed").toJson())
-}
+internal fun KhomeSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
+    stateResults.result
+        .forEach { state ->
+            stateStore[state.entityId] = state
+            logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
+        }
 
-private suspend fun WebSocketSession.fetchStates() = callWebSocketApi(FetchStates(idCounter.incrementAndGet()).toJson())
+internal suspend fun KhomeSession.fetchStates(id: CallerID) =
+    callWebSocketApi(FetchStates(id.incrementAndGet()).toJson())
 
-internal suspend fun WebSocketSession.callWebSocketApi(content: String) = send(content)
-
-private suspend fun WebSocketSession.successfullyStartedStateStream() = getMessage<Result>().success
-
-internal suspend inline fun <reified M : Any> WebSocketSession.getMessage(): M = incoming.receive().asObject()
-
-internal inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
+private suspend fun KhomeSession.successfullyStartedStateStream() = consumeMessage<Result>().success

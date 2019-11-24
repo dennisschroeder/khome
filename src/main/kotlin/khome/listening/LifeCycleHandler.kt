@@ -1,19 +1,20 @@
 package khome.listening
 
-import khome.core.logger
-import khome.scheduling.runOnceInMinutes
-import khome.scheduling.runOnceInSeconds
+import io.ktor.util.KtorExperimentalAPI
 import khome.core.entities.EntityInterface
 import khome.core.LifeCycleHandlerInterface
-import khome.Khome.Companion.unsubscribeStateChangeEvent
+import khome.core.dependencyInjection.KhomeComponent
+import khome.core.eventHandling.StateChangeEvent
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.core.inject
 
-class LifeCycleHandler(handle: String, entityId: EntityInterface) : LifeCycleHandlerInterface {
-    override val lazyCancellation: Unit by lazy {
-        unsubscribeStateChangeEvent(handle)
-        logger.info { "Subscription to ${entityId.id} disabled." }
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
+class LifeCycleHandler(val handle: String, val entityId: EntityInterface) : LifeCycleHandlerInterface, KhomeComponent() {
+    private val stateChangeEvent: StateChangeEvent by inject()
+    override fun cancel() {
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
-    fun disable() = lazyCancellation
-    fun disableInSeconds(seconds: Int) = runOnceInSeconds(seconds) { lazyCancellation }
-    fun disableInMinutes(minutes: Int) = runOnceInMinutes(minutes) { lazyCancellation }
+    fun disable() = stateChangeEvent.unsubscribe(handle)
 }

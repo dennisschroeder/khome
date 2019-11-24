@@ -1,11 +1,10 @@
 package khome.core.entities
 
-import java.time.ZoneId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
-
-object Sun : AbstractEntity<String>("sun", "sun") {
+class Sun : AbstractEntity<String>("sun", "sun") {
     val isUp get() = state.getValue<String>() == "above_horizon"
     val isDown get() = state.getValue<String>() == "below_horizon"
 
@@ -13,7 +12,7 @@ object Sun : AbstractEntity<String>("sun", "sun") {
     val nextSunset get() = getNextSunPosition("next_setting")
 
     private fun getNextSunPosition(nextPosition: String): LocalDateTime {
-        val nextSunPositionChange = Sun.getAttributeValue<String>(nextPosition)
+        val nextSunPositionChange = getAttributeValue<String>(nextPosition)
         return convertUtcToLocalDateTime(nextSunPositionChange)
     }
 

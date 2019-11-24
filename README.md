@@ -1,3 +1,7 @@
+
+![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
+![LINE](https://img.shields.io/badge/line--coverage-15%25-red.svg)
+
 # Khome
 
 Khome is a smart home-automation library for **Home Assistant**, written in Kotlin. It makes heavy usage of the **Kotlin-DSL** 
@@ -8,23 +12,21 @@ Or you can call any other third party code or API.
 The heart of Khome is the [Ktor-Websocket-Client](https://ktor.io/clients/websockets.html). Khome uses ktor for the communication 
 between your application and your Home-Assistant Server.
 
-Example:
+Simple Example:
 ```kotlin
 
-object LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
-object LivingRoomMoodLight : AbstractLightEntity("livingroom_mood") 
+class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
+class LivingRoomLight : AbstractLightEntity("livingroom_main")
+class TurnOnLivingRoomLight(light: LivingRoomLight) : TurnOn(light)
 
-listenState(LivingRoomLuminance) {
+beans {
+    single { LivingRoomLuminance() }
+    single { LivingRoomLight() }
+    single { TurnOnLivingRoomLight(get()) }
+}
 
-    constrain {
-        newState.getValue<Double>() <= 3.0
-    }
-
-    execute {
-        callService {
-            turnOn(LivingRoomMoodLight)
-        }
-    }
+onStateChange<LivingRoomLuminance> { 
+    if(stateValue <= 3.0) callService<TurnOnLivingRoomMoodLight>
 }
 ```
 
@@ -94,7 +96,7 @@ dependencies {
 <dependency>
         <groupId>com.github.dennisschroeder</groupId>
         <artifactId>khome</artifactId>
-        <version>master-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
 </dependency>
 
 ```
@@ -112,16 +114,32 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 
 #### Initialization & Configuration
 
-To start off listening to state change events and call services, you need to initialize and configure khome.
+To start listening to state change events and call services, you need to initialize and configure khome.
 
 ```kotlin
-initialize { // this: Khome
+khomeApplication { // this: Khome
     configure { // this: Configuration
         host = "localhost"
         port = 8123
         accessToken = "Your super secret token"
         secure = false
      }
+}
+```
+Alternatively you can use a configuration bean.
+
+```kotlin
+data class MyConfiguration(
+    override var host: String = "localhost",
+    override var port: Int = 8123,
+    override var accessToken: String = "Your super secret token"
+    override var secure = false
+) : Configuration()
+
+khomeApplication { // this: Khome
+    bean {
+        single<ConfigurationInterface> { MyConfiguration() }
+    }
 }
 ```
 
@@ -138,16 +156,16 @@ You can do so within the Lovelace ui. Just go to your user profile, scroll to th
 
 #### Connect to the web socket api
 
-```
-initialize {
-    configure {...}
-    connect { // this: DefaultClientWebSocketSession
+```kotlin
+khomeApplication {
+    beans {/*...*/}
+    connectAndRun { // this: KhomeSession
         
     }
 }
 ```
 
-By calling the connect function, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
+By calling the connectAndRun() method, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
 change streaming. When all went as supposed, you should see the following output in the console. 
 
 ```bash
@@ -156,6 +174,25 @@ change streaming. When all went as supposed, you should see the following output
 [main] INFO khome.core.Logger - Authenticated successfully.
 ```
 
-The `connect()` function basically is a wrapper around [ktors](https://ktor.io/clients/websockets.html) `client.ws()` function, which is the scope to receive from and send messages 
-to the websocket api. Inside the connect scope, you can use khome's ktor abstracted functions, or your very own, to build your smart home-automation's.
+#### React to state changes
+No you can build your application with Khome by writing callbacks that get executed when a state change occurs.
+```kotlin
+class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
+class LivingRoomLight : AbstractLightEntity("livingroom_main")
+class TurnOnLivingRoomLight(light: LivingRoomMoodLight) : TurnOn(light)
+
+khomeApplication {
+    beans {
+        single { LivingRoomLuminance() }
+        single { LivingRoomLight() }
+        single { TurnOnLivingRoomLight(get()) }
+    }
+    connectAndRun { // this: KhomeSession
+        onStateChange<LivingRoomLuminance> {
+            if (stateValue <= 3) callService<TurnOnLivingRoomMoodLight>()
+        }
+    }
+}
+```
+
 
