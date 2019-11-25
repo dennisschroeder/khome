@@ -1,7 +1,11 @@
 package khome.calling
 
 import com.google.gson.annotations.SerializedName
+import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
+@ObsoleteCoroutinesApi
+@KtorExperimentalAPI
 fun ServiceCaller.notify(init: NotifierMessage.() -> Unit) {
     domain = Domain.NOTIFY
     serviceData = NotifierMessage(
