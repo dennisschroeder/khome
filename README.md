@@ -1,6 +1,7 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
 ![LINE](https://img.shields.io/badge/line--coverage-15%25-red.svg)
+[![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
 
@@ -79,7 +80,7 @@ repositories {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.dennisschroeder:khome:0.1.0-SNAPSHOT'
+    implementation 'com.github.dennisschroeder:khome:master-SNAPSHOT'
 }
 ```
 

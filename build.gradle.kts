@@ -1,3 +1,4 @@
+
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -13,7 +14,7 @@ plugins {
 }
 
 group = "com.dennisschroeder"
-version = "0.1.0-MODULIZE"
+version = "0.1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
