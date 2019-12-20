@@ -1,0 +1,19 @@
+name: On push pipeline
+on:
+  push:
+    branches-ignore:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Commit check
+        uses: docker://commitsar/commitsar:latest
+
+      - name: Code Check
+        run: ./gradlew --no-daemon clean check
