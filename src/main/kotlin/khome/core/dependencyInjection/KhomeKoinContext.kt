@@ -16,13 +16,14 @@ import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.logger
 import khome.core.mapping.ObjectMapper
+import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import org.koin.core.KoinApplication
-import org.koin.core.logger.Level
 import org.koin.core.module.Module
+import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import java.time.OffsetDateTime
@@ -50,21 +51,32 @@ object KhomeKoinContext {
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
                     .create()!!
             }
-            single { ObjectMapper(get()) }
+            single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
             single { StateChangeEvent(Event()) }
             single { FailureResponseEvent(Event()) }
             single { newSingleThreadContext("ServiceContext") }
             single { AtomicInteger(0) }
-            single<ConfigurationInterface> { DefaultConfiguration() }
+            single<ConfigurationInterface> {
+                DefaultConfiguration(
+                    host = getProperty("HOST", "localhost"),
+                    port = getProperty("PORT", 8123),
+                    accessToken = getProperty("ACCESS_TOKEN", "<some-fancy-access-token>"),
+                    secure = getProperty("SECURE", "false").toBoolean(),
+                    startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean(),
+                    logLevel = getProperty("LOG_LEVEL", "INFO"),
+                    logTime = getProperty("LOG_TIME", "true").toBoolean(),
+                    logTimeFormat = getProperty("LOG_TIME_FORMAT", "yyyy-MM-dd HH:mm:ss"),
+                    logOutput = getProperty("LOG_OUTPUT", "System.out")
+                )
+            }
             single { KhomeClient(get()) }
             single { Sun() }
         }
 
     fun startKoinApplication() {
         application = koinApplication {
-            printLogger(Level.DEBUG)
             environmentProperties()
             runCatching {
                 fileProperties("/khome.properties")

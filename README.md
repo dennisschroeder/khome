@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-15%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-19%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
@@ -115,8 +115,9 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 
 #### Initialization & Configuration
 
-To start listening to state change events and call services, you need to initialize and configure khome.
+To start listening to state change events and call services, you need to initialize and configure khome. Here you have three choices to configure khome
 
+1. The functional way
 ```kotlin
 khomeApplication { // this: Khome
     configure { // this: Configuration
@@ -127,6 +128,7 @@ khomeApplication { // this: Khome
      }
 }
 ```
+2. Use dependency injection
 Alternatively you can use a configuration bean.
 
 ```kotlin
@@ -135,13 +137,18 @@ data class MyConfiguration(
     override var port: Int = 8123,
     override var accessToken: String = "Your super secret token"
     override var secure = false
-) : Configuration()
+) : ConfigurationInterface
 
 khomeApplication { // this: Khome
     bean {
-        single<ConfigurationInterface> { MyConfiguration() }
+        single<ConfigurationInterface>(override = true) { MyConfiguration() }
     }
 }
+```
+3. Set environment variables
+You can use env variables to configure home.
+```.env
+HOST=192.169.178.101
 ```
 
 ##### Required Parameters
