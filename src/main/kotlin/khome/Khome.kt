@@ -27,6 +27,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.get
 import org.koin.core.inject
+import org.koin.core.logger.Level
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.concurrent.atomic.AtomicBoolean
@@ -105,6 +106,7 @@ internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
     System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
     System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
     System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
+    KhomeKoinContext.application?.let { it.printLogger(Level.valueOf(config.logLevel)) }
 }
 
 @KtorExperimentalAPI

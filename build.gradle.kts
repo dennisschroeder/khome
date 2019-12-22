@@ -85,6 +85,15 @@ publishing {
 }
 
 tasks.withType<Test> {
+    environment["HOST"] = "home-assistant.local"
+    environment["PORT"] = 8321
+    environment["ACCESS_TOKEN"] = "dsq7zht54899dhz43kbv4dgr56a8we234h>!sg?x"
+    environment["SECURE"] = true
+    environment["START_STATE_STREAM"] = false
+    environment["LOG_LEVEL"] = "TRACE"
+    environment["LOG_TIME"] = false
+    environment["LOG_TIME_FORMAT"] = "yyy-MM-dd"
+    environment["LOG_OUTPUT"] = "/khome.log"
     useJUnitPlatform()
 }
 
