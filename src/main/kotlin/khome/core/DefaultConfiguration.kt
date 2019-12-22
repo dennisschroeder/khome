@@ -1,7 +1,5 @@
 package khome.core
 
-import org.koin.core.logger.Level
-
 data class DefaultConfiguration(
     override var host: String,
     override var port: Int,
