@@ -80,5 +80,5 @@ interface ServiceDataInterface {
  * Domains that are supported from Khome
  */
 enum class Domain : DomainInterface {
-    COVER, LIGHT, HOME_ASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
+    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
 }
