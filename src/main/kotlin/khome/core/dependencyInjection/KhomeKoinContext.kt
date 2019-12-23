@@ -69,7 +69,7 @@ object KhomeKoinContext {
                     logTime = getProperty("LOG_TIME", "true").toBoolean(),
                     logTimeFormat = getProperty("LOG_TIME_FORMAT", "yyyy-MM-dd HH:mm:ss"),
                     logOutput = getProperty("LOG_OUTPUT", "System.out")
-                )
+                ).also { logger.debug { it } }
             }
             single { KhomeClient(get()) }
             single { Sun() }
