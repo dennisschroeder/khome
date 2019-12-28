@@ -66,11 +66,10 @@ internal class StateStoreTest : KhomeTestComponent() {
                 }
             }
         """.trimIndent()
-    private val state: State = get<ObjectMapper>().fromJson(stateJson)
-    private val newState: State = get<ObjectMapper>().fromJson(newStateJson)
 
     @Test
     fun `assert StateStore returns injected State by entity id`() {
+        val state: State = get<ObjectMapper>().fromJson(stateJson)
         val stateStore = StateStore()
         stateStore["light.bed_light"] = state
         assertThat(stateStore["light.bed_light"]).isEqualTo(state)
@@ -79,6 +78,8 @@ internal class StateStoreTest : KhomeTestComponent() {
     @Test
     fun `assert StateStore updates State when overridden by entity id`() {
         val stateStore = StateStore()
+        val state: State = get<ObjectMapper>().fromJson(stateJson)
+        val newState: State = get<ObjectMapper>().fromJson(newStateJson)
         stateStore["light.bed_light"] = state
         stateStore["light.bed_light"] = newState
 
@@ -87,6 +88,8 @@ internal class StateStoreTest : KhomeTestComponent() {
 
     @Test
     fun `assert read from different coroutine`() {
+        val state: State = get<ObjectMapper>().fromJson(stateJson)
+        val newState: State = get<ObjectMapper>().fromJson(newStateJson)
         runBlocking {
             val stateStore = StateStore()
             logger.info { "State: $newState" }
@@ -105,6 +108,7 @@ internal class StateStoreTest : KhomeTestComponent() {
     @Test
     fun `returns null when state not found`() {
         val stateStore = StateStore()
+        val state: State = get<ObjectMapper>().fromJson(stateJson)
         stateStore["light.bed_light"] = state
 
         assertThat(stateStore["light.bathroom_light"]).isNull()
@@ -113,6 +117,7 @@ internal class StateStoreTest : KhomeTestComponent() {
     @Test
     fun `assert call to clear removes all items`() {
         val stateStore = StateStore()
+        val state: State = get<ObjectMapper>().fromJson(stateJson)
         stateStore["light.bed_light"] = state
 
         stateStore.clear()

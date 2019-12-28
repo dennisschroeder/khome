@@ -6,7 +6,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun ServiceCaller.notify(init: NotifierMessage.() -> Unit) {
+fun ServiceCall.notify(init: NotifierMessage.() -> Unit) {
     domain = Domain.NOTIFY
     serviceData = NotifierMessage(
         null,

@@ -10,7 +10,6 @@ import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
-import khome.core.entities.Sun
 import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
@@ -72,7 +71,6 @@ object KhomeKoinContext {
                 ).also { logger.debug { it } }
             }
             single { KhomeClient(get()) }
-            single { Sun() }
         }
 
     fun startKoinApplication() {
@@ -85,11 +83,14 @@ object KhomeKoinContext {
             }
 
             modules(internalModule)
-        }.createEagerInstances()
+                .createEagerInstances()
+        }
     }
 }
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 fun loadKhomeModule(module: Module) =
-    checkNotNull(KhomeKoinContext.application) { "Koin application not started yet" }.modules(module)
+    checkNotNull(KhomeKoinContext.application) { "Koin application not started yet" }
+        .modules(module)
+        .createEagerInstances()

@@ -1,6 +1,6 @@
 package khome.calling
 
-fun ServiceCaller.createPersistentNotification(init: PersistentNotificationMessage.() -> Unit) {
+fun ServiceCall.createPersistentNotification(init: PersistentNotificationMessage.() -> Unit) {
     domain = Domain.PERSISTENT_NOTIFICATION
     service = PersistentNotificationService.CREATE
     serviceData = PersistentNotificationMessage(

@@ -2,40 +2,40 @@ package khome.calling
 
 import khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity
 
-fun ServiceCaller.setVolume(entity: AbstractMediaPlayerEntity, level: Float) =
+fun ServiceCall.setVolume(entity: AbstractMediaPlayerEntity, level: Float) =
     mediaPlayer {
         entityId = entity.id
         service = MediaPlayerServices.VOLUME_SET
         volumeLevel = level
     }
 
-fun ServiceCaller.volumeDown(entity: AbstractMediaPlayerEntity) =
+fun ServiceCall.volumeDown(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         entityId = entity.id
         service = MediaPlayerServices.VOLUME_DOWN
     }
 
-fun ServiceCaller.volumeUp(entity: AbstractMediaPlayerEntity) =
+fun ServiceCall.volumeUp(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         entityId = entity.id
         service = MediaPlayerServices.VOLUME_UP
     }
 
-fun ServiceCaller.unMute(entity: AbstractMediaPlayerEntity) =
+fun ServiceCall.unMute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         entityId = entity.id
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = false
     }
 
-fun ServiceCaller.mute(entity: AbstractMediaPlayerEntity) =
+fun ServiceCall.mute(entity: AbstractMediaPlayerEntity) =
     mediaPlayer {
         entityId = entity.id
         service = MediaPlayerServices.VOLUME_MUTE
         isVolumeMuted = true
     }
 
-fun ServiceCaller.mediaPlayer(init: MediaData.() -> Unit) {
+fun ServiceCall.mediaPlayer(init: MediaData.() -> Unit) {
     domain = Domain.MEDIA_PLAYER
     serviceData = MediaData(
         null,

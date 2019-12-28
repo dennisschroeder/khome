@@ -7,7 +7,7 @@ package khome.calling
  *
  * @receiver [LightData]
  */
-fun ServiceCaller.light(init: LightData.() -> Unit) {
+fun ServiceCall.light(init: LightData.() -> Unit) {
     domain = Domain.LIGHT
     serviceData = LightData(
         "light",
