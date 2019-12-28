@@ -22,8 +22,6 @@ data class TestData(val text: String, val number: Int, val state: Boolean, val d
 @KtorExperimentalAPI
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ObjectMapperTest : KhomeTestComponent() {
-
-    private val mapper: ObjectMapper = get()
     private val someJson = """
             {
                 "text": "some text about whatever",
@@ -35,6 +33,7 @@ internal class ObjectMapperTest : KhomeTestComponent() {
 
     @Test
     fun `assert ObjectMapper reads correctly`() {
+        val mapper: ObjectMapper = get()
         val testDataFromJson: TestData = mapper.fromJson(someJson)
         val testDataFromObject = mapper.toJson(testDataFromJson)
 

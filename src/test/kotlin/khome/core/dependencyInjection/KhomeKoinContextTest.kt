@@ -15,8 +15,6 @@ import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
-import khome.core.entities.AbstractEntity
-import khome.core.entities.Sun
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
@@ -77,9 +75,6 @@ internal class KhomeKoinContextTest : KhomeComponent() {
             assertThat(configuration).isInstanceOf(DefaultConfiguration::class)
 
             val khomeClient: KhomeClient = get()
-
-            val sun: Sun = get()
-            assertThat(sun).isInstanceOf(AbstractEntity::class)
         }.isSuccess()
     }
 

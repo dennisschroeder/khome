@@ -3,7 +3,10 @@ package khome.calling
 import com.google.gson.annotations.SerializedName
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
+import khome.calling.errors.DomainNotFoundException
+import khome.calling.errors.ServiceNotFoundException
 import khome.core.MessageInterface
+import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.ServiceCoroutineContext
@@ -14,16 +17,16 @@ import org.koin.core.get
 import org.koin.core.inject
 
 /**
- * A function to build an [ServiceCaller] object, which is the base
+ * A function to build an [ServiceCall] object, which is the base
  * to all [home-assistant](https://www.home-assistant.io/) websocket api calls.
  * The ServiceCaller object is then serialized and send to the websocket api.
  * [Home-Assistant Websocket-Api](https://developers.home-assistant.io/docs/en/external_api_websocket.html).
  *
- * @see ServiceCaller
+ * @see ServiceCall
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-inline fun <reified CallType : ServiceCaller> KhomeSession.callService() {
+inline fun <reified CallType : ServiceCall> KhomeSession.callService() {
     val servicePayload: CallType by inject()
     val serviceCoroutineContext: ServiceCoroutineContext by inject()
     launch(serviceCoroutineContext) {
@@ -51,21 +54,32 @@ data class EntityIds(
  */
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-abstract class ServiceCaller : KhomeComponent(), MessageInterface {
+abstract class ServiceCall(
+    var domain: DomainInterface,
+    var service: ServiceInterface,
+    var serviceData: ServiceDataInterface
+) : KhomeComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
-    abstract var domain: DomainInterface
-    abstract var service: ServiceInterface
-    abstract var serviceData: ServiceDataInterface
+    @Transient private val serviceStore: ServiceStoreInterface = get()
+    @Transient private val _domain = domain.toString().toLowerCase()
+    @Transient private val _service = service.toString().toLowerCase()
+
+    init {
+        if (_domain !in serviceStore)
+            throw DomainNotFoundException("ServiceDomain: \"$_domain\" not found in homeassistant Services")
+        if (!serviceStore[_domain]!!.contains(_service))
+            throw ServiceNotFoundException("Service: \"${_service}service\" not found under domain: \"${_domain}domain\"in homeassistant Services")
+    }
 }
 
 /**
- * Main entry point to create own domain enum classes
+ * Main entry point to create new domain enum classes
  */
 interface DomainInterface
 
 /**
- * Main entry point to create own service enum classes
+ * Main entry point to create new service enum classes
  */
 interface ServiceInterface
 

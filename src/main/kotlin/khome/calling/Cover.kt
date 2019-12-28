@@ -3,26 +3,26 @@ package khome.calling
 import com.google.gson.annotations.SerializedName
 import khome.core.entities.cover.AbstractCoverEntity
 
-fun ServiceCaller.openCover(entity: AbstractCoverEntity) =
+fun ServiceCall.openCover(entity: AbstractCoverEntity) =
     cover {
         entityId = entity.id
         service = CoverServices.OPEN_COVER
     }
 
-fun ServiceCaller.closeCover(entity: AbstractCoverEntity) =
+fun ServiceCall.closeCover(entity: AbstractCoverEntity) =
     cover {
         entityId = entity.id
         service = CoverServices.CLOSE_COVER
     }
 
-fun ServiceCaller.setCoverPositionTo(entity: AbstractCoverEntity, position: Int) =
+fun ServiceCall.setCoverPositionTo(entity: AbstractCoverEntity, position: Int) =
     cover {
         entityId = entity.id
         service = CoverServices.SET_COVER_POSITION
         this.position = position
     }
 
-fun ServiceCaller.cover(init: CoverData.() -> Unit) {
+fun ServiceCall.cover(init: CoverData.() -> Unit) {
     domain = Domain.COVER
     serviceData = CoverData(
         entityId = null,
@@ -36,7 +36,7 @@ data class CoverData(
 
 ) : ServiceDataInterface
 
-fun ServiceCaller.covers(init: CoversData.() -> Unit) {
+fun ServiceCall.covers(init: CoversData.() -> Unit) {
     domain = Domain.COVER
     serviceData = CoversData(
         entityId = null,

@@ -61,6 +61,8 @@ class Khome : KhomeComponent() {
         val isSandBoxModeActive get() = sandboxMode.get()
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
+
+        var beanDeclarations: Module.() -> Unit = {}
     }
 
     /**
@@ -75,8 +77,9 @@ class Khome : KhomeComponent() {
         config.apply(init)
     }
 
-    fun beans(beanDeclarations: Module.() -> Unit) =
-        loadKhomeModule(module(override = true, moduleDeclaration = beanDeclarations))
+    fun beans(beanDeclarations: Module.() -> Unit) {
+        Khome.beanDeclarations = beanDeclarations
+    }
 
     /**
      * The connect function is the window to your home assistant instance.
@@ -117,7 +120,6 @@ private suspend fun KhomeSession.runApplication(
     listeners: suspend KhomeSession.() -> Unit
 ) {
     authenticate(get())
-
     fetchServices(get())
     storeServices(consumeMessage(), get())
 
@@ -127,6 +129,7 @@ private suspend fun KhomeSession.runApplication(
         subscribeStateChanges(get())
     }
 
+    loadKhomeModule(module(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
     listeners()
 
     if (successfullyStartedStateStream()) {
