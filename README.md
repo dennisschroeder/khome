@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-21%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-22%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
@@ -21,13 +21,13 @@ class LivingRoomLight : AbstractLightEntity("livingroom_main")
 class TurnOnLivingRoomLight(light: LivingRoomLight) : TurnOn(light)
 
 beans {
-    single { LivingRoomLuminance() }
-    single { LivingRoomLight() }
-    single { TurnOnLivingRoomLight(get()) }
+    bean { LivingRoomLuminance() }
+    bean { LivingRoomLight() }
+    bean { TurnOnLivingRoomLight(get()) }
 }
 
 onStateChange<LivingRoomLuminance> { 
-    if(stateValue <= 3.0) callService<TurnOnLivingRoomMoodLight>
+    if(stateValue <= 3.0) callService<TurnOnLivingRoomMoodLight>()
 }
 ```
 
@@ -140,8 +140,8 @@ data class MyConfiguration(
 ) : ConfigurationInterface
 
 khomeApplication { // this: Khome
-    bean {
-        single<ConfigurationInterface>(override = true) { MyConfiguration() }
+    beans {
+        beans<ConfigurationInterface>(override = true) { MyConfiguration() }
     }
 }
 ```
@@ -191,9 +191,9 @@ class TurnOnLivingRoomLight(light: LivingRoomMoodLight) : TurnOn(light)
 
 khomeApplication {
     beans {
-        single { LivingRoomLuminance() }
-        single { LivingRoomLight() }
-        single { TurnOnLivingRoomLight(get()) }
+        bean { LivingRoomLuminance() }
+        bean { LivingRoomLight() }
+        bean { TurnOnLivingRoomLight(get()) }
     }
     connectAndRun { // this: KhomeSession
         onStateChange<LivingRoomLuminance> {

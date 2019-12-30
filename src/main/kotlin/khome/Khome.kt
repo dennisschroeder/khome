@@ -16,6 +16,8 @@ import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.KhomeKoinContext
+import khome.core.dependencyInjection.KhomeModule
+import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
@@ -28,8 +30,6 @@ import kotlinx.coroutines.coroutineScope
 import org.koin.core.get
 import org.koin.core.inject
 import org.koin.core.logger.Level
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -62,7 +62,7 @@ class Khome : KhomeComponent() {
         private fun activateSandBoxMode() = sandboxMode.set(true)
         private fun deactivateSandBoxMode() = sandboxMode.set(false)
 
-        var beanDeclarations: Module.() -> Unit = {}
+        var beanDeclarations: KhomeModule.() -> Unit = {}
     }
 
     /**
@@ -77,7 +77,7 @@ class Khome : KhomeComponent() {
         config.apply(init)
     }
 
-    fun beans(beanDeclarations: Module.() -> Unit) {
+    fun beans(beanDeclarations: KhomeModule.() -> Unit) {
         Khome.beanDeclarations = beanDeclarations
     }
 
@@ -129,7 +129,7 @@ private suspend fun KhomeSession.runApplication(
         subscribeStateChanges(get())
     }
 
-    loadKhomeModule(module(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
+    loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
     listeners()
 
     if (successfullyStartedStateStream()) {
@@ -161,7 +161,7 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
     }
 }
 
-private fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
+private suspend fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
     logger.debug { "Result: $resultData" }
     when {

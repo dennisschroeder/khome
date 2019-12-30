@@ -87,10 +87,3 @@ object KhomeKoinContext {
         }
     }
 }
-
-@ObsoleteCoroutinesApi
-@KtorExperimentalAPI
-fun loadKhomeModule(module: Module) =
-    checkNotNull(KhomeKoinContext.application) { "Koin application not started yet" }
-        .modules(module)
-        .createEagerInstances()

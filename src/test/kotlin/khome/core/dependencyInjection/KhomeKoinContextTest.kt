@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
 import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.check.checkModules
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -92,8 +91,8 @@ internal class KhomeKoinContextTest : KhomeComponent() {
             override var logOutput: String = "default"
         ) : ConfigurationInterface
 
-        val testModule = module {
-            single<ConfigurationInterface>(override = true) { CustomConfig() } bind CustomConfig::class
+        val testModule = khomeModule {
+            bean<ConfigurationInterface>(override = true) { CustomConfig() } bind CustomConfig::class
         }
 
         loadKhomeModule(testModule)

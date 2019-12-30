@@ -6,7 +6,9 @@ import khome.configureLogger
 import khome.core.ServiceStoreInterface
 import khome.core.StateStoreInterface
 import khome.core.authenticate
+import khome.core.dependencyInjection.KhomeModule
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.entities.AbstractEntity
 import khome.fetchServices
@@ -18,18 +20,16 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeAll
 import org.koin.core.get
 import org.koin.core.inject
-import org.koin.core.module.Module
-import org.koin.dsl.module
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 abstract class KhomeTestApplicationContext : KhomeTestComponent() {
-    fun beans(declaration: Module.() -> Unit) =
-        loadKhomeModule(module(override = true, moduleDeclaration = declaration))
+    fun beans(declaration: KhomeModule.() -> Unit) =
+        loadKhomeModule(khomeModule(override = true, createdAtStart = true, moduleDeclaration = declaration))
 
     private val khomeClient: KhomeClient by inject()
-    val stateStore: StateStoreInterface by inject()
-    val serviceStore: ServiceStoreInterface by inject()
+    private val stateStore: StateStoreInterface by inject()
+    private val serviceStore: ServiceStoreInterface by inject()
 
     fun getService(name: String) = serviceStore[name]
     fun <T> getState(entity: AbstractEntity<T>) = stateStore[entity.toString()]
