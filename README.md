@@ -141,7 +141,7 @@ data class MyConfiguration(
 
 khomeApplication { // this: Khome
     beans {
-        beans<ConfigurationInterface>(override = true) { MyConfiguration() }
+        bean<ConfigurationInterface>(override = true) { MyConfiguration() }
     }
 }
 ```
