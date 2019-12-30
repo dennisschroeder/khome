@@ -8,13 +8,13 @@ import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
 import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.koin.core.error.InstanceCreationException
 import org.koin.core.get
-import org.koin.dsl.module
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ServiceCallTest : KhomeTestComponent() {
@@ -28,8 +28,8 @@ internal class ServiceCallTest : KhomeTestComponent() {
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
 
         assertThat {
-            val bean = module(createdAtStart = true) { single { CustomService() } }
-            loadKhomeModule(bean).createEagerInstances()
+            val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }
+            loadKhomeModule(bean)
         }.isSuccess()
 
         val customService: CustomService = get()
@@ -47,8 +47,8 @@ internal class ServiceCallTest : KhomeTestComponent() {
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
 
         val exception = assertThrows<InstanceCreationException> {
-            val bean = module(createdAtStart = true) { single { CustomService() } }
-            loadKhomeModule(bean).createEagerInstances()
+            val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }
+            loadKhomeModule(bean)
         }
 
         assertThat(exception.cause).matchesPredicate { it is DomainNotFoundException }
@@ -63,8 +63,8 @@ internal class ServiceCallTest : KhomeTestComponent() {
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
 
         val exception = assertThrows<InstanceCreationException> {
-            val bean = module(createdAtStart = true) { single { CustomService() } }
-            loadKhomeModule(bean).createEagerInstances()
+            val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }
+            loadKhomeModule(bean)
         }
 
         assertThat(exception.cause).matchesPredicate { it is ServiceNotFoundException }
