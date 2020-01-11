@@ -1,5 +1,6 @@
-package khome.core.entities
+package khome.core.entities.system
 
+import khome.core.entities.AbstractEntity
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId

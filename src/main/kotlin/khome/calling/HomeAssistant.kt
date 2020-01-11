@@ -98,6 +98,6 @@ fun ServiceCall.restartHomeAssistant() {
     service = HomeAssistantServices.RESTART
 }
 
-internal enum class HomeAssistantServices : ServiceInterface {
+enum class HomeAssistantServices : ServiceInterface {
     TURN_ON, TURN_OFF, TOGGLE, UPDATE_ENTITY, STOP, RESTART
 }

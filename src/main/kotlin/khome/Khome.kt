@@ -19,6 +19,8 @@ import khome.core.dependencyInjection.KhomeKoinContext
 import khome.core.dependencyInjection.KhomeModule
 import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
+import khome.core.entities.system.Sun
+import khome.core.entities.system.Time
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
@@ -129,6 +131,12 @@ private suspend fun KhomeSession.runApplication(
         subscribeStateChanges(get())
     }
 
+    val systemEntityBeans = khomeModule {
+        bean { Sun() }
+        bean { Time() }
+    }
+
+    loadKhomeModule(systemEntityBeans)
     loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
     listeners()
 
