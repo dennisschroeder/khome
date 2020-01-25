@@ -5,6 +5,7 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
 import khome.core.ConfigurationInterface
+import khome.core.CustomEventResult
 import khome.core.EventResult
 import khome.core.ListenEvent
 import khome.core.Result
@@ -169,12 +170,15 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
 
         when (type) {
             "event" -> {
-                logger.info { "Event fired: ${determineEventType(frame)}" }
                 if (determineEventType(frame) == "state_changed") {
                     updateLocalStateStore(frame, get())
                     stateChangeEvent.emit(frame.asObject())
                 } else {
-                    getCustomEventOrNull(frame)?.emit(mapOf<String, Any>("key" to "value"))
+                    getCustomEventOrNull(frame)?.let { event ->
+                        frame.asObject<CustomEventResult>().event.data.let { eventData ->
+                            event.emit(eventData)
+                        }
+                    }
                 }
             }
             "result" -> {
