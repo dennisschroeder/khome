@@ -19,8 +19,10 @@ import khome.core.dependencyInjection.KhomeKoinContext
 import khome.core.dependencyInjection.KhomeModule
 import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
+import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
+import khome.core.eventHandling.CustomEvent
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
@@ -29,9 +31,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.error.NoBeanDefFoundException
 import org.koin.core.get
 import org.koin.core.inject
 import org.koin.core.logger.Level
+import org.koin.core.qualifier.named
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -107,7 +111,10 @@ class Khome : KhomeComponent() {
 }
 
 internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
-    System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, config.logLevel)
+    System.setProperty(
+        org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY,
+        if (config.logLevel == "DEBUG") "TRACE" else config.logLevel
+    )
     System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
     System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
     System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
@@ -131,9 +138,10 @@ private suspend fun KhomeSession.runApplication(
         subscribeStateChanges(get())
     }
 
-    val systemEntityBeans = khomeModule {
+    val systemEntityBeans = khomeModule(createdAtStart = true, override = true) {
         bean { Sun() }
         bean { Time() }
+        bean { DateTime() }
     }
 
     loadKhomeModule(systemEntityBeans)
@@ -158,8 +166,13 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
 
         when (type) {
             "event" -> {
-                updateLocalStateStore(frame, get())
-                stateChangeEvent.emit(frame.asObject())
+                logger.info { "Event fired: ${determineEventType(frame)}" }
+                if (determineEventType(frame) == "state_changed") {
+                    updateLocalStateStore(frame, get())
+                    stateChangeEvent.emit(frame.asObject())
+                } else {
+                    getCustomEventOrNull(frame)?.emit(mapOf<String, Any>("key" to "value"))
+                }
             }
             "result" -> {
                 resolveResultTypeAndEmitEvents(frame)
@@ -168,6 +181,18 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
         }
     }
 }
+
+private fun KhomeSession.getCustomEventOrNull(frame: Frame): CustomEvent? =
+    try {
+        val eventType = determineEventType(frame)
+        get<CustomEvent>(named(eventType))
+    } catch (e: NoBeanDefFoundException) {
+        logger.warn { "Custom event: \"${determineEventType(frame)}\" is not registered in this application." }
+        null
+    }
+
+private fun KhomeSession.determineEventType(frame: Frame): String =
+    frame.asObject<EventResult>().event.eventType
 
 private suspend fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     val resultData = frame.asObject<Result>()
@@ -205,7 +230,10 @@ private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
 private fun KhomeSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
-private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(resultData: Result, failureResponseEvent: FailureResponseEvent) {
+private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
+    resultData: Result,
+    failureResponseEvent: FailureResponseEvent
+) {
     failureResponseEvent.emit(resultData)
     logger.error { "{CallId: ${resultData.id}] errorCode: ${resultData.error!!.code} ${resultData.error.message}" }
 }
