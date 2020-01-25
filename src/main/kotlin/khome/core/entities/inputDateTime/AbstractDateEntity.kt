@@ -6,8 +6,10 @@ import java.time.LocalDate
 abstract class AbstractDateEntity(name: String) :
     AbstractEntity<String>("input_datetime", name) {
 
-    val date get(): LocalDate {
-        val date = stateValue
-        return LocalDate.parse(date)
+    init {
+        val hasDate = getAttributeValue<Boolean>("has_date")
+        check(hasDate) { "This entity is not configured to be an Date." }
     }
+
+    val date get(): LocalDate = LocalDate.parse(stateValue)
 }
