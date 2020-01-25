@@ -23,6 +23,7 @@ import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
 import khome.core.eventHandling.CustomEvent
+import khome.core.eventHandling.CustomEventRegistry
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
@@ -148,6 +149,8 @@ private suspend fun KhomeSession.runApplication(
     loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
     listeners()
 
+    subscribeCustomEvents(get(), get())
+
     if (successfullyStartedStateStream()) {
         consumeStateChangesByTriggeringEvents()
     } else
@@ -263,6 +266,12 @@ internal fun KhomeSession.storeServices(
             }
             serviceStore[domain] = serviceList
         }
+
+internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: CustomEventRegistry) {
+    registry.forEach { eventType ->
+        callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = eventType).toJson())
+    }
+}
 
 internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
     callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = "state_changed").toJson())

@@ -2,6 +2,7 @@ package khome.core.eventHandling
 
 import assertk.assertThat
 import assertk.assertions.isSuccess
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -23,8 +24,10 @@ internal class CustomEventRegistryTest {
         sut.register("testEventTwo")
 
         assertThat {
-            sut.forEach { event ->
-                assertThat(event in sut)
+            runBlocking {
+                sut.forEach { event ->
+                    assertThat(event in sut)
+                }
             }
         }.isSuccess()
     }

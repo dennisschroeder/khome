@@ -13,11 +13,11 @@ class KhomeModule(val delegate: Module) {
         noinline definition: Definition<T>
     ) = delegate.single(override = override, definition = definition)
 
-    inline fun <reified T: CustomEvent> customEvent(
-        name: String,
+    inline fun <reified T : CustomEvent> customEvent(
+        eventName: String,
         noinline definition: Definition<T>
     ) =
-        delegate.single(named(name), override = false, definition = definition)
+        delegate.single(named(eventName), override = false, definition = definition)
 }
 
 fun khomeModule(
