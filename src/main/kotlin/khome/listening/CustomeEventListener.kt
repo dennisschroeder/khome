@@ -17,6 +17,5 @@ fun KhomeSession.registerCustomEventCallback(
     val handle = UUID.randomUUID().toString()
     val event = get<CustomEvent>(named(eventName))
     event.subscribe(handle, callback)
-
     return LifeCycleHandler(handle)
 }

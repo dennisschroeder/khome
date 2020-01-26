@@ -148,9 +148,8 @@ private suspend fun KhomeSession.runApplication(
 
     loadKhomeModule(systemEntityBeans)
     loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
-    listeners()
-
     subscribeCustomEvents(get(), get())
+    listeners()
 
     if (successfullyStartedStateStream()) {
         consumeStateChangesByTriggeringEvents()
@@ -242,7 +241,7 @@ private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
     failureResponseEvent: FailureResponseEvent
 ) {
     failureResponseEvent.emit(resultData)
-    logger.error { "{CallId: ${resultData.id}] errorCode: ${resultData.error!!.code} ${resultData.error.message}" }
+    logger.error { "CallId: ${resultData.id} -  errorCode: ${resultData.error!!.code} ${resultData.error.message}" }
 }
 
 private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
@@ -273,7 +272,9 @@ internal fun KhomeSession.storeServices(
 
 internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: CustomEventRegistry) {
     registry.forEach { eventType ->
-        callWebSocketApi(ListenEvent(id.incrementAndGet(), eventType = eventType).toJson())
+        val id = id.incrementAndGet()
+        callWebSocketApi(ListenEvent(id, eventType = eventType).toJson())
+        logger.info { "CallerId: $id - Subscribed to custom event: $eventType" }
     }
 }
 
