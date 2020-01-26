@@ -11,8 +11,8 @@ data class Event(val eventType: String, val data: Data, val timeFired: OffsetDat
 
 data class Data(val entityId: String, val oldState: State?, val newState: State?) : MessageInterface
 
-data class CustomEventResult(val id: Int, val type: String, val event: CustomEvent) : MessageInterface
-data class CustomEvent(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
+data class CustomEventResult(val id: Int, val type: String, val event: CustomEventDto) : MessageInterface
+data class CustomEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
     MessageInterface
 
 data class State(
