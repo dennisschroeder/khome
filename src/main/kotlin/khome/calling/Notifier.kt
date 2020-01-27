@@ -1,32 +1,19 @@
 package khome.calling
 
 import com.google.gson.annotations.SerializedName
-import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 
-@ObsoleteCoroutinesApi
-@KtorExperimentalAPI
-fun ServiceCall.notify(init: NotifierMessage.() -> Unit) {
-    domain = Domain.NOTIFY
-    serviceData = NotifierMessage(
-        null,
-        null,
-        null,
-        null,
-        null
-    ).apply(init)
+abstract class Notify : ServiceCall(Domain.NOTIFY, NotifyService.NOTIFY) {
+    override val serviceData: NotifierMessage = NotifierMessage()
+    fun serviceData(builder: NotifierMessage.() -> Unit) = serviceData.apply(builder)
 }
 
 data class NotifierMessage(
-    override var entityId: String?,
-    var message: String?,
-    var title: String?,
-    @SerializedName("target") var targets: List<String>?,
-    var data: NotifierDataInterface?
+    var message: String? = null,
+    var title: String? = null,
+    @SerializedName("target") var targets: List<String>? = null,
+    var data: Map<String, Any>? = null
 ) : ServiceDataInterface
 
-interface NotifierDataInterface
-
-enum class NotifierServices : ServiceInterface {
+enum class NotifyService : ServiceInterface {
     NOTIFY
 }
