@@ -1,5 +1,6 @@
 package khome.core
 
+import khome.core.eventHandling.EventData
 import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.core.exceptions.InvalidStateValueTypeException
 import java.time.OffsetDateTime
@@ -9,6 +10,10 @@ data class Event(val eventType: String, val data: Data, val timeFired: OffsetDat
     MessageInterface
 
 data class Data(val entityId: String, val oldState: State?, val newState: State?) : MessageInterface
+
+data class CustomEventResult(val id: Int, val type: String, val event: CustomEventDto) : MessageInterface
+data class CustomEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
+    MessageInterface
 
 data class State(
     override val entityId: String,

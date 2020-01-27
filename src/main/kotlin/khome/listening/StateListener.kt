@@ -17,7 +17,7 @@ inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEv
     val handle = UUID.randomUUID().toString()
     val entity = get<Entity>()
 
-    val lifeCycleHandler = LifeCycleHandler(handle, entity)
+    val lifeCycleHandler = LifeCycleHandler(handle)
     val stateChangeEvent: StateChangeEvent = get()
 
     stateChangeEvent.subscribe(handle) {
