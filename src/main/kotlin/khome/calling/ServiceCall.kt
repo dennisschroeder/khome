@@ -26,21 +26,21 @@ import org.koin.core.inject
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-inline fun <reified CallType : ServiceCall> KhomeSession.callService() {
+inline fun <reified CallType : ServiceCall> KhomeSession.callService(crossinline mutate: CallType.() -> Unit) {
     val servicePayload: CallType by inject()
     val serviceCoroutineContext: ServiceCoroutineContext by inject()
     launch(serviceCoroutineContext) {
+        servicePayload.apply(mutate)
         servicePayload.id = get<CallerID>().incrementAndGet()
         callWebSocketApi(servicePayload.toJson())
         logger.info { "Called Service with: " + servicePayload.toJson() }
     }
 }
 
-data class EntityId(override var entityId: String?) : ServiceDataInterface
+data class EntityId(var entityId: String?) : ServiceDataInterface
 
 data class EntityIds(
-    @SerializedName("entity_id") var entityIds: String,
-    @Transient override var entityId: String?
+    @SerializedName("entity_id") var entityIds: String
 ) : ServiceDataInterface
 
 /**
@@ -55,12 +55,12 @@ data class EntityIds(
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 abstract class ServiceCall(
-    var domain: DomainInterface,
-    var service: ServiceInterface,
-    var serviceData: ServiceDataInterface
+    val domain: DomainInterface,
+    val service: ServiceInterface
 ) : KhomeComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
+    abstract val serviceData: ServiceDataInterface?
     @Transient private val serviceStore: ServiceStoreInterface = get()
     @Transient private val _domain = domain.toString().toLowerCase()
     @Transient private val _service = service.toString().toLowerCase()
@@ -86,9 +86,7 @@ interface ServiceInterface
 /**
  * Main entry point to create own service data classes
  */
-interface ServiceDataInterface {
-    var entityId: String?
-}
+interface ServiceDataInterface
 
 /**
  * Domains that are supported from Khome

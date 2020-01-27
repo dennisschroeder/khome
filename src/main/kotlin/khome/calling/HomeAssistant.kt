@@ -8,14 +8,10 @@ import khome.core.entities.EntityInterface
  *
  * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
  */
-fun ServiceCall.turnOn(entity: EntityInterface) {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.TURN_ON
-    serviceData = EntityId(entity.id)
-}
-
 abstract class TurnOn(entity: EntityInterface) :
-    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.TURN_ON, EntityId(entity.id))
+    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_ON) {
+    override val serviceData: ServiceDataInterface? = EntityId(entity.id)
+}
 
 /**
  * Turns off an entity that is capable of being turned off.
@@ -23,14 +19,10 @@ abstract class TurnOn(entity: EntityInterface) :
  *
  * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
  */
-fun ServiceCall.turnOff(entity: EntityInterface) {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.TURN_OFF
-    serviceData = EntityId(entity.id)
-}
-
 abstract class TurnOff(entity: EntityInterface) :
-    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.TURN_OFF, EntityId(entity.id))
+    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_OFF) {
+    override val serviceData: ServiceDataInterface? = EntityId(entity.id)
+}
 
 /**
  * Toggles an entity that is capable of being turned on and off.
@@ -38,14 +30,11 @@ abstract class TurnOff(entity: EntityInterface) :
  *
  * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
  */
-fun ServiceCall.toggle(entity: EntityInterface) {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.TOGGLE
-    serviceData = EntityId(entity.id)
-}
 
 abstract class Toggle(entity: EntityInterface) :
-    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.TOGGLE, EntityId(entity.id))
+    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TOGGLE) {
+    override val serviceData: ServiceDataInterface? = EntityId(entity.id)
+}
 
 /**
  * Updates an entity..
@@ -53,14 +42,11 @@ abstract class Toggle(entity: EntityInterface) :
  *
  * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
  */
-fun ServiceCall.updateEntity(entity: EntityInterface) {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.UPDATE_ENTITY
-    serviceData = EntityId(entity.id)
-}
 
 abstract class UpdateEntity(entity: EntityInterface) :
-    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId(entity.id))
+    ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
+    override val serviceData: ServiceDataInterface? = EntityId(entity.id)
+}
 
 /**
  * Updates a bunch of entities.
@@ -68,36 +54,37 @@ abstract class UpdateEntity(entity: EntityInterface) :
  *
  * @param entities Objects that inherits the [EntityInterface] that represents an entity in home-assistant.
  */
-fun ServiceCall.updateEntities(vararg entities: EntityInterface) {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.UPDATE_ENTITY
-    serviceData = EntityIds(listOf(*entities).joinToString(","), null)
-}
 
 abstract class UpdateEntities(vararg entities: EntityInterface) : ServiceCall(
     Domain.HOMEASSISTANT,
-    HomeAssistantServices.UPDATE_ENTITY,
-    EntityIds(listOf(*entities).joinToString(","), null)
-)
+    HomeAssistantService.UPDATE_ENTITY
+) {
+    override val serviceData: ServiceDataInterface? = EntityIds(listOf(*entities).joinToString(","))
+}
 
 /**
  * Stops the home-assistant instance.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  */
-fun ServiceCall.stopHomeAssistant() {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.STOP
+
+abstract class StopHomeAssistant : ServiceCall(
+    Domain.HOMEASSISTANT,
+    HomeAssistantService.STOP
+) {
+    override val serviceData: ServiceDataInterface? = null
 }
 
 /**
  * Restarts the home-assistant instance.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  */
-fun ServiceCall.restartHomeAssistant() {
-    domain = Domain.HOMEASSISTANT
-    service = HomeAssistantServices.RESTART
+abstract class RestartHomeAssistant : ServiceCall(
+    Domain.HOMEASSISTANT,
+    HomeAssistantService.RESTART
+) {
+    override val serviceData: ServiceDataInterface? = null
 }
 
-enum class HomeAssistantServices : ServiceInterface {
+enum class HomeAssistantService : ServiceInterface {
     TURN_ON, TURN_OFF, TOGGLE, UPDATE_ENTITY, STOP, RESTART
 }

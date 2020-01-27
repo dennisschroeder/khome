@@ -25,7 +25,9 @@ internal class ServiceCallTest : KhomeTestComponent() {
         serviceStore["homeassistant"] = listOf("update_entity")
 
         class CustomService :
-            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
+            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
+            override val serviceData = EntityId("foo.bar")
+        }
 
         assertThat {
             val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }
@@ -34,7 +36,7 @@ internal class ServiceCallTest : KhomeTestComponent() {
 
         val customService: CustomService = get()
         assertThat(customService.domain).isEqualTo(Domain.HOMEASSISTANT)
-        assertThat(customService.service).isEqualTo(HomeAssistantServices.UPDATE_ENTITY)
+        assertThat(customService.service).isEqualTo(HomeAssistantService.UPDATE_ENTITY)
         assertThat(customService.serviceData).isEqualTo(EntityId("foo.bar"))
     }
 
@@ -44,7 +46,9 @@ internal class ServiceCallTest : KhomeTestComponent() {
         serviceStore["rocket"] = listOf("start_engine")
 
         class CustomService :
-            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
+            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
+            override val serviceData = EntityId("foo.bar")
+        }
 
         val exception = assertThrows<InstanceCreationException> {
             val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }
@@ -60,7 +64,9 @@ internal class ServiceCallTest : KhomeTestComponent() {
         serviceStore["homeassistant"] = listOf("start_engine")
 
         class CustomService :
-            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantServices.UPDATE_ENTITY, EntityId("foo.bar"))
+            ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
+            override val serviceData = EntityId("foo.bar")
+        }
 
         val exception = assertThrows<InstanceCreationException> {
             val bean = khomeModule(createdAtStart = true) { bean { CustomService() } }

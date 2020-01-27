@@ -1,56 +1,41 @@
 package khome.calling
 
 import com.google.gson.annotations.SerializedName
+import khome.core.entities.EntityInterface
 import khome.core.entities.cover.AbstractCoverEntity
 
-fun ServiceCall.openCover(entity: AbstractCoverEntity) =
-    cover {
-        entityId = entity.id
-        service = CoverServices.OPEN_COVER
-    }
+abstract class OpenCover(entity: EntityInterface) :
+    ServiceCall(Domain.COVER, CoverService.OPEN_COVER) {
+    override val serviceData: EntityId = EntityId(entity.id)
+}
 
-fun ServiceCall.closeCover(entity: AbstractCoverEntity) =
-    cover {
-        entityId = entity.id
-        service = CoverServices.CLOSE_COVER
-    }
+abstract class CloseCover(entity: EntityInterface) :
+    ServiceCall(Domain.COVER, CoverService.CLOSE_COVER) {
+    override val serviceData: EntityId = EntityId(entity.id)
+}
 
-fun ServiceCall.setCoverPositionTo(entity: AbstractCoverEntity, position: Int) =
-    cover {
-        entityId = entity.id
-        service = CoverServices.SET_COVER_POSITION
-        this.position = position
-    }
+abstract class SetCoverPosition(entity: AbstractCoverEntity) :
+    ServiceCall(Domain.COVER, CoverService.SET_COVER_POSITION) {
+    override val serviceData: CoverData = CoverData(entity.id)
+    fun serviceData(builder: CoverData.() -> Unit) = serviceData.apply(builder)
+}
 
-fun ServiceCall.cover(init: CoverData.() -> Unit) {
-    domain = Domain.COVER
-    serviceData = CoverData(
-        entityId = null,
-        position = null
-    ).apply(init)
+abstract class ToggleCover(entity: AbstractCoverEntity) :
+    ServiceCall(Domain.COVER, CoverService.TOGGLE_COVER) {
+    override val serviceData: EntityId = EntityId(entity.id)
 }
 
 data class CoverData(
-    override var entityId: String?,
-    var position: Int?
+    private val entityId: String?,
+    var position: Int? = null
 
 ) : ServiceDataInterface
 
-fun ServiceCall.covers(init: CoversData.() -> Unit) {
-    domain = Domain.COVER
-    serviceData = CoversData(
-        entityId = null,
-        entityIds = listOf("cover"),
-        position = null
-    ).apply(init)
-}
-
 data class CoversData(
-    @Transient override var entityId: String?,
     @SerializedName("entity_id") var entityIds: List<String>,
     var position: Int?
 ) : ServiceDataInterface
 
-enum class CoverServices : ServiceInterface {
-    OPEN_COVER, CLOSE_COVER, SET_COVER_POSITION
+enum class CoverService : ServiceInterface {
+    OPEN_COVER, CLOSE_COVER, SET_COVER_POSITION, TOGGLE_COVER
 }
