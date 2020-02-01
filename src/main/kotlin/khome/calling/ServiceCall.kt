@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.get
 import org.koin.core.inject
 
+internal typealias ServiceCallMutator<T> = T.() -> Unit
+
 /**
  * A function to build an [ServiceCall] object, which is the base
  * to all [home-assistant](https://www.home-assistant.io/) websocket api calls.
@@ -26,12 +28,12 @@ import org.koin.core.inject
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-inline fun <reified CallType : ServiceCall> KhomeSession.callService(crossinline mutate: CallType.() -> Unit) {
+inline fun <reified CallType : ServiceCall> KhomeSession.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
     val servicePayload: CallType by inject()
     val serviceCoroutineContext: ServiceCoroutineContext by inject()
+    if (mutate != null) servicePayload.apply(mutate)
+    servicePayload.id = get<CallerID>().incrementAndGet()
     launch(serviceCoroutineContext) {
-        servicePayload.apply(mutate)
-        servicePayload.id = get<CallerID>().incrementAndGet()
         callWebSocketApi(servicePayload.toJson())
         logger.info { "Called Service with: " + servicePayload.toJson() }
     }
@@ -61,9 +63,12 @@ abstract class ServiceCall(
     var id: Int = 0
     private val type: String = "call_service"
     abstract val serviceData: ServiceDataInterface?
-    @Transient private val serviceStore: ServiceStoreInterface = get()
-    @Transient private val _domain = domain.toString().toLowerCase()
-    @Transient private val _service = service.toString().toLowerCase()
+    @Transient
+    private val serviceStore: ServiceStoreInterface = get()
+    @Transient
+    private val _domain = domain.toString().toLowerCase()
+    @Transient
+    private val _service = service.toString().toLowerCase()
 
     init {
         if (_domain !in serviceStore)
