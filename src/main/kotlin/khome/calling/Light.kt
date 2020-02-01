@@ -30,7 +30,7 @@ data class LightData(
     var kelvin: Int? = null,
     var whiteValue: Int? = null,
     var brightness: Int? = null,
-    var brightnessPct: Int? = null,
+    var brightnessPct: Double? = null,
     var profile: String? = null,
     var flash: String? = null,
     var effect: String? = null

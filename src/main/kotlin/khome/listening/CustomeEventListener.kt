@@ -4,18 +4,16 @@ import khome.KhomeSession
 import khome.core.eventHandling.CustomEvent
 import khome.core.eventHandling.EventData
 import org.koin.core.get
-import org.koin.core.qualifier.named
 import java.util.UUID
 
-fun KhomeSession.onCustomEvent(eventName: String, callback: (EventData) -> Unit) =
-    registerCustomEventCallback(eventName, callback)
+inline fun <reified EventType : CustomEvent> KhomeSession.onCustomEvent(noinline callback: (EventData) -> Unit): LifeCycleHandler =
+    registerCustomEventCallback<EventType>(callback)
 
-fun KhomeSession.registerCustomEventCallback(
-    eventName: String,
-    callback: (EventData) -> Unit
+inline fun <reified EventType : CustomEvent> KhomeSession.registerCustomEventCallback(
+    noinline callback: (EventData) -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
-    val event = get<CustomEvent>(named(eventName))
+    val event = get<EventType>()
     event.subscribe(handle, callback)
     return LifeCycleHandler(handle)
 }
