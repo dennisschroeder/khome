@@ -270,7 +270,7 @@ internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: 
     registry.forEach { eventType ->
         val id = id.incrementAndGet()
         callWebSocketApi(ListenEvent(id = id, eventType = eventType.key).toJson())
-        logger.info { "CallerId: $id - Subscribed to custom event: $eventType" }
+        logger.info { "CallerId: $id - Subscribed to custom event: ${eventType.key}" }
     }
 }
 
