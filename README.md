@@ -23,7 +23,7 @@ class TurnOnLivingRoomLight(light: LivingRoomLight) : TurnOn(light)
 beans {
     bean { LivingRoomLuminance() }
     bean { LivingRoomLight() }
-    bean { TurnOnLivingRoomLight(get()) }
+    service { TurnOnLivingRoomLight(get()) }
 }
 
 onStateChange<LivingRoomLuminance> { 

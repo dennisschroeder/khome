@@ -10,7 +10,7 @@ import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
-import khome.core.eventHandling.CustomEventRegistry
+import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
@@ -56,7 +56,7 @@ object KhomeKoinContext {
             single<ServiceStoreInterface> { ServiceStore() }
             single { StateChangeEvent(Event()) }
             single { FailureResponseEvent(Event()) }
-            single { CustomEventRegistry() }
+            single { HassEventRegistry() }
             single { newSingleThreadContext("ServiceContext") }
             single { AtomicInteger(0) }
             single<ConfigurationInterface> {

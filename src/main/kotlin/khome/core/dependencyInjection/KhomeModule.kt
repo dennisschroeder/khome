@@ -1,7 +1,7 @@
 package khome.core.dependencyInjection
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.eventHandling.CustomEvent
+import khome.core.eventHandling.HassEvent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.definition.Definition
 import org.koin.core.module.Module
@@ -12,7 +12,12 @@ class KhomeModule(val delegate: Module) {
         noinline definition: Definition<T>
     ) = delegate.single(override = override, definition = definition)
 
-    inline fun <reified T : CustomEvent> event(
+    inline fun <reified T> service(
+        override: Boolean = false,
+        noinline definition: Definition<T>
+    ) = delegate.factory(override = override, definition = definition)
+
+    inline fun <reified T : HassEvent> event(
         noinline definition: Definition<T>
     ) {
         delegate.single(override = false, definition = definition)

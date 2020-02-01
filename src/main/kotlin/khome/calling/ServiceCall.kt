@@ -31,8 +31,8 @@ internal typealias ServiceCallMutator<T> = T.() -> Unit
 inline fun <reified CallType : ServiceCall> KhomeSession.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
     val servicePayload: CallType by inject()
     val serviceCoroutineContext: ServiceCoroutineContext by inject()
-    if (mutate != null) servicePayload.apply(mutate)
     servicePayload.id = get<CallerID>().incrementAndGet()
+    if (mutate != null) servicePayload.apply(mutate)
     launch(serviceCoroutineContext) {
         callWebSocketApi(servicePayload.toJson())
         logger.info { "Called Service with: " + servicePayload.toJson() }
