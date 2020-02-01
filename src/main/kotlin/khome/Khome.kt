@@ -33,11 +33,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
-import org.koin.core.error.NoBeanDefFoundException
 import org.koin.core.get
 import org.koin.core.inject
 import org.koin.core.logger.Level
-import org.koin.core.qualifier.named
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -67,8 +65,8 @@ class Khome : KhomeComponent() {
         private var sandboxMode = AtomicBoolean(false)
 
         val isSandBoxModeActive get() = sandboxMode.get()
-        private fun activateSandBoxMode() = sandboxMode.set(true)
-        private fun deactivateSandBoxMode() = sandboxMode.set(false)
+        private fun sandBoxModeOn() = sandboxMode.set(true)
+        private fun sandBoxModeOff() = sandboxMode.set(false)
 
         var beanDeclarations: KhomeModule.() -> Unit = {}
     }
@@ -165,9 +163,7 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
 
     incoming.consumeEach { frame ->
         val message = frame.asObject<Map<String, Any>>()
-        val type = message["type"]
-
-        when (type) {
+        when (message["type"]) {
             "event" -> {
                 if (determineEventType(frame) == "state_changed") {
                     updateLocalStateStore(frame, get())
@@ -183,19 +179,19 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
             "result" -> {
                 resolveResultTypeAndEmitEvents(frame)
             }
-            else -> logger.warn { "Could not classify message: $type" }
+            else -> logger.warn { "Could not classify message: ${message["type"]}" }
         }
     }
 }
 
-private fun KhomeSession.getCustomEventOrNull(frame: Frame): CustomEvent? =
-    try {
-        val eventType = determineEventType(frame)
-        get<CustomEvent>(named(eventType))
-    } catch (e: NoBeanDefFoundException) {
-        logger.warn { "Custom event: \"${determineEventType(frame)}\" is not registered in this application." }
-        null
-    }
+private fun KhomeSession.getCustomEventOrNull(frame: Frame): CustomEvent? {
+    val registry = get<CustomEventRegistry>()
+    val eventType = determineEventType(frame)
+    if (eventType in registry) return registry[eventType]
+
+    logger.warn { "Custom event: \"${determineEventType(frame)}\" is not registered in this application." }
+    return null
+}
 
 private fun KhomeSession.determineEventType(frame: Frame): String =
     frame.asObject<EventResult>().event.eventType
@@ -273,7 +269,7 @@ internal fun KhomeSession.storeServices(
 internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: CustomEventRegistry) {
     registry.forEach { eventType ->
         val id = id.incrementAndGet()
-        callWebSocketApi(ListenEvent(id, eventType = eventType).toJson())
+        callWebSocketApi(ListenEvent(id = id, eventType = eventType.key).toJson())
         logger.info { "CallerId: $id - Subscribed to custom event: $eventType" }
     }
 }

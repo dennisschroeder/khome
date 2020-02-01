@@ -5,7 +5,6 @@ import khome.core.eventHandling.CustomEvent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.definition.Definition
 import org.koin.core.module.Module
-import org.koin.core.qualifier.named
 
 class KhomeModule(val delegate: Module) {
     inline fun <reified T> bean(
@@ -13,11 +12,11 @@ class KhomeModule(val delegate: Module) {
         noinline definition: Definition<T>
     ) = delegate.single(override = override, definition = definition)
 
-    inline fun <reified T : CustomEvent> customEvent(
-        eventName: String,
+    inline fun <reified T : CustomEvent> event(
         noinline definition: Definition<T>
-    ) =
-        delegate.single(named(eventName), override = false, definition = definition)
+    ) {
+        delegate.single(override = false, definition = definition)
+    }
 }
 
 fun khomeModule(
