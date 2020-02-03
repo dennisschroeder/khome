@@ -10,9 +10,9 @@ import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
-import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
+import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.logger
 import khome.core.mapping.ObjectMapper
@@ -44,6 +44,7 @@ object KhomeKoinContext {
 
     private var internalModule: Module =
         module {
+
             single {
                 GsonBuilder()
                     .setPrettyPrinting()

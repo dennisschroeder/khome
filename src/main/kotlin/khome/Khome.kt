@@ -5,8 +5,8 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
 import khome.core.ConfigurationInterface
-import khome.core.CustomEventResult
 import khome.core.EventResult
+import khome.core.HassEventResultDto
 import khome.core.ListenEvent
 import khome.core.Result
 import khome.core.ServiceResult
@@ -23,9 +23,9 @@ import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
+import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.HassEvent
 import khome.core.eventHandling.HassEventRegistry
-import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
 import khome.core.logger
@@ -146,7 +146,7 @@ private suspend fun KhomeSession.runApplication(
 
     loadKhomeModule(systemEntityBeans)
     loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
-    subscribeCustomEvents(get(), get())
+    subscribeHassEvents(get(), get())
     listeners()
 
     if (successfullyStartedStateStream()) {
@@ -169,8 +169,8 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
                     updateLocalStateStore(frame, get())
                     stateChangeEvent.emit(frame.asObject())
                 } else {
-                    getCustomEventOrNull(frame)?.let { event ->
-                        frame.asObject<CustomEventResult>().event.data.let { eventData ->
+                    getHassEventOrNull(frame)?.let { event ->
+                        frame.asObject<HassEventResultDto>().event.data.let { eventData ->
                             event.emit(eventData)
                         }
                     }
@@ -184,7 +184,7 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
     }
 }
 
-private fun KhomeSession.getCustomEventOrNull(frame: Frame): HassEvent? {
+private fun KhomeSession.getHassEventOrNull(frame: Frame): HassEvent? {
     val registry = get<HassEventRegistry>()
     val eventType = determineEventType(frame)
     if (eventType in registry) return registry[eventType]
@@ -266,7 +266,7 @@ internal fun KhomeSession.storeServices(
             serviceStore[domain] = serviceList
         }
 
-internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: HassEventRegistry) {
+internal suspend fun KhomeSession.subscribeHassEvents(id: CallerID, registry: HassEventRegistry) {
     registry.forEach { eventType ->
         val id = id.incrementAndGet()
         callWebSocketApi(ListenEvent(id = id, eventType = eventType.key).toJson())
