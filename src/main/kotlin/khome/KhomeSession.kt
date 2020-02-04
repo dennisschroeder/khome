@@ -11,11 +11,13 @@ import khome.core.MessageInterface
 import khome.core.dependencyInjection.KhomeComponent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mu.KotlinLogging
 import org.koin.core.get
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 class KhomeSession(delegate: DefaultClientWebSocketSession) : KhomeComponent(), WebSocketSession by delegate {
+    val logger = KotlinLogging.logger {}
     suspend fun callWebSocketApi(message: String) = send(message)
     suspend inline fun <reified M : Any> consumeMessage(): M = incoming.receive().asObject()
     inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()

@@ -14,7 +14,6 @@ data class HassEventResultDto(val id: Int, val type: String, val event: HassEven
 data class HassEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
     MessageInterface
 
-
 interface EventDtoInterface {
     val eventType: String
     val timeFired: OffsetDateTime

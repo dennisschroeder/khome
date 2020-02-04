@@ -10,7 +10,6 @@ import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.ServiceCoroutineContext
-import khome.core.logger
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.get

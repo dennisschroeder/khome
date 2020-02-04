@@ -14,13 +14,13 @@ import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.StateChangeEvent
-import khome.core.logger
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
+import mu.KotlinLogging
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.bind
@@ -41,6 +41,7 @@ internal typealias CallerID = AtomicInteger
 @ObsoleteCoroutinesApi
 object KhomeKoinContext {
     var application: KoinApplication? = null
+    private val logger = KotlinLogging.logger {}
 
     private var internalModule: Module =
         module {
@@ -66,11 +67,7 @@ object KhomeKoinContext {
                     port = getProperty("PORT", 8123),
                     accessToken = getProperty("ACCESS_TOKEN", "<some-fancy-access-token>"),
                     secure = getProperty("SECURE", "false").toBoolean(),
-                    startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean(),
-                    logLevel = getProperty("LOG_LEVEL", "INFO"),
-                    logTime = getProperty("LOG_TIME", "true").toBoolean(),
-                    logTimeFormat = getProperty("LOG_TIME_FORMAT", "yyyy-MM-dd HH:mm:ss"),
-                    logOutput = getProperty("LOG_OUTPUT", "System.out")
+                    startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean()
                 ).also { logger.debug { it } }
             }
             single { KhomeClient(get()) }

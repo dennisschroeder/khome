@@ -28,14 +28,12 @@ import khome.core.eventHandling.HassEvent
 import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
-import khome.core.logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.get
 import org.koin.core.inject
-import org.koin.core.logger.Level
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -104,21 +102,9 @@ class Khome : KhomeComponent() {
         coroutineScope {
             get<KhomeClient>()
                 .startSession {
-                    configureLogger(get())
                     runApplication(get(), listeners)
                 }
         }
-}
-
-internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
-    System.setProperty(
-        org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY,
-        if (config.logLevel == "DEBUG") "TRACE" else config.logLevel
-    )
-    System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
-    System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
-    System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
-    KhomeKoinContext.application?.let { it.printLogger(Level.valueOf(config.logLevel)) }
 }
 
 @KtorExperimentalAPI
@@ -128,6 +114,7 @@ private suspend fun KhomeSession.runApplication(
     config: ConfigurationInterface,
     listeners: suspend KhomeSession.() -> Unit
 ) {
+
     authenticate(get())
     fetchServices(get())
     storeServices(consumeMessage(), get())

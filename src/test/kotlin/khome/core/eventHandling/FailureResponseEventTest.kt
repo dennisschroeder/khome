@@ -7,13 +7,14 @@ import assertk.assertions.isNull
 import com.google.gson.Gson
 import khome.core.Result
 import khome.core.dependencyInjection.KhomeTestComponent
-import khome.core.logger
+import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FailureResponseEventTest : KhomeTestComponent() {
+    private val logger = KotlinLogging.logger { }
 
     @Test
     fun `assert callback was subscribed to event`() {

@@ -5,7 +5,6 @@ import khome.core.entities.inputDateTime.AbstractDateTimeEntity
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Time
-import khome.core.logger
 import khome.listening.LifeCycleHandler
 import khome.listening.onStateChange
 import org.koin.core.get
