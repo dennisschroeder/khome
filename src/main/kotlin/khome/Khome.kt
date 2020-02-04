@@ -5,8 +5,8 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
 import khome.core.ConfigurationInterface
-import khome.core.CustomEventResult
 import khome.core.EventResult
+import khome.core.HassEventResultDto
 import khome.core.ListenEvent
 import khome.core.Result
 import khome.core.ServiceResult
@@ -23,19 +23,17 @@ import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
-import khome.core.eventHandling.CustomEvent
-import khome.core.eventHandling.CustomEventRegistry
 import khome.core.eventHandling.FailureResponseEvent
+import khome.core.eventHandling.HassEvent
+import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.exceptions.EventStreamException
-import khome.core.logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.get
 import org.koin.core.inject
-import org.koin.core.logger.Level
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -104,21 +102,9 @@ class Khome : KhomeComponent() {
         coroutineScope {
             get<KhomeClient>()
                 .startSession {
-                    configureLogger(get())
                     runApplication(get(), listeners)
                 }
         }
-}
-
-internal fun KhomeSession.configureLogger(config: ConfigurationInterface) {
-    System.setProperty(
-        org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY,
-        if (config.logLevel == "DEBUG") "TRACE" else config.logLevel
-    )
-    System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, "${config.logTime}")
-    System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, config.logTimeFormat)
-    System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, config.logOutput)
-    KhomeKoinContext.application?.let { it.printLogger(Level.valueOf(config.logLevel)) }
 }
 
 @KtorExperimentalAPI
@@ -128,6 +114,7 @@ private suspend fun KhomeSession.runApplication(
     config: ConfigurationInterface,
     listeners: suspend KhomeSession.() -> Unit
 ) {
+
     authenticate(get())
     fetchServices(get())
     storeServices(consumeMessage(), get())
@@ -146,7 +133,7 @@ private suspend fun KhomeSession.runApplication(
 
     loadKhomeModule(systemEntityBeans)
     loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
-    subscribeCustomEvents(get(), get())
+    subscribeHassEvents(get(), get())
     listeners()
 
     if (successfullyStartedStateStream()) {
@@ -169,8 +156,8 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
                     updateLocalStateStore(frame, get())
                     stateChangeEvent.emit(frame.asObject())
                 } else {
-                    getCustomEventOrNull(frame)?.let { event ->
-                        frame.asObject<CustomEventResult>().event.data.let { eventData ->
+                    getHassEventOrNull(frame)?.let { event ->
+                        frame.asObject<HassEventResultDto>().event.data.let { eventData ->
                             event.emit(eventData)
                         }
                     }
@@ -184,8 +171,8 @@ private suspend fun KhomeSession.consumeStateChangesByTriggeringEvents() = corou
     }
 }
 
-private fun KhomeSession.getCustomEventOrNull(frame: Frame): CustomEvent? {
-    val registry = get<CustomEventRegistry>()
+private fun KhomeSession.getHassEventOrNull(frame: Frame): HassEvent? {
+    val registry = get<HassEventRegistry>()
     val eventType = determineEventType(frame)
     if (eventType in registry) return registry[eventType]
 
@@ -266,7 +253,7 @@ internal fun KhomeSession.storeServices(
             serviceStore[domain] = serviceList
         }
 
-internal suspend fun KhomeSession.subscribeCustomEvents(id: CallerID, registry: CustomEventRegistry) {
+internal suspend fun KhomeSession.subscribeHassEvents(id: CallerID, registry: HassEventRegistry) {
     registry.forEach { eventType ->
         val id = id.incrementAndGet()
         callWebSocketApi(ListenEvent(id = id, eventType = eventType.key).toJson())

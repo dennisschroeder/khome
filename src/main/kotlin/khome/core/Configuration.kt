@@ -6,8 +6,4 @@ interface ConfigurationInterface {
     var accessToken: String
     var secure: Boolean
     var startStateStream: Boolean
-    var logLevel: String
-    var logTime: Boolean
-    var logTimeFormat: String
-    var logOutput: String
 }

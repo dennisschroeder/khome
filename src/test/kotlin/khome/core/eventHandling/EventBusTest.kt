@@ -6,8 +6,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.logger
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestInstance
 @KtorExperimentalAPI
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventBusTest {
+    private val logger = KotlinLogging.logger { }
 
     @Test
     fun `assert callback was added with plus assign`() {

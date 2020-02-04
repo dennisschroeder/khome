@@ -6,14 +6,19 @@ import khome.core.exceptions.InvalidStateValueTypeException
 import java.time.OffsetDateTime
 
 data class EventResult(val id: Int, val type: String, val event: Event) : MessageInterface
-data class Event(val eventType: String, val data: Data, val timeFired: OffsetDateTime, val origin: String) :
-    MessageInterface
+data class Event(override val eventType: String, val data: Data, override val timeFired: OffsetDateTime, override val origin: String) :
+    MessageInterface, EventDtoInterface
 
 data class Data(val entityId: String, val oldState: State?, val newState: State?) : MessageInterface
-
-data class CustomEventResult(val id: Int, val type: String, val event: CustomEventDto) : MessageInterface
-data class CustomEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
+data class HassEventResultDto(val id: Int, val type: String, val event: HassEventDto) : MessageInterface
+data class HassEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
     MessageInterface
+
+interface EventDtoInterface {
+    val eventType: String
+    val timeFired: OffsetDateTime
+    val origin: String
+}
 
 data class State(
     override val entityId: String,

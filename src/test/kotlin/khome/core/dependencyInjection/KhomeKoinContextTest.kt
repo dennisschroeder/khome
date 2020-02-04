@@ -84,11 +84,7 @@ internal class KhomeKoinContextTest : KhomeComponent() {
             override var port: Int = 1234,
             override var accessToken: String = "some-super-secret-token",
             override var secure: Boolean = true,
-            override var startStateStream: Boolean = true,
-            override var logLevel: String = "INFO",
-            override var logTime: Boolean = false,
-            override var logTimeFormat: String = "does not matter",
-            override var logOutput: String = "default"
+            override var startStateStream: Boolean = true
         ) : ConfigurationInterface
 
         val testModule = khomeModule {
@@ -110,10 +106,6 @@ internal class KhomeKoinContextTest : KhomeComponent() {
         assertThat(config.accessToken).isEqualTo("dsq7zht54899dhz43kbv4dgr56a8we234h>!sg?x")
         assertThat(config.secure).isTrue()
         assertThat(config.startStateStream).isFalse()
-        assertThat(config.logLevel).isEqualTo("TRACE")
-        assertThat(config.logTime).isFalse()
-        assertThat(config.logTimeFormat).isEqualTo("yyy-MM-dd")
-        assertThat(config.logOutput).isEqualTo("/khome.log")
     }
 
     @AfterEach

@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class CustomEventRegistryTest : KhomeTestComponent() {
+internal class HassEventRegistryTest : KhomeTestComponent() {
 
     @Test
     fun `operator plus adds event`() {
-        val sut = CustomEventRegistry()
-        class MyEvent : CustomEvent("testEvent")
+        val sut = HassEventRegistry()
+        class MyEvent : HassEvent("testEvent")
 
         sut.register("testEvent", MyEvent())
 
@@ -22,9 +22,9 @@ internal class CustomEventRegistryTest : KhomeTestComponent() {
 
     @Test
     fun `can iterate over registry`() {
-        val sut = CustomEventRegistry()
-        class MyFirstEvent : CustomEvent("testEventOne")
-        class MySecondEvent : CustomEvent("testEventTwo")
+        val sut = HassEventRegistry()
+        class MyFirstEvent : HassEvent("testEventOne")
+        class MySecondEvent : HassEvent("testEventTwo")
         sut.register("testEventOne", MyFirstEvent())
         sut.register("testEventTwo", MySecondEvent())
 

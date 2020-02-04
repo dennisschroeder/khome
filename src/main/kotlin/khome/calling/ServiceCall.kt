@@ -10,7 +10,6 @@ import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeComponent
 import khome.core.dependencyInjection.ServiceCoroutineContext
-import khome.core.logger
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.get
@@ -31,8 +30,8 @@ internal typealias ServiceCallMutator<T> = T.() -> Unit
 inline fun <reified CallType : ServiceCall> KhomeSession.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
     val servicePayload: CallType by inject()
     val serviceCoroutineContext: ServiceCoroutineContext by inject()
-    if (mutate != null) servicePayload.apply(mutate)
     servicePayload.id = get<CallerID>().incrementAndGet()
+    if (mutate != null) servicePayload.apply(mutate)
     launch(serviceCoroutineContext) {
         callWebSocketApi(servicePayload.toJson())
         logger.info { "Called Service with: " + servicePayload.toJson() }

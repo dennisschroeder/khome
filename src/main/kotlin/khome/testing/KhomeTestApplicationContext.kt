@@ -2,7 +2,6 @@ package khome.testing
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeClient
-import khome.configureLogger
 import khome.core.ServiceStoreInterface
 import khome.core.StateStoreInterface
 import khome.core.authenticate
@@ -38,7 +37,6 @@ abstract class KhomeTestApplicationContext : KhomeTestComponent() {
     fun startKhome() {
         runBlocking {
             khomeClient.startSession {
-                configureLogger(get())
                 authenticate(get())
                 fetchStates(get())
                 storeStates(consumeMessage(), get())

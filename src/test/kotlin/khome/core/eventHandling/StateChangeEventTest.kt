@@ -6,14 +6,15 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import khome.core.EventResult
 import khome.core.dependencyInjection.KhomeTestComponent
-import khome.core.logger
 import khome.core.mapping.ObjectMapper
+import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StateChangeEventTest : KhomeTestComponent() {
+    private val logger = KotlinLogging.logger { }
 
     @Test
     fun `assert callback was subscribed to event`() {
