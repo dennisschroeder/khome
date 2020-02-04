@@ -5,9 +5,5 @@ data class DefaultConfiguration(
     override var port: Int,
     override var accessToken: String,
     override var secure: Boolean,
-    override var startStateStream: Boolean,
-    override var logLevel: String,
-    override var logTime: Boolean,
-    override var logTimeFormat: String,
-    override var logOutput: String
+    override var startStateStream: Boolean
 ) : ConfigurationInterface
