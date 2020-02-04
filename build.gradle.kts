@@ -19,6 +19,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenLocal()
+    google()
     jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
     maven { url = uri("https://kotlin.bintray.com/kotlinx") }
@@ -32,6 +33,8 @@ val jupiterVersion: String by project
 val assertVersion: String by project
 val dataBobVersion: String by project
 val jsonAssertVersion: String by project
+val gsonVersion: String by project
+val kotlinLoggingVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -39,10 +42,10 @@ dependencies {
     compile("io.ktor:ktor-client-core-jvm:$ktorVersion")
     compile("io.ktor:ktor-client-cio:$ktorVersion")
     compile("io.ktor:ktor-client-json-jvm:$ktorVersion")
-    compile("io.ktor:ktor-client-gson:$ktorVersion")
+    compile("com.google.code.gson:gson:$gsonVersion")
     compile("org.koin:koin-core:$koinVersion")
     compile("org.slf4j:slf4j-simple:1.7.26")
-    compile("io.github.microutils:kotlin-logging:1.6.24")
+    compile("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
     testCompile("org.koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
         exclude(group = "junit")
