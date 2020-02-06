@@ -5,23 +5,24 @@ import org.koin.core.get
 
 typealias EventData = Map<String, Any>
 
-abstract class HassEvent(eventName: String, delegate: Event<EventData> = Event()) : KhomeComponent(), HassEventInterface<EventData> {
+abstract class HassEvent(eventName: String, delegate: Event<EventData> = Event()) : KhomeComponent(),
+    HassEventInterface<EventData> {
     final override val eventType: String = eventName
+    private val eventHandler = delegate
 
     init {
         registerInEventRegistry()
     }
 
     private fun registerInEventRegistry() = get<HassEventRegistry>().register(eventType, this)
-    private val event = delegate
-    override val listenerCount get() = event.listeners.size
-    override fun subscribe(handle: String?, callback: EventData.() -> Unit) {
-        if (handle == null) event += callback else event[handle] = callback
+    override val listenerCount get() = eventHandler.listeners.size
+    override fun subscribe(handle: String?, callback: suspend EventData.() -> Unit) {
+        if (handle == null) eventHandler += callback else eventHandler[handle] = callback
     }
 
     override fun unsubscribe(handle: String) {
-        event -= handle
+        eventHandler -= handle
     }
 
-    override fun emit(eventData: EventData) = event(eventData)
+    override suspend fun emit(eventData: EventData) = eventHandler(eventData)
 }

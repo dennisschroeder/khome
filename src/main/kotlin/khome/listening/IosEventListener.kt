@@ -24,7 +24,7 @@ interface IosActionEventDataInterface {
     val actionData: Map<String, Any>?
 }
 
-inline fun KhomeSession.onIosActionEvent(crossinline callback: (IosActionEventDataInterface) -> Unit) {
+inline fun KhomeSession.onIosActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosActionEvent> { eventData ->
         val iosActionEventData = IosActionEventData(
             sourceDeviceID = eventData["sourceDeviceID"] as String,
@@ -39,7 +39,7 @@ inline fun KhomeSession.onIosActionEvent(crossinline callback: (IosActionEventDa
     }
 }
 
-inline fun KhomeSession.onIosNotificationActionEvent(crossinline callback: (IosActionEventDataInterface) -> Unit) {
+inline fun KhomeSession.onIosNotificationActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosNotificationEvent> { eventData ->
         val iosNotificationEventData = IosActionEventData(
             sourceDeviceID = eventData["sourceDeviceID"] as String,

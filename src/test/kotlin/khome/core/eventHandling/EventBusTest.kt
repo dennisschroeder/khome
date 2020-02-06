@@ -7,6 +7,8 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -36,7 +38,7 @@ class EventBusTest {
     }
 
     @Test
-    fun `assert that callback was executed when event was fired`() {
+    fun `assert that callback was executed when event was fired`() = runBlocking {
         val testEvent = Event<String>()
         var testValue: String? = null
         testEvent += {
@@ -44,15 +46,17 @@ class EventBusTest {
         }
 
         testEvent("Foo")
+        delay(1)
         assertThat(testValue).isEqualTo("Foo")
     }
 
     @Test
-    fun `assert that all callbacks were executed when event was fired`() {
+    fun `assert that all callbacks were executed when event was fired`() = runBlocking {
         val testEvent = Event<String>()
         var testValueOne: String? = null
         var testValueTwo: String? = null
         testEvent += {
+            logger.debug { it }
             testValueOne = it
         }
 
@@ -61,6 +65,7 @@ class EventBusTest {
         }
 
         testEvent("Foo")
+        delay(1)
         assertThat(testValueOne).isEqualTo("Foo")
         assertThat(testValueTwo).isEqualTo("Foo")
     }

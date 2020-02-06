@@ -1,9 +1,9 @@
 package khome.core.eventHandling
 
-interface HassEventInterface<EventType> {
+interface HassEventInterface<EventDataType> {
     val eventType: String
     val listenerCount: Int
-    fun subscribe(handle: String? = null, callback: EventType.() -> Unit)
+    fun subscribe(handle: String? = null, callback: suspend EventDataType.() -> Unit)
     fun unsubscribe(handle: String)
-    fun emit(eventData: EventType)
+    suspend fun emit(eventData: EventDataType)
 }

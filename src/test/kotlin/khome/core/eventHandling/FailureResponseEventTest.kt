@@ -7,6 +7,8 @@ import assertk.assertions.isNull
 import com.google.gson.Gson
 import khome.core.Result
 import khome.core.dependencyInjection.KhomeTestComponent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -37,7 +39,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     }
 
     @Test
-    fun `assert that subscribed event callback was fired`() {
+    fun `assert that subscribed event callback was fired`() = runBlocking {
         val failureResponseEvents = FailureResponseEvent(Event())
         var testValue: Result? = null
         failureResponseEvents.subscribe {
@@ -58,12 +60,12 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
         val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
-
+        delay(1)
         assertThat(errorResult).isEqualTo(testValue)
     }
 
     @Test
-    fun `assert that subscribed event callbacks were fired`() {
+    fun `assert that subscribed event callbacks were fired`() = runBlocking {
         val failureResponseEvents = FailureResponseEvent(Event())
         var testValueOne: Result? = null
         var testValueTwo: Result? = null
@@ -89,13 +91,13 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
         val errorResult: Result = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
-
+        delay(1)
         assertThat(errorResult).isEqualTo(testValueOne)
         assertThat(errorResult).isEqualTo(testValueTwo)
     }
 
     @Test
-    fun `assert that unsubscribing was successful`() {
+    fun `assert that unsubscribing was successful`() = runBlocking {
         val failureResponseEvents = FailureResponseEvent(Event())
         var testValueOne: Result? = null
         var testValueTwo: Result? = null
@@ -122,7 +124,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
         val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.unsubscribe("handle")
         failureResponseEvents.emit(errorResult)
-
+        delay(1)
         assertThat(errorResult).isEqualTo(testValueOne)
         assertThat(testValueTwo).isNull()
     }

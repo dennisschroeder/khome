@@ -132,7 +132,7 @@ private suspend fun KhomeSession.runApplication(
     }
 
     loadKhomeModule(systemEntityBeans)
-    loadKhomeModule(khomeModule(createdAtStart = true, override = true, moduleDeclaration = Khome.beanDeclarations))
+    loadKhomeModule(khomeModule(createdAtStart = true, moduleDeclaration = Khome.beanDeclarations))
     subscribeHassEvents(get(), get())
     listeners()
 
@@ -219,7 +219,7 @@ private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
 private fun KhomeSession.logResults(resultData: Result) =
     logger.info { "Result-Id: ${resultData.id} | Success: ${resultData.success}" }
 
-private fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
+private suspend fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
     resultData: Result,
     failureResponseEvent: FailureResponseEvent
 ) {

@@ -8,11 +8,11 @@ import khome.core.eventHandling.StateChangeEvent
 import org.koin.core.get
 import java.util.UUID
 
-inline fun <reified Entity : EntityInterface> KhomeSession.onStateChange(crossinline callback: Entity.(OldState?) -> Unit) =
+inline fun <reified Entity : EntityInterface> KhomeSession.onStateChange(crossinline callback: suspend Entity.(OldState?) -> Unit) =
     registerStateChangeEvent(callback)
 
 inline fun <reified Entity : EntityInterface> KhomeSession.registerStateChangeEvent(
-    crossinline callback: Entity.(OldState?) -> Unit
+    crossinline callback: suspend Entity.(OldState?) -> Unit
 ): LifeCycleHandler {
     val handle = UUID.randomUUID().toString()
     val entity = get<Entity>()

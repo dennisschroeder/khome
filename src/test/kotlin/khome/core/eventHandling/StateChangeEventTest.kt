@@ -7,6 +7,8 @@ import assertk.assertions.isNull
 import khome.core.EventResult
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.mapping.ObjectMapper
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -37,7 +39,7 @@ class StateChangeEventTest : KhomeTestComponent() {
     }
 
     @Test
-    fun `assert that subscribed event callback was fired`() {
+    fun `assert that subscribed event callback was fired`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
         var testValue: EventResult? = null
         stateChangeEvent.subscribe {
@@ -93,11 +95,12 @@ class StateChangeEventTest : KhomeTestComponent() {
         val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.emit(eventResult)
+        delay(1)
         assertThat(eventResult).isEqualTo(testValue)
     }
 
     @Test
-    fun `assert that subscribed event callbacks were fired`() {
+    fun `assert that subscribed event callbacks were fired`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
         var testValueOne: EventResult? = null
         var testValueTwo: EventResult? = null
@@ -158,12 +161,13 @@ class StateChangeEventTest : KhomeTestComponent() {
         val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.emit(eventResult)
+        delay(1)
         assertThat(eventResult).isEqualTo(testValueOne)
         assertThat(eventResult).isEqualTo(testValueTwo)
     }
 
     @Test
-    fun `assert that unsubscribing was successful`() {
+    fun `assert that unsubscribing was successful`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
         var testValueOne: EventResult? = null
         var testValueTwo: EventResult? = null
@@ -225,7 +229,7 @@ class StateChangeEventTest : KhomeTestComponent() {
 
         stateChangeEvent.unsubscribe("handle")
         stateChangeEvent.emit(eventResult)
-
+        delay(1)
         assertThat(testValueOne).isNull()
         assertThat(eventResult).isEqualTo(testValueTwo)
     }

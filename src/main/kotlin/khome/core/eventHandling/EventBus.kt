@@ -1,52 +1,39 @@
 package khome.core.eventHandling
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Consumer
 
-typealias Handler<EventType> = Consumer<EventType>
-internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
-typealias EventIterator<T> = Iterable<MutableMap.MutableEntry<String, Handler<T>>>
+typealias Handler<EventDataType> = suspend (EventDataType) -> Unit
+typealias EventIterator<EventDataType> = Iterable<MutableMap.MutableEntry<String, Handler<EventDataType>>>
 
-open class Event<T> : EventIterator<T> {
-
-    private val list = ConcurrentHashMap<String, Handler<T>>()
-
+class Event<EventDataType> : EventIterator<EventDataType> {
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val list = ConcurrentHashMap<String, Handler<EventDataType>>()
     private var nextUnnamedIndex = 0L
 
-    val size: Int @JvmName("size") get() = list.size
+    val size: Int get() = list.size
     internal val listeners get() = list.entries
 
     internal fun clear() = list.clear()
 
     override operator fun iterator() = list.iterator()
 
-    @JvmName("add")
-    operator fun plusAssign(handler: Handler<T>) {
+    operator fun plusAssign(handler: Handler<EventDataType>) {
         list["${nextUnnamedIndex++}"] = handler
     }
 
-    @JvmName("put")
-    operator fun set(name: String, handler: Handler<T>) {
+    operator fun set(name: String, handler: Handler<EventDataType>) {
         list[name] = handler
     }
 
-    @JvmName("add")
-    inline operator fun plusAssign(crossinline handler: (T) -> Unit) {
-        this += Handler { handler(it) }
-    }
-
-    @JvmName("put")
-    inline operator fun set(name: String, crossinline handler: (T) -> Unit) {
-        this[name] = Handler { handler(it) }
-    }
-
-    @JvmName("remove")
     operator fun minusAssign(name: String) {
         list.remove(name)
     }
 
-    @JvmName("handle")
-    operator fun invoke(data: T) {
-        for ((_, value) in this) value(data)
+    @Suppress("SuspendFunctionOnCoroutineScope")
+    suspend operator fun invoke(data: EventDataType) {
+        for ((_, value) in this) scope.launch { value(data) }
     }
 }

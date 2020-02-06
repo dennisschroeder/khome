@@ -8,5 +8,5 @@ import org.koin.core.get
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun KhomeSession.listenCallServiceError(action: Result.() -> Unit) =
+fun KhomeSession.listenCallServiceError(action: suspend Result.() -> Unit) =
     get<FailureResponseEvent>().subscribe(callback = action)

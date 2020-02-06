@@ -2,17 +2,17 @@ package khome.core.eventHandling
 
 import khome.core.Result
 
-internal class FailureResponseEvent(private val delegate: Event<Result>) :
+internal class FailureResponseEvent(delegate: Event<Result>) :
     Iterable<MutableMap.MutableEntry<String, Handler<Result>>> by delegate, EventInterface<Result> {
-
-    override val listenerCount get() = delegate.listeners.size
-    override fun subscribe(handle: String?, callback: Result.() -> Unit) {
-        if (handle == null) delegate += callback else delegate[handle] = callback
+    val eventHandler = delegate
+    override val listenerCount get() = eventHandler.listeners.size
+    override fun subscribe(handle: String?, callback: suspend Result.() -> Unit) {
+        if (handle == null) eventHandler += callback else eventHandler[handle] = callback
     }
 
     override fun unsubscribe(handle: String) {
-        delegate -= handle
+        eventHandler -= handle
     }
 
-    override fun emit(eventData: Result) = delegate(eventData)
+    override suspend fun emit(eventData: Result) = eventHandler(eventData)
 }
