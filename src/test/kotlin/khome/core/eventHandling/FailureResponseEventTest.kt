@@ -97,7 +97,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     }
 
     @Test
-    fun `assert that unsubscribing was successful`() = runBlocking {
+    fun `assert that unsubscribe was successful`() = runBlocking {
         val failureResponseEvents = FailureResponseEvent(Event())
         var testValueOne: Result? = null
         var testValueTwo: Result? = null

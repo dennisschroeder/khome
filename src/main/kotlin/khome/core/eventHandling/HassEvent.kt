@@ -1,11 +1,11 @@
 package khome.core.eventHandling
 
-import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.KhomeKoinComponent
 import org.koin.core.get
 
 typealias EventData = Map<String, Any>
 
-abstract class HassEvent(eventName: String, delegate: Event<EventData> = Event()) : KhomeComponent(),
+abstract class HassEvent(eventName: String, delegate: Event<EventData> = Event()) : KhomeKoinComponent(),
     HassEventInterface<EventData> {
     final override val eventType: String = eventName
     private val eventHandler = delegate

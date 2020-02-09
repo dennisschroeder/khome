@@ -65,7 +65,7 @@ class EventBusTest {
         }
 
         testEvent("Foo")
-        delay(1)
+        delay(10)
         assertThat(testValueOne).isEqualTo("Foo")
         assertThat(testValueTwo).isEqualTo("Foo")
     }

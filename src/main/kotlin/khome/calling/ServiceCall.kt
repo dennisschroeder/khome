@@ -5,15 +5,14 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
+import khome.core.KhomeComponent
 import khome.core.MessageInterface
 import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
-import khome.core.dependencyInjection.KhomeComponent
-import khome.core.dependencyInjection.ServiceCoroutineContext
+import khome.core.dependencyInjection.KhomeKoinComponent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.get
-import org.koin.core.inject
 
 internal typealias ServiceCallMutator<T> = T.() -> Unit
 
@@ -27,14 +26,15 @@ internal typealias ServiceCallMutator<T> = T.() -> Unit
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-inline fun <reified CallType : ServiceCall> KhomeSession.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
-    val servicePayload: CallType by inject()
-    val serviceCoroutineContext: ServiceCoroutineContext by inject()
+inline fun <reified CallType : ServiceCall> KhomeComponent.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
+    val servicePayload: CallType = get()
+    val serviceCoroutineContext: ServiceCoroutineContext = get()
     servicePayload.id = get<CallerID>().incrementAndGet()
     if (mutate != null) servicePayload.apply(mutate)
-    launch(serviceCoroutineContext) {
-        callWebSocketApi(servicePayload.toJson())
-        logger.info { "Called Service with: " + servicePayload.toJson() }
+    val session = get<KhomeSession>()
+    session.launch(serviceCoroutineContext) {
+        session.callWebSocketApi(servicePayload.toJson())
+        session.logger.info { "Called Service with: " + servicePayload.toJson() }
     }
 }
 
@@ -58,7 +58,7 @@ data class EntityIds(
 abstract class ServiceCall(
     val domain: DomainInterface,
     val service: ServiceInterface
-) : KhomeComponent(), MessageInterface {
+) : KhomeKoinComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
     abstract val serviceData: ServiceDataInterface?

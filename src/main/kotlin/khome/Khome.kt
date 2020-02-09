@@ -4,6 +4,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.FetchServices
 import khome.calling.FetchStates
+import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.EventResult
 import khome.core.HassEventResultDto
@@ -15,7 +16,7 @@ import khome.core.StateResult
 import khome.core.StateStoreInterface
 import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
-import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.dependencyInjection.KhomeKoinContext
 import khome.core.dependencyInjection.KhomeModule
 import khome.core.dependencyInjection.khomeModule
@@ -34,7 +35,6 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.get
 import org.koin.core.inject
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The main entry point to start your application
@@ -43,11 +43,13 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @return instance of Khome class instantiated with default values.
  */
 
+@ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun khomeApplication(init: Khome.() -> Unit): Khome {
+fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
     KhomeKoinContext.startKoinApplication()
-    return Khome().apply(init)
+    val khome = Khome().apply(init)
+    return khome.get()
 }
 
 /**
@@ -58,14 +60,8 @@ fun khomeApplication(init: Khome.() -> Unit): Khome {
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-class Khome : KhomeComponent() {
+class Khome : KhomeKoinComponent() {
     companion object {
-        private var sandboxMode = AtomicBoolean(false)
-
-        val isSandBoxModeActive get() = sandboxMode.get()
-        private fun sandBoxModeOn() = sandboxMode.set(true)
-        private fun sandBoxModeOff() = sandboxMode.set(false)
-
         var beanDeclarations: KhomeModule.() -> Unit = {}
     }
 
@@ -73,46 +69,25 @@ class Khome : KhomeComponent() {
      * Configure your Khome instance. See all available properties in
      * the [ConfigurationInterface] data class.
      *
-     * @param init Lambda with receiver to configure Khome
+     * @param builder Lambda with receiver to configure Khome
      * @see [ConfigurationInterface]
      */
-    fun configure(init: ConfigurationInterface.() -> Unit) {
+    fun configure(builder: ConfigurationInterface.() -> Unit) {
         val config: ConfigurationInterface by inject()
-        config.apply(init)
+        config.apply(builder)
     }
 
     fun beans(beanDeclarations: KhomeModule.() -> Unit) {
         Khome.beanDeclarations = beanDeclarations
     }
-
-    /**
-     * The connect function is the window to your home assistant instance.
-     * Basically it is an wrapper of the ktor websocket client function.
-     * Inside the lambda, that you have to pass in, you can register
-     * state change based or time change based callbacks, call external api´s , or do whatever you`l like.
-     *
-     * @see khome.listening.onStateChange
-     * @see khome.scheduling
-     *
-     */
-    @ExperimentalCoroutinesApi
-    @KtorExperimentalAPI
-    @ObsoleteCoroutinesApi
-    suspend fun connectAndRun(listeners: suspend KhomeSession.() -> Unit) =
-        coroutineScope {
-            get<KhomeClient>()
-                .startSession {
-                    runApplication(get(), listeners)
-                }
-        }
 }
 
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-private suspend fun KhomeSession.runApplication(
+internal suspend fun KhomeSession.initiateApplication(
     config: ConfigurationInterface,
-    listeners: suspend KhomeSession.() -> Unit
+    listeners: suspend BaseKhomeComponent.() -> Unit
 ) {
 
     authenticate(get())
@@ -134,7 +109,7 @@ private suspend fun KhomeSession.runApplication(
     loadKhomeModule(systemEntityBeans)
     loadKhomeModule(khomeModule(createdAtStart = true, moduleDeclaration = Khome.beanDeclarations))
     subscribeHassEvents(get(), get())
-    listeners()
+    listeners(BaseKhomeComponent())
 
     if (successfullyStartedStateStream()) {
         consumeStateChangesByTriggeringEvents()

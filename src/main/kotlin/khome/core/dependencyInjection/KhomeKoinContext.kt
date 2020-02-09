@@ -2,8 +2,15 @@ package khome.core.dependencyInjection
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.ktor.client.features.websocket.WebSockets
 import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeApplication
 import khome.KhomeClient
+import khome.KhomeSession
+import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.ServiceStore
@@ -17,7 +24,7 @@ import khome.core.eventHandling.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
-import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import mu.KotlinLogging
@@ -29,7 +36,6 @@ import org.koin.dsl.module
 import java.time.OffsetDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
-internal typealias ServiceCoroutineContext = ExecutorCoroutineDispatcher
 internal typealias CallerID = AtomicInteger
 
 /**
@@ -43,6 +49,7 @@ object KhomeKoinContext {
     var application: KoinApplication? = null
     private val logger = KotlinLogging.logger {}
 
+    @ExperimentalCoroutinesApi
     private var internalModule: Module =
         module {
 
@@ -59,7 +66,7 @@ object KhomeKoinContext {
             single { StateChangeEvent(Event()) }
             single { FailureResponseEvent(Event()) }
             single { HassEventRegistry() }
-            single { newSingleThreadContext("ServiceContext") }
+            single { ServiceCoroutineContext(newSingleThreadContext("ServiceContext")) }
             single { AtomicInteger(0) }
             single<ConfigurationInterface> {
                 DefaultConfiguration(
@@ -70,9 +77,13 @@ object KhomeKoinContext {
                     startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean()
                 ).also { logger.debug { it } }
             }
-            single { KhomeClient(get()) }
+            single { HttpClient(CIO).config { install(WebSockets) } }
+            single { (websocketSession: DefaultClientWebSocketSession) -> KhomeSession(websocketSession) }
+            single { KhomeClient(get(), get()) }
+            single { KhomeApplication(get()) }
         }
 
+    @ExperimentalCoroutinesApi
     fun startKoinApplication() {
         application = koinApplication {
             environmentProperties()
