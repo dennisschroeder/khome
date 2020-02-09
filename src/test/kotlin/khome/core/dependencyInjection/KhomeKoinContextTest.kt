@@ -8,7 +8,13 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isSuccess
 import assertk.assertions.isTrue
 import com.google.gson.Gson
+import io.ktor.client.HttpClient
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.mockk.mockk
+import khome.KhomeApplication
 import khome.KhomeClient
+import khome.KhomeSession
+import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.ServiceStore
@@ -18,33 +24,24 @@ import khome.core.StateStoreInterface
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
-import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
-import org.koin.test.check.checkModules
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.CoroutineContext
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class KhomeKoinContextTest : KhomeComponent() {
+internal class KhomeKoinContextTest : KhomeKoinComponent() {
 
     private val sut = KhomeKoinContext
 
     @BeforeEach
     fun init() {
         sut.startKoinApplication()
-    }
-
-    @Test
-    fun `assert khome components hierarchy is correct`() {
-        assertThat {
-            sut.application?.let {
-                it.checkModules()
-            }
-        }.isSuccess()
     }
 
     @Test
@@ -65,7 +62,7 @@ internal class KhomeKoinContextTest : KhomeComponent() {
             val failureResponseEvent: StateChangeEvent = get()
 
             val serviceCoroutineContext: ServiceCoroutineContext = get()
-            assertThat(serviceCoroutineContext).isInstanceOf(ExecutorCoroutineDispatcher::class)
+            assertThat(serviceCoroutineContext).isInstanceOf(CoroutineContext::class)
 
             val callerID: CallerID = get()
             assertThat(callerID).isInstanceOf(AtomicInteger::class)
@@ -73,7 +70,13 @@ internal class KhomeKoinContextTest : KhomeComponent() {
             val configuration: ConfigurationInterface = get()
             assertThat(configuration).isInstanceOf(DefaultConfiguration::class)
 
+            val httpClient: HttpClient = get()
             val khomeClient: KhomeClient = get()
+
+            val mockWebsocketSession = mockk<DefaultClientWebSocketSession>()
+            val khomeSession: KhomeSession = get() { parametersOf(mockWebsocketSession) }
+
+            val khomeApplication: KhomeApplication = get()
         }.isSuccess()
     }
 

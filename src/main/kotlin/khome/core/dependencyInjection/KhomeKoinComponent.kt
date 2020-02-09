@@ -9,13 +9,13 @@ import org.koin.core.KoinComponent
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-abstract class KhomeComponent : KoinComponent {
+abstract class KhomeKoinComponent : KoinComponent {
     override fun getKoin(): Koin = checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-abstract class KhomeTestComponent : KhomeComponent() {
+abstract class KhomeTestComponent : KhomeKoinComponent() {
 
     @BeforeEach
     fun initKoin() {

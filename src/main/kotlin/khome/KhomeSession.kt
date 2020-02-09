@@ -8,7 +8,7 @@ import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.ServiceDataInterface
 import khome.core.MessageInterface
-import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
@@ -16,7 +16,7 @@ import org.koin.core.get
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class KhomeSession(delegate: DefaultClientWebSocketSession) : KhomeComponent(), WebSocketSession by delegate {
+class KhomeSession(delegate: DefaultClientWebSocketSession) : KhomeKoinComponent(), WebSocketSession by delegate {
     val logger = KotlinLogging.logger {}
     suspend fun callWebSocketApi(message: String) = send(message)
     suspend inline fun <reified M : Any> consumeMessage(): M = incoming.receive().asObject()

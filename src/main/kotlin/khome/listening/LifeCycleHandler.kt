@@ -2,7 +2,7 @@ package khome.listening
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.LifeCycleHandlerInterface
-import khome.core.dependencyInjection.KhomeComponent
+import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.eventHandling.StateChangeEvent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
@@ -10,7 +10,7 @@ import org.koin.core.inject
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class LifeCycleHandler(val handle: String) : LifeCycleHandlerInterface, KhomeComponent() {
+class LifeCycleHandler(val handle: String) : LifeCycleHandlerInterface, KhomeKoinComponent() {
     private val logger = KotlinLogging.logger { }
     private val stateChangeEvent: StateChangeEvent by inject()
     override fun cancel() {

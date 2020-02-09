@@ -1,6 +1,6 @@
 package khome.listening
 
-import khome.KhomeSession
+import khome.core.KhomeComponent
 import khome.core.eventHandling.ios.IosActionEvent
 import khome.core.eventHandling.ios.IosNotificationEvent
 
@@ -24,7 +24,7 @@ interface IosActionEventDataInterface {
     val actionData: Map<String, Any>?
 }
 
-inline fun KhomeSession.onIosActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
+inline fun KhomeComponent.onIosActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosActionEvent> { eventData ->
         val iosActionEventData = IosActionEventData(
             sourceDeviceID = eventData["sourceDeviceID"] as String,
@@ -39,7 +39,7 @@ inline fun KhomeSession.onIosActionEvent(crossinline callback: suspend (IosActio
     }
 }
 
-inline fun KhomeSession.onIosNotificationActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
+inline fun KhomeComponent.onIosNotificationActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosNotificationEvent> { eventData ->
         val iosNotificationEventData = IosActionEventData(
             sourceDeviceID = eventData["sourceDeviceID"] as String,
