@@ -88,8 +88,7 @@ object KhomeKoinContext {
         application = koinApplication {
             environmentProperties()
             runCatching {
-                //fileProperties("/khome.properties")
-                fileProperties("/khome.yaml")
+                fileProperties("/khome.properties")
             }.onFailure {
                 logger.warn { "No khome.properties file found" }
             }
