@@ -8,7 +8,6 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isSuccess
 import assertk.assertions.isTrue
 import com.google.gson.Gson
-import io.ktor.client.HttpClient
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.mockk.mockk
 import khome.KhomeApplication
@@ -17,10 +16,12 @@ import khome.KhomeSession
 import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
+import khome.core.clients.RestApiClient
 import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
+import khome.core.clients.WebSocketClient
 import khome.core.eventHandling.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
@@ -70,7 +71,8 @@ internal class KhomeKoinContextTest : KhomeKoinComponent() {
             val configuration: ConfigurationInterface = get()
             assertThat(configuration).isInstanceOf(DefaultConfiguration::class)
 
-            val httpClient: HttpClient = get()
+            val wsClient: WebSocketClient = get()
+            val restClient: RestApiClient = get()
             val khomeClient: KhomeClient = get()
 
             val mockWebsocketSession = mockk<DefaultClientWebSocketSession>()

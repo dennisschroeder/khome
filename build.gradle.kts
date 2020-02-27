@@ -42,7 +42,7 @@ dependencies {
     compile("io.ktor:ktor-client-core-jvm:$ktorVersion")
     compile("io.ktor:ktor-client-cio:$ktorVersion")
     compile("io.ktor:ktor-client-json-jvm:$ktorVersion")
-    compile("com.google.code.gson:gson:$gsonVersion")
+    compile("io.ktor:ktor-client-gson:$ktorVersion")
     compile("org.koin:koin-core:$koinVersion")
     compile("org.slf4j:slf4j-simple:1.7.26")
     compile("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
