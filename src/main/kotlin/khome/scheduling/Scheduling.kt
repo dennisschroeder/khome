@@ -19,7 +19,10 @@ import java.time.format.DateTimeFormatter
 inline fun <reified TimeEntity : AbstractTimeEntity> KhomeComponent.onTime(noinline callback: LocalTime.() -> Unit): LifeCycleHandler {
     return onStateChange<Time> {
         val executeAt: LocalTime = get<TimeEntity>().time
-        if (executeAt == currentLocalTime) callback(executeAt)
+        if (executeAt == currentLocalTime) {
+            callback(executeAt)
+            logger.debug { "Executed scheduled task at: $currentLocalTime" }
+        }
     }
 }
 
@@ -40,11 +43,15 @@ fun KhomeComponent.onTime(executeAt: LocalTime, callback: LocalTime.() -> Unit) 
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-inline fun <reified TimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler {
-    val timeEntity: TimeEntity = get()
-    val executeAt: LocalDateTime = timeEntity.dateTime
-    return onDateTime(executeAt, callback)
-}
+inline fun <reified DateTimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler =
+    onStateChange<DateTime> {
+        val executeAt: LocalDateTime = get<DateTimeEntity>().dateTime
+        if (executeAt == currentLocalDateTime) {
+            callback(executeAt)
+            logger.debug { "Executed scheduled task at: $currentLocalDateTime" }
+        }
+    }
+
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
