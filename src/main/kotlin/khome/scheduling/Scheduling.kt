@@ -8,35 +8,52 @@ import khome.core.entities.system.DateTime
 import khome.core.entities.system.Time
 import khome.listening.LifeCycleHandler
 import khome.listening.onStateChange
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+@ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 inline fun <reified TimeEntity : AbstractTimeEntity> KhomeComponent.onTime(noinline callback: LocalTime.() -> Unit): LifeCycleHandler {
-    val timeEntity: TimeEntity = get()
-    val executeAt: LocalTime = timeEntity.time
-    return onTime(executeAt, callback)
+    return onStateChange<Time> {
+        val executeAt: LocalTime = get<TimeEntity>().time
+        if (executeAt == currentLocalTime) {
+            callback(executeAt)
+            logger.debug { "Executed scheduled task at: $currentLocalTime" }
+        }
+    }
 }
 
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
 fun KhomeComponent.onTime(executeAt: String, callback: LocalTime.() -> Unit): LifeCycleHandler {
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m")
     val localTime: LocalTime = LocalTime.parse(executeAt, formatter)
     return onTime(localTime, callback)
 }
 
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
 fun KhomeComponent.onTime(executeAt: LocalTime, callback: LocalTime.() -> Unit) =
     onStateChange<Time> {
         if (executeAt == currentLocalTime) callback(executeAt)
     }
 
-inline fun <reified TimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler {
-    val timeEntity: TimeEntity = get()
-    val executeAt: LocalDateTime = timeEntity.dateTime
-    return onDateTime(executeAt, callback)
-}
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
+inline fun <reified DateTimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler =
+    onStateChange<DateTime> {
+        val executeAt: LocalDateTime = get<DateTimeEntity>().dateTime
+        if (executeAt == currentLocalDateTime) {
+            callback(executeAt)
+            logger.debug { "Executed scheduled task at: $currentLocalDateTime" }
+        }
+    }
 
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
 fun KhomeComponent.onDateTime(
     executeAtDate: String,
     executeAtTime: String,
@@ -47,6 +64,8 @@ fun KhomeComponent.onDateTime(
     return onDateTime(localDateTime, callback)
 }
 
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
 fun KhomeComponent.onDateTime(executeAt: LocalDateTime, callback: LocalDateTime.() -> Unit) =
     onStateChange<DateTime> {
         if (executeAt == currentLocalDateTime) {

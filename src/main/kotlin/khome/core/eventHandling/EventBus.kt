@@ -9,8 +9,7 @@ typealias Handler<EventDataType> = suspend (EventDataType) -> Unit
 typealias EventIterator<EventDataType> = Iterable<MutableMap.MutableEntry<String, Handler<EventDataType>>>
 
 class Event<EventDataType> : EventIterator<EventDataType> {
-    private val dispatcher = Dispatchers.IO
-    private val scope get() = CoroutineScope(dispatcher)
+    private val scope get() = CoroutineScope(Dispatchers.IO)
     private val list = ConcurrentHashMap<String, Handler<EventDataType>>()
     private var nextUnnamedIndex = 0L
 
@@ -34,7 +33,7 @@ class Event<EventDataType> : EventIterator<EventDataType> {
     }
 
     @Suppress("SuspendFunctionOnCoroutineScope")
-    suspend operator fun invoke(data: EventDataType) {
+    operator fun invoke(data: EventDataType) {
         for ((_, value) in this) scope.launch { value(data) }
     }
 }

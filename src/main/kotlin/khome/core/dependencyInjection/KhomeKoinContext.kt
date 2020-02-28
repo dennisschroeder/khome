@@ -4,8 +4,14 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.request.header
+import io.ktor.client.request.host
+import io.ktor.client.request.port
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeApplication
 import khome.KhomeClient
@@ -17,6 +23,8 @@ import khome.core.ServiceStore
 import khome.core.ServiceStoreInterface
 import khome.core.StateStore
 import khome.core.StateStoreInterface
+import khome.core.clients.RestApiClient
+import khome.core.clients.WebSocketClient
 import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.HassEventRegistry
@@ -77,7 +85,33 @@ object KhomeKoinContext {
                     startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean()
                 ).also { logger.debug { it } }
             }
-            single { HttpClient(CIO).config { install(WebSockets) } }
+            single {
+                val client = HttpClient(CIO).config { install(WebSockets) }
+                WebSocketClient(client)
+            }
+            single {
+                val client = HttpClient(CIO) {
+                    install(JsonFeature) {
+                        serializer = GsonSerializer {
+                            setPrettyPrinting()
+                            setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                            registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
+                            create()!!
+                        }
+                    }
+
+                    val config = get<ConfigurationInterface>()
+
+                    defaultRequest {
+                        host = config.host
+                        port = config.port
+                        header("Authorization", "Bearer ${config.accessToken}")
+                        header("Content-Type", "application/json")
+                    }
+                }
+                RestApiClient(client)
+            }
+
             single { (websocketSession: DefaultClientWebSocketSession) -> KhomeSession(websocketSession) }
             single { KhomeClient(get(), get()) }
             single { KhomeApplication(get()) }
