@@ -63,15 +63,15 @@ abstract class AbstractEntity<StateValueType>(
         return initial == afterDelay
     }
 
-    suspend fun onlyIfStateHasNotChangedAfter(millis: Long, block: () -> Unit) {
+    suspend fun onlyIfStateHasNotChangedAfter(millis: Long, block: suspend () -> Unit) {
         if (hasStateChangedAfter(millis)) block()
     }
 
-    suspend fun onlyIfAttributeHasNotChangedAfter(millis: Long, attribute: String, block: () -> Unit) {
+    suspend fun onlyIfAttributeHasNotChangedAfter(millis: Long, attribute: String, block: suspend () -> Unit) {
         if (hasAttributeChangedAfter(millis, attribute)) block()
     }
 
-    suspend fun onlyIfAttributesHasNotChangedAfter(millis: Long, vararg attributes: String, block: () -> Unit) {
+    suspend fun onlyIfAttributesHasNotChangedAfter(millis: Long, vararg attributes: String, block: suspend () -> Unit) {
         if (hasAttributesChangedAfter(millis, *attributes)) block()
     }
 }

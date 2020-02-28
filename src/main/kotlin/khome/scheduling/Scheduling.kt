@@ -52,7 +52,6 @@ inline fun <reified DateTimeEntity : AbstractDateTimeEntity> KhomeComponent.onDa
         }
     }
 
-
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onDateTime(
