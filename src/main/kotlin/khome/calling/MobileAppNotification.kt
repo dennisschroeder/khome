@@ -49,14 +49,21 @@ data class AttachmentData(
 data class PushData(
     @SerializedName("thread-id")
     var threadId: String? = null,
-    var sound: String? = null,
+    var sound: SoundData? = null,
     var badge: Int? = null,
     var category: PushCategoryInterface? = null
 ) {
+
+    fun sound(builder: SoundData.() -> Unit) {
+        sound = SoundData("default", 0, 1.0).apply(builder)
+    }
+
     enum class PushCategory : PushCategoryInterface {
         MAP
     }
 }
+
+data class SoundData(var name: String, var critical: Int, var volume: Double)
 
 interface PushCategoryInterface
 
