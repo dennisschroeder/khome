@@ -60,7 +60,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
         val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
-        delay(1)
+        delay(10)
         assertThat(errorResult).isEqualTo(testValue)
     }
 
@@ -91,7 +91,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
         val errorResult: Result = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.emit(errorResult)
-        delay(1)
+        delay(10)
         assertThat(errorResult).isEqualTo(testValueOne)
         assertThat(errorResult).isEqualTo(testValueTwo)
     }
@@ -124,7 +124,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
         val errorResult = get<Gson>().fromJson(errorResultJson, Result::class.java)
         failureResponseEvents.unsubscribe("handle")
         failureResponseEvents.emit(errorResult)
-        delay(1)
+        delay(10)
         assertThat(errorResult).isEqualTo(testValueOne)
         assertThat(testValueTwo).isNull()
     }

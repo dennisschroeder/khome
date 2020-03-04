@@ -27,12 +27,12 @@ internal typealias ServiceCallMutator<T> = T.() -> Unit
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 inline fun <reified CallType : ServiceCall> KhomeComponent.callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
-    val servicePayload: CallType = get()
-    val serviceCoroutineContext: ServiceCoroutineContext = get()
-    servicePayload.id = get<CallerID>().incrementAndGet()
-    if (mutate != null) servicePayload.apply(mutate)
     val session = get<KhomeSession>()
+    val serviceCoroutineContext: ServiceCoroutineContext = get()
     session.launch(serviceCoroutineContext) {
+        val servicePayload: CallType = get()
+        servicePayload.id = get<CallerID>().incrementAndGet()
+        if (mutate != null) servicePayload.apply(mutate)
         session.callWebSocketApi(servicePayload.toJson())
         session.logger.info { "Called Service with: " + servicePayload.toJson() }
     }
