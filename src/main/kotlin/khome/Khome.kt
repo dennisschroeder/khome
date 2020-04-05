@@ -9,10 +9,13 @@ import khome.core.ConfigurationInterface
 import khome.core.EventResult
 import khome.core.HassEventResultDto
 import khome.core.ListenEvent
+import khome.core.NewState
+import khome.core.OldState
 import khome.core.Result
 import khome.core.ServiceResult
 import khome.core.ServiceStoreInterface
 import khome.core.StateResult
+import khome.core.StateStoreEntry
 import khome.core.StateStoreInterface
 import khome.core.authenticate
 import khome.core.dependencyInjection.CallerID
@@ -163,32 +166,10 @@ private suspend fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     logger.debug { "Result: $resultData" }
     when {
         !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData, get())
-        resultData.success && resultData.result is ArrayList<*> -> checkLocalStateStoreAndRefresh(frame)
         resultData.success -> {
             logResults(resultData)
         }
     }
-}
-
-private fun KhomeSession.checkLocalStateStoreAndRefresh(frame: Frame) {
-    val states = frame.asObject<StateResult>()
-    var noneEqualStateCount = 0
-    val stateStore: StateStoreInterface by inject()
-
-    logger.info { " ###    Started local state store check    ###" }
-
-    states.result.forEach { state ->
-
-        if (stateStore[state.entityId] != state) {
-            noneEqualStateCount++
-            logger.warn { "The state of ${state.entityId} is not in sync any more." }
-            stateStore[state.entityId] = state
-            logger.warn { "The state has been refreshed." }
-        }
-    }
-
-    if (noneEqualStateCount > 0) logger.debug { """--- $noneEqualStateCount none equal states discovered --- """ }
-    logger.info { " ###    Local state store check finished    ###" }
 }
 
 private fun KhomeSession.logResults(resultData: Result) =
@@ -204,7 +185,17 @@ private suspend fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
 
 private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
     val data = frame.asObject<EventResult>()
-    data.event.data.newState?.let { stateStore[data.event.data.entityId] = it }
+    val stateStoreEntryById = checkNotNull(stateStore[data.event.data.entityId]) { "Can not update state store. No state store entry found for ${data.event.data.entityId}" }
+
+    data.event.data.oldState?.let {
+        val updatedState = stateStoreEntryById.copy(oldState = OldState(it))
+        stateStore[data.event.data.entityId] = updatedState
+    }
+
+    data.event.data.newState?.let {
+        val updatedState = stateStoreEntryById.copy(newState = NewState(it))
+        stateStore[data.event.data.entityId] = updatedState
+    }
 }
 
 internal suspend fun KhomeSession.fetchServices(id: CallerID) {
@@ -242,7 +233,7 @@ internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
 internal fun KhomeSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
     stateResults.result
         .forEach { state ->
-            stateStore[state.entityId] = state
+            stateStore[state.entityId] = StateStoreEntry(OldState(state), NewState(state))
             logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
         }
 

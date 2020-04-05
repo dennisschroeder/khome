@@ -3,11 +3,10 @@ package khome.core
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.entities.getAttribute
 import khome.core.exceptions.InvalidAttributeValueTypeException
-import khome.core.exceptions.InvalidStateValueTypeException
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.jupiter.api.Nested
@@ -207,19 +206,6 @@ internal class DtoTest : KhomeTestComponent() {
         """.trimIndent()
             val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
             assertThat(eventResult).isDataClassEqualTo(expectedResult)
-        }
-
-        @Test
-        fun `assert that getValue returns correct type and value`() {
-            val stateValue = newState.getValue<String>()
-            assertThat(stateValue).isInstanceOf(String::class)
-            assertThat(stateValue).isEqualTo("on")
-        }
-
-        @Test
-        fun `assert getValue throws InvalidStateValueTypeException on wrong Type parameter`() {
-            val exception = assertThrows<InvalidStateValueTypeException> { newState.getValue<Boolean>() }
-            assertThat(exception.message).isEqualTo("State value is of type: ${String::class}.")
         }
 
         @Test
