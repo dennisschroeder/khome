@@ -4,6 +4,6 @@ import khome.core.entities.AbstractEntity
 
 abstract class AbstractDeviceTrackerEntity(name: String) :
     AbstractEntity<String>("device_tracker", name) {
-    val isHome get() = stateValue == "home"
-    val isAway get() = stateValue == "not_home"
+    val isHome get() = newState.state == "home"
+    val isAway get() = newState.state == "not_home"
 }

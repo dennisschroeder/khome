@@ -73,36 +73,36 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `assert StateStore returns injected State by entity id`() {
         val state: State = get<ObjectMapper>().fromJson(stateJson)
         val stateStore = StateStore()
-        stateStore["light.bed_light"] = state
-        assertThat(stateStore["light.bed_light"]).isEqualTo(state)
+        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+        assertThat(stateStore["light.bed_light"]!!.newState).isEqualTo(NewState(state))
     }
 
     @Test
-    fun `assert StateStore updates State when overridden by entity id`() {
+    fun `assert StateStore updates state when overridden by key`() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        val newState: State = get<ObjectMapper>().fromJson(newStateJson)
-        stateStore["light.bed_light"] = state
-        stateStore["light.bed_light"] = newState
+        val updatedState: State = get<ObjectMapper>().fromJson(newStateJson)
+        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(updatedState), newState = NewState(updatedState))
 
-        assertThat(stateStore["light.bed_light"]).isEqualTo(newState)
+        assertThat(stateStore["light.bed_light"]!!.newState).isEqualTo(NewState(updatedState))
     }
 
     @Test
     fun `assert read from different coroutine`() {
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        val newState: State = get<ObjectMapper>().fromJson(newStateJson)
+        val updatedState: State = get<ObjectMapper>().fromJson(newStateJson)
         runBlocking {
             val stateStore = StateStore()
-            logger.info { "State: $newState" }
-            stateStore["light.bed_light"] = state
+            logger.info { "State: $state" }
+            stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
 
-            logger.info { "NewState: $newState" }
-            stateStore["light.bed_light"] = newState
+            logger.info { "NewState: $updatedState" }
+            stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(updatedState), newState = NewState(updatedState))
 
             launch(Dispatchers.Default) {
                 logger.info { "Accessing newState from another coroutine" }
-                assertThat(stateStore["light.bed_light"]).isEqualTo(newState)
+                assertThat(stateStore["light.bed_light"]!!.newState).isEqualTo(NewState(updatedState))
             }
         }
     }
@@ -111,7 +111,7 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `returns null when state not found`() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        stateStore["light.bed_light"] = state
+        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
 
         assertThat(stateStore["light.bathroom_light"]).isNull()
     }
@@ -120,7 +120,7 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `assert call to clear removes all items`() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        stateStore["light.bed_light"] = state
+        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
 
         stateStore.clear()
 

@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 class Time : AbstractSensorEntity("time") {
     val logger: KLogger = KotlinLogging.logger {}
-    private val currentTime get() = stateValue
+    private val currentTime get() = newState.state as String
     private val timePattern: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m")
     val currentLocalTime: LocalTime get() = LocalTime.parse(currentTime, timePattern)
 }
