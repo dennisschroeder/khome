@@ -1,75 +1,63 @@
 package khome.calling
 
-import khome.core.entities.mediaPlayer.AbstractMediaPlayerEntity
+class TurnOnMediaPlayer :
+    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_ON)
 
-abstract class TurnOnMediaPlayer(entity: AbstractMediaPlayerEntity) :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_ON) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class TurnOffMediaPlayer :
+    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_OFF)
 
-abstract class TurnOffMediaPlayer(entity: AbstractMediaPlayerEntity) :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_OFF) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class ToggleMediaPlayer :
+    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TOGGLE)
 
-abstract class ToggleMediaPlayer(entity: AbstractMediaPlayerEntity) :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TOGGLE) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
-
-abstract class SetVolume(entity: AbstractMediaPlayerEntity) :
+class SetVolume :
     ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_SET) {
-    override val serviceData: VolumeData = VolumeData(entity.id)
-    fun serviceData(builder: VolumeData.() -> Unit) = serviceData.apply(builder)
+    val serviceData: VolumeData = VolumeData(null, null)
+    fun volumeLevel(level: Float) = serviceData.apply { volumeLevel = level }
 }
 
-abstract class VolumeDown(entity: AbstractMediaPlayerEntity) :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_DOWN) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class VolumeDown :
+    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_DOWN)
 
-abstract class VolumeUp(entity: AbstractMediaPlayerEntity) :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_UP) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class VolumeUp :
+    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_UP)
 
-abstract class MutePlayer(entity: AbstractMediaPlayerEntity) :
+class MutePlayer :
     ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_MUTE) {
-    override val serviceData: MuteData = MuteData(entity.id)
-    fun serviceData(builder: MuteData.() -> Unit) = serviceData.apply(builder)
+    val serviceData: MuteData = MuteData(null, true)
+    fun unMute() = serviceData.apply { isVolumeMuted = false }
 }
 
-abstract class SelectSource(entity: AbstractMediaPlayerEntity) :
+class SelectSource :
     ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.SELECT_SOURCE) {
-    override val serviceData: SourceData = SourceData(entity.id)
-    fun serviceData(builder: SourceData.() -> Unit) = serviceData.apply(builder)
+    val serviceData: SourceData = SourceData(null, null)
+    fun configure(builder: SourceData.() -> Unit) = serviceData.apply(builder)
 }
 
-abstract class PlayMedia(entity: AbstractMediaPlayerEntity) :
+class PlayMedia :
     ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.PLAY_MEDIA) {
-    override val serviceData: ContentData = ContentData(entity.id)
-    fun serviceData(builder: ContentData.() -> Unit) = serviceData.apply(builder)
+    val serviceData: ContentData = ContentData(null, null, null)
+    fun configure(builder: ContentData.() -> Unit) = serviceData.apply(builder)
 }
 
 data class MuteData(
     var entityId: String?,
-    var isVolumeMuted: Boolean? = null
+    var isVolumeMuted: Boolean
 ) : ServiceDataInterface
 
 data class VolumeData(
     var entityId: String?,
-    var volumeLevel: Float? = null
+    var volumeLevel: Float?
 ) : ServiceDataInterface
 
 data class SourceData(
     var entityId: String?,
-    var source: String? = null
+    var source: String?
 ) : ServiceDataInterface
 
 data class ContentData(
-    private val entityId: String?,
-    var mediaContentId: String? = null,
-    var mediaContentType: MediaContentType? = null
+    var entityId: String?,
+    var mediaContentId: String?,
+    var mediaContentType: MediaContentType?
 ) : ServiceDataInterface {
 
     enum class MediaContentType {

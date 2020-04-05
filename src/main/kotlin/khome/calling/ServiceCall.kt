@@ -1,6 +1,5 @@
 package khome.calling
 
-import com.google.gson.annotations.SerializedName
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.calling.errors.DomainNotFoundException
@@ -10,6 +9,7 @@ import khome.core.MessageInterface
 import khome.core.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.entities.EntityInterface
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.get
@@ -38,20 +38,33 @@ inline fun <reified CallType : ServiceCall> KhomeComponent.callService(noinline 
     }
 }
 
-data class EntityId(var entityId: String?) : ServiceDataInterface
+data class EntityId(override var entityId: EntityInterface?) : EntityBasedServiceDataInterface
 
-data class EntityIds(
-    @SerializedName("entity_id") var entityIds: String
-) : ServiceDataInterface
+@KtorExperimentalAPI
+@ObsoleteCoroutinesApi
+abstract class EntityIdOnlyServiceCall(
+    domain: DomainInterface,
+    service: ServiceInterface
+) : EntityBasedServiceCall(domain, service) {
+
+    inline fun <reified Entity : EntityInterface> entity() =
+        entity(get<Entity>())
+
+    fun entity(entity: EntityInterface) {
+        serviceData.apply {
+            entityId = entity
+        }
+    }
+
+    override val serviceData: EntityId = EntityId(null)
+}
 
 /**
  * The base class to build the payload for home-assistant websocket api calls.
  * @see callService
- * @see ServiceDataInterface
  *
  * @property domain One of the from Khome supported domains [Domain].
  * @property service One of the services that are available for the given [domain].
- * @property serviceData ServiceData object to send context data that fits to the given [service].
  */
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
@@ -61,7 +74,6 @@ abstract class ServiceCall(
 ) : KhomeKoinComponent(), MessageInterface {
     var id: Int = 0
     private val type: String = "call_service"
-    abstract val serviceData: ServiceDataInterface?
     @Transient
     private val serviceStore: ServiceStoreInterface = get()
     @Transient
@@ -75,6 +87,13 @@ abstract class ServiceCall(
         if (!serviceStore[_domain]!!.contains(_service))
             throw ServiceNotFoundException("Service: \"${_service}service\" not found under domain: \"${_domain}domain\"in homeassistant Services")
     }
+}
+
+abstract class EntityBasedServiceCall(
+    domain: DomainInterface,
+    service: ServiceInterface
+) : ServiceCall(domain, service) {
+    abstract val serviceData: EntityBasedServiceDataInterface
 }
 
 /**
@@ -91,6 +110,14 @@ interface ServiceInterface
  * Main entry point to create own service data classes
  */
 interface ServiceDataInterface
+
+abstract class EntityBasedServiceData : EntityBasedServiceDataInterface {
+    override var entityId: EntityInterface? = null
+}
+
+interface EntityBasedServiceDataInterface {
+    var entityId: EntityInterface?
+}
 
 /**
  * Domains that are supported from Khome

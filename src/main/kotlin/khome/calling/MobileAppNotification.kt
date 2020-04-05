@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.ktor.http.URLBuilder
 
 abstract class NotifyMobileApp(device: ServiceInterface) : ServiceCall(Domain.NOTIFY, device) {
-    override val serviceData = NotificationMessage()
+    val serviceData = NotificationMessage()
     fun serviceData(builder: NotificationMessage.() -> Unit) =
         serviceData.apply(builder)
 }

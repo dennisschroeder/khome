@@ -18,16 +18,15 @@ Simple Example:
 
 class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
 class LivingRoomLight : AbstractLightEntity("livingroom_main")
-class TurnOnLivingRoomLight(light: LivingRoomLight) : TurnOn(light)
 
 beans {
     bean { LivingRoomLuminance() }
     bean { LivingRoomLight() }
-    service { TurnOnLivingRoomLight(get()) }
+    service { TurnOn() }
 }
 
 onStateChange<LivingRoomLuminance> { 
-    if(stateValue <= 3.0) callService<TurnOnLivingRoomMoodLight>()
+    if(stateValue <= 3.0) callService<TurnOn> { entity<LivingRoomLight>() }
 }
 ```
 
@@ -167,13 +166,10 @@ You can do so within the Lovelace ui. Just go to your user profile, scroll to th
 ```kotlin
 khomeApplication {
     beans {/*...*/}
-    connectAndRun { // this: KhomeSession
-        
-    }
-}
+}.runApplication()
 ```
 
-By calling the connectAndRun() method, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
+By calling the .runApplication() method, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
 change streaming. When all went as supposed, you should see the following output in the console. 
 
 ```bash
@@ -187,20 +183,50 @@ No you can build your application with Khome by writing callbacks that get execu
 ```kotlin
 class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
 class LivingRoomLight : AbstractLightEntity("livingroom_main")
-class TurnOnLivingRoomLight(light: LivingRoomMoodLight) : TurnOn(light)
 
 khomeApplication {
     beans {
         bean { LivingRoomLuminance() }
         bean { LivingRoomLight() }
-        bean { TurnOnLivingRoomLight(get()) }
+        bean { TurnOn() }
     }
-    connectAndRun { // this: KhomeSession
-        onStateChange<LivingRoomLuminance> {
-            if (stateValue <= 3) callService<TurnOnLivingRoomMoodLight>()
-        }
+   
+}.runApplication { // this: BaseKhomeComponent
+     onStateChange<LivingRoomLuminance> {
+         if (stateValue <= 3) callService<TurnOn> { entity<LivingRoomLight>() }
     }
 }
 ```
+If you prefer to write your code in OOP style, you can also do so nicely with Khome.
+Khome supports this with an abstract helper called ``KhomeComponent()``. But let's see how this works by rewriting the
+above example in OOP style: 
 
+```kotlin
 
+class LivingRoomLightHandler : KhomeComponent() {
+    
+    init {
+        turnOnLightAtCertainLuminance()
+    }
+
+    private fun turnOnLightAtCertainLuminance() = 
+        onStateChange<LivingRoomLuminance> {
+            if (stateValue <= 3) callService<TurnOn> { entity<LivingRoomLight>() }
+        }
+
+}
+
+class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
+class LivingRoomLight : AbstractLightEntity("livingroom_main")
+
+khomeApplication {
+    beans {
+        bean { LivingRoomLuminance() }
+        bean { LivingRoomLight() }
+        service { TurnOn() }
+        bean { LivingRoomLightHandler() }
+    }
+}.runApplication()
+``` 
+It is important that you register your state change listeners e.g. ``onStateChange<LivingRoomLuminance>()`` in the init block
+of your class. If you don't do this, nothing will happen. Same if you don't declare your class instance in Khomes beans section.

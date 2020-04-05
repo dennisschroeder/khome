@@ -25,10 +25,12 @@ import khome.core.StateStore
 import khome.core.StateStoreInterface
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
+import khome.core.entities.EntityInterface
 import khome.core.eventHandling.Event
 import khome.core.eventHandling.FailureResponseEvent
 import khome.core.eventHandling.HassEventRegistry
 import khome.core.eventHandling.StateChangeEvent
+import khome.core.mapping.KhomeEntityConverter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
@@ -66,6 +68,7 @@ object KhomeKoinContext {
                     .setPrettyPrinting()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
+                    .registerTypeAdapter(EntityInterface::class.java, KhomeEntityConverter().nullSafe())
                     .create()!!
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class

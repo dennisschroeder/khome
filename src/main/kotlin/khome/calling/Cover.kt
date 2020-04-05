@@ -1,40 +1,23 @@
 package khome.calling
 
-import com.google.gson.annotations.SerializedName
 import khome.core.entities.EntityInterface
-import khome.core.entities.cover.AbstractCoverEntity
 
-abstract class OpenCover(entity: EntityInterface) :
-    ServiceCall(Domain.COVER, CoverService.OPEN_COVER) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class OpenCover : EntityIdOnlyServiceCall(Domain.COVER, CoverService.OPEN_COVER)
 
-abstract class CloseCover(entity: EntityInterface) :
-    ServiceCall(Domain.COVER, CoverService.CLOSE_COVER) {
-    override val serviceData: EntityId = EntityId(entity.id)
-}
+class CloseCover : EntityIdOnlyServiceCall(Domain.COVER, CoverService.CLOSE_COVER)
 
-abstract class SetCoverPosition(entity: AbstractCoverEntity) :
-    ServiceCall(Domain.COVER, CoverService.SET_COVER_POSITION) {
-    override val serviceData: CoverData = CoverData(entity.id)
-    fun serviceData(builder: CoverData.() -> Unit) = serviceData.apply(builder)
-}
+class ToggleCover : EntityIdOnlyServiceCall(Domain.COVER, CoverService.TOGGLE_COVER)
 
-abstract class ToggleCover(entity: AbstractCoverEntity) :
-    ServiceCall(Domain.COVER, CoverService.TOGGLE_COVER) {
-    override val serviceData: EntityId = EntityId(entity.id)
+class SetCoverPosition : EntityBasedServiceCall(Domain.COVER, CoverService.SET_COVER_POSITION) {
+    override val serviceData: CoverData = CoverData(entityId = null, position = null)
+    fun configure(builder: CoverData.() -> Unit) = serviceData.apply(builder)
 }
 
 data class CoverData(
-    private val entityId: String?,
-    var position: Int? = null
-
-) : ServiceDataInterface
-
-data class CoversData(
-    @SerializedName("entity_id") var entityIds: List<String>,
+    override var entityId: EntityInterface?,
     var position: Int?
-) : ServiceDataInterface
+
+) : EntityBasedServiceDataInterface
 
 enum class CoverService : ServiceInterface {
     OPEN_COVER, CLOSE_COVER, SET_COVER_POSITION, TOGGLE_COVER
