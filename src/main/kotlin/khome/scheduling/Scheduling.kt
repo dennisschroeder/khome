@@ -36,16 +36,19 @@ fun KhomeComponent.onTime(executeAt: String, callback: LocalTime.() -> Unit): Li
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-fun KhomeComponent.onTime(executeAt: LocalTime, callback: LocalTime.() -> Unit) =
-    onStateChange<Time> {
-        if (executeAt == currentLocalTime) callback(executeAt)
+fun KhomeComponent.onTime(executeAt: LocalTime, callback: LocalTime.() -> Unit): LifeCycleHandler {
+    val executeAtWithoutNanos = executeAt.let { LocalTime.of(it.hour, it.minute) }
+    return onStateChange<Time> {
+        if (executeAtWithoutNanos == currentLocalTime) callback(executeAt)
     }
+}
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 inline fun <reified DateTimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler =
     onStateChange<DateTime> {
-        val executeAt: LocalDateTime = get<DateTimeEntity>().dateTime
+        val executeAt: LocalDateTime =
+            get<DateTimeEntity>().dateTime
         if (executeAt == currentLocalDateTime) {
             callback(executeAt)
             logger.debug { "Executed scheduled task at: $currentLocalDateTime" }
@@ -66,10 +69,20 @@ fun KhomeComponent.onDateTime(
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-fun KhomeComponent.onDateTime(executeAt: LocalDateTime, callback: LocalDateTime.() -> Unit) =
-    onStateChange<DateTime> {
-        if (executeAt == currentLocalDateTime) {
+fun KhomeComponent.onDateTime(executeAt: LocalDateTime, callback: LocalDateTime.() -> Unit): LifeCycleHandler {
+    val executeAtWithoutNanos = executeAt.let {
+        LocalDateTime.of(
+            it.year,
+            it.month,
+            it.dayOfMonth,
+            it.hour,
+            it.minute
+        )
+    }
+    return onStateChange<DateTime> {
+        if (executeAtWithoutNanos == currentLocalDateTime) {
             callback(executeAt)
             logger.debug { "Executed scheduled task at: $currentLocalDateTime" }
         }
     }
+}

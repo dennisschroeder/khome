@@ -1,26 +1,23 @@
 package khome.calling
 
-import khome.core.entities.light.AbstractLightEntity
-
-abstract class TurnOnLight(entity: AbstractLightEntity) :
-    ServiceCall(Domain.LIGHT, LightService.TURN_ON) {
-    override val serviceData: LightData = LightData(entity.id)
-    fun serviceData(builder: LightData.() -> Unit) = serviceData.apply(builder)
+class TurnOnLight :
+    EntityBasedServiceCall(Domain.LIGHT, LightService.TURN_ON) {
+    override val serviceData: LightData = LightData()
+    fun configure(builder: LightData.() -> Unit) = serviceData.apply(builder)
 }
 
-abstract class TurnOffLight(entity: AbstractLightEntity) :
-    ServiceCall(Domain.LIGHT, LightService.TURN_OFF) {
-    override val serviceData: LightData = LightData(entity.id)
-}
+class TurnOffLight : EntityIdOnlyServiceCall(Domain.LIGHT, LightService.TURN_OFF)
 
-abstract class ToggleLight(entity: AbstractLightEntity) :
-    ServiceCall(Domain.LIGHT, LightService.TOGGLE)
+class ToggleLight :
+    EntityBasedServiceCall(Domain.LIGHT, LightService.TOGGLE) {
+    override val serviceData: LightData = LightData()
+    fun configure(builder: LightData.() -> Unit) = serviceData.apply(builder)
+}
 
 /**
  * The light context data class
  */
-data class LightData(
-    private val entityId: String?,
+class LightData(
     var transition: Int? = null,
     var rgbColor: Array<Int>? = null,
     var colorName: String? = null,
@@ -35,7 +32,7 @@ data class LightData(
     var flash: String? = null,
     var effect: String? = null
 
-) : ServiceDataInterface
+) : EntityBasedServiceData()
 
 enum class LightService : ServiceInterface {
     TURN_ON, TURN_OFF, TOGGLE

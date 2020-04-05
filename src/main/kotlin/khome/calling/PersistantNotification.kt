@@ -1,15 +1,27 @@
 package khome.calling
 
-abstract class PersistentNotification :
+class PersistentNotificationCreate :
     ServiceCall(Domain.PERSISTENT_NOTIFICATION, PersistentNotificationService.CREATE) {
-    override val serviceData: PersistentNotificationMessage = PersistentNotificationMessage()
-    fun serviceData(builder: PersistentNotificationMessage.() -> Unit) = serviceData.apply(builder)
+    val serviceData: PersistentNotificationMessage = PersistentNotificationMessage(null, null, null)
+    fun configure(builder: PersistentNotificationMessage.() -> Unit) = serviceData.apply(builder)
+}
+
+class PersistentNotificationDismiss :
+    ServiceCall(Domain.PERSISTENT_NOTIFICATION, PersistentNotificationService.DISMISS) {
+    val serviceData: PersistentNotificationMessage = PersistentNotificationMessage(null, null, null)
+    fun notificationId(id: Int) = serviceData.apply { notificationId = id }
+}
+
+class PersistentNotificationMarkRead :
+    ServiceCall(Domain.PERSISTENT_NOTIFICATION, PersistentNotificationService.MARK_READ) {
+    val serviceData: PersistentNotificationMessage = PersistentNotificationMessage(null, null, null)
+    fun notificationId(id: Int) = serviceData.apply { notificationId = id }
 }
 
 data class PersistentNotificationMessage(
-    var notificationId: Int? = null,
-    var message: String? = null,
-    var title: String? = null
+    var notificationId: Int?,
+    var message: String?,
+    var title: String?
 ) : ServiceDataInterface
 
 enum class PersistentNotificationService : ServiceInterface {

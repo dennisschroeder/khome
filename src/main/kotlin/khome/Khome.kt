@@ -2,8 +2,8 @@ package khome
 
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.util.KtorExperimentalAPI
-import khome.calling.FetchServices
-import khome.calling.FetchStates
+import khome.core.FetchServices
+import khome.core.FetchStates
 import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.EventResult

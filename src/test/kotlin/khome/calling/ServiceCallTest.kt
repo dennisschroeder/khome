@@ -26,7 +26,7 @@ internal class ServiceCallTest : KhomeTestComponent() {
 
         class CustomService :
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
-            override val serviceData = EntityId("foo.bar")
+            val serviceData = null
         }
 
         assertThat {
@@ -37,7 +37,6 @@ internal class ServiceCallTest : KhomeTestComponent() {
         val customService: CustomService = get()
         assertThat(customService.domain).isEqualTo(Domain.HOMEASSISTANT)
         assertThat(customService.service).isEqualTo(HomeAssistantService.UPDATE_ENTITY)
-        assertThat(customService.serviceData).isEqualTo(EntityId("foo.bar"))
     }
 
     @Test
@@ -47,7 +46,7 @@ internal class ServiceCallTest : KhomeTestComponent() {
 
         class CustomService :
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
-            override val serviceData = EntityId("foo.bar")
+            val serviceData = null
         }
 
         val exception = assertThrows<InstanceCreationException> {
@@ -65,7 +64,7 @@ internal class ServiceCallTest : KhomeTestComponent() {
 
         class CustomService :
             ServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY) {
-            override val serviceData = EntityId("foo.bar")
+            val serviceData = null
         }
 
         val exception = assertThrows<InstanceCreationException> {

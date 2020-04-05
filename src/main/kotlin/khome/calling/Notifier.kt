@@ -3,7 +3,7 @@ package khome.calling
 import com.google.gson.annotations.SerializedName
 
 abstract class Notify : ServiceCall(Domain.NOTIFY, NotifyService.NOTIFY) {
-    override val serviceData: NotifierMessage = NotifierMessage()
+    val serviceData: NotifierMessage = NotifierMessage()
     fun serviceData(builder: NotifierMessage.() -> Unit) = serviceData.apply(builder)
 }
 
