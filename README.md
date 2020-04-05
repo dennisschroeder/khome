@@ -26,7 +26,7 @@ beans {
 }
 
 onStateChange<LivingRoomLuminance> { 
-    if(stateValue <= 3.0) callService<TurnOn> { entity<>()}
+    if(stateValue <= 3.0) callService<TurnOn> { entity<LivingRoomLight>() }
 }
 ```
 
