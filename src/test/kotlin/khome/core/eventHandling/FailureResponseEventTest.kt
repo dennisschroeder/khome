@@ -22,7 +22,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event`() {
         val failureResponseEvents = FailureResponseEvent(Event())
         failureResponseEvents.subscribe {
-            logger.debug { error!!.message }
+            logger.debug { it.error!!.message }
         }
 
         assertThat(failureResponseEvents.listenerCount).isEqualTo(1)
@@ -32,7 +32,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event with handle`() {
         val failureResponseEvents = FailureResponseEvent(Event())
         failureResponseEvents.subscribe("handle") {
-            logger.debug { error!!.message }
+            logger.debug { it.error!!.message }
         }
 
         assertThat(failureResponseEvents.find { it.key == "handle" }).isNotNull()
@@ -43,7 +43,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
         val failureResponseEvents = FailureResponseEvent(Event())
         var testValue: Result? = null
         failureResponseEvents.subscribe {
-            testValue = this
+            testValue = it
         }
 
         val errorResultJson = """
@@ -70,11 +70,11 @@ class FailureResponseEventTest : KhomeTestComponent() {
         var testValueOne: Result? = null
         var testValueTwo: Result? = null
         failureResponseEvents.subscribe {
-            testValueOne = this
+            testValueOne = it
         }
 
         failureResponseEvents.subscribe("handle") {
-            testValueTwo = this
+            testValueTwo = it
         }
 
         val errorResultJson = """
@@ -102,11 +102,11 @@ class FailureResponseEventTest : KhomeTestComponent() {
         var testValueOne: Result? = null
         var testValueTwo: Result? = null
         failureResponseEvents.subscribe {
-            testValueOne = this
+            testValueOne = it
         }
 
         failureResponseEvents.subscribe("handle") {
-            testValueTwo = this
+            testValueTwo = it
         }
 
         val errorResultJson = """

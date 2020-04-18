@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-24%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-25%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
