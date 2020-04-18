@@ -22,7 +22,7 @@ class StateChangeEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event`() {
         val stateChangeEvent = StateChangeEvent(Event())
         stateChangeEvent.subscribe {
-            logger.debug { id }
+            logger.debug { it.id }
         }
 
         assertThat(stateChangeEvent.listenerCount).isEqualTo(1)
@@ -32,7 +32,7 @@ class StateChangeEventTest : KhomeTestComponent() {
     fun `assert callback was subscribed to event with handle`() {
         val stateChangeEvent = StateChangeEvent(Event())
         stateChangeEvent.subscribe("handle") {
-            logger.debug { id }
+            logger.debug { it.id }
         }
 
         assertThat(stateChangeEvent.find { it.key == "handle" }).isNotNull()
@@ -43,7 +43,7 @@ class StateChangeEventTest : KhomeTestComponent() {
         val stateChangeEvent = StateChangeEvent(Event())
         var testValue: EventResult? = null
         stateChangeEvent.subscribe {
-            testValue = this
+            testValue = it
         }
 
         val eventResultJson = """
@@ -105,11 +105,11 @@ class StateChangeEventTest : KhomeTestComponent() {
         var testValueOne: EventResult? = null
         var testValueTwo: EventResult? = null
         stateChangeEvent.subscribe {
-            testValueOne = this
+            testValueOne = it
         }
 
         stateChangeEvent.subscribe {
-            testValueTwo = this
+            testValueTwo = it
         }
 
         val eventResultJson = """
@@ -172,11 +172,11 @@ class StateChangeEventTest : KhomeTestComponent() {
         var testValueOne: EventResult? = null
         var testValueTwo: EventResult? = null
         stateChangeEvent.subscribe("handle") {
-            testValueOne = this
+            testValueOne = it
         }
 
         stateChangeEvent.subscribe {
-            testValueTwo = this
+            testValueTwo = it
         }
 
         val eventResultJson = """
