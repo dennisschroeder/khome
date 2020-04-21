@@ -2,11 +2,11 @@ package khome
 
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.FetchServices
-import khome.core.FetchStates
 import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.EventResult
+import khome.core.FetchServices
+import khome.core.FetchStates
 import khome.core.HassEventResultDto
 import khome.core.ListenEvent
 import khome.core.NewState
@@ -14,6 +14,7 @@ import khome.core.OldState
 import khome.core.Result
 import khome.core.ServiceResult
 import khome.core.ServiceStoreInterface
+import khome.core.State
 import khome.core.StateResult
 import khome.core.StateStoreEntry
 import khome.core.StateStoreInterface
@@ -166,9 +167,7 @@ private suspend fun KhomeSession.resolveResultTypeAndEmitEvents(frame: Frame) {
     logger.debug { "Result: $resultData" }
     when {
         !resultData.success -> emitResultErrorEventAndPrintLogMessage(resultData, get())
-        resultData.success -> {
-            logResults(resultData)
-        }
+        resultData.success -> { logResults(resultData) }
     }
 }
 
@@ -185,16 +184,21 @@ private suspend fun KhomeSession.emitResultErrorEventAndPrintLogMessage(
 
 private fun KhomeSession.updateLocalStateStore(frame: Frame, stateStore: StateStoreInterface) {
     val data = frame.asObject<EventResult>()
-    val stateStoreEntryById = checkNotNull(stateStore[data.event.data.entityId]) { "Can not update state store. No state store entry found for ${data.event.data.entityId}" }
+    if (data.event.data.oldState == null && data.event.data.newState == null) throw IllegalStateException("Both states (old and new) are null in ${data.event.data.entityId}")
+    val stateStoreEntryById = stateStore[data.event.data.entityId]
 
-    data.event.data.oldState?.let {
-        val updatedState = stateStoreEntryById.copy(oldState = OldState(it))
-        stateStore[data.event.data.entityId] = updatedState
-    }
+    if (stateStoreEntryById !== null) {
+        data.event.data.oldState?.let { state ->
+            val updatedState = stateStoreEntryById.copy(oldState = OldState(state))
+            stateStore[data.event.data.entityId] = updatedState
+        }
 
-    data.event.data.newState?.let {
-        val updatedState = stateStoreEntryById.copy(newState = NewState(it))
-        stateStore[data.event.data.entityId] = updatedState
+        data.event.data.newState?.let { state ->
+            val updatedState = stateStoreEntryById.copy(newState = NewState(state))
+            stateStore[data.event.data.entityId] = updatedState
+        }
+    } else {
+        logger.info { "New entity detected: ${data.event.data.entityId}. Restart your application to have it available." }
     }
 }
 
@@ -233,9 +237,13 @@ internal suspend fun KhomeSession.subscribeStateChanges(id: CallerID) =
 internal fun KhomeSession.storeStates(stateResults: StateResult, stateStore: StateStoreInterface) =
     stateResults.result
         .forEach { state ->
-            stateStore[state.entityId] = StateStoreEntry(OldState(state), NewState(state))
+            createEntryInStateStore(stateStore, state, state)
             logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
         }
+
+internal fun KhomeSession.createEntryInStateStore(stateStore: StateStoreInterface, oldState: State, newState: State) {
+    stateStore[newState.entityId] = StateStoreEntry(OldState(oldState), NewState(newState))
+}
 
 internal suspend fun KhomeSession.fetchStates(id: CallerID) =
     callWebSocketApi(FetchStates(id.incrementAndGet()).toJson())
