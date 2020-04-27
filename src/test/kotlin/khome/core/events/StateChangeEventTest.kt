@@ -1,10 +1,10 @@
-package khome.core.eventHandling
+package khome.core.events
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import khome.core.EventResult
+import khome.core.StateChangedResponse
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.delay
@@ -41,7 +41,7 @@ class StateChangeEventTest : KhomeTestComponent() {
     @Test
     fun `assert that subscribed event callback was fired`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
-        var testValue: EventResult? = null
+        var testValue: StateChangedResponse? = null
         stateChangeEvent.subscribe {
             testValue = it
         }
@@ -92,18 +92,18 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
+        val stateChangedResponse: StateChangedResponse = get<ObjectMapper>().fromJson(eventResultJson)
 
-        stateChangeEvent.emit(eventResult)
+        stateChangeEvent.emit(stateChangedResponse)
         delay(1)
-        assertThat(eventResult).isEqualTo(testValue)
+        assertThat(stateChangedResponse).isEqualTo(testValue)
     }
 
     @Test
     fun `assert that subscribed event callbacks were fired`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
-        var testValueOne: EventResult? = null
-        var testValueTwo: EventResult? = null
+        var testValueOne: StateChangedResponse? = null
+        var testValueTwo: StateChangedResponse? = null
         stateChangeEvent.subscribe {
             testValueOne = it
         }
@@ -158,19 +158,19 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
+        val stateChangedResponse: StateChangedResponse = get<ObjectMapper>().fromJson(eventResultJson)
 
-        stateChangeEvent.emit(eventResult)
+        stateChangeEvent.emit(stateChangedResponse)
         delay(1)
-        assertThat(eventResult).isEqualTo(testValueOne)
-        assertThat(eventResult).isEqualTo(testValueTwo)
+        assertThat(stateChangedResponse).isEqualTo(testValueOne)
+        assertThat(stateChangedResponse).isEqualTo(testValueTwo)
     }
 
     @Test
     fun `assert that unsubscribing was successful`() = runBlocking {
         val stateChangeEvent = StateChangeEvent(Event())
-        var testValueOne: EventResult? = null
-        var testValueTwo: EventResult? = null
+        var testValueOne: StateChangedResponse? = null
+        var testValueTwo: StateChangedResponse? = null
         stateChangeEvent.subscribe("handle") {
             testValueOne = it
         }
@@ -225,12 +225,12 @@ class StateChangeEventTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-        val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
+        val stateChangedResponse: StateChangedResponse = get<ObjectMapper>().fromJson(eventResultJson)
 
         stateChangeEvent.unsubscribe("handle")
-        stateChangeEvent.emit(eventResult)
+        stateChangeEvent.emit(stateChangedResponse)
         delay(1)
         assertThat(testValueOne).isNull()
-        assertThat(eventResult).isEqualTo(testValueTwo)
+        assertThat(stateChangedResponse).isEqualTo(testValueTwo)
     }
 }

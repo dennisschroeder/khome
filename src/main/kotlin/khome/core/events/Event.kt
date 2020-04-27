@@ -1,4 +1,4 @@
-package khome.core.eventHandling
+package khome.core.events
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

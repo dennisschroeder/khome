@@ -8,6 +8,8 @@ import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.entities.getAttribute
 import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.core.mapping.ObjectMapper
+import khome.core.servicestore.ServicesResponse
+import khome.core.statestore.StatesResponse
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -31,17 +33,17 @@ internal class DtoTest : KhomeTestComponent() {
                 "result": null 
             }
         """.trimIndent()
-        private val expectedResult = Result(13, "result", true, null, null)
+        private val expectedResult = ResultResponse(13, "result", true, null, null)
 
         @Test
         fun `assert that error response json is correctly mapped`() {
-            val result: Result = get<ObjectMapper>().fromJson(resultJson)
-            assertThat(result).isEqualTo(expectedResult)
+            val resultResponse: ResultResponse = get<ObjectMapper>().fromJson(resultJson)
+            assertThat(resultResponse).isEqualTo(expectedResult)
         }
     }
 
     @Nested
-    inner class ErrorResultTest {
+    inner class ErrorResultResponseTest {
 
         @Test
         fun `assert that json is correctly mapped`() {
@@ -57,10 +59,10 @@ internal class DtoTest : KhomeTestComponent() {
             }
         """.trimIndent()
 
-            val errorResult: Result = get<ObjectMapper>().fromJson(errorResultJson)
+            val errorResultResponse: ResultResponse = get<ObjectMapper>().fromJson(errorResultJson)
 
             val expectedErrorResponse =
-                Result(
+                ResultResponse(
                     12,
                     "result",
                     false,
@@ -71,12 +73,12 @@ internal class DtoTest : KhomeTestComponent() {
                     null
                 )
 
-            assertThat(errorResult).isEqualTo(expectedErrorResponse)
+            assertThat(errorResultResponse).isEqualTo(expectedErrorResponse)
         }
     }
 
     @Nested
-    inner class StateResultTest {
+    inner class StatesResponseTest {
 
         private val resultJson = """
             {
@@ -122,19 +124,26 @@ internal class DtoTest : KhomeTestComponent() {
             "friendly_name" to "Bed Light"
         )
         private val state =
-            State("light.bed_light", OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"), "on", attributes, OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"))
+            State(
+                "light.bed_light",
+                OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
+                "on",
+                attributes,
+                OffsetDateTime.parse("2016-11-26T01:37:24.265390Z")
+            )
 
-        private val expectedResult = StateResult(13, "result", true, arrayOf(state))
+        private val expectedResult =
+            StatesResponse(13, "result", true, arrayOf(state))
 
         @Test
         fun `assert that error response json is correctly mapped`() {
-            val result: StateResult = get<ObjectMapper>().fromJson(resultJson)
-            assertThat(result.result).isEqualTo(expectedResult.result)
+            val response: StatesResponse = get<ObjectMapper>().fromJson(resultJson)
+            assertThat(response.result).isEqualTo(expectedResult.result)
         }
     }
 
     @Nested
-    inner class EventResultTest {
+    inner class StateChangedResponseResponseTest {
         // Note that [Gson] can not defer between Int, Floats and Doubles in maps.
         // Therefore we need to expect all Ints in Maps as Double/Float values.
         private val newAttributes = mapOf(
@@ -149,12 +158,24 @@ internal class DtoTest : KhomeTestComponent() {
 
         private val oldAttributes = mapOf("supported_features" to 147.0, "friendly_name" to "Bed Light")
         private val newState =
-            State("light.bed_light", OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"), "on", newAttributes, OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"))
+            State(
+                "light.bed_light",
+                OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
+                "on",
+                newAttributes,
+                OffsetDateTime.parse("2016-11-26T01:37:24.265390Z")
+            )
         private val oldState =
-            State("light.bed_light", OffsetDateTime.parse("2016-11-26T01:37:10.466994Z"), "off", oldAttributes, OffsetDateTime.parse("2016-11-26T01:37:10.466994Z"))
+            State(
+                "light.bed_light",
+                OffsetDateTime.parse("2016-11-26T01:37:10.466994Z"),
+                "off",
+                oldAttributes,
+                OffsetDateTime.parse("2016-11-26T01:37:10.466994Z")
+            )
         private val data = Data("light.bed_light", oldState, newState)
-        private val event = Event("state_changed", data, OffsetDateTime.parse("2016-11-26T01:37:24.265429Z"), "LOCAL")
-        private val expectedResult = EventResult(18, "event", event)
+        private val event = EventData("state_changed", data, OffsetDateTime.parse("2016-11-26T01:37:24.265429Z"), "LOCAL")
+        private val expectedResult = StateChangedResponse(18, ResponseType.EVENT, event)
 
         @Test
         fun `assert that json is correctly mapped`() {
@@ -204,8 +225,8 @@ internal class DtoTest : KhomeTestComponent() {
                }
             }
         """.trimIndent()
-            val eventResult: EventResult = get<ObjectMapper>().fromJson(eventResultJson)
-            assertThat(eventResult).isDataClassEqualTo(expectedResult)
+            val stateChangedResponse: StateChangedResponse = get<ObjectMapper>().fromJson(eventResultJson)
+            assertThat(stateChangedResponse).isDataClassEqualTo(expectedResult)
         }
 
         @Test
@@ -216,13 +237,14 @@ internal class DtoTest : KhomeTestComponent() {
 
         @Test
         fun `assert getAttribute throws InvalidAttributeValueTypeException on wrong Type parameter`() {
-            val exception = assertThrows<InvalidAttributeValueTypeException> { newState.getAttribute<Boolean>("color_temp") }
+            val exception =
+                assertThrows<InvalidAttributeValueTypeException> { newState.getAttribute<Boolean>("color_temp") }
             assertThat(exception.message).isEqualTo("Attribute value for color_temp is of type: ${Double::class}.")
         }
     }
 
     @Nested
-    inner class ServiceResultTest {
+    inner class ServicesResponseTest {
         private val entityIdField = mapOf(
             "entity_id" to mapOf(
                 "description" to "The entity_id of the device.",
@@ -238,12 +260,13 @@ internal class DtoTest : KhomeTestComponent() {
             "fields" to entityIdField
         )
 
-        private val expectedResult = ServiceResult(
+        private val expectedResult = ServicesResponse(
             19,
             "result",
             success = true,
             result = mapOf("turn_on" to turnOnDescription, "turn_off" to turnOffDescription)
         )
+
         @Test
         fun `assert that json is correctly mapped`() {
             val serviceResultJson = """
@@ -273,8 +296,8 @@ internal class DtoTest : KhomeTestComponent() {
                    }
                 }
             """.trimIndent()
-            val serviceResult: ServiceResult = get<ObjectMapper>().fromJson(serviceResultJson)
-            assertThat(serviceResult).isDataClassEqualTo(expectedResult)
+            val servicesResponse: ServicesResponse = get<ObjectMapper>().fromJson(serviceResultJson)
+            assertThat(servicesResponse).isDataClassEqualTo(expectedResult)
         }
     }
 }

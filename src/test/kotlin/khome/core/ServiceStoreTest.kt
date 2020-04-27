@@ -7,6 +7,7 @@ import assertk.assertions.isNull
 import assertk.assertions.isSuccess
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.servicestore.ServiceStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch

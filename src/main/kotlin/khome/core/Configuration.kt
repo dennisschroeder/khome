@@ -5,5 +5,4 @@ interface ConfigurationInterface {
     var port: Int
     var accessToken: String
     var secure: Boolean
-    var startStateStream: Boolean
 }

@@ -28,12 +28,14 @@ class KhomeClient(
                 host = config.host,
                 port = config.port,
                 path = path,
-                block = { block(get { parametersOf(this) }) })
+                block = { block(get { parametersOf(this) }) }
+            )
             false -> httpClient.websocket(
                 method = method,
                 host = config.host,
                 port = config.port,
                 path = path,
-                block = { block(get { parametersOf(this) }) })
+                block = { block(get { parametersOf(this) }) }
+            )
         }
 }

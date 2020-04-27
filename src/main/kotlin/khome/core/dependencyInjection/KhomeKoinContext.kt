@@ -13,27 +13,33 @@ import io.ktor.client.request.header
 import io.ktor.client.request.host
 import io.ktor.client.request.port
 import io.ktor.util.KtorExperimentalAPI
+import khome.core.events.EventResponseConsumer
 import khome.KhomeApplication
 import khome.KhomeClient
 import khome.KhomeSession
 import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
-import khome.core.ServiceStore
-import khome.core.ServiceStoreInterface
-import khome.core.StateStore
-import khome.core.StateStoreInterface
+import khome.core.authentication.Authenticator
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
 import khome.core.entities.EntityInterface
-import khome.core.eventHandling.Event
-import khome.core.eventHandling.FailureResponseEvent
-import khome.core.eventHandling.HassEventRegistry
-import khome.core.eventHandling.StateChangeEvent
+import khome.core.events.Event
+import khome.core.events.FailureResponseEvent
+import khome.core.events.HassEventRegistry
+import khome.core.events.HassEventSubscriber
+import khome.core.events.StateChangeEvent
+import khome.core.events.StateChangeEventSubscriber
 import khome.core.mapping.KhomeEntityConverter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
+import khome.core.servicestore.ServiceStore
+import khome.core.servicestore.ServiceStoreInitializer
+import khome.core.servicestore.ServiceStoreInterface
+import khome.core.statestore.StateStore
+import khome.core.statestore.StateStoreInitializer
+import khome.core.statestore.StateStoreInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
@@ -84,9 +90,8 @@ object KhomeKoinContext {
                     host = getProperty("HOST", "localhost"),
                     port = getProperty("PORT", 8123),
                     accessToken = getProperty("ACCESS_TOKEN", "<some-fancy-access-token>"),
-                    secure = getProperty("SECURE", "false").toBoolean(),
-                    startStateStream = getProperty("START_STATE_STREAM", "true").toBoolean()
-                ).also { logger.debug { it } }
+                    secure = getProperty("SECURE", "false").toBoolean()
+                )
             }
             single {
                 val client = HttpClient(CIO).config { install(WebSockets) }
@@ -116,6 +121,55 @@ object KhomeKoinContext {
             }
 
             single { (websocketSession: DefaultClientWebSocketSession) -> KhomeSession(websocketSession) }
+
+            single { (khomeSession: KhomeSession) ->
+                Authenticator(
+                    khomeSession = khomeSession,
+                    configuration = get()
+                )
+            }
+            single { (khomeSession: KhomeSession) ->
+                ServiceStoreInitializer(
+                    khomeSession = khomeSession,
+                    callerID = get(),
+                    serviceStore = get()
+                )
+            }
+            single { (khomeSession: KhomeSession) ->
+                StateStoreInitializer(
+                    khomeSession = khomeSession,
+                    callerID = get(),
+                    stateStore = get()
+                )
+            }
+
+            single { (khomeSession: KhomeSession) ->
+                HassEventSubscriber(
+                    khomeSession = khomeSession,
+                    callerID = get(),
+                    registry = get()
+                )
+            }
+
+            single { (khomeSession: KhomeSession) ->
+                StateChangeEventSubscriber(
+                    khomeSession = khomeSession,
+                    callerID = get()
+                )
+            }
+
+            single { (khomeSession: KhomeSession) ->
+                EventResponseConsumer(
+                    khomeSession = khomeSession,
+                    stateChangeEvent = get(),
+                    objectMapper = get(),
+                    stateStore = get(),
+                    hassEventRegistry = get(),
+                    failureResponseEvent = get()
+                )
+            }
+
+            single { (khomeSession: KhomeSession) -> KhomeModulesInitializer(khomeSession = khomeSession) }
             single { KhomeClient(get(), get()) }
             single { KhomeApplication(get()) }
         }

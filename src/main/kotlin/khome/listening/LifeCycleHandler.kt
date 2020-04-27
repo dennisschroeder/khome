@@ -3,7 +3,7 @@ package khome.listening
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.LifeCycleHandlerInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.eventHandling.StateChangeEvent
+import khome.core.events.StateChangeEvent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.core.inject

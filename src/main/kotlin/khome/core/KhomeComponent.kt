@@ -9,7 +9,7 @@ import khome.calling.callService
 import khome.core.clients.RestApiClient
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.EntityInterface
-import khome.core.eventHandling.HassEvent
+import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi

@@ -6,7 +6,7 @@ import assertk.assertions.isSuccess
 import assertk.assertions.matchesPredicate
 import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
-import khome.core.ServiceStoreInterface
+import khome.core.servicestore.ServiceStoreInterface
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule

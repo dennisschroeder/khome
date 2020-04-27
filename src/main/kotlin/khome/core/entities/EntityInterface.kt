@@ -1,6 +1,6 @@
 package khome.core.entities
 
-import khome.core.StateStoreEntry
+import khome.core.statestore.StateStoreEntry
 
 interface EntityInterface {
     val domain: String

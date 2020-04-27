@@ -1,8 +1,9 @@
-package khome.core.eventHandling
+package khome.core.events
 
 import kotlinx.coroutines.CoroutineScope
 
-internal interface EventInterface<EventDataType> {
+interface HassEventInterface<EventDataType> {
+    val eventType: String
     val listenerCount: Int
     fun subscribe(handle: String? = null, callback: suspend CoroutineScope.(EventDataType) -> Unit)
     fun unsubscribe(handle: String)

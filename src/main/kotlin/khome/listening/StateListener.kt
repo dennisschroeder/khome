@@ -2,7 +2,7 @@ package khome.listening
 
 import khome.core.KhomeComponent
 import khome.core.entities.EntityInterface
-import khome.core.eventHandling.StateChangeEvent
+import khome.core.events.StateChangeEvent
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.get
 import java.util.UUID
