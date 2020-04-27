@@ -4,8 +4,8 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.core.NewState
 import khome.core.OldState
 import khome.core.StateInterface
-import khome.core.StateStoreEntry
-import khome.core.StateStoreInterface
+import khome.core.statestore.StateStoreEntry
+import khome.core.statestore.StateStoreInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.exceptions.EntityNotFoundException
 import khome.core.exceptions.InvalidAttributeValueTypeException

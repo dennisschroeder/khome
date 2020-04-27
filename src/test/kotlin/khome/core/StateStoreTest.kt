@@ -7,6 +7,8 @@ import assertk.assertions.isNull
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.mapping.ObjectMapper
+import khome.core.statestore.StateStore
+import khome.core.statestore.StateStoreEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
@@ -73,7 +75,10 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `assert StateStore returns injected State by entity id`() {
         val state: State = get<ObjectMapper>().fromJson(stateJson)
         val stateStore = StateStore()
-        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+        stateStore["light.bed_light"] = StateStoreEntry(
+            oldState = OldState(state),
+            newState = NewState(state)
+        )
         assertThat(stateStore["light.bed_light"]!!.newState).isEqualTo(NewState(state))
     }
 
@@ -82,8 +87,14 @@ internal class StateStoreTest : KhomeTestComponent() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
         val updatedState: State = get<ObjectMapper>().fromJson(newStateJson)
-        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
-        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(updatedState), newState = NewState(updatedState))
+        stateStore["light.bed_light"] = StateStoreEntry(
+            oldState = OldState(state),
+            newState = NewState(state)
+        )
+        stateStore["light.bed_light"] = StateStoreEntry(
+            oldState = OldState(updatedState),
+            newState = NewState(updatedState)
+        )
 
         assertThat(stateStore["light.bed_light"]!!.newState).isEqualTo(NewState(updatedState))
     }
@@ -95,10 +106,16 @@ internal class StateStoreTest : KhomeTestComponent() {
         runBlocking {
             val stateStore = StateStore()
             logger.info { "State: $state" }
-            stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+            stateStore["light.bed_light"] = StateStoreEntry(
+                oldState = OldState(state),
+                newState = NewState(state)
+            )
 
             logger.info { "NewState: $updatedState" }
-            stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(updatedState), newState = NewState(updatedState))
+            stateStore["light.bed_light"] = StateStoreEntry(
+                oldState = OldState(updatedState),
+                newState = NewState(updatedState)
+            )
 
             launch(Dispatchers.Default) {
                 logger.info { "Accessing newState from another coroutine" }
@@ -111,7 +128,10 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `returns null when state not found`() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+        stateStore["light.bed_light"] = StateStoreEntry(
+            oldState = OldState(state),
+            newState = NewState(state)
+        )
 
         assertThat(stateStore["light.bathroom_light"]).isNull()
     }
@@ -120,7 +140,10 @@ internal class StateStoreTest : KhomeTestComponent() {
     fun `assert call to clear removes all items`() {
         val stateStore = StateStore()
         val state: State = get<ObjectMapper>().fromJson(stateJson)
-        stateStore["light.bed_light"] = StateStoreEntry(oldState = OldState(state), newState = NewState(state))
+        stateStore["light.bed_light"] = StateStoreEntry(
+            oldState = OldState(state),
+            newState = NewState(state)
+        )
 
         stateStore.clear()
 

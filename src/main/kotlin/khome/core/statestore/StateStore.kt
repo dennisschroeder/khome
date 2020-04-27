@@ -1,5 +1,7 @@
-package khome.core
+package khome.core.statestore
 
+import khome.core.NewState
+import khome.core.OldState
 import java.util.Collections
 
 interface StateStoreInterface {
@@ -12,7 +14,8 @@ interface StateStoreInterface {
     fun clear()
 }
 
-internal class StateStore : Iterable<MutableMap.MutableEntry<String, StateStoreEntry>>, StateStoreInterface {
+internal class StateStore : Iterable<MutableMap.MutableEntry<String, StateStoreEntry>>,
+    StateStoreInterface {
     override val listenerCount: Int
         get() = list.size
     override val list: MutableMap<String, StateStoreEntry> =

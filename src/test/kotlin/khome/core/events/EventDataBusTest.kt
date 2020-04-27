@@ -1,4 +1,4 @@
-package khome.core.eventHandling
+package khome.core.events
 
 import assertk.assertThat
 import assertk.assertions.isEmpty
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.TestInstance
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EventBusTest {
+class EventDataBusTest {
     private val logger = KotlinLogging.logger { }
 
     @Test

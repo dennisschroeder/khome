@@ -1,8 +1,8 @@
 package khome.listening
 
 import khome.core.KhomeComponent
-import khome.core.eventHandling.EventData
-import khome.core.eventHandling.HassEvent
+import khome.core.events.EventData
+import khome.core.events.HassEvent
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.get
 import java.util.UUID

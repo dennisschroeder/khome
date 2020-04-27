@@ -3,7 +3,6 @@ package khome.core.dependencyInjection
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isSuccess
 import assertk.assertions.isTrue
@@ -17,14 +16,14 @@ import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.clients.RestApiClient
-import khome.core.ServiceStore
-import khome.core.ServiceStoreInterface
-import khome.core.StateStore
-import khome.core.StateStoreInterface
 import khome.core.clients.WebSocketClient
-import khome.core.eventHandling.StateChangeEvent
+import khome.core.events.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
+import khome.core.servicestore.ServiceStore
+import khome.core.servicestore.ServiceStoreInterface
+import khome.core.statestore.StateStore
+import khome.core.statestore.StateStoreInterface
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -88,8 +87,7 @@ internal class KhomeKoinContextTest : KhomeKoinComponent() {
             override var host: String = "somehost.com",
             override var port: Int = 1234,
             override var accessToken: String = "some-super-secret-token",
-            override var secure: Boolean = true,
-            override var startStateStream: Boolean = true
+            override var secure: Boolean = true
         ) : ConfigurationInterface
 
         val testModule = khomeModule {
@@ -110,7 +108,6 @@ internal class KhomeKoinContextTest : KhomeKoinComponent() {
         assertThat(config.port).isEqualTo(8321)
         assertThat(config.accessToken).isEqualTo("dsq7zht54899dhz43kbv4dgr56a8we234h>!sg?x")
         assertThat(config.secure).isTrue()
-        assertThat(config.startStateStream).isFalse()
     }
 
     @AfterEach

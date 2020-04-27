@@ -1,15 +1,16 @@
 package khome.core
 
-import khome.core.eventHandling.EventData
+import com.google.gson.annotations.SerializedName
 import java.time.OffsetDateTime
-
-data class EventResult(val id: Int, val type: String, val event: Event) : MessageInterface
-data class Event(override val eventType: String, val data: Data, override val timeFired: OffsetDateTime, override val origin: String) :
+data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
+data class StateChangedResponse(val id: Int, val type: ResponseType, val event: EventData) : MessageInterface
+data class EventData(override val eventType: String, val data: Data, override val timeFired: OffsetDateTime, override val origin: String) :
     MessageInterface, EventDtoInterface
 
 data class Data(val entityId: String, val oldState: State?, val newState: State?) : MessageInterface
-data class HassEventResultDto(val id: Int, val type: String, val event: HassEventDto) : MessageInterface
-data class HassEventDto(val eventType: String, val data: EventData, val timeFired: OffsetDateTime, val origin: String) :
+
+data class HassEventResponse(val id: Int, val type: String, val event: HassEventData) : MessageInterface
+data class HassEventData(val eventType: String, val data: Map<String, Any>, val timeFired: OffsetDateTime, val origin: String) :
     MessageInterface
 
 interface EventDtoInterface {
@@ -37,7 +38,7 @@ interface StateInterface : MessageInterface {
     val lastUpdated: OffsetDateTime
 }
 
-data class Result(
+data class ResultResponse(
     val id: Int,
     val type: String,
     val success: Boolean,
@@ -45,16 +46,9 @@ data class Result(
     val result: Any?
 ) : MessageInterface
 
-class StateResult(
-    val id: Int,
-    val type: String,
-    val success: Boolean,
-    val result: Array<State>
-) : MessageInterface
-
-data class ServiceResult(
-    val id: Int,
-    val type: String,
-    val success: Boolean,
-    val result: Map<String, Map<String, Any>>
-) : MessageInterface
+enum class ResponseType {
+    @SerializedName("event")
+    EVENT,
+    @SerializedName("result")
+    RESULT
+}

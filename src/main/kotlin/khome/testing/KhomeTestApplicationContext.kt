@@ -2,22 +2,19 @@ package khome.testing
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeClient
-import khome.core.ServiceStoreInterface
-import khome.core.StateStoreInterface
-import khome.core.authenticate
+import khome.core.servicestore.ServiceStoreInterface
+import khome.core.statestore.StateStoreInterface
+import khome.core.authentication.Authenticator
 import khome.core.dependencyInjection.KhomeModule
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.dependencyInjection.khomeModule
 import khome.core.dependencyInjection.loadKhomeModule
 import khome.core.entities.AbstractEntity
-import khome.fetchServices
-import khome.fetchStates
-import khome.storeServices
-import khome.storeStates
+import khome.core.servicestore.ServiceStoreInitializer
+import khome.core.statestore.StateStoreInitializer
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeAll
-import org.koin.core.get
 import org.koin.core.inject
 
 @KtorExperimentalAPI
@@ -37,11 +34,9 @@ abstract class KhomeTestApplicationContext : KhomeTestComponent() {
     fun startKhome() {
         runBlocking {
             khomeClient.startSession {
-                authenticate(get())
-                fetchStates(get())
-                storeStates(consumeMessage(), get())
-                fetchServices(get())
-                storeServices(consumeMessage(), get())
+                runBootSequence<Authenticator>()
+                runBootSequence<ServiceStoreInitializer>()
+                runBootSequence<StateStoreInitializer>()
             }
         }
     }

@@ -1,4 +1,4 @@
-package khome.core.eventHandling
+package khome.core.events
 
 import assertk.assertThat
 import assertk.assertions.isSuccess

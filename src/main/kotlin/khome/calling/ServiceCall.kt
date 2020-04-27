@@ -6,7 +6,7 @@ import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
 import khome.core.KhomeComponent
 import khome.core.MessageInterface
-import khome.core.ServiceStoreInterface
+import khome.core.servicestore.ServiceStoreInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.EntityInterface

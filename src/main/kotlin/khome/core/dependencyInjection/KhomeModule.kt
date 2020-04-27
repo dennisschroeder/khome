@@ -1,7 +1,7 @@
 package khome.core.dependencyInjection
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.eventHandling.HassEvent
+import khome.core.events.HassEvent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.definition.Definition
 import org.koin.core.module.Module

@@ -1,8 +1,8 @@
 package khome.listening
 
 import khome.core.KhomeComponent
-import khome.core.eventHandling.ios.IosActionEvent
-import khome.core.eventHandling.ios.IosNotificationEvent
+import khome.core.events.ios.IosActionEvent
+import khome.core.events.ios.IosNotificationEvent
 
 data class IosActionEventData(
     override val sourceDeviceID: String,
