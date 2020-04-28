@@ -18,7 +18,8 @@ import kotlinx.coroutines.coroutineScope
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 class KhomeApplication(
-    private val khomeClient: KhomeClient
+    private val khomeClient: KhomeClient,
+    private val baseKhomeComponent: BaseKhomeComponent
 ) {
     @InternalCoroutinesApi
     suspend fun runApplication(listeners: suspend BaseKhomeComponent.() -> Unit = {}) =
@@ -35,7 +36,7 @@ class KhomeApplication(
 
                 runBootSequence<HassEventSubscriber>()
 
-                listeners(BaseKhomeComponent())
+                listeners(baseKhomeComponent)
 
                 runBootSequence<StateChangeEventSubscriber>()
 

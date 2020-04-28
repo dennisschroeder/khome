@@ -9,17 +9,17 @@ class PersistentNotificationCreate :
 class PersistentNotificationDismiss :
     ServiceCall(Domain.PERSISTENT_NOTIFICATION, PersistentNotificationService.DISMISS) {
     val serviceData: PersistentNotificationMessage = PersistentNotificationMessage(null, null, null)
-    fun notificationId(id: Int) = serviceData.apply { notificationId = id }
+    fun notificationId(id: String) = serviceData.apply { notificationId = id }
 }
 
 class PersistentNotificationMarkRead :
     ServiceCall(Domain.PERSISTENT_NOTIFICATION, PersistentNotificationService.MARK_READ) {
     val serviceData: PersistentNotificationMessage = PersistentNotificationMessage(null, null, null)
-    fun notificationId(id: Int) = serviceData.apply { notificationId = id }
+    fun notificationId(id: String) = serviceData.apply { notificationId = id }
 }
 
 data class PersistentNotificationMessage(
-    var notificationId: Int?,
+    var notificationId: String?,
     var message: String?,
     var title: String?
 ) : ServiceDataInterface

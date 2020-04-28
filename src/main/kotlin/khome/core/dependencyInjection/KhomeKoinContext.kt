@@ -18,18 +18,21 @@ import khome.KhomeApplication
 import khome.KhomeClient
 import khome.KhomeSession
 import khome.calling.ServiceCoroutineContext
+import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.authentication.Authenticator
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
 import khome.core.entities.EntityInterface
+import khome.core.events.DefaultEventListenerExceptionHandler
 import khome.core.events.Event
 import khome.core.events.FailureResponseEvent
 import khome.core.events.HassEventRegistry
 import khome.core.events.HassEventSubscriber
 import khome.core.events.StateChangeEvent
 import khome.core.events.StateChangeEventSubscriber
+import khome.core.events.EventListenerExceptionHandler
 import khome.core.mapping.KhomeEntityConverter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
@@ -80,8 +83,9 @@ object KhomeKoinContext {
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
-            single { StateChangeEvent(Event()) }
-            single { FailureResponseEvent(Event()) }
+            single<EventListenerExceptionHandler> { DefaultEventListenerExceptionHandler(get()) }
+            single { StateChangeEvent(Event(get())) }
+            single { FailureResponseEvent(Event(get())) }
             single { HassEventRegistry() }
             single { ServiceCoroutineContext(newSingleThreadContext("ServiceContext")) }
             single { AtomicInteger(0) }
@@ -171,7 +175,8 @@ object KhomeKoinContext {
 
             single { (khomeSession: KhomeSession) -> KhomeModulesInitializer(khomeSession = khomeSession) }
             single { KhomeClient(get(), get()) }
-            single { KhomeApplication(get()) }
+            single { BaseKhomeComponent() }
+            single { KhomeApplication(get(), get()) }
         }
 
     @ExperimentalCoroutinesApi

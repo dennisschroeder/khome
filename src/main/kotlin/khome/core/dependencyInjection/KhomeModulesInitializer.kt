@@ -2,6 +2,7 @@ package khome.core.dependencyInjection
 
 import khome.Khome
 import khome.KhomeSession
+import khome.calling.PersistentNotificationCreate
 import khome.core.boot.BootSequenceInterface
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
@@ -15,6 +16,7 @@ internal class KhomeModulesInitializer(override val khomeSession: KhomeSession) 
             bean { Sun() }
             bean { Time() }
             bean { DateTime() }
+            service { PersistentNotificationCreate() }
         }
 
     private val userBeansModule =

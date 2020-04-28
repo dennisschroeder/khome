@@ -7,11 +7,10 @@ import org.koin.core.get
 typealias EventData = Map<String, Any>
 
 abstract class HassEvent(
-    final override val eventType: String,
-    delegate: Event<EventData> = Event()
+    final override val eventType: String
 ) : KhomeKoinComponent(),
     HassEventInterface<EventData> {
-    private val eventHandler = delegate
+    private val eventHandler = Event<EventData>(get())
 
     init {
         registerInEventRegistry()

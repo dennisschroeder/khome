@@ -3,8 +3,7 @@ package khome.core.events
 import khome.core.StateChangedResponse
 import kotlinx.coroutines.CoroutineScope
 
-class StateChangeEvent(delegate: Event<StateChangedResponse>) :
-    Iterable<MutableMap.MutableEntry<String, Handler<StateChangedResponse>>> by delegate, EventInterface<StateChangedResponse> {
+class StateChangeEvent(delegate: Event<StateChangedResponse>) :  EventInterface<StateChangedResponse> {
     private val eventHandler = delegate
 
     override val listenerCount get() = eventHandler.listeners.size
