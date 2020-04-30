@@ -84,10 +84,15 @@ internal class KhomeKoinContextTest : KhomeKoinComponent() {
     @Test
     fun `assert configuration bean can be overwritten`() {
         data class CustomConfig(
+            override var name: String = "testApp",
             override var host: String = "somehost.com",
             override var port: Int = 1234,
             override var accessToken: String = "some-super-secret-token",
-            override var secure: Boolean = true
+            override var secure: Boolean = true,
+            override var enableDefaultErrorResponseHandler: Boolean = true,
+            override var enableDefaultStateChangeListenerExceptionHandler: Boolean = true,
+            override var enableHassEventListenerExceptionHandler: Boolean = true,
+            override var enableErrorResponseListenerExceptionHandler: Boolean = true
         ) : ConfigurationInterface
 
         val testModule = khomeModule {

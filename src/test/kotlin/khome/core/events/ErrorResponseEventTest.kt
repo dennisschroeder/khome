@@ -15,12 +15,12 @@ import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FailureResponseEventTest : KhomeTestComponent() {
+class ErrorResponseEventTest : KhomeTestComponent() {
     private val logger = KotlinLogging.logger { }
 
     @Test
     fun `assert callback was subscribed to event`() {
-        val failureResponseEvents = FailureResponseEvent(Event())
+        val failureResponseEvents = ErrorResponseEvent(Event())
         failureResponseEvents.subscribe {
             logger.debug { it.error!!.message }
         }
@@ -30,7 +30,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
     @Test
     fun `assert callback was subscribed to event with handle`() {
-        val failureResponseEvents = FailureResponseEvent(Event())
+        val failureResponseEvents = ErrorResponseEvent(Event())
         failureResponseEvents.subscribe("handle") {
             logger.debug { it.error!!.message }
         }
@@ -40,7 +40,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
     @Test
     fun `assert that subscribed event callback was fired`() = runBlocking {
-        val failureResponseEvents = FailureResponseEvent(Event())
+        val failureResponseEvents = ErrorResponseEvent(Event())
         var testValue: ResultResponse? = null
         failureResponseEvents.subscribe {
             testValue = it
@@ -66,7 +66,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
     @Test
     fun `assert that subscribed event callbacks were fired`() = runBlocking {
-        val failureResponseEvents = FailureResponseEvent(Event())
+        val failureResponseEvents = ErrorResponseEvent(Event())
         var testValueOne: ResultResponse? = null
         var testValueTwo: ResultResponse? = null
         failureResponseEvents.subscribe {
@@ -98,7 +98,7 @@ class FailureResponseEventTest : KhomeTestComponent() {
 
     @Test
     fun `assert that unsubscribe was successful`() = runBlocking {
-        val failureResponseEvents = FailureResponseEvent(Event())
+        val failureResponseEvents = ErrorResponseEvent(Event())
         var testValueOne: ResultResponse? = null
         var testValueTwo: ResultResponse? = null
         failureResponseEvents.subscribe {

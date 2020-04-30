@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 inline fun <reified TimeEntity : AbstractTimeEntity> KhomeComponent.onTimeDaily(noinline callback: LocalTime.() -> Unit): LifeCycleHandler {
-    return onStateChange<Time> { entity, _ ->
+    return onStateChange<Time> { entity ->
         val executeAt: LocalTime = get<TimeEntity>().time
         if (executeAt == entity.currentLocalTime) {
             callback(executeAt)
@@ -38,7 +38,7 @@ fun KhomeComponent.onTimeDaily(executeAt: String, callback: LocalTime.() -> Unit
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onTimeDaily(executeAt: LocalTime, callback: LocalTime.() -> Unit): LifeCycleHandler {
     val executeAtWithoutNanos = executeAt.let { LocalTime.of(it.hour, it.minute) }
-    return onStateChange<Time> { entity, _ ->
+    return onStateChange<Time> { entity ->
         if (executeAtWithoutNanos == entity.currentLocalTime) callback(executeAt)
     }
 }
@@ -46,7 +46,7 @@ fun KhomeComponent.onTimeDaily(executeAt: LocalTime, callback: LocalTime.() -> U
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 inline fun <reified DateTimeEntity : AbstractDateTimeEntity> KhomeComponent.onDateTime(noinline callback: LocalDateTime.() -> Unit): LifeCycleHandler =
-    onStateChange<DateTime> { entity, _ ->
+    onStateChange<DateTime> { entity ->
         val executeAt: LocalDateTime =
             get<DateTimeEntity>().dateTime
         if (executeAt == entity.currentLocalDateTime) {
@@ -79,7 +79,7 @@ fun KhomeComponent.onDateTime(executeAt: LocalDateTime, callback: LocalDateTime.
             it.minute
         )
     }
-    return onStateChange<DateTime> { entity, _ ->
+    return onStateChange<DateTime> { entity ->
         if (executeAtWithoutNanos == entity.currentLocalDateTime) {
             callback(executeAt)
             logger.debug { "Executed scheduled task at: ${entity.currentLocalDateTime}" }
