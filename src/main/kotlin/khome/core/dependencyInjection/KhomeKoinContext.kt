@@ -13,7 +13,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.host
 import io.ktor.client.request.port
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.events.EventResponseConsumer
 import khome.KhomeApplication
 import khome.KhomeClient
 import khome.KhomeSession
@@ -25,14 +24,13 @@ import khome.core.authentication.Authenticator
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
 import khome.core.entities.EntityInterface
-import khome.core.events.DefaultEventListenerExceptionHandler
+import khome.core.events.ErrorResponseEvent
 import khome.core.events.Event
-import khome.core.events.FailureResponseEvent
+import khome.core.events.EventResponseConsumer
 import khome.core.events.HassEventRegistry
 import khome.core.events.HassEventSubscriber
 import khome.core.events.StateChangeEvent
 import khome.core.events.StateChangeEventSubscriber
-import khome.core.events.EventListenerExceptionHandler
 import khome.core.mapping.KhomeEntityConverter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
@@ -65,6 +63,19 @@ internal typealias CallerID = AtomicInteger
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 object KhomeKoinContext {
+    private const val NAME = "NAME"
+    private const val HOST = "HOST"
+    private const val PORT = "PORT"
+    private const val ACCESS_TOKEN = "ACCESS_TOKEN"
+    private const val SECURE = "SECURE"
+    private const val ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER = "ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER"
+    private const val ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER =
+        "ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER"
+    private const val ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER =
+        "ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER"
+    private const val ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER =
+        "ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER"
+
     var application: KoinApplication? = null
     private val logger = KotlinLogging.logger {}
 
@@ -83,18 +94,34 @@ object KhomeKoinContext {
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
-            single<EventListenerExceptionHandler> { DefaultEventListenerExceptionHandler(get()) }
-            single { StateChangeEvent(Event(get())) }
-            single { FailureResponseEvent(Event(get())) }
+            single { StateChangeEvent(Event()) }
+            single { ErrorResponseEvent(Event()) }
             single { HassEventRegistry() }
             single { ServiceCoroutineContext(newSingleThreadContext("ServiceContext")) }
             single { AtomicInteger(0) }
             single<ConfigurationInterface> {
                 DefaultConfiguration(
-                    host = getProperty("HOST", "localhost"),
-                    port = getProperty("PORT", 8123),
-                    accessToken = getProperty("ACCESS_TOKEN", "<some-fancy-access-token>"),
-                    secure = getProperty("SECURE", "false").toBoolean()
+                    name = getProperty(NAME, "[Give your application a unique name]"),
+                    host = getProperty(HOST, "localhost"),
+                    port = getProperty(PORT, 8123),
+                    accessToken = getProperty(ACCESS_TOKEN, "<some-fancy-access-token>"),
+                    secure = getProperty(SECURE, "false").toBoolean(),
+                    enableDefaultErrorResponseHandler = getProperty(
+                        ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER,
+                        "true"
+                    ).toBoolean(),
+                    enableDefaultStateChangeListenerExceptionHandler = getProperty(
+                        ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER,
+                        "true"
+                    ).toBoolean(),
+                    enableHassEventListenerExceptionHandler = getProperty(
+                        ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER,
+                        "true"
+                    ).toBoolean(),
+                    enableErrorResponseListenerExceptionHandler = getProperty(
+                        ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER,
+                        "true"
+                    ).toBoolean()
                 )
             }
             single {
@@ -169,11 +196,16 @@ object KhomeKoinContext {
                     objectMapper = get(),
                     stateStore = get(),
                     hassEventRegistry = get(),
-                    failureResponseEvent = get()
+                    errorResponseEvent = get()
                 )
             }
 
-            single { (khomeSession: KhomeSession) -> KhomeModulesInitializer(khomeSession = khomeSession) }
+            single { (khomeSession: KhomeSession) ->
+                KhomeModulesInitializer(
+                    khomeSession = khomeSession,
+                    configuration = get()
+                )
+            }
             single { KhomeClient(get(), get()) }
             single { BaseKhomeComponent() }
             single { KhomeApplication(get(), get()) }

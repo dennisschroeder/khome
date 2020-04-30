@@ -16,7 +16,7 @@ class KhomeClient(
     private val config: ConfigurationInterface,
     private val httpClient: WebSocketClient
 ) : KhomeKoinComponent() {
-    private val logger = KotlinLogging.logger {  }
+    private val logger = KotlinLogging.logger { }
 
     private val method = HttpMethod.Get
     private val path = "/api/websocket"
@@ -25,7 +25,6 @@ class KhomeClient(
     @ObsoleteCoroutinesApi
     suspend fun startSession(block: suspend KhomeSession.() -> Unit) =
         startSessionCatching(block)
-
 
     private suspend fun startSessionCatching(block: suspend KhomeSession.() -> Unit) =
         try {

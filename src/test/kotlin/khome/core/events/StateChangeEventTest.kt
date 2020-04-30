@@ -35,7 +35,7 @@ class StateChangeEventTest : KhomeTestComponent() {
             logger.debug { it.id }
         }
 
-        assertThat(stateChangeEvent.find { it.key == "handle" }).isNotNull()
+        assertThat(stateChangeEvent["handle"]).isNotNull()
     }
 
     @Test

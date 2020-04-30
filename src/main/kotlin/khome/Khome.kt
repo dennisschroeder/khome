@@ -8,7 +8,6 @@ import khome.core.dependencyInjection.KhomeModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
-import org.koin.core.inject
 
 /**
  * The main entry point to start your application
@@ -22,8 +21,9 @@ import org.koin.core.inject
 @KtorExperimentalAPI
 fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
     KhomeKoinContext.startKoinApplication()
-    val khome = Khome().apply(init)
-    return khome.get<KhomeApplication>()
+    val koinComponent = object : KhomeKoinComponent() {}
+    Khome(koinComponent.get()).apply(init)
+    return koinComponent.get()
 }
 
 /**
@@ -34,7 +34,7 @@ fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
  */
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-class Khome : KhomeKoinComponent() {
+class Khome(private val config: ConfigurationInterface) {
     companion object {
         var beanDeclarations: KhomeModule.() -> Unit = {}
     }
@@ -46,10 +46,8 @@ class Khome : KhomeKoinComponent() {
      * @param builder Lambda with receiver to configure Khome
      * @see [ConfigurationInterface]
      */
-    fun configure(builder: ConfigurationInterface.() -> Unit) {
-        val config: ConfigurationInterface by inject()
+    fun configure(builder: ConfigurationInterface.() -> Unit) =
         config.apply(builder)
-    }
 
     fun beans(beanDeclarations: KhomeModule.() -> Unit) {
         Khome.beanDeclarations = beanDeclarations

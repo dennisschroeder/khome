@@ -1,13 +1,12 @@
 package khome.core.events
 
 import khome.core.ResultResponse
-import kotlinx.coroutines.CoroutineScope
 
-internal class FailureResponseEvent(delegate: Event<ResultResponse>) :
+class ErrorResponseEvent(delegate: Event<ResultResponse>) :
     Iterable<MutableMap.MutableEntry<String, Handler<ResultResponse>>> by delegate, EventInterface<ResultResponse> {
     val eventHandler = delegate
     override val listenerCount get() = eventHandler.listeners.size
-    override fun subscribe(handle: String?, callback: suspend CoroutineScope.(ResultResponse) -> Unit) {
+    override fun subscribe(handle: String?, callback: (ResultResponse) -> Unit) {
         if (handle == null) eventHandler += callback else eventHandler[handle] = callback
     }
 

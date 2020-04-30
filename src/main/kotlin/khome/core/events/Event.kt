@@ -2,13 +2,12 @@ package khome.core.events
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
-typealias Handler<EventDataType> = suspend CoroutineScope.(EventDataType) -> Unit
+typealias Handler<EventDataType> = (EventDataType) -> Unit
 typealias EventIterator<EventDataType> = Iterable<MutableMap.MutableEntry<String, Handler<EventDataType>>>
 
-class Event<EventDataType>(private val exceptionHandler: EventListenerExceptionHandler) : EventIterator<EventDataType> {
+class Event<EventDataType> : EventIterator<EventDataType> {
     private val scope
         get() = CoroutineScope(Dispatchers.IO)
     private val list = ConcurrentHashMap<String, Handler<EventDataType>>()
@@ -32,12 +31,14 @@ class Event<EventDataType>(private val exceptionHandler: EventListenerExceptionH
         list[name] = handler
     }
 
+    operator fun get(name: String) =
+        list[name]
+
     operator fun minusAssign(name: String) {
         list.remove(name)
     }
 
     operator fun invoke(data: EventDataType) {
-        for ((_, value) in this)
-            scope.launch(exceptionHandler) { value(data) }
+        for ((_, value) in this) value(data)
     }
 }

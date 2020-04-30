@@ -4,26 +4,6 @@ import khome.core.KhomeComponent
 import khome.core.events.ios.IosActionEvent
 import khome.core.events.ios.IosNotificationEvent
 
-data class IosActionEventData(
-    override val sourceDeviceID: String,
-    override val actionID: String? = null,
-    override val actionName: String,
-    override val sourceDeviceName: String,
-    override val sourceDevicePermanentID: String,
-    override val triggerSource: String? = null,
-    override val actionData: Map<String, Any>? = null
-) : IosActionEventDataInterface
-
-interface IosActionEventDataInterface {
-    val sourceDeviceID: String
-    val actionID: String?
-    val actionName: String
-    val sourceDeviceName: String
-    val sourceDevicePermanentID: String
-    val triggerSource: String?
-    val actionData: Map<String, Any>?
-}
-
 inline fun KhomeComponent.onIosActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosActionEvent> { eventData ->
         val iosActionEventData = IosActionEventData(
@@ -50,4 +30,24 @@ inline fun KhomeComponent.onIosNotificationActionEvent(crossinline callback: sus
         )
         callback(iosNotificationEventData)
     }
+}
+
+data class IosActionEventData(
+    override val sourceDeviceID: String,
+    override val actionID: String? = null,
+    override val actionName: String,
+    override val sourceDeviceName: String,
+    override val sourceDevicePermanentID: String,
+    override val triggerSource: String? = null,
+    override val actionData: Map<String, Any>? = null
+) : IosActionEventDataInterface
+
+interface IosActionEventDataInterface {
+    val sourceDeviceID: String
+    val actionID: String?
+    val actionName: String
+    val sourceDeviceName: String
+    val sourceDevicePermanentID: String
+    val triggerSource: String?
+    val actionData: Map<String, Any>?
 }

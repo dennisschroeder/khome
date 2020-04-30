@@ -31,7 +31,7 @@ internal class EventResponseConsumer(
     private val objectMapper: ObjectMapper,
     private val stateStore: StateStoreInterface,
     private val hassEventRegistry: HassEventRegistry,
-    private val failureResponseEvent: FailureResponseEvent
+    private val errorResponseEvent: ErrorResponseEvent
 ) : BootSequenceInterface {
     private val logger = KotlinLogging.logger { }
 
@@ -110,7 +110,7 @@ internal class EventResponseConsumer(
             .takeIf { resultResponse -> !resultResponse.success }
             ?.let { resultResponse ->
                 logFailureResponse(resultResponse)
-                emitFailureResponseEvent(resultResponse, failureResponseEvent)
+                emitFailureResponseEvent(resultResponse, errorResponseEvent)
             }
 
     private fun logSuccessResult(resultResponse: ResultResponse) =
@@ -119,6 +119,6 @@ internal class EventResponseConsumer(
     private fun logFailureResponse(resultResponse: ResultResponse) =
         logger.error { "CallId: ${resultResponse.id} -  errorCode: ${resultResponse.error!!.code} ${resultResponse.error.message}" }
 
-    private suspend fun emitFailureResponseEvent(resultResponse: ResultResponse, failureResponseEvent: FailureResponseEvent) =
-        failureResponseEvent.emit(resultResponse)
+    private suspend fun emitFailureResponseEvent(resultResponse: ResultResponse, errorResponseEvent: ErrorResponseEvent) =
+        errorResponseEvent.emit(resultResponse)
 }

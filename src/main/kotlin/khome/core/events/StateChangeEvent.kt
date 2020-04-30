@@ -1,15 +1,17 @@
 package khome.core.events
 
 import khome.core.StateChangedResponse
-import kotlinx.coroutines.CoroutineScope
 
-class StateChangeEvent(delegate: Event<StateChangedResponse>) :  EventInterface<StateChangedResponse> {
+class StateChangeEvent(delegate: Event<StateChangedResponse>) : EventInterface<StateChangedResponse> {
     private val eventHandler = delegate
 
     override val listenerCount get() = eventHandler.listeners.size
-    override fun subscribe(handle: String?, callback: suspend CoroutineScope.(StateChangedResponse) -> Unit) {
+    override fun subscribe(handle: String?, callback: (StateChangedResponse) -> Unit) {
         if (handle == null) eventHandler += callback else eventHandler[handle] = callback
     }
+
+    operator fun get(handle: String) =
+        eventHandler[handle]
 
     override fun unsubscribe(handle: String) {
         eventHandler -= handle
