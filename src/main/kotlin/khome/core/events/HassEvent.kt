@@ -1,6 +1,7 @@
 package khome.core.events
 
 import khome.core.dependencyInjection.KhomeKoinComponent
+import kotlinx.coroutines.flow.collect
 import org.koin.core.get
 
 typealias EventData = Map<String, Any>
@@ -15,8 +16,12 @@ abstract class HassEvent(
         registerInEventRegistry()
     }
 
-    private fun registerInEventRegistry() = get<HassEventRegistry>().register(eventType, this)
-    override val listenerCount get() = eventHandler.listeners.size
+    private fun registerInEventRegistry() =
+        get<HassEventRegistry>().register(eventType, this)
+
+    override val listenerCount
+        get() = eventHandler.listeners.size
+
     override fun subscribe(handle: String?, callback: (EventData) -> Unit) {
         if (handle == null) eventHandler += callback else eventHandler[handle] = callback
     }
@@ -25,5 +30,8 @@ abstract class HassEvent(
         eventHandler -= handle
     }
 
-    override suspend fun emit(eventData: EventData) = eventHandler(eventData)
+    override suspend fun emit(eventData: EventData) =
+        eventHandler.collect { handlerFunction ->
+            handlerFunction(eventData)
+        }
 }

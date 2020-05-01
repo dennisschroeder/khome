@@ -8,6 +8,7 @@ import assertk.assertions.isNull
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
@@ -45,7 +46,9 @@ class EventDataBusTest {
             testValue = it
         }
 
-        testEvent("Foo")
+        testEvent.collect { handler ->
+            handler("Foo")
+        }
         delay(1)
         assertThat(testValue).isEqualTo("Foo")
     }
@@ -64,7 +67,9 @@ class EventDataBusTest {
             testValueTwo = it
         }
 
-        testEvent("Foo")
+        testEvent.collect { handler ->
+            handler("Foo")
+        }
         delay(10)
         assertThat(testValueOne).isEqualTo("Foo")
         assertThat(testValueTwo).isEqualTo("Foo")

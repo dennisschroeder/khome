@@ -11,8 +11,10 @@ import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.EntityInterface
 import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import org.koin.core.get
@@ -33,6 +35,14 @@ abstract class KhomeComponent() : KhomeKoinComponent() {
             val event = get<Event>()
             restClient.post<HttpResponse> {
                 url { encodedPath = "/api/events/${event.eventType}" }
+                body = payload ?: EmptyContent
+            }
+        }
+
+    fun createEntity(entityId: String, payload: Any? = null) =
+        CoroutineScope(Dispatchers.IO).launch {
+            restClient.post<HttpResponse> {
+                url { encodedPath = "/api/states/$entityId" }
                 body = payload ?: EmptyContent
             }
         }

@@ -30,7 +30,7 @@ class DefaultStateChangeListenerExceptionHandler(
                         with handle: ${stateListenerContext.handle}
                         $exception
                         ${exception.stackTrace.first()}
-                    """
+                    """.trimIndent()
                 }
             }
             stateListenerContext.lifeCycleHandler.disable()
@@ -55,7 +55,7 @@ class DefaultHassEventListenerExceptionHandler(
                         with handle: ${hassEventListenerContext.handle}
                         $exception
                         ${exception.stackTrace.first()}
-                    """
+                    """.trimIndent()
                 }
             }
             hassEventListenerContext.lifeCycleHandler.disable()
@@ -80,7 +80,7 @@ class DefaultErrorResultListenerExceptionHandler(
                         with handle: ${errorResponseContext.handle}
                         $exception
                         ${exception.stackTrace.first()}
-                    """
+                    """.trimIndent()
                 }
             }
             errorResponseContext.lifeCycleHandler.disable()
