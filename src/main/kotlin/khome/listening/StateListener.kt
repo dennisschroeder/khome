@@ -15,13 +15,18 @@ import kotlin.coroutines.CoroutineContext
 inline fun <reified Entity : EntityInterface> KhomeComponent.onStateChange(
     context: CoroutineContext = Dispatchers.IO,
     noinline callback: suspend CoroutineScope.(Entity) -> Unit
-): LifeCycleHandler = StateListener(
-    context = context,
-    stateChangeEvent = get(),
-    entity = get(),
-    exceptionHandler = get(),
-    listener = callback
-).lifeCycleHandler
+): LifeCycleHandler {
+
+    val listener = StateListener(
+        context = context,
+        stateChangeEvent = get(),
+        entity = get(),
+        exceptionHandler = get(),
+        listener = callback
+    )
+
+    return listener.lifeCycleHandler
+}
 
 class StateListener<Entity : EntityInterface>(
     context: CoroutineContext,

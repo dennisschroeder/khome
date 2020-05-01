@@ -1,6 +1,7 @@
 package khome.core.events
 
 import khome.core.StateChangedResponse
+import kotlinx.coroutines.flow.collect
 
 class StateChangeEvent(delegate: Event<StateChangedResponse>) : EventInterface<StateChangedResponse> {
     private val eventHandler = delegate
@@ -17,5 +18,8 @@ class StateChangeEvent(delegate: Event<StateChangedResponse>) : EventInterface<S
         eventHandler -= handle
     }
 
-    override suspend fun emit(eventData: StateChangedResponse) = eventHandler(eventData)
+    override suspend fun emit(eventData: StateChangedResponse) =
+        eventHandler.collect { handlerFunction ->
+            handlerFunction(eventData)
+        }
 }

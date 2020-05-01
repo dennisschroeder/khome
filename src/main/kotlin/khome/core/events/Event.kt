@@ -2,12 +2,15 @@ package khome.core.events
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.AbstractFlow
+import kotlinx.coroutines.flow.FlowCollector
 import java.util.concurrent.ConcurrentHashMap
 
 typealias Handler<EventDataType> = (EventDataType) -> Unit
 typealias EventIterator<EventDataType> = Iterable<MutableMap.MutableEntry<String, Handler<EventDataType>>>
 
-class Event<EventDataType> : EventIterator<EventDataType> {
+class Event<EventDataType> : EventIterator<EventDataType>, AbstractFlow<Handler<EventDataType>>() {
     private val scope
         get() = CoroutineScope(Dispatchers.IO)
     private val list = ConcurrentHashMap<String, Handler<EventDataType>>()
@@ -38,7 +41,8 @@ class Event<EventDataType> : EventIterator<EventDataType> {
         list.remove(name)
     }
 
-    operator fun invoke(data: EventDataType) {
-        for ((_, value) in this) value(data)
+    @FlowPreview
+    override suspend fun collectSafely(collector: FlowCollector<Handler<EventDataType>>) {
+        for ((_, value) in this) collector.emit(value)
     }
 }
