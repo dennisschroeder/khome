@@ -21,7 +21,7 @@ import org.koin.core.inject
 abstract class AbstractEntity<StateValueType>(
     override val domain: String,
     override val name: String
-) : KhomeKoinComponent(), EntityInterface {
+) : KhomeKoinComponent, EntityInterface {
     private val stateStore: StateStoreInterface by inject()
     final override val id: String get() = "$domain.$name"
     final override val states: StateStoreEntry

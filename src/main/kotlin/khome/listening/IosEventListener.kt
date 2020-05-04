@@ -1,6 +1,6 @@
 package khome.listening
 
-import khome.core.KhomeComponent
+import khome.KhomeComponent
 import khome.core.events.ios.IosActionEvent
 import khome.core.events.ios.IosNotificationEvent
 

@@ -9,7 +9,7 @@ interface ObjectMapperInterface
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class ObjectMapper(val delegate: Gson) : KhomeKoinComponent(), ObjectMapperInterface {
+class ObjectMapper(val delegate: Gson) : KhomeKoinComponent, ObjectMapperInterface {
     inline fun <reified Target> fromJson(json: String): Target = delegate.fromJson<Target>(json, Target::class.java)
     fun <Destination> toJson(from: Destination): String = delegate.toJson(from)
 }

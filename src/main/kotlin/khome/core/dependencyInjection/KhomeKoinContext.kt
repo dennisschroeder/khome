@@ -7,7 +7,6 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.defaultRequest
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.header
 import io.ktor.client.request.host
@@ -151,8 +150,6 @@ object KhomeKoinContext {
                 RestApiClient(client)
             }
 
-            single { (websocketSession: DefaultClientWebSocketSession) -> KhomeSession(websocketSession) }
-
             single { (khomeSession: KhomeSession) ->
                 Authenticator(
                     khomeSession = khomeSession,
@@ -208,7 +205,7 @@ object KhomeKoinContext {
             }
             single { KhomeClient(get(), get()) }
             single { BaseKhomeComponent() }
-            single { KhomeApplication(get(), get()) }
+            single { KhomeApplication() }
         }
 
     @ExperimentalCoroutinesApi

@@ -4,18 +4,16 @@ import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.ConfigurationInterface
 import khome.core.clients.WebSocketClient
-import khome.core.dependencyInjection.KhomeKoinComponent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-class KhomeClient(
+internal class KhomeClient(
     private val config: ConfigurationInterface,
     private val httpClient: WebSocketClient
-) : KhomeKoinComponent() {
+) {
     private val logger = KotlinLogging.logger { }
 
     private val method = HttpMethod.Get
@@ -34,14 +32,14 @@ class KhomeClient(
                     host = config.host,
                     port = config.port,
                     path = path,
-                    block = { block(get { parametersOf(this) }) }
+                    block = { block(KhomeSession(this)) }
                 )
                 false -> httpClient.websocket(
                     method = method,
                     host = config.host,
                     port = config.port,
                     path = path,
-                    block = { block(get { parametersOf(this) }) }
+                    block = { block( KhomeSession(this)) }
                 )
             }
         } catch (exception: Exception) {

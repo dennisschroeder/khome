@@ -7,11 +7,8 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isSuccess
 import assertk.assertions.isTrue
 import com.google.gson.Gson
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
-import io.mockk.mockk
 import khome.KhomeApplication
 import khome.KhomeClient
-import khome.KhomeSession
 import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
@@ -29,13 +26,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class KhomeKoinContextTest : KhomeKoinComponent() {
+internal class KhomeKoinContextTest : KhomeKoinComponent {
 
     private val sut = KhomeKoinContext
 
@@ -73,9 +69,6 @@ internal class KhomeKoinContextTest : KhomeKoinComponent() {
             val wsClient: WebSocketClient = get()
             val restClient: RestApiClient = get()
             val khomeClient: KhomeClient = get()
-
-            val mockWebsocketSession = mockk<DefaultClientWebSocketSession>()
-            val khomeSession: KhomeSession = get() { parametersOf(mockWebsocketSession) }
 
             val khomeApplication: KhomeApplication = get()
         }.isSuccess()

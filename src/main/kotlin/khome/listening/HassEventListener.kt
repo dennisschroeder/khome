@@ -1,6 +1,6 @@
 package khome.listening
 
-import khome.core.KhomeComponent
+import khome.KhomeComponent
 import khome.core.events.EventData
 import khome.core.events.EventListenerExceptionHandler
 import khome.core.events.HassEvent
