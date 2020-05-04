@@ -8,7 +8,7 @@ typealias EventData = Map<String, Any>
 
 abstract class HassEvent(
     final override val eventType: String
-) : KhomeKoinComponent(),
+) : KhomeKoinComponent,
     EventInterface<EventData>, HassEventInterface {
     private val eventHandler = Event<EventData>()
 

@@ -1,7 +1,7 @@
 package khome.scheduling
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.KhomeComponent
+import khome.KhomeComponent
 import khome.core.entities.inputDateTime.AbstractDateTimeEntity
 import khome.core.entities.inputDateTime.AbstractTimeEntity
 import khome.core.entities.system.DateTime

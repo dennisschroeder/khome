@@ -1,37 +1,37 @@
 package khome
 
+import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
-import khome.calling.ServiceDataInterface
 import khome.core.MessageInterface
-import khome.core.boot.BootSequenceInterface
+import khome.core.ServiceCallInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.core.get
-import org.koin.core.parameter.parametersOf
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class KhomeSession(
+internal class KhomeSession(
     delegate: DefaultClientWebSocketSession
-) : KhomeKoinComponent(), WebSocketSession by delegate {
-    val logger = KotlinLogging.logger {}
-    suspend fun callWebSocketApi(message: String) = send(message)
-    suspend fun callWebSocketApi(message: MessageInterface) = send(message.toJson())
+) : KhomeKoinComponent, ClientWebSocketSession by delegate {
+
+    private val logger = KotlinLogging.logger {}
+    private val objectMapper: ObjectMapper = get()
+    suspend fun callWebSocketApi(message: MessageInterface) =
+        send(message.toJson()).also { logger.info { "Called hass api with message: ${message.toJson()}" } }
+
+    suspend fun callWebSocketApi(message: ServiceCallInterface) =
+        send(message.toJson()).also { logger.info { "Called hass api with service call message: ${message.toJson()}" } }
 
     suspend inline fun <reified M : Any> consumeSingleMessage(): M = incoming.receive().asObject()
     inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()
-    inline fun <reified M : Any> Frame.Text.toObject(): M = get<ObjectMapper>().fromJson(readText())
+    inline fun <reified M : Any> Frame.Text.toObject(): M = objectMapper.fromJson(readText())
 
-    fun ServiceDataInterface.toJson(): String = get<ObjectMapper>().toJson(this)
-    fun MessageInterface.toJson(): String = get<ObjectMapper>().toJson(this)
-
-    suspend inline fun <reified BootSequence : BootSequenceInterface> runBootSequence() =
-        get<BootSequence> { parametersOf(this) }.runBootSequence()
+    private fun ServiceCallInterface.toJson(): String = objectMapper.toJson(this)
+    private fun MessageInterface.toJson(): String = objectMapper.toJson(this)
 }

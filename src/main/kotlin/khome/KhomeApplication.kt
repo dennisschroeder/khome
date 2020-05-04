@@ -3,6 +3,8 @@ package khome
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.BaseKhomeComponent
 import khome.core.authentication.Authenticator
+import khome.core.boot.BootSequenceInterface
+import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.dependencyInjection.KhomeModulesInitializer
 import khome.core.events.EventResponseConsumer
 import khome.core.events.HassEventSubscriber
@@ -12,35 +14,38 @@ import khome.core.statestore.StateStoreInitializer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.coroutineScope
+import org.koin.core.get
+import org.koin.core.inject
+import org.koin.core.parameter.parametersOf
 
 @ExperimentalCoroutinesApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-class KhomeApplication(
-    private val khomeClient: KhomeClient,
-    private val baseKhomeComponent: BaseKhomeComponent
-) {
+class KhomeApplication : KhomeKoinComponent {
+    private val khomeClient: KhomeClient by inject()
+    private val baseKhomeComponent: BaseKhomeComponent by inject()
+
     @InternalCoroutinesApi
     suspend fun runApplication(listeners: suspend BaseKhomeComponent.() -> Unit = {}) =
-        coroutineScope {
-            khomeClient.startSession {
+        khomeClient.startSession {
 
-                runBootSequence<Authenticator>()
+            runBootSequence<Authenticator>(this)
 
-                runBootSequence<ServiceStoreInitializer>()
+            runBootSequence<ServiceStoreInitializer>(this)
 
-                runBootSequence<StateStoreInitializer>()
+            runBootSequence<StateStoreInitializer>(this)
 
-                runBootSequence<KhomeModulesInitializer>()
+            runBootSequence<KhomeModulesInitializer>(this)
 
-                runBootSequence<HassEventSubscriber>()
+            runBootSequence<HassEventSubscriber>(this)
 
-                listeners(baseKhomeComponent)
+            listeners(baseKhomeComponent)
 
-                runBootSequence<StateChangeEventSubscriber>()
+            runBootSequence<StateChangeEventSubscriber>(this)
 
-                runBootSequence<EventResponseConsumer>()
-            }
+            runBootSequence<EventResponseConsumer>(this)
         }
+
+    private suspend inline fun <reified BootSequence : BootSequenceInterface> runBootSequence(session: KhomeSession) =
+        get<BootSequence> { parametersOf(session) }.runBootSequence()
 }

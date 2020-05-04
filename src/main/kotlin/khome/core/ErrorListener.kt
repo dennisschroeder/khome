@@ -1,6 +1,7 @@
 package khome.core
 
 import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeComponent
 import khome.core.events.ErrorResponseEvent
 import khome.core.events.EventListenerExceptionHandler
 import khome.listening.LifeCycleHandler

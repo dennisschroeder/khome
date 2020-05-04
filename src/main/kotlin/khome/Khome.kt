@@ -21,7 +21,7 @@ import org.koin.core.get
 @KtorExperimentalAPI
 fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
     KhomeKoinContext.startKoinApplication()
-    val koinComponent = object : KhomeKoinComponent() {}
+    val koinComponent = object : KhomeKoinComponent {}
     Khome(koinComponent.get()).apply(init)
     return koinComponent.get()
 }

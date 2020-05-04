@@ -14,7 +14,7 @@ import org.koin.core.qualifier.Qualifier
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-abstract class KhomeKoinComponent : KoinComponent {
+interface KhomeKoinComponent : KoinComponent {
     override fun getKoin(): Koin = checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
 
@@ -40,7 +40,7 @@ inline fun <reified T : ServiceCall> KhomeKoinComponent.service(
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-abstract class KhomeTestComponent : KhomeKoinComponent() {
+abstract class KhomeTestComponent : KhomeKoinComponent {
 
     @BeforeEach
     fun initKoin() {

@@ -1,6 +1,6 @@
 package khome.listening
 
-import khome.core.KhomeComponent
+import khome.KhomeComponent
 import khome.core.entities.EntityInterface
 import khome.core.events.StateChangeEvent
 import khome.core.events.StateChangeListenerExceptionHandler

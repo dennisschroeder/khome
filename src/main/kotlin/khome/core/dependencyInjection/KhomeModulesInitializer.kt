@@ -1,7 +1,8 @@
 package khome.core.dependencyInjection
 
-import khome.DefaultErrorResponseHandler
+import khome.DefaultErrorResponseObserver
 import khome.ErrorResponseHandlerInterface
+import khome.HassApi
 import khome.Khome
 import khome.KhomeSession
 import khome.calling.PersistentNotificationCreate
@@ -17,17 +18,21 @@ import khome.core.events.ErrorResultListenerExceptionHandler
 import khome.core.events.EventListenerExceptionHandler
 import khome.core.events.StateChangeListenerExceptionHandler
 
-internal class KhomeModulesInitializer(override val khomeSession: KhomeSession, private val configuration: ConfigurationInterface) :
+internal class KhomeModulesInitializer(
+    override val khomeSession: KhomeSession,
+    private val configuration: ConfigurationInterface
+) :
     BootSequenceInterface {
 
     private val systemBeansModule =
         khomeModule(createdAtStart = true, override = true) {
+            bean { HassApi(khomeSession, get(), get(), get()) }
             bean { Sun() }
             bean { Time() }
             bean { DateTime() }
             service { PersistentNotificationCreate() }
             if (configuration.enableDefaultErrorResponseHandler)
-                bean<ErrorResponseHandlerInterface> { DefaultErrorResponseHandler(get()) }
+                bean<ErrorResponseHandlerInterface> { DefaultErrorResponseObserver(get(), get()) }
             if (configuration.enableDefaultStateChangeListenerExceptionHandler)
                 bean<StateChangeListenerExceptionHandler> { DefaultStateChangeListenerExceptionHandler(get(), get()) }
             if (configuration.enableHassEventListenerExceptionHandler)
