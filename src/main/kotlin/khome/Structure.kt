@@ -10,17 +10,21 @@ import khome.core.MessageInterface
 import khome.core.ResultResponse
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.EntityCollection
-import khome.core.entities.EntityInterface
+import khome.core.entities.EntitySubject
+import khome.core.events.EntityObserverExceptionHandler
 import khome.core.events.EventData
 import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
-import khome.listening.HassEventListener
-import khome.listening.StateListener
+import khome.observing.EntityObservable
+import khome.observing.EntityObservableContext
+import khome.observing.EntityObservableFunction
+import khome.observing.HassEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.core.get
+import java.util.UUID
 
 @Suppress("unused")
 @ObsoleteCoroutinesApi
@@ -52,11 +56,11 @@ abstract class KhomeComponent : KhomeKoinComponent {
     suspend inline fun <reified Event : HassEvent> emitEvent(eventData: EventData? = null) =
         hassApi.emitHassEvent(get<Event>(), eventData)
 
-    suspend inline fun <reified CallType : EntityBasedServiceCall> Iterable<EntityInterface>.callServiceEach(noinline mutate: CallType.(EntityInterface) -> Unit) =
+    suspend inline fun <reified CallType : EntityBasedServiceCall> Iterable<EntitySubject<*>>.callServiceEach(noinline mutate: CallType.(EntitySubject<*>) -> Unit) =
         forEach { callService<CallType> { mutate(it) } }
 }
 
-abstract class Repository<Entity : EntityInterface> : KhomeKoinComponent {
+abstract class Repository<Entity : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entity: Entity
 
     @PublishedApi
@@ -70,7 +74,7 @@ abstract class Repository<Entity : EntityInterface> : KhomeKoinComponent {
     }
 }
 
-abstract class CollectionRepository<EntityType : EntityInterface> : KhomeKoinComponent {
+abstract class CollectionRepository<EntityType : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entities: EntityCollection<EntityType>
 
     @PublishedApi
@@ -85,18 +89,17 @@ abstract class CollectionRepository<EntityType : EntityInterface> : KhomeKoinCom
         }
 }
 
-abstract class EntityObserver<Entity : EntityInterface> : KhomeKoinComponent {
-
+abstract class EntityObserver<Entity : EntitySubject<*>> : KhomeKoinComponent {
+    private val coroutineContext = Dispatchers.IO
+    private val exceptionHandler: EntityObserverExceptionHandler = get()
     abstract val observedEntity: Entity
 
-    fun onStateChange(callback: suspend CoroutineScope.(Entity) -> Unit) =
-        StateListener(
-            context = Dispatchers.IO,
-            entity = observedEntity,
-            exceptionHandler = get(),
-            stateChangeEvent = get(),
-            listener = callback
-        ).lifeCycleHandler
+    fun onStateChange(observable: EntityObservableFunction): Entity {
+        val handle: String = UUID.randomUUID().toString()
+        val observableContext = coroutineContext + exceptionHandler + EntityObservableContext(observedEntity, handle)
+        observedEntity[handle] = EntityObservable(observableContext, observable)
+        return observedEntity
+    }
 }
 
 abstract class ErrorResponseObserver : KhomeKoinComponent {

@@ -23,7 +23,7 @@ internal class KhomeSession(
     private val logger = KotlinLogging.logger {}
     private val objectMapper: ObjectMapper = get()
     suspend fun callWebSocketApi(message: MessageInterface) =
-        send(message.toJson()).also { logger.info { "Called hass api with message: ${message.toJson()}" } }
+        send(message.toJson()).also { logger.debug { "Called hass api with message: ${message.toJson()}" } }
 
     suspend fun callWebSocketApi(message: ServiceCallInterface) =
         send(message.toJson()).also { logger.info { "Called hass api with service call message: ${message.toJson()}" } }

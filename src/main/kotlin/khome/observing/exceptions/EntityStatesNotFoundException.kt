@@ -1,4 +1,4 @@
-package khome.listening.exceptions
+package khome.observing.exceptions
 
 import java.lang.RuntimeException
 

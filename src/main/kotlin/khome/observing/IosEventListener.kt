@@ -1,4 +1,4 @@
-package khome.listening
+package khome.observing
 
 import khome.KhomeComponent
 import khome.core.events.ios.IosActionEvent

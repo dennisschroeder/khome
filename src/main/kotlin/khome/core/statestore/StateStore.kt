@@ -1,7 +1,6 @@
 package khome.core.statestore
 
-import khome.core.NewState
-import khome.core.OldState
+import khome.core.State
 import java.util.Collections
 
 interface StateStoreInterface {
@@ -31,4 +30,4 @@ internal class StateStore : Iterable<MutableMap.MutableEntry<String, StateStoreE
     override fun clear() = list.clear()
 }
 
-data class StateStoreEntry(val oldState: OldState, val newState: NewState)
+data class StateStoreEntry(val oldState: State, val newState: State)

@@ -1,4 +1,4 @@
-package khome.listening
+package khome.observing
 
 import khome.core.events.EventInterface
 import mu.KotlinLogging

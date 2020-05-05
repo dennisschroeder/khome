@@ -1,23 +1,23 @@
 package khome.core.entities.system
 
-import khome.core.entities.AbstractEntity
-import khome.core.entities.getAttribute
+import khome.core.entities.EntitySubject
+import khome.core.getAttribute
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-class Sun : AbstractEntity<String>("sun", "sun") {
+class Sun : EntitySubject<String>("sun", "sun") {
     val logger: KLogger = KotlinLogging.logger {}
-    val isUp get() = newState.state == "above_horizon"
-    val isDown get() = newState.state == "below_horizon"
+    val isUp get() = state.state == "above_horizon"
+    val isDown get() = state.state == "below_horizon"
 
     val nextSunrise get() = getNextSunPosition("next_rising")
     val nextSunset get() = getNextSunPosition("next_setting")
 
     private fun getNextSunPosition(nextPosition: String): LocalDateTime {
-        val nextSunPositionChange = newState.getAttribute<String>(nextPosition)
+        val nextSunPositionChange = state.getAttribute<String>(nextPosition)
         return convertUtcToLocalDateTime(nextSunPositionChange)
     }
 

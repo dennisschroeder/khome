@@ -4,8 +4,8 @@ import khome.calling.PersistentNotificationCreate
 import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.ErrorResponseListenerContext
-import khome.listening.HassEventListenerContext
-import khome.listening.StateListenerContext
+import khome.observing.EntityObservableContext
+import khome.observing.HassEventListenerContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,31 +14,31 @@ import mu.KotlinLogging
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-class DefaultStateChangeListenerExceptionHandler(
+class DefaultEntityObserverExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface
-) : AbstractCoroutineContextElement(CoroutineExceptionHandler), StateChangeListenerExceptionHandler {
+) : AbstractCoroutineContextElement(CoroutineExceptionHandler), EntityObserverExceptionHandler {
 
     private val logger = KotlinLogging.logger { }
     override fun handleException(context: CoroutineContext, exception: Throwable) =
-        context[StateListenerContext]?.let { stateListenerContext ->
-            logger.error(exception) { "Caught Exception in listener of entity: ${stateListenerContext.entityId} with handle: ${stateListenerContext.handle}" }
+        context[EntityObservableContext]?.let { entityObservableContext ->
+            logger.error(exception) { "Caught Exception in listener of entity: ${entityObservableContext.entity.id} with handle: ${entityObservableContext.handle}" }
             CoroutineScope(Dispatchers.IO).launch {
                 logger.info { "In CoroutineScope" }
                 baseKhomeComponent.callService<PersistentNotificationCreate> {
                     configure {
-                        notificationId = stateListenerContext.entityId
+                        notificationId = entityObservableContext.entity.id
                         title = "Error in Khome application: ${configurationInterface.name}"
                         message = """
-                        Caught Exception in listener of entity: **${stateListenerContext.entityId}** 
-                        with handle: ${stateListenerContext.handle}
+                        Caught Exception in listener of entity: **${entityObservableContext.entity.id}** 
+                        with handle: ${entityObservableContext.handle}
                         $exception
                         ${exception.stackTrace.first()}
                     """.trimIndent()
                     }
                 }
             }
-            stateListenerContext.lifeCycleHandler.disable()
+            entityObservableContext.disableObservable()
         } ?: throw IllegalStateException("No StateListenerContext in coroutine context.")
 }
 
@@ -96,7 +96,7 @@ class DefaultErrorResultListenerExceptionHandler(
         } ?: throw IllegalStateException("No ErrorResponseListenerContext in coroutine context.")
 }
 
-interface StateChangeListenerExceptionHandler : CoroutineExceptionHandler
+interface EntityObserverExceptionHandler : CoroutineExceptionHandler
 
 interface EventListenerExceptionHandler : CoroutineExceptionHandler
 

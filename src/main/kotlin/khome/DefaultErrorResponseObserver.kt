@@ -4,7 +4,7 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.PersistentNotificationCreate
 import khome.core.ConfigurationInterface
 import khome.core.ResultResponse
-import khome.listening.LifeCycleHandler
+import khome.observing.LifeCycleHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get

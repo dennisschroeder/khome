@@ -1,12 +1,12 @@
 package khome.calling
 
-import khome.core.entities.EntityInterface
+import khome.core.entities.EntitySubjectInterface
 
 /**
  * Turns on an entity that is capable of being turned on.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  *
- * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
+ * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 class TurnOn :
     EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_ON)
@@ -15,7 +15,7 @@ class TurnOn :
  * Turns off an entity that is capable of being turned off.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  *
- * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
+ * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 class TurnOff :
     EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_OFF)
@@ -24,7 +24,7 @@ class TurnOff :
  * Toggles an entity that is capable of being turned on and off.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  *
- * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
+ * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 
 class Toggle :
@@ -34,7 +34,7 @@ class Toggle :
  * Updates an entity..
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  *
- * @param entity An object that inherits the [EntityInterface] that represents an entity in home-assistant.
+ * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 
 class UpdateEntity :

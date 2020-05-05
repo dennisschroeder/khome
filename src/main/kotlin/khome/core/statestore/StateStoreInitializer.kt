@@ -1,8 +1,6 @@
 package khome.core.statestore
 
 import khome.KhomeSession
-import khome.core.NewState
-import khome.core.OldState
 import khome.core.boot.BootSequenceInterface
 import khome.core.dependencyInjection.CallerID
 import mu.KotlinLogging
@@ -37,7 +35,7 @@ internal class StateStoreInitializer(
             true -> {
                 statesResponse.result.forEach { state ->
                     stateStore[state.entityId] =
-                        StateStoreEntry(OldState(state), NewState(state))
+                        StateStoreEntry(state, state)
                     logger.debug { "Fetched state with data: ${stateStore[state.entityId]}" }
                 }
                 logger.info { "Stored homeassistant states in local state store" }

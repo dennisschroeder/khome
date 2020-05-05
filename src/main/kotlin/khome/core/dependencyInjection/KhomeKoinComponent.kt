@@ -2,7 +2,7 @@ package khome.core.dependencyInjection
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.calling.ServiceCall
-import khome.core.entities.EntityInterface
+import khome.core.entities.EntitySubjectInterface
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +23,7 @@ interface KhomeKoinComponent : KoinComponent {
  * @param qualifier
  * @param parameters
  */
-inline fun <reified T : EntityInterface> KhomeKoinComponent.entity(
+inline fun <reified T : EntitySubjectInterface> KhomeKoinComponent.entity(
     qualifier: Qualifier? = null,
     noinline parameters: ParametersDefinition? = null
 ): T = get(qualifier, parameters)

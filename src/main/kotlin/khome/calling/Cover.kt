@@ -1,6 +1,6 @@
 package khome.calling
 
-import khome.core.entities.EntityInterface
+import khome.core.entities.EntitySubjectInterface
 
 class OpenCover : EntityIdOnlyServiceCall(Domain.COVER, CoverService.OPEN_COVER)
 
@@ -14,7 +14,7 @@ class SetCoverPosition : EntityBasedServiceCall(Domain.COVER, CoverService.SET_C
 }
 
 data class CoverData(
-    override var entityId: EntityInterface?,
+    override var entityId: EntitySubjectInterface?,
     var position: Int?
 
 ) : EntityBasedServiceDataInterface

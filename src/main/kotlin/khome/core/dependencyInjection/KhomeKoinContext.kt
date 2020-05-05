@@ -22,13 +22,12 @@ import khome.core.DefaultConfiguration
 import khome.core.authentication.Authenticator
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
-import khome.core.entities.EntityInterface
+import khome.core.entities.EntitySubjectInterface
 import khome.core.events.ErrorResponseEvent
 import khome.core.events.Event
 import khome.core.events.EventResponseConsumer
 import khome.core.events.HassEventRegistry
 import khome.core.events.HassEventSubscriber
-import khome.core.events.StateChangeEvent
 import khome.core.events.StateChangeEventSubscriber
 import khome.core.mapping.KhomeEntityConverter
 import khome.core.mapping.ObjectMapper
@@ -87,13 +86,12 @@ object KhomeKoinContext {
                     .setPrettyPrinting()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
-                    .registerTypeAdapter(EntityInterface::class.java, KhomeEntityConverter().nullSafe())
+                    .registerTypeAdapter(EntitySubjectInterface::class.java, KhomeEntityConverter().nullSafe())
                     .create()!!
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
-            single { StateChangeEvent(Event()) }
             single { ErrorResponseEvent(Event()) }
             single { HassEventRegistry() }
             single { ServiceCoroutineContext(newSingleThreadContext("ServiceContext")) }
@@ -189,11 +187,10 @@ object KhomeKoinContext {
             single { (khomeSession: KhomeSession) ->
                 EventResponseConsumer(
                     khomeSession = khomeSession,
-                    stateChangeEvent = get(),
                     objectMapper = get(),
-                    stateStore = get(),
                     hassEventRegistry = get(),
-                    errorResponseEvent = get()
+                    errorResponseEvent = get(),
+                    entityIdToEntityTypeMap = get()
                 )
             }
 

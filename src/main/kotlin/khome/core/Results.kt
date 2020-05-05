@@ -1,6 +1,8 @@
 package khome.core
 
 import com.google.gson.annotations.SerializedName
+import khome.core.exceptions.InvalidAttributeValueTypeException
+import kotlinx.coroutines.delay
 import java.time.OffsetDateTime
 data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
 data class StateChangedResponse(val id: Int, val type: ResponseType, val event: EventData) : MessageInterface
@@ -19,9 +21,6 @@ interface EventDtoInterface {
     val origin: String
 }
 
-data class NewState(private val delegate: State) : StateInterface by delegate
-data class OldState(private val delegate: State) : StateInterface by delegate
-
 data class State(
     override val entityId: String,
     override val lastChanged: OffsetDateTime,
@@ -36,6 +35,43 @@ interface StateInterface : MessageInterface {
     val state: Any
     val attributes: Map<String, Any>
     val lastUpdated: OffsetDateTime
+}
+
+inline fun <reified T> StateInterface.getAttribute(key: String): T {
+    return attributes[key] as? T ?: throw InvalidAttributeValueTypeException(
+        "Attribute value for $key is of type: ${(attributes[key]
+            ?: error("Key not valid"))::class}."
+    )
+}
+
+suspend fun StateInterface.hasStateChangedAfter(millis: Long): Boolean {
+    val initial = state
+    delay(millis)
+    val afterDelay = state
+    return initial == afterDelay
+}
+
+suspend fun StateInterface.hasAttributesChangedAfter(millis: Long, vararg attributes: String): Boolean {
+    val results = attributes.map { attribute ->
+        hasAttributeChangedAfter(millis, attribute)
+    }
+
+    return results.contains(false)
+}
+
+suspend fun StateInterface.hasAttributeChangedAfter(millis: Long, attribute: String): Boolean {
+    val initial = attributes[attribute]
+    delay(millis)
+    val afterDelay = attributes[attribute]
+    return initial == afterDelay
+}
+
+suspend fun StateInterface.onlyIfStateHasNotChangedAfter(millis: Long, block: suspend () -> Unit) {
+    if (hasStateChangedAfter(millis)) block()
+}
+
+suspend fun StateInterface.onlyIfAttributeHasNotChangedAfter(millis: Long, attribute: String, block: suspend () -> Unit) {
+    if (hasAttributeChangedAfter(millis, attribute)) block()
 }
 
 data class ResultResponse(

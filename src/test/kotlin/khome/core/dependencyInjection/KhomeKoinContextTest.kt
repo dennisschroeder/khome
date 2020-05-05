@@ -14,7 +14,6 @@ import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
-import khome.core.events.StateChangeEvent
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.servicestore.ServiceStore

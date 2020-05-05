@@ -7,15 +7,15 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.core.HassEventResponse
 import khome.core.MessageInterface
-import khome.core.NewState
-import khome.core.OldState
 import khome.core.ResolverResponse
 import khome.core.ResponseType
 import khome.core.ResultResponse
 import khome.core.StateChangedResponse
 import khome.core.boot.BootSequenceInterface
+import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.entities.EntityIdToEntityTypeMap
+import khome.core.entities.EntitySubject
 import khome.core.mapping.ObjectMapper
-import khome.core.statestore.StateStoreInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -27,12 +27,11 @@ import mu.KotlinLogging
 @ExperimentalCoroutinesApi
 internal class EventResponseConsumer(
     override val khomeSession: KhomeSession,
-    private val stateChangeEvent: StateChangeEvent,
     private val objectMapper: ObjectMapper,
-    private val stateStore: StateStoreInterface,
     private val hassEventRegistry: HassEventRegistry,
-    private val errorResponseEvent: ErrorResponseEvent
-) : BootSequenceInterface {
+    private val errorResponseEvent: ErrorResponseEvent,
+    private val entityIdToEntityTypeMap: EntityIdToEntityTypeMap
+) : BootSequenceInterface, KhomeKoinComponent {
     private val logger = KotlinLogging.logger { }
 
     override suspend fun runBootSequence() = coroutineScope {
@@ -59,12 +58,17 @@ internal class EventResponseConsumer(
                 ?: throw IllegalStateException("Frame could not ne casted to Frame.Text")
         }
 
-    private suspend fun handleStateChangedResponse(frameText: Frame.Text) =
+    private fun handleStateChangedResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<StateChangedResponse>(frameText)
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
-                updateStateStore(stateChangedResponse)
-                stateChangeEvent.emit(stateChangedResponse)
+                entityIdToEntityTypeMap[stateChangedResponse.event.data.entityId]?.let { clazz ->
+                    logger.debug { "Found type for ${stateChangedResponse.event.data.entityId}" }
+                    stateChangedResponse.event.data.newState?.let { state ->
+                        logger.debug { "update entity state with $state" }
+                        getKoin().get<EntitySubject<*>>(clazz, null, null)._state = state
+                    }
+                }
             }
 
     private suspend fun handleHassEventResponse(frameText: Frame.Text) =
@@ -81,24 +85,6 @@ internal class EventResponseConsumer(
                     event for this unknown event type: ${hassEventResponse.event.eventType}.
                 """
             }
-
-    private fun updateStateStore(stateChange: StateChangedResponse) {
-        if (stateChange.event.data.oldState == null && stateChange.event.data.newState == null)
-            throw IllegalStateException("Both states (old and new) are null in ${stateChange.event.data.entityId}")
-
-        stateStore[stateChange.event.data.entityId]?.let { stateStoreEntry ->
-            stateChange.event.data.oldState?.let { state ->
-                val updatedState = stateStoreEntry.copy(oldState = OldState(state))
-                stateStore[stateChange.event.data.entityId] = updatedState
-            }
-
-            stateChange.event.data.newState?.let { state ->
-                val updatedState = stateStoreEntry.copy(newState = NewState(state))
-                stateStore[stateChange.event.data.entityId] = updatedState
-            }
-        }
-            ?: logger.info { "Entity: \"${stateChange.event.data.entityId}\" could not be updated because it got created by homeassistant during runtime." }
-    }
 
     private fun handleSuccessResultResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<ResultResponse>(frameText)
@@ -119,6 +105,9 @@ internal class EventResponseConsumer(
     private fun logFailureResponse(resultResponse: ResultResponse) =
         logger.error { "CallId: ${resultResponse.id} -  errorCode: ${resultResponse.error!!.code} ${resultResponse.error.message}" }
 
-    private suspend fun emitFailureResponseEvent(resultResponse: ResultResponse, errorResponseEvent: ErrorResponseEvent) =
+    private suspend fun emitFailureResponseEvent(
+        resultResponse: ResultResponse,
+        errorResponseEvent: ErrorResponseEvent
+    ) =
         errorResponseEvent.emit(resultResponse)
 }

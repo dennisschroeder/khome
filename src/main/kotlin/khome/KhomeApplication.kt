@@ -14,6 +14,7 @@ import khome.core.statestore.StateStoreInitializer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mu.KotlinLogging
 import org.koin.core.get
 import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
@@ -24,6 +25,7 @@ import org.koin.core.parameter.parametersOf
 class KhomeApplication : KhomeKoinComponent {
     private val khomeClient: KhomeClient by inject()
     private val baseKhomeComponent: BaseKhomeComponent by inject()
+    private val logger = KotlinLogging.logger { }
 
     @InternalCoroutinesApi
     suspend fun runApplication(listeners: suspend BaseKhomeComponent.() -> Unit = {}) =
@@ -35,9 +37,9 @@ class KhomeApplication : KhomeKoinComponent {
 
             runBootSequence<StateStoreInitializer>(this)
 
-            runBootSequence<KhomeModulesInitializer>(this)
-
             runBootSequence<HassEventSubscriber>(this)
+
+            runBootSequence<KhomeModulesInitializer>(this)
 
             listeners(baseKhomeComponent)
 
