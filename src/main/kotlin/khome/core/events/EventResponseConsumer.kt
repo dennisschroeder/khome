@@ -22,6 +22,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi

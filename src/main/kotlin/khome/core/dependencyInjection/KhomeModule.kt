@@ -46,6 +46,7 @@ fun khomeModule(
     return khomeModule
 }
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 fun loadKhomeModule(module: KhomeModule) =

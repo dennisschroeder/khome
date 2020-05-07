@@ -15,6 +15,7 @@ import org.koin.core.qualifier.Qualifier
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 interface KhomeKoinComponent : KoinComponent {
+    @ExperimentalStdlibApi
     override fun getKoin(): Koin = checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
 
@@ -38,6 +39,7 @@ inline fun <reified T : ServiceCall> KhomeKoinComponent.service(
     noinline parameters: ParametersDefinition? = null
 ): T = get(qualifier, parameters)
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 abstract class KhomeTestComponent : KhomeKoinComponent {

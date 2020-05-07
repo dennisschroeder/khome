@@ -16,6 +16,7 @@ import org.junit.jupiter.api.assertThrows
 import org.koin.core.error.InstanceCreationException
 import org.koin.core.get
 
+@ExperimentalStdlibApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ServiceCallTest : KhomeTestComponent() {
 

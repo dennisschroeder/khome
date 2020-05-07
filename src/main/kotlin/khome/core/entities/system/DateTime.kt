@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@ExperimentalStdlibApi
 class DateTime : SensorEntity("date_time_iso") {
     private val currentDateTime get() = state.state as String
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME

@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+@ExperimentalStdlibApi
 class Sun : EntitySubject<String>("sun", "sun") {
     val logger: KLogger = KotlinLogging.logger {}
     val isUp get() = state.state == "above_horizon"

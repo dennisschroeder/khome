@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
 
+@ExperimentalStdlibApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ErrorResponseEventTest : KhomeTestComponent() {
     private val logger = KotlinLogging.logger { }

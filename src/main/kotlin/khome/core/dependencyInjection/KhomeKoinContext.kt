@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package khome.core.dependencyInjection
 
 import com.google.gson.FieldNamingPolicy
@@ -11,7 +13,6 @@ import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.header
 import io.ktor.client.request.host
 import io.ktor.client.request.port
-import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeApplication
 import khome.KhomeClient
 import khome.KhomeSession
@@ -36,11 +37,7 @@ import khome.core.mapping.OffsetDateTimeAdapter
 import khome.core.servicestore.ServiceStore
 import khome.core.servicestore.ServiceStoreInitializer
 import khome.core.servicestore.ServiceStoreInterface
-import khome.core.statestore.StateStore
-import khome.core.statestore.StateStoreInitializer
-import khome.core.statestore.StateStoreInterface
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import khome.core.statestore.EntityStateInitializer
 import kotlinx.coroutines.newSingleThreadContext
 import mu.KotlinLogging
 import org.koin.core.KoinApplication
@@ -58,8 +55,7 @@ internal typealias CallerID = AtomicInteger
  * @link https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
  */
 
-@KtorExperimentalAPI
-@ObsoleteCoroutinesApi
+@ExperimentalStdlibApi
 object KhomeKoinContext {
     private const val NAME = "NAME"
     private const val HOST = "HOST"
@@ -77,7 +73,6 @@ object KhomeKoinContext {
     var application: KoinApplication? = null
     private val logger = KotlinLogging.logger {}
 
-    @ExperimentalCoroutinesApi
     private var internalModule: Module =
         module {
 
@@ -90,7 +85,6 @@ object KhomeKoinContext {
                     .create()!!
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
-            single<StateStoreInterface> { StateStore() }
             single<ServiceStoreInterface> { ServiceStore() }
             single { ErrorResponseEvent(Event()) }
             single { HassEventRegistry() }
@@ -162,10 +156,10 @@ object KhomeKoinContext {
                 )
             }
             single { (khomeSession: KhomeSession) ->
-                StateStoreInitializer(
+                EntityStateInitializer(
                     khomeSession = khomeSession,
                     callerID = get(),
-                    stateStore = get()
+                    entityIdToEntityTypeMap = get()
                 )
             }
 
@@ -205,7 +199,6 @@ object KhomeKoinContext {
             single { KhomeApplication() }
         }
 
-    @ExperimentalCoroutinesApi
     fun startKoinApplication() {
         application = koinApplication {
             environmentProperties()

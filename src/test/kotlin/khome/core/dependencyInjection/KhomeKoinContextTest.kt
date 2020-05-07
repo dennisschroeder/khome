@@ -18,8 +18,6 @@ import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.servicestore.ServiceStore
 import khome.core.servicestore.ServiceStoreInterface
-import khome.core.statestore.StateStore
-import khome.core.statestore.StateStoreInterface
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,6 +27,7 @@ import org.koin.dsl.bind
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 
+@ExperimentalStdlibApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class KhomeKoinContextTest : KhomeKoinComponent {
 
@@ -44,17 +43,11 @@ internal class KhomeKoinContextTest : KhomeKoinComponent {
         assertThat {
             val gson: Gson = get()
 
-            val stateStore: StateStoreInterface = get()
-            assertThat(stateStore).isInstanceOf(StateStore::class)
-
             val serviceStore: ServiceStoreInterface = get()
             assertThat(serviceStore).isInstanceOf(ServiceStore::class)
 
             val objectMapperInterface: ObjectMapperInterface = get()
             val objectMapperImplementation: ObjectMapper = get()
-
-            val stateChangeEvent: StateChangeEvent = get()
-            val failureResponseEvent: StateChangeEvent = get()
 
             val serviceCoroutineContext: ServiceCoroutineContext = get()
             assertThat(serviceCoroutineContext).isInstanceOf(CoroutineContext::class)
@@ -109,6 +102,6 @@ internal class KhomeKoinContextTest : KhomeKoinComponent {
 
     @AfterEach
     fun close() {
-        sut.application?.let { it.close() }
+        sut.application?.close()
     }
 }

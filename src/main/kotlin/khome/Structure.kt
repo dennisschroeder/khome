@@ -15,7 +15,7 @@ import khome.core.events.EntityObserverExceptionHandler
 import khome.core.events.EventData
 import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
-import khome.observing.EntityObservable
+import khome.observing.ObservableCoroutine
 import khome.observing.EntityObservableContext
 import khome.observing.EntityObservableFunction
 import khome.observing.HassEventListener
@@ -26,6 +26,7 @@ import mu.KotlinLogging
 import org.koin.core.get
 import java.util.UUID
 
+@ExperimentalStdlibApi
 @Suppress("unused")
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
@@ -59,7 +60,7 @@ abstract class KhomeComponent : KhomeKoinComponent {
     suspend inline fun <reified CallType : EntityBasedServiceCall> Iterable<EntitySubject<*>>.callServiceEach(noinline mutate: CallType.(EntitySubject<*>) -> Unit) =
         forEach { callService<CallType> { mutate(it) } }
 }
-
+@ExperimentalStdlibApi
 abstract class Repository<Entity : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entity: Entity
 
@@ -73,7 +74,7 @@ abstract class Repository<Entity : EntitySubject<*>> : KhomeKoinComponent {
         hassApi.callHassService(service)
     }
 }
-
+@ExperimentalStdlibApi
 abstract class CollectionRepository<EntityType : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entities: EntityCollection<EntityType>
 
@@ -88,7 +89,7 @@ abstract class CollectionRepository<EntityType : EntitySubject<*>> : KhomeKoinCo
             hassApi.callHassService(service)
         }
 }
-
+@ExperimentalStdlibApi
 abstract class EntityObserver<Entity : EntitySubject<*>> : KhomeKoinComponent {
     private val coroutineContext = Dispatchers.IO
     private val exceptionHandler: EntityObserverExceptionHandler = get()
@@ -97,11 +98,11 @@ abstract class EntityObserver<Entity : EntitySubject<*>> : KhomeKoinComponent {
     fun onStateChange(observable: EntityObservableFunction): Entity {
         val handle: String = UUID.randomUUID().toString()
         val observableContext = coroutineContext + exceptionHandler + EntityObservableContext(observedEntity, handle)
-        observedEntity[handle] = EntityObservable(observableContext, observable)
+        observedEntity[handle] = ObservableCoroutine(observableContext, observable)
         return observedEntity
     }
 }
-
+@ExperimentalStdlibApi
 abstract class ErrorResponseObserver : KhomeKoinComponent {
     fun onErrorResponse(callback: suspend CoroutineScope.(ResultResponse) -> Unit) =
         ErrorResponseListener(

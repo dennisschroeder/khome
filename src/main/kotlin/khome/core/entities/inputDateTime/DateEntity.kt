@@ -4,6 +4,7 @@ import khome.core.entities.EntitySubject
 import khome.core.getAttribute
 import java.time.LocalDate
 
+@ExperimentalStdlibApi
 abstract class DateEntity(name: String) :
     EntitySubject<String>("input_datetime", name) {
 

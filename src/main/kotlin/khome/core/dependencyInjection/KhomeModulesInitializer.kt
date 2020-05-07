@@ -1,5 +1,6 @@
 package khome.core.dependencyInjection
 
+import io.ktor.util.KtorExperimentalAPI
 import khome.DefaultErrorResponseObserver
 import khome.ErrorResponseHandlerInterface
 import khome.HassApi
@@ -18,7 +19,9 @@ import khome.core.events.DefaultEntityObserverExceptionHandler
 import khome.core.events.ErrorResultListenerExceptionHandler
 import khome.core.events.EventListenerExceptionHandler
 import khome.core.events.EntityObserverExceptionHandler
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
+@OptIn(ObsoleteCoroutinesApi::class, ExperimentalStdlibApi::class, KtorExperimentalAPI::class)
 internal class KhomeModulesInitializer(
     override val khomeSession: KhomeSession,
     private val configuration: ConfigurationInterface

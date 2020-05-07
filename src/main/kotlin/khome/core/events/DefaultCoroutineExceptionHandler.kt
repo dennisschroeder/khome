@@ -14,13 +14,14 @@ import mu.KotlinLogging
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
+@ExperimentalStdlibApi
 class DefaultEntityObserverExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface
 ) : AbstractCoroutineContextElement(CoroutineExceptionHandler), EntityObserverExceptionHandler {
 
     private val logger = KotlinLogging.logger { }
-    override fun handleException(context: CoroutineContext, exception: Throwable) =
+    override fun handleException(context: CoroutineContext, exception: Throwable) {
         context[EntityObservableContext]?.let { entityObservableContext ->
             logger.error(exception) { "Caught Exception in listener of entity: ${entityObservableContext.entity.id} with handle: ${entityObservableContext.handle}" }
             CoroutineScope(Dispatchers.IO).launch {
@@ -30,18 +31,20 @@ class DefaultEntityObserverExceptionHandler(
                         notificationId = entityObservableContext.entity.id
                         title = "Error in Khome application: ${configurationInterface.name}"
                         message = """
-                        Caught Exception in listener of entity: **${entityObservableContext.entity.id}** 
-                        with handle: ${entityObservableContext.handle}
-                        $exception
-                        ${exception.stackTrace.first()}
-                    """.trimIndent()
+                            Caught Exception in listener of entity: **${entityObservableContext.entity.id}** 
+                            with handle: ${entityObservableContext.handle}
+                            $exception
+                            ${exception.stackTrace.first()}
+                        """.trimIndent()
                     }
                 }
             }
             entityObservableContext.disableObservable()
         } ?: throw IllegalStateException("No StateListenerContext in coroutine context.")
+    }
 }
 
+@ExperimentalStdlibApi
 class DefaultHassEventListenerExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface
@@ -69,6 +72,7 @@ class DefaultHassEventListenerExceptionHandler(
         } ?: throw IllegalStateException("No HassEventListenerContext in coroutine context.")
 }
 
+@ExperimentalStdlibApi
 class DefaultErrorResultListenerExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface

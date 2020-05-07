@@ -18,6 +18,7 @@ import java.time.OffsetDateTime
 
 data class TestData(val text: String, val number: Int, val state: Boolean, val dateTime: OffsetDateTime?)
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

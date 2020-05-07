@@ -16,6 +16,7 @@ import org.koin.core.get
  * @return instance of Khome class instantiated with default values.
  */
 
+@ExperimentalStdlibApi
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI

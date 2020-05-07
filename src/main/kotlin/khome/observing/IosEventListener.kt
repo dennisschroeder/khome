@@ -4,6 +4,7 @@ import khome.KhomeComponent
 import khome.core.events.ios.IosActionEvent
 import khome.core.events.ios.IosNotificationEvent
 
+@ExperimentalStdlibApi
 inline fun KhomeComponent.onIosActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosActionEvent> { eventData ->
         val iosActionEventData = IosActionEventData(
@@ -19,6 +20,7 @@ inline fun KhomeComponent.onIosActionEvent(crossinline callback: suspend (IosAct
     }
 }
 
+@ExperimentalStdlibApi
 inline fun KhomeComponent.onIosNotificationActionEvent(crossinline callback: suspend (IosActionEventDataInterface) -> Unit) {
     onHassEvent<IosNotificationEvent> { eventData ->
         val iosNotificationEventData = IosActionEventData(

@@ -5,7 +5,6 @@ import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
-import khome.core.entities.getAttribute
 import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.core.mapping.ObjectMapper
 import khome.core.servicestore.ServicesResponse
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.assertThrows
 import org.koin.core.get
 import java.time.OffsetDateTime
 
+@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

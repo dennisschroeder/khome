@@ -3,6 +3,7 @@ package khome.core.entities.light
 import khome.core.entities.EntitySubject
 import khome.core.hasStateChangedAfter
 
+@ExperimentalStdlibApi
 abstract class LightEntity(name: String) : EntitySubject<String>("light", name) {
     open val isOn get() = state.state == "on"
     open val isOff get() = state.state == "off"

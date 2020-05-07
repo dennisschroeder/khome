@@ -3,6 +3,7 @@ package khome.core.entities.mediaPlayer
 import khome.core.entities.EntitySubject
 import khome.core.getAttribute
 
+@ExperimentalStdlibApi
 abstract class MediaPlayerEntity(name: String) : EntitySubject<String>("media_player", name) {
     open val isOn get() = state.state == "on"
     open val isOff get() = state.state == "off"

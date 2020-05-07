@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
+@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

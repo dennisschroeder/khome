@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
+@ExperimentalStdlibApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class HassEventRegistryTest : KhomeTestComponent() {
 

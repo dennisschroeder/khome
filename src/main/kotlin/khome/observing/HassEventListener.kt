@@ -12,6 +12,7 @@ import java.util.UUID
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
+@ExperimentalStdlibApi
 inline fun <reified EventType : HassEvent> KhomeComponent.onHassEvent(
     context: CoroutineContext = Dispatchers.IO,
     noinline callback: suspend CoroutineScope.(EventData) -> Unit
