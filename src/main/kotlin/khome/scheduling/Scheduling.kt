@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 inline fun <reified TimeEntity : khome.core.entities.inputDateTime.TimeEntity> KhomeComponent.onTimeDaily(noinline callback: LocalTime.() -> Unit): Time {
@@ -25,7 +24,6 @@ inline fun <reified TimeEntity : khome.core.entities.inputDateTime.TimeEntity> K
     }
 }
 
-@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onTimeDaily(executeAt: String, callback: LocalTime.() -> Unit): Time {
@@ -34,7 +32,6 @@ fun KhomeComponent.onTimeDaily(executeAt: String, callback: LocalTime.() -> Unit
     return onTimeDaily(localTime, callback)
 }
 
-@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onTimeDaily(executeAt: LocalTime, callback: LocalTime.() -> Unit): Time {
@@ -45,7 +42,6 @@ fun KhomeComponent.onTimeDaily(executeAt: LocalTime, callback: LocalTime.() -> U
     }
 }
 
-@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 inline fun <reified DateTimeEntity : khome.core.entities.inputDateTime.DateTimeEntity> KhomeComponent.onDateTime(
@@ -61,7 +57,6 @@ inline fun <reified DateTimeEntity : khome.core.entities.inputDateTime.DateTimeE
         }
     }
 
-@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onDateTime(
@@ -74,7 +69,6 @@ fun KhomeComponent.onDateTime(
     return onDateTime(localDateTime, callback)
 }
 
-@ExperimentalStdlibApi
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 fun KhomeComponent.onDateTime(executeAt: LocalDateTime, callback: LocalDateTime.() -> Unit): DateTime {

@@ -2,77 +2,107 @@ package khome.core.entities
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
+import khome.core.StateAttributes
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.exceptions.InvalidStateValueTypeException
-import khome.observing.ObservableCoroutine
+import khome.observing.AsyncStateObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.inject
 import java.time.OffsetDateTime
+import java.util.UUID
 import kotlin.properties.Delegates.observable
 import kotlin.reflect.KClass
 
+typealias StateHistory = CircularBuffer<State>
+typealias StateHistorySnapshot = List<State>
+
+data class EntityId(private val domain: String, private val id: String) {
+    override fun toString(): String = "$domain.$id"
+
+    companion object {
+        fun fromString(entityId: String): EntityId {
+            val domain: String = entityId.split(".").first()
+            val id: String = entityId.split(".").last()
+            return EntityId(domain, id)
+        }
+    }
+}
+
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-@OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class, ExperimentalStdlibApi::class)
-abstract class EntitySubject<StateValueType>(
-    override val domain: String,
-    override val name: String
+@OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class)
+abstract class EntitySubject<StateValueType : Any>(
+    final override val domain: String,
+    final override val id: String,
+    historyCapacity: Int = 10
 ) : KhomeKoinComponent, EntitySubjectInterface {
 
     private val entityIdToEntityTypeMap: EntityIdToEntityTypeMap by inject()
-    final override val id: String get() = "$domain.$name"
+    final override val entityId: EntityId
+        get() = EntityId(domain, id)
 
-    private val initialState = State(id, OffsetDateTime.now(), "initial", emptyMap(), OffsetDateTime.now())
-    internal var _state: State by observable(initialState) { _, old, new ->
-        _stateArchive.archive(old)
-        observables.forEach { func -> func.value(old, new) }
-    }
+    private val initialState = State(entityId, OffsetDateTime.now(), "initial", emptyMap(), OffsetDateTime.now())
 
-    override val state get() = _state
-
-    private val _stateArchive = StateArchive<State>(10)
-    private val observables: HashMap<String, ObservableCoroutine> = hashMapOf()
-    val size = observables.size
-    operator fun set(handle: String, observable: ObservableCoroutine) {
-        observables[handle] = observable
-    }
-
-    fun removeObservable(handle: String) {
-        observables.remove(handle)
+    internal var _state: State by observable(initialState) { _, oldState, newState ->
+        if (oldState.state != "initial") stateHistory.add(oldState)
+        val historySnapshot: StateHistorySnapshot = stateHistory.snapshot()
+        observers.forEach { mapEntry -> mapEntry.value(historySnapshot, newState) }
     }
 
     init {
         @Suppress("UNCHECKED_CAST")
         if (_state.state as? StateValueType == null) throw InvalidStateValueTypeException("Could not cast new state val to type parameter of entity: $id ")
-        entityIdToEntityTypeMap[id] = this::class
+        entityIdToEntityTypeMap[entityId] = this::class
     }
 
-    override fun toString() = id
+    @Suppress("UNCHECKED_CAST")
+    override val state: StateValueType
+        get() = _state.state as? StateValueType
+            ?: throw InvalidStateValueTypeException("Could not cast new state val to type parameter of entity: $id")
+
+    private fun getStateSnapshot(): State = _state.copy()
+
+    val attributes: StateAttributes
+        get() = getStateSnapshot().attributes
+
+    val lastUpdated: OffsetDateTime
+        get() = getStateSnapshot().lastUpdated
+
+    val lastChanged: OffsetDateTime
+        get() = getStateSnapshot().lastChanged
+
+    private val observers: HashMap<UUID, AsyncStateObserver> = hashMapOf()
+    val observerCount = observers.size
+    fun registerObserver(handle: UUID, asyncStateObserver: AsyncStateObserver) {
+        observers[handle] = asyncStateObserver
+    }
+
+    fun removeObserver(handle: UUID) {
+        observers.remove(handle)
+    }
+
+    private val stateHistory = StateHistory(historyCapacity)
+
+    override fun toString() = entityId.toString()
 }
 
-class EntityIdToEntityTypeMap(private val map: HashMap<String, KClass<*>>) : Iterable<Map.Entry<String, KClass<*>>> {
+class EntityIdToEntityTypeMap(private val map: HashMap<EntityId, KClass<*>>) :
+    Iterable<Map.Entry<EntityId, KClass<*>>> {
     val size get() = map.size
-    override operator fun iterator(): Iterator<Map.Entry<String, KClass<*>>> = map.iterator()
-    operator fun get(entityId: String) = map[entityId]
-    operator fun set(entityId: String, type: KClass<*>) {
+    override operator fun iterator(): Iterator<Map.Entry<EntityId, KClass<*>>> = map.iterator()
+    operator fun get(entityId: EntityId) = map[entityId]
+    operator fun set(entityId: EntityId, type: KClass<*>) {
         map[entityId] = type
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-class StateArchive<StateType>(maxCapacity: Int, delegate: ArrayDeque<StateType> = ArrayDeque(maxCapacity)) :
-    Iterable<StateType> {
-    private val backend: ArrayDeque<StateType> = delegate
+class CircularBuffer<E>(private val maxCapacity: Int) {
+    private val backend: MutableList<E> = mutableListOf()
+    fun add(e: E) =
+        backend.add(e).also {
+            if (backend.size > maxCapacity) {
+                backend.removeAt(backend.size - 1)
+            }
+        }
 
-    private val limit: Int = maxCapacity
-    val size: Int get() = backend.size
-
-    private val limitExceeded: Boolean get() = size > limit
-
-    fun archive(element: StateType) {
-        backend.addFirst(element)
-        if (limitExceeded) backend.removeLast().also { println("Removed oldest item") }
-    }
-
-    operator fun get(index: Int) = backend.getOrNull(index)
-    override fun iterator(): Iterator<StateType> = backend.iterator()
+    fun snapshot() = backend.toList()
 }

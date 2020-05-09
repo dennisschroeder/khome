@@ -13,8 +13,7 @@ import khome.core.ResultResponse
 import khome.core.StateChangedResponse
 import khome.core.boot.BootSequenceInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.entities.EntityIdToEntityTypeMap
-import khome.core.entities.EntitySubject
+import khome.core.entities.EntityUpdater
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -22,7 +21,6 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
-@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
@@ -31,7 +29,7 @@ internal class EventResponseConsumer(
     private val objectMapper: ObjectMapper,
     private val hassEventRegistry: HassEventRegistry,
     private val errorResponseEvent: ErrorResponseEvent,
-    private val entityIdToEntityTypeMap: EntityIdToEntityTypeMap
+    private val entityUpdater: EntityUpdater
 ) : BootSequenceInterface, KhomeKoinComponent {
     private val logger = KotlinLogging.logger { }
 
@@ -63,11 +61,9 @@ internal class EventResponseConsumer(
         mapFrameTextToResponse<StateChangedResponse>(frameText)
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
-                entityIdToEntityTypeMap[stateChangedResponse.event.data.entityId]?.let { clazz ->
-                    logger.debug { "Found type for ${stateChangedResponse.event.data.entityId}" }
-                    stateChangedResponse.event.data.newState?.let { state ->
-                        logger.debug { "update entity state with $state" }
-                        getKoin().get<EntitySubject<*>>(clazz, null, null)._state = state
+                entityUpdater(stateChangedResponse.event.data.entityId) {
+                    stateChangedResponse.event.data.newState?.let { newState ->
+                        _state = newState
                     }
                 }
             }

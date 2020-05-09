@@ -6,12 +6,13 @@ import khome.core.State
 import khome.core.dependencyInjection.KhomeTestComponent
 import khome.core.entities.EntitySubject
 import khome.core.mapping.ObjectMapper
-import khome.observing.ObservableCoroutine
+import khome.observing.AsyncStateObserver
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.koin.core.get
+import java.util.UUID
 import kotlin.coroutines.EmptyCoroutineContext
 
 @ExperimentalStdlibApi
@@ -25,12 +26,12 @@ class StateChangeEventTest : KhomeTestComponent() {
         class Sut : EntitySubject<String>("test", "entity")
 
         val sut = Sut()
-        sut["test"] = ObservableCoroutine(EmptyCoroutineContext) { old, new ->
-            logger.info { "Old: ${old.state}" }
+        sut.registerObserver(UUID.fromString("81e3d1a3-0116-4c7f-87af-668c690f1802"), AsyncStateObserver(EmptyCoroutineContext) { history, new ->
+            logger.info { "Old: ${history.getOrNull(0)?.state}" }
             logger.info { "Old: ${new.state}" }
-        }
+        })
 
-        assertThat(sut.size).isEqualTo(1)
+        assertThat(sut.observerCount).isEqualTo(1)
     }
 
     @ExperimentalStdlibApi
@@ -41,9 +42,9 @@ class StateChangeEventTest : KhomeTestComponent() {
         var state: State? = null
 
         var sut = Sut()
-        sut["test"] = ObservableCoroutine(EmptyCoroutineContext) { old, new ->
+        sut.registerObserver(UUID.fromString("81e3d1a3-0116-4c7f-87af-668c690f1802"), AsyncStateObserver(EmptyCoroutineContext) { old, new ->
             state = new
-        }
+        })
 
         val oldStateResponse = """
             {

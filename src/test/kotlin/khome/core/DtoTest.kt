@@ -5,6 +5,7 @@ import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.entities.EntityId
 import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.core.mapping.ObjectMapper
 import khome.core.servicestore.ServicesResponse
@@ -125,7 +126,7 @@ internal class DtoTest : KhomeTestComponent() {
         )
         private val state =
             State(
-                "light.bed_light",
+                EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
                 "on",
                 attributes,
@@ -159,7 +160,7 @@ internal class DtoTest : KhomeTestComponent() {
         private val oldAttributes = mapOf("supported_features" to 147.0, "friendly_name" to "Bed Light")
         private val newState =
             State(
-                "light.bed_light",
+                EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
                 "on",
                 newAttributes,
@@ -167,13 +168,13 @@ internal class DtoTest : KhomeTestComponent() {
             )
         private val oldState =
             State(
-                "light.bed_light",
+                EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:10.466994Z"),
                 "off",
                 oldAttributes,
                 OffsetDateTime.parse("2016-11-26T01:37:10.466994Z")
             )
-        private val data = Data("light.bed_light", oldState, newState)
+        private val data = Data(EntityId.fromString("light.bed_light"), oldState, newState)
         private val event = EventData("state_changed", data, OffsetDateTime.parse("2016-11-26T01:37:24.265429Z"), "LOCAL")
         private val expectedResult = StateChangedResponse(18, ResponseType.EVENT, event)
 
@@ -231,14 +232,14 @@ internal class DtoTest : KhomeTestComponent() {
 
         @Test
         fun `assert that getAttribute returns correct type and value`() {
-            val stateAttribute = newState.getAttribute<List<Double>>("rgb_color")
+            val stateAttribute = newState.attributes.safeGet<List<Double>>("rgb_color")
             assertThat(stateAttribute).isEqualTo(listOf(254.0, 208.0, 0.0))
         }
 
         @Test
         fun `assert getAttribute throws InvalidAttributeValueTypeException on wrong Type parameter`() {
             val exception =
-                assertThrows<InvalidAttributeValueTypeException> { newState.getAttribute<Boolean>("color_temp") }
+                assertThrows<InvalidAttributeValueTypeException> { newState.attributes.safeGet<Boolean>("color_temp") }
             assertThat(exception.message).isEqualTo("Attribute value for color_temp is of type: ${Double::class}.")
         }
     }

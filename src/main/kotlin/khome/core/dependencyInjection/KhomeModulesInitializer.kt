@@ -10,6 +10,7 @@ import khome.calling.PersistentNotificationCreate
 import khome.core.ConfigurationInterface
 import khome.core.boot.BootSequenceInterface
 import khome.core.entities.EntityIdToEntityTypeMap
+import khome.core.entities.EntityUpdater
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
@@ -25,13 +26,13 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 internal class KhomeModulesInitializer(
     override val khomeSession: KhomeSession,
     private val configuration: ConfigurationInterface
-) :
-    BootSequenceInterface {
+) : BootSequenceInterface {
 
     private val systemBeansModule =
         khomeModule(createdAtStart = true, override = true) {
             bean { HassApi(khomeSession, get(), get(), get()) }
             bean { EntityIdToEntityTypeMap(hashMapOf()) }
+            bean { EntityUpdater(get(), getKoin()) }
             bean { Sun() }
             bean { Time() }
             bean { DateTime() }

@@ -6,7 +6,6 @@ import mu.KotlinLogging
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@ExperimentalStdlibApi
 class Time : SensorEntity("time") {
     val logger: KLogger = KotlinLogging.logger {}
     private val currentTime get() = state as String

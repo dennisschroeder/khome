@@ -9,7 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 
-@ExperimentalStdlibApi
 @Suppress("FunctionName")
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi

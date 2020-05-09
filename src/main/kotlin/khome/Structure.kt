@@ -15,9 +15,9 @@ import khome.core.events.EntityObserverExceptionHandler
 import khome.core.events.EventData
 import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
-import khome.observing.ObservableCoroutine
-import khome.observing.EntityObservableContext
-import khome.observing.EntityObservableFunction
+import khome.observing.AsyncStateObserver
+import khome.observing.AsyncStateObserverContext
+import khome.observing.AsyncStateObserverSuspendable
 import khome.observing.HassEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,6 @@ import mu.KotlinLogging
 import org.koin.core.get
 import java.util.UUID
 
-@ExperimentalStdlibApi
 @Suppress("unused")
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
@@ -47,7 +46,6 @@ abstract class KhomeComponent : KhomeKoinComponent {
      * @see ServiceCall
      */
     @ObsoleteCoroutinesApi
-    @KtorExperimentalAPI
     suspend inline fun <reified CallType : ServiceCall> callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
         val service: CallType = get()
         if (mutate != null) service.apply(mutate)
@@ -60,7 +58,7 @@ abstract class KhomeComponent : KhomeKoinComponent {
     suspend inline fun <reified CallType : EntityBasedServiceCall> Iterable<EntitySubject<*>>.callServiceEach(noinline mutate: CallType.(EntitySubject<*>) -> Unit) =
         forEach { callService<CallType> { mutate(it) } }
 }
-@ExperimentalStdlibApi
+
 abstract class Repository<Entity : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entity: Entity
 
@@ -70,11 +68,11 @@ abstract class Repository<Entity : EntitySubject<*>> : KhomeKoinComponent {
     suspend inline fun <reified CallType : EntityBasedServiceCall> callService(noinline mutate: ServiceCallMutator<CallType>? = null) {
         val service = get<CallType>()
         if (mutate != null) service.apply(mutate)
-        service.serviceData.entityId = entity
+        service.serviceData.entityId = entity.entityId
         hassApi.callHassService(service)
     }
 }
-@ExperimentalStdlibApi
+
 abstract class CollectionRepository<EntityType : EntitySubject<*>> : KhomeKoinComponent {
     abstract val entities: EntityCollection<EntityType>
 
@@ -85,24 +83,24 @@ abstract class CollectionRepository<EntityType : EntitySubject<*>> : KhomeKoinCo
         entities.forEach { entity ->
             val service = get<CallType>()
             if (mutate != null) service.apply(mutate)
-            service.serviceData.entityId = entity
+            service.serviceData.entityId = entity.entityId
             hassApi.callHassService(service)
         }
 }
-@ExperimentalStdlibApi
+
 abstract class EntityObserver<Entity : EntitySubject<*>> : KhomeKoinComponent {
     private val coroutineContext = Dispatchers.IO
     private val exceptionHandler: EntityObserverExceptionHandler = get()
     abstract val observedEntity: Entity
 
-    fun onStateChange(observable: EntityObservableFunction): Entity {
-        val handle: String = UUID.randomUUID().toString()
-        val observableContext = coroutineContext + exceptionHandler + EntityObservableContext(observedEntity, handle)
-        observedEntity[handle] = ObservableCoroutine(observableContext, observable)
+    fun onStateChange(observer: AsyncStateObserverSuspendable): Entity {
+        val handle: UUID = UUID.randomUUID()
+        val observableContext = coroutineContext + exceptionHandler + AsyncStateObserverContext(observedEntity, handle)
+        observedEntity.registerObserver(handle, AsyncStateObserver(observableContext, observer))
         return observedEntity
     }
 }
-@ExperimentalStdlibApi
+
 abstract class ErrorResponseObserver : KhomeKoinComponent {
     fun onErrorResponse(callback: suspend CoroutineScope.(ResultResponse) -> Unit) =
         ErrorResponseListener(

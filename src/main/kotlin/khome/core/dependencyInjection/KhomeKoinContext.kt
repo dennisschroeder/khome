@@ -23,14 +23,14 @@ import khome.core.DefaultConfiguration
 import khome.core.authentication.Authenticator
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
-import khome.core.entities.EntitySubjectInterface
+import khome.core.entities.EntityId
 import khome.core.events.ErrorResponseEvent
 import khome.core.events.Event
 import khome.core.events.EventResponseConsumer
 import khome.core.events.HassEventRegistry
 import khome.core.events.HassEventSubscriber
 import khome.core.events.StateChangeEventSubscriber
-import khome.core.mapping.KhomeEntityConverter
+import khome.core.mapping.EntityIdConverter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
@@ -55,7 +55,6 @@ internal typealias CallerID = AtomicInteger
  * @link https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
  */
 
-@ExperimentalStdlibApi
 object KhomeKoinContext {
     private const val NAME = "NAME"
     private const val HOST = "HOST"
@@ -81,7 +80,7 @@ object KhomeKoinContext {
                     .setPrettyPrinting()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
-                    .registerTypeAdapter(EntitySubjectInterface::class.java, KhomeEntityConverter().nullSafe())
+                    .registerTypeAdapter(EntityId::class.java, EntityIdConverter().nullSafe())
                     .create()!!
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
@@ -159,7 +158,8 @@ object KhomeKoinContext {
                 EntityStateInitializer(
                     khomeSession = khomeSession,
                     callerID = get(),
-                    entityIdToEntityTypeMap = get()
+                    entityIdToEntityTypeMap = get(),
+                    entityUpdater = get()
                 )
             }
 
@@ -184,7 +184,7 @@ object KhomeKoinContext {
                     objectMapper = get(),
                     hassEventRegistry = get(),
                     errorResponseEvent = get(),
-                    entityIdToEntityTypeMap = get()
+                    entityUpdater = get()
                 )
             }
 

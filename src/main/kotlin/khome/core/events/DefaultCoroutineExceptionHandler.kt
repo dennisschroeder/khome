@@ -4,7 +4,7 @@ import khome.calling.PersistentNotificationCreate
 import khome.core.BaseKhomeComponent
 import khome.core.ConfigurationInterface
 import khome.core.ErrorResponseListenerContext
-import khome.observing.EntityObservableContext
+import khome.observing.AsyncStateObserverContext
 import khome.observing.HassEventListenerContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +14,6 @@ import mu.KotlinLogging
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-@ExperimentalStdlibApi
 class DefaultEntityObserverExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface
@@ -22,7 +21,7 @@ class DefaultEntityObserverExceptionHandler(
 
     private val logger = KotlinLogging.logger { }
     override fun handleException(context: CoroutineContext, exception: Throwable) {
-        context[EntityObservableContext]?.let { entityObservableContext ->
+        context[AsyncStateObserverContext]?.let { entityObservableContext ->
             logger.error(exception) { "Caught Exception in listener of entity: ${entityObservableContext.entity.id} with handle: ${entityObservableContext.handle}" }
             CoroutineScope(Dispatchers.IO).launch {
                 logger.info { "In CoroutineScope" }
@@ -44,7 +43,6 @@ class DefaultEntityObserverExceptionHandler(
     }
 }
 
-@ExperimentalStdlibApi
 class DefaultHassEventListenerExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface
@@ -72,7 +70,6 @@ class DefaultHassEventListenerExceptionHandler(
         } ?: throw IllegalStateException("No HassEventListenerContext in coroutine context.")
 }
 
-@ExperimentalStdlibApi
 class DefaultErrorResultListenerExceptionHandler(
     private val baseKhomeComponent: BaseKhomeComponent,
     private val configurationInterface: ConfigurationInterface

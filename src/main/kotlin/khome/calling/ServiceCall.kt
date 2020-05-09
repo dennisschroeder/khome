@@ -5,14 +5,13 @@ import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
 import khome.core.ServiceCallInterface
 import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.entities.EntitySubjectInterface
+import khome.core.entities.EntityId
+import khome.core.entities.EntitySubject
 import khome.core.servicestore.ServiceStoreInterface
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 
 internal typealias ServiceCallMutator<T> = T.() -> Unit
-
-data class EntityId(override var entityId: EntitySubjectInterface?) : EntityBasedServiceDataInterface
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
@@ -21,16 +20,21 @@ abstract class EntityIdOnlyServiceCall(
     service: ServiceInterface
 ) : EntityBasedServiceCall(domain, service) {
 
-    inline fun <reified Entity : EntitySubjectInterface> entity() =
+    inline fun <reified Entity : EntitySubject<*>> entity() =
         entity(get<Entity>())
 
-    fun entity(entity: EntitySubjectInterface) {
+    fun entity(entity: EntitySubject<*>) {
         serviceData.apply {
-            entityId = entity
+            entityId = entity.entityId
         }
     }
 
-    override val serviceData: EntityId = EntityId(null)
+    override val serviceData: EntityBasedServiceDataInterface =
+        EntityIdOnlyServiceData()
+}
+
+class EntityIdOnlyServiceData : EntityBasedServiceDataInterface {
+    override var entityId: EntityId? = EntityId("", "")
 }
 
 /**
@@ -89,11 +93,11 @@ interface ServiceInterface
 interface ServiceDataInterface
 
 abstract class EntityBasedServiceData : EntityBasedServiceDataInterface {
-    override var entityId: EntitySubjectInterface? = null
+    override var entityId: EntityId? = null
 }
 
 interface EntityBasedServiceDataInterface {
-    var entityId: EntitySubjectInterface?
+    var entityId: EntityId?
 }
 
 /**

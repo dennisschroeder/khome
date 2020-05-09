@@ -6,16 +6,17 @@ import khome.core.boot.BootSequenceInterface
 import khome.core.dependencyInjection.CallerID
 import khome.core.dependencyInjection.KhomeKoinComponent
 import khome.core.entities.EntityIdToEntityTypeMap
-import khome.core.entities.EntitySubject
+import khome.core.entities.EntityUpdater
 import khome.core.entities.exceptions.EntityNotFoundException
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 
-@OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class, ExperimentalStdlibApi::class)
+@OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class)
 internal class EntityStateInitializer(
     override val khomeSession: KhomeSession,
     private val callerID: CallerID,
-    private val entityIdToEntityTypeMap: EntityIdToEntityTypeMap
+    entityIdToEntityTypeMap: EntityIdToEntityTypeMap,
+    private val entityUpdater: EntityUpdater
 ) : BootSequenceInterface, KhomeKoinComponent {
 
     private val logger = KotlinLogging.logger { }
@@ -46,19 +47,14 @@ internal class EntityStateInitializer(
             false -> logger.error { "Could not fetch initial states from homeassistant" }
             true -> {
                 statesResponse.result.forEach { state ->
-                    getEntityOrNull(state.entityId)?.let { entity ->
-                        entity._state = state
+                    entityUpdater(state.entityId) {
+                        listOfEntityIds.remove(entityId)
+                        _state = state
                         logger.debug { "Set initial state for entity: ${state.entityId} with: $state" }
                     }
                 }
                 logger.info { "All initial entity states are set." }
             }
-        }
-
-    private fun getEntityOrNull(entityId: String) =
-        entityIdToEntityTypeMap[entityId]?.let { clazz ->
-            listOfEntityIds.remove(entityId)
-            getKoin().get<EntitySubject<*>>(clazz, null, null)
         }
 
     private fun runEntityHealthCheck() {
