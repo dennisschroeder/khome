@@ -1,8 +1,8 @@
 package khome.core.entities
 
+import khome.core.StateAttributes
+
 interface EntitySubjectInterface {
-    val domain: String
-    val id: String
     val entityId: EntityId
-    val state: Any
+    val attributes: StateAttributes
 }

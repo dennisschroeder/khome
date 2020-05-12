@@ -22,15 +22,15 @@ class DefaultEntityObserverExceptionHandler(
     private val logger = KotlinLogging.logger { }
     override fun handleException(context: CoroutineContext, exception: Throwable) {
         context[AsyncStateObserverContext]?.let { entityObservableContext ->
-            logger.error(exception) { "Caught Exception in listener of entity: ${entityObservableContext.entity.id} with handle: ${entityObservableContext.handle}" }
+            logger.error(exception) { "Caught Exception in listener of entity: ${entityObservableContext.entity.entityId} with handle: ${entityObservableContext.handle}" }
             CoroutineScope(Dispatchers.IO).launch {
                 logger.info { "In CoroutineScope" }
                 baseKhomeComponent.callService<PersistentNotificationCreate> {
                     configure {
-                        notificationId = entityObservableContext.entity.id
+                        notificationId = entityObservableContext.entity.entityId.toString()
                         title = "Error in Khome application: ${configurationInterface.name}"
                         message = """
-                            Caught Exception in listener of entity: **${entityObservableContext.entity.id}** 
+                            Caught Exception in listener of entity: **${entityObservableContext.entity.entityId}** 
                             with handle: ${entityObservableContext.handle}
                             $exception
                             ${exception.stackTrace.first()}

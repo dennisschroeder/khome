@@ -15,16 +15,12 @@ import khome.core.events.EntityObserverExceptionHandler
 import khome.core.events.EventData
 import khome.core.events.HassEvent
 import khome.core.mapping.ObjectMapper
-import khome.observing.AsyncStateObserver
-import khome.observing.AsyncStateObserverContext
-import khome.observing.AsyncStateObserverSuspendable
 import khome.observing.HassEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.core.get
-import java.util.UUID
 
 @Suppress("unused")
 @ObsoleteCoroutinesApi
@@ -92,13 +88,6 @@ abstract class EntityObserver<Entity : EntitySubject<*>> : KhomeKoinComponent {
     private val coroutineContext = Dispatchers.IO
     private val exceptionHandler: EntityObserverExceptionHandler = get()
     abstract val observedEntity: Entity
-
-    fun onStateChange(observer: AsyncStateObserverSuspendable): Entity {
-        val handle: UUID = UUID.randomUUID()
-        val observableContext = coroutineContext + exceptionHandler + AsyncStateObserverContext(observedEntity, handle)
-        observedEntity.registerObserver(handle, AsyncStateObserver(observableContext, observer))
-        return observedEntity
-    }
 }
 
 abstract class ErrorResponseObserver : KhomeKoinComponent {

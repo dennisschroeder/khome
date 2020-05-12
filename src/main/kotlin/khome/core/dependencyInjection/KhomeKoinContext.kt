@@ -158,8 +158,7 @@ object KhomeKoinContext {
                 EntityStateInitializer(
                     khomeSession = khomeSession,
                     callerID = get(),
-                    entityIdToEntityTypeMap = get(),
-                    entityUpdater = get()
+                    entityStateUpdater = get()
                 )
             }
 
@@ -184,7 +183,7 @@ object KhomeKoinContext {
                     objectMapper = get(),
                     hassEventRegistry = get(),
                     errorResponseEvent = get(),
-                    entityUpdater = get()
+                    entityStateUpdater = get()
                 )
             }
 

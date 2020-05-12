@@ -21,18 +21,13 @@ class KhomeModule(val delegate: Module) {
     inline fun <reified T : EntitySubjectInterface> entity(
         override: Boolean = false,
         noinline definition: Definition<T>
-    ) {
-        delegate.single(override = override, definition = definition)
-    }
+    ) = delegate.single(override = override, definition = definition)
 
     inline fun <reified T : HassEvent> event(
         noinline definition: Definition<T>
     ) {
         delegate.single(override = false, definition = definition)
     }
-
-    @PublishedApi
-    internal fun <T : EntitySubjectInterface> getEntityIdFromType(type: Class<T>) = type.newInstance().id
 }
 
 fun khomeModule(

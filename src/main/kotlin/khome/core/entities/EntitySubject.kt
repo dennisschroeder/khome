@@ -3,18 +3,23 @@ package khome.core.entities
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
 import khome.core.StateAttributes
+import khome.core.StateResponse
 import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.exceptions.InvalidStateValueTypeException
+import khome.core.events.EntityObserverExceptionHandler
 import khome.observing.AsyncStateObserver
+import khome.observing.AsyncStateObserverContext
+import khome.observing.AsyncStateObserverSuspendable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.core.get
 import org.koin.core.inject
 import java.time.OffsetDateTime
 import java.util.UUID
-import kotlin.properties.Delegates.observable
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
-typealias StateHistory = CircularBuffer<State>
-typealias StateHistorySnapshot = List<State>
+typealias StateHistory<StateValueType> = CircularBuffer<State<StateValueType>>
+typealias StateHistorySnapshot<StateValueType> = List<State<StateValueType>>
 
 data class EntityId(private val domain: String, private val id: String) {
     override fun toString(): String = "$domain.$id"
@@ -30,49 +35,50 @@ data class EntityId(private val domain: String, private val id: String) {
 
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 @OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class)
-abstract class EntitySubject<StateValueType : Any>(
-    final override val domain: String,
-    final override val id: String,
+abstract class EntitySubject<StateValueType>(
+    final override val entityId: EntityId,
     historyCapacity: Int = 10
 ) : KhomeKoinComponent, EntitySubjectInterface {
 
     private val entityIdToEntityTypeMap: EntityIdToEntityTypeMap by inject()
-    final override val entityId: EntityId
-        get() = EntityId(domain, id)
 
-    private val initialState = State(entityId, OffsetDateTime.now(), "initial", emptyMap(), OffsetDateTime.now())
-
-    internal var _state: State by observable(initialState) { _, oldState, newState ->
-        if (oldState.state != "initial") stateHistory.add(oldState)
-        val historySnapshot: StateHistorySnapshot = stateHistory.snapshot()
-        observers.forEach { mapEntry -> mapEntry.value(historySnapshot, newState) }
-    }
+    internal var state: State<StateValueType>
+        get() = stateHistory.last() ?: throw IllegalStateException("No state available yet.")
+        set(newState) {
+            val historySnapshot = stateHistory.snapshot()
+            observers.forEach { it.value(historySnapshot, newState) }
+            stateHistory.add(newState)
+        }
 
     init {
-        @Suppress("UNCHECKED_CAST")
-        if (_state.state as? StateValueType == null) throw InvalidStateValueTypeException("Could not cast new state val to type parameter of entity: $id ")
         entityIdToEntityTypeMap[entityId] = this::class
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override val state: StateValueType
-        get() = _state.state as? StateValueType
-            ?: throw InvalidStateValueTypeException("Could not cast new state val to type parameter of entity: $id")
+    fun onStateChange(
+        context: CoroutineContext = Dispatchers.IO,
+        observer: AsyncStateObserverSuspendable<StateValueType>
+    ) {
+        val exceptionHandler: EntityObserverExceptionHandler = get()
+        val handle: UUID = UUID.randomUUID()
+        val observableContext = context + exceptionHandler + AsyncStateObserverContext(this, handle)
+        registerObserver(handle, AsyncStateObserver(observableContext, observer))
+    }
 
-    private fun getStateSnapshot(): State = _state.copy()
+    val stateValue
+        get() = state.value
 
-    val attributes: StateAttributes
-        get() = getStateSnapshot().attributes
+    final override val attributes: StateAttributes
+        get() = state.attributes
 
-    val lastUpdated: OffsetDateTime
-        get() = getStateSnapshot().lastUpdated
+    final val lastUpdated: OffsetDateTime
+        get() = state.lastUpdated
 
-    val lastChanged: OffsetDateTime
-        get() = getStateSnapshot().lastChanged
+    final val lastChanged: OffsetDateTime
+        get() = state.lastChanged
 
-    private val observers: HashMap<UUID, AsyncStateObserver> = hashMapOf()
+    private val observers: HashMap<UUID, AsyncStateObserver<StateValueType>> = hashMapOf()
     val observerCount = observers.size
-    fun registerObserver(handle: UUID, asyncStateObserver: AsyncStateObserver) {
+    fun registerObserver(handle: UUID, asyncStateObserver: AsyncStateObserver<StateValueType>) {
         observers[handle] = asyncStateObserver
     }
 
@@ -80,7 +86,17 @@ abstract class EntitySubject<StateValueType : Any>(
         observers.remove(handle)
     }
 
-    private val stateHistory = StateHistory(historyCapacity)
+    internal fun setStateFromResponse(response: StateResponse) {
+        assert(response.entityId == entityId)
+        state = State(
+            value = response.state as StateValueType,
+            attributes = response.attributes,
+            lastUpdated = response.lastUpdated,
+            lastChanged = response.lastChanged
+        )
+    }
+
+    private val stateHistory = StateHistory<StateValueType>(historyCapacity)
 
     override fun toString() = entityId.toString()
 }
@@ -104,5 +120,6 @@ class CircularBuffer<E>(private val maxCapacity: Int) {
             }
         }
 
+    fun last() = backend.lastOrNull()
     fun snapshot() = backend.toList()
 }

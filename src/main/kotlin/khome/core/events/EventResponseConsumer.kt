@@ -12,8 +12,7 @@ import khome.core.ResponseType
 import khome.core.ResultResponse
 import khome.core.StateChangedResponse
 import khome.core.boot.BootSequenceInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.entities.EntityUpdater
+import khome.core.entities.EntityStateUpdater
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -29,8 +28,8 @@ internal class EventResponseConsumer(
     private val objectMapper: ObjectMapper,
     private val hassEventRegistry: HassEventRegistry,
     private val errorResponseEvent: ErrorResponseEvent,
-    private val entityUpdater: EntityUpdater
-) : BootSequenceInterface, KhomeKoinComponent {
+    private val entityStateUpdater: EntityStateUpdater
+) : BootSequenceInterface {
     private val logger = KotlinLogging.logger { }
 
     override suspend fun runBootSequence() = coroutineScope {
@@ -61,10 +60,8 @@ internal class EventResponseConsumer(
         mapFrameTextToResponse<StateChangedResponse>(frameText)
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
-                entityUpdater(stateChangedResponse.event.data.entityId) {
-                    stateChangedResponse.event.data.newState?.let { newState ->
-                        _state = newState
-                    }
+                stateChangedResponse.event.data.newState?.let { newState ->
+                    entityStateUpdater(stateChangedResponse.event.data.entityId, newState)
                 }
             }
 

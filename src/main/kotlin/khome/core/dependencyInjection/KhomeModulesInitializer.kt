@@ -10,7 +10,7 @@ import khome.calling.PersistentNotificationCreate
 import khome.core.ConfigurationInterface
 import khome.core.boot.BootSequenceInterface
 import khome.core.entities.EntityIdToEntityTypeMap
-import khome.core.entities.EntityUpdater
+import khome.core.entities.EntityStateUpdater
 import khome.core.entities.system.DateTime
 import khome.core.entities.system.Sun
 import khome.core.entities.system.Time
@@ -32,9 +32,9 @@ internal class KhomeModulesInitializer(
         khomeModule(createdAtStart = true, override = true) {
             bean { HassApi(khomeSession, get(), get(), get()) }
             bean { EntityIdToEntityTypeMap(hashMapOf()) }
-            bean { EntityUpdater(get(), getKoin()) }
-            bean { Sun() }
-            bean { Time() }
+            bean { EntityStateUpdater(get(), getKoin()) }
+            entity { Sun() }
+            entity { Time() }
             bean { DateTime() }
             service { PersistentNotificationCreate() }
             if (configuration.enableDefaultErrorResponseHandler)

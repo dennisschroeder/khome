@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import khome.core.State
 import khome.core.dependencyInjection.KhomeTestComponent
+import khome.core.entities.EntityId
 import khome.core.entities.EntitySubject
 import khome.core.mapping.ObjectMapper
 import khome.observing.AsyncStateObserver
@@ -23,12 +24,12 @@ class StateChangeEventTest : KhomeTestComponent() {
     @ExperimentalStdlibApi
 
     fun `assert callback was subscribed to subject with handle`() {
-        class Sut : EntitySubject<String>("test", "entity")
+        class Sut : EntitySubject<String>(EntityId("test", "entity"))
 
         val sut = Sut()
         sut.registerObserver(UUID.fromString("81e3d1a3-0116-4c7f-87af-668c690f1802"), AsyncStateObserver(EmptyCoroutineContext) { history, new ->
-            logger.info { "Old: ${history.getOrNull(0)?.state}" }
-            logger.info { "Old: ${new.state}" }
+            logger.info { "Old: ${history.getOrNull(0)?.value}" }
+            logger.info { "Old: ${new.value}" }
         })
 
         assertThat(sut.observerCount).isEqualTo(1)
@@ -37,11 +38,11 @@ class StateChangeEventTest : KhomeTestComponent() {
     @ExperimentalStdlibApi
 
     fun `assert that subscribed event callback was fired`() = runBlocking {
-        class Sut : EntitySubject<String>("test", "entity")
+        class Sut : EntitySubject<String>(EntityId("test", "entity"))
 
-        var state: State? = null
+        var state: State<String>? = null
 
-        var sut = Sut()
+        val sut = Sut()
         sut.registerObserver(UUID.fromString("81e3d1a3-0116-4c7f-87af-668c690f1802"), AsyncStateObserver(EmptyCoroutineContext) { old, new ->
             state = new
         })
@@ -83,10 +84,10 @@ class StateChangeEventTest : KhomeTestComponent() {
                 "last_updated":"2016-11-26T01:37:24.265390+00:00"
              }
         """.trimIndent()
-        val oldState: State = get<ObjectMapper>().fromJson(oldStateResponse)
-        val newState: State = get<ObjectMapper>().fromJson(newStateResponse)
+        val oldState: State<String> = get<ObjectMapper>().fromJson(oldStateResponse)
+        val newState: State<String> = get<ObjectMapper>().fromJson(newStateResponse)
 
-        sut._state = oldState
+        sut.state = oldState
         assertThat(oldState).isEqualTo(state)
     }
 

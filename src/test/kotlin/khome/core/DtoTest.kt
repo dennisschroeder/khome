@@ -125,7 +125,7 @@ internal class DtoTest : KhomeTestComponent() {
             "friendly_name" to "Bed Light"
         )
         private val state =
-            State(
+            StateResponse(
                 EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
                 "on",
@@ -159,7 +159,7 @@ internal class DtoTest : KhomeTestComponent() {
 
         private val oldAttributes = mapOf("supported_features" to 147.0, "friendly_name" to "Bed Light")
         private val newState =
-            State(
+            StateResponse(
                 EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:24.265390Z"),
                 "on",
@@ -167,7 +167,7 @@ internal class DtoTest : KhomeTestComponent() {
                 OffsetDateTime.parse("2016-11-26T01:37:24.265390Z")
             )
         private val oldState =
-            State(
+            StateResponse(
                 EntityId.fromString("light.bed_light"),
                 OffsetDateTime.parse("2016-11-26T01:37:10.466994Z"),
                 "off",
@@ -175,7 +175,8 @@ internal class DtoTest : KhomeTestComponent() {
                 OffsetDateTime.parse("2016-11-26T01:37:10.466994Z")
             )
         private val data = Data(EntityId.fromString("light.bed_light"), oldState, newState)
-        private val event = EventData("state_changed", data, OffsetDateTime.parse("2016-11-26T01:37:24.265429Z"), "LOCAL")
+        private val event =
+            EventData("state_changed", data, OffsetDateTime.parse("2016-11-26T01:37:24.265429Z"), "LOCAL")
         private val expectedResult = StateChangedResponse(18, ResponseType.EVENT, event)
 
         @Test
