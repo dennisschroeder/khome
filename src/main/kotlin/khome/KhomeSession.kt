@@ -8,7 +8,7 @@ import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.MessageInterface
 import khome.core.ServiceCallInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.koin.KhomeKoinComponent
 import khome.core.mapping.ObjectMapper
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging

@@ -3,7 +3,7 @@ package khome.core.mapping
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import khome.core.entities.EntityId
+import khome.entities.EntityId
 
 class EntityIdConverter : TypeAdapter<EntityId>() {
     override fun write(jsonWriter: JsonWriter, value: EntityId) {

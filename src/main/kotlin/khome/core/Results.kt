@@ -1,8 +1,8 @@
 package khome.core
 
 import com.google.gson.annotations.SerializedName
-import khome.core.entities.EntityId
 import khome.core.exceptions.InvalidAttributeValueTypeException
+import khome.entities.EntityId
 import java.time.OffsetDateTime
 
 typealias StateAttributes = Map<String, Any>
@@ -17,16 +17,7 @@ data class EventData(
 ) :
     MessageInterface, EventDtoInterface
 
-data class Data(val entityId: EntityId, val oldState: StateResponse?, val newState: StateResponse?) : MessageInterface
-
-data class HassEventResponse(val id: Int, val type: String, val event: HassEventData) : MessageInterface
-data class HassEventData(
-    val eventType: String,
-    val data: Map<String, Any>,
-    val timeFired: OffsetDateTime,
-    val origin: String
-) :
-    MessageInterface
+data class Data(val entityId: String, val oldState: StateResponse?, val newState: StateResponse?) : MessageInterface
 
 interface EventDtoInterface {
     val eventType: String
@@ -42,19 +33,12 @@ data class StateResponse(
     val lastUpdated: OffsetDateTime
 )
 
-data class State<StateValueType>(
-    override val lastChanged: OffsetDateTime,
-    override val value: StateValueType,
-    override val attributes: StateAttributes,
-    override val lastUpdated: OffsetDateTime
-) : StateInterface<StateValueType>
-
-interface StateInterface<StateValueType> : MessageInterface {
-    val lastChanged: OffsetDateTime
-    val value: StateValueType
-    val attributes: StateAttributes
+data class State<T>(
+    val lastChanged: OffsetDateTime,
+    val value: T,
+    val attributes: StateAttributes,
     val lastUpdated: OffsetDateTime
-}
+)
 
 inline fun <reified T> StateAttributes.safeGet(key: String): T {
     return get(key) as? T ?: throw InvalidAttributeValueTypeException(

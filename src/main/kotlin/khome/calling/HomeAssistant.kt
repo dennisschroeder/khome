@@ -1,7 +1,5 @@
 package khome.calling
 
-import khome.core.entities.EntitySubjectInterface
-
 /**
  * Turns on an entity that is capable of being turned on.
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.

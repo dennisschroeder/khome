@@ -4,10 +4,8 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.calling.errors.DomainNotFoundException
 import khome.calling.errors.ServiceNotFoundException
 import khome.core.ServiceCallInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.entities.EntityId
-import khome.core.entities.EntitySubject
-import khome.core.servicestore.ServiceStoreInterface
+import khome.core.koin.KhomeKoinComponent
+import khome.core.boot.servicestore.ServiceStoreInterface
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.get
 
@@ -20,12 +18,9 @@ abstract class EntityIdOnlyServiceCall(
     service: ServiceInterface
 ) : EntityBasedServiceCall(domain, service) {
 
-    inline fun <reified Entity : EntitySubject<*>> entity() =
-        entity(get<Entity>())
-
-    fun entity(entity: EntitySubject<*>) {
+    fun entityId(id: String) {
         serviceData.apply {
-            entityId = entity.entityId
+            entityId = id
         }
     }
 
@@ -34,7 +29,7 @@ abstract class EntityIdOnlyServiceCall(
 }
 
 class EntityIdOnlyServiceData : EntityBasedServiceDataInterface {
-    override var entityId: EntityId? = EntityId("", "")
+    override var entityId: String? = ""
 }
 
 /**
@@ -93,16 +88,16 @@ interface ServiceInterface
 interface ServiceDataInterface
 
 abstract class EntityBasedServiceData : EntityBasedServiceDataInterface {
-    override var entityId: EntityId? = null
+    override var entityId: String? = null
 }
 
 interface EntityBasedServiceDataInterface {
-    var entityId: EntityId?
+    var entityId: String?
 }
 
 /**
  * Domains that are supported from Khome
  */
 enum class Domain : DomainInterface {
-    COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION
+    SENSOR, SUN, COVER, LIGHT, HOMEASSISTANT, MEDIA_PLAYER, NOTIFY, PERSISTENT_NOTIFICATION, INPUT_BOOLEAN, INPUT_NUMBER
 }

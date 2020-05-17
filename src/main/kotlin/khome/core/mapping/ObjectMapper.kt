@@ -2,7 +2,7 @@ package khome.core.mapping
 
 import com.google.gson.Gson
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.dependencyInjection.KhomeKoinComponent
+import khome.core.koin.KhomeKoinComponent
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 interface ObjectMapperInterface

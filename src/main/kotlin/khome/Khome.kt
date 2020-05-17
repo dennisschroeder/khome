@@ -2,12 +2,10 @@ package khome
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.ConfigurationInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.dependencyInjection.KhomeKoinContext
-import khome.core.dependencyInjection.KhomeModule
+import khome.core.koin.KhomeKoinComponent
+import khome.core.koin.KhomeKoinContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.koin.core.get
 import org.koin.core.inject
 
 /**
@@ -20,7 +18,7 @@ import org.koin.core.inject
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
+fun khomeApplication(init: Khome.() -> Unit): KhomeApplicationImpl {
     val khome = Khome()
     khome.apply(init)
     return khome.createApplication()
@@ -34,12 +32,9 @@ fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
  */
 @OptIn(ExperimentalStdlibApi::class, KtorExperimentalAPI::class, ObsoleteCoroutinesApi::class)
 class Khome : KhomeKoinComponent {
+
     init {
         KhomeKoinContext.startKoinApplication()
-    }
-
-    companion object {
-        var beanDeclarations: KhomeModule.() -> Unit = {}
     }
 
     private val config: ConfigurationInterface by inject()
@@ -54,9 +49,5 @@ class Khome : KhomeKoinComponent {
     fun configure(builder: ConfigurationInterface.() -> Unit) =
         config.apply(builder)
 
-    fun beans(beanDeclarations: KhomeModule.() -> Unit) {
-        Khome.beanDeclarations = beanDeclarations
-    }
-
-    fun createApplication() = KhomeApplication()
+    internal fun createApplication() = KhomeApplicationImpl()
 }

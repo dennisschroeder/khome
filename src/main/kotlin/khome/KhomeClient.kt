@@ -6,7 +6,6 @@ import khome.core.ConfigurationInterface
 import khome.core.clients.WebSocketClient
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
-import org.koin.core.get
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
@@ -39,7 +38,7 @@ internal class KhomeClient(
                     host = config.host,
                     port = config.port,
                     path = path,
-                    block = { block( KhomeSession(this)) }
+                    block = { block(KhomeSession(this)) }
                 )
             }
         } catch (exception: Exception) {
