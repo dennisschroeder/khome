@@ -4,9 +4,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.util.KtorExperimentalAPI
-import khome.ActuatorsByApiName
 import khome.KhomeSession
-import khome.SensorsByApiName
 import khome.core.MessageInterface
 import khome.core.ResolverResponse
 import khome.core.ResponseType

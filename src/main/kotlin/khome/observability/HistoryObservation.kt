@@ -7,7 +7,6 @@ internal class HistorySnapshot<T>(
     override val history: List<T>
 ) : WithHistory<T>
 
-
 internal class ObservableHistoryNoInitial<T>(maxHistory: Int = 10) : ObservableHistory<T> {
     override var state: T
         get() = _history.last() ?: throw IllegalStateException("No value available yet.")

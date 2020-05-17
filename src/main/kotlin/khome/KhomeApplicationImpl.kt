@@ -49,6 +49,8 @@ class KhomeApplicationImpl : KhomeApplication {
     private val koin = object : KhomeKoinComponent {}
     private val khomeClient: KhomeClient by koin.inject()
 
+    val foo = ""
+
     private val sensorsByApiName: SensorsByApiName = mutableMapOf()
     private val actuatorsByApiName: ActuatorsByApiName = mutableMapOf()
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
@@ -76,7 +78,7 @@ class KhomeApplicationImpl : KhomeApplication {
 
     internal fun <State> enqueueStateChange(actuator: ActuatorImpl<State>, value: State) {
         val entityId = actuatorsByEntity[actuator] ?: throw RuntimeException("Entity not registered: $actuator")
-        println("Would soon send '${value.toString()}' as new state for ${entityId.domain}.${entityId.name}")
+        println("Would soon send '$value' as new state for ${entityId.domain}.${entityId.name}")
         // todo: Add to queue to be processed in connection thread
     }
 

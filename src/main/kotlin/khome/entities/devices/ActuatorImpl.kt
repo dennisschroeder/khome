@@ -14,7 +14,7 @@ interface Actuator<S> {
 }
 
 internal class ActuatorImpl<S>(private val type: KClass<*>) : Actuator<S> {
-    val logger = KotlinLogging.logger {  }
+    val logger = KotlinLogging.logger { }
     override var actualState = ObservableHistoryNoInitial<State<S>>()
     override var desiredState: S? = null
         set(value) {

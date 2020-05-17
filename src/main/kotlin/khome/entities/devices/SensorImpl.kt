@@ -13,7 +13,7 @@ interface Sensor<S> {
 }
 
 internal class SensorImpl<S>(private val type: KClass<*>) : Sensor<S> {
-    val logger = KotlinLogging.logger {  }
+    val logger = KotlinLogging.logger { }
     override var measurement = ObservableHistoryNoInitial<State<S>>()
 
     @ExperimentalStdlibApi
