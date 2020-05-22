@@ -13,9 +13,8 @@ import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.header
 import io.ktor.client.request.host
 import io.ktor.client.request.port
+import khome.HassClient
 import khome.KhomeApplicationImpl
-import khome.KhomeClient
-import khome.calling.ServiceCoroutineContext
 import khome.core.ConfigurationInterface
 import khome.core.DefaultConfiguration
 import khome.core.boot.servicestore.ServiceStore
@@ -27,7 +26,6 @@ import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
 import khome.entities.EntityId
-import kotlinx.coroutines.newSingleThreadContext
 import mu.KotlinLogging
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
@@ -35,28 +33,18 @@ import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import java.time.OffsetDateTime
-import java.util.concurrent.atomic.AtomicInteger
-
-internal typealias CallerID = AtomicInteger
 
 /**
  * The Khome encapsulated public Koin context
  * @link https://insert-koin.io/docs/2.0/documentation/reference/index.html#_koin_context_isolation
  */
 
-object KhomeKoinContext {
+internal object KhomeKoinContext {
     private const val NAME = "NAME"
     private const val HOST = "HOST"
     private const val PORT = "PORT"
     private const val ACCESS_TOKEN = "ACCESS_TOKEN"
     private const val SECURE = "SECURE"
-    private const val ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER = "ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER"
-    private const val ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER =
-        "ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER"
-    private const val ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER =
-        "ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER"
-    private const val ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER =
-        "ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER"
 
     var application: KoinApplication? = null
     private val logger = KotlinLogging.logger {}
@@ -74,31 +62,13 @@ object KhomeKoinContext {
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<ServiceStoreInterface> { ServiceStore() }
-            single { ServiceCoroutineContext(newSingleThreadContext("ServiceContext")) }
-            single { AtomicInteger(0) }
             single<ConfigurationInterface> {
                 DefaultConfiguration(
                     name = getProperty(NAME, "[Give your application a unique name]"),
                     host = getProperty(HOST, "localhost"),
                     port = getProperty(PORT, 8123),
                     accessToken = getProperty(ACCESS_TOKEN, "<some-fancy-access-token>"),
-                    secure = getProperty(SECURE, "false").toBoolean(),
-                    enableDefaultErrorResponseHandler = getProperty(
-                        ENABLE_DEFAULT_ERROR_RESPONSE_HANDLER,
-                        "true"
-                    ).toBoolean(),
-                    enableDefaultStateChangeListenerExceptionHandler = getProperty(
-                        ENABLE_DEFAULT_STATE_CHANGE_LISTENER_EXCEPTION_HANDLER,
-                        "true"
-                    ).toBoolean(),
-                    enableHassEventListenerExceptionHandler = getProperty(
-                        ENABLE_DEFAULT_HASS_EVENT_LISTENER_EXCEPTION_HANDLER,
-                        "true"
-                    ).toBoolean(),
-                    enableErrorResponseListenerExceptionHandler = getProperty(
-                        ENABLE_DEFAULT_ERROR_RESPONSE_LISTENER_EXCEPTION_HANDLER,
-                        "true"
-                    ).toBoolean()
+                    secure = getProperty(SECURE, "false").toBoolean()
                 )
             }
             single {
@@ -123,7 +93,7 @@ object KhomeKoinContext {
                 }
                 RestApiClient(client)
             }
-            single { KhomeClient(get(), WebSocketClient(HttpClient(CIO).config { install(WebSockets) })) }
+            single { HassClient(get(), WebSocketClient(HttpClient(CIO).config { install(WebSockets) })) }
             single { KhomeApplicationImpl() }
         }
 

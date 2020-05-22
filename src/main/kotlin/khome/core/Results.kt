@@ -3,6 +3,7 @@ package khome.core
 import com.google.gson.annotations.SerializedName
 import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.entities.EntityId
+import java.time.Instant
 import java.time.OffsetDateTime
 
 typealias StateAttributes = Map<String, Any>
@@ -34,10 +35,10 @@ data class StateResponse(
 )
 
 data class State<T>(
-    val lastChanged: OffsetDateTime,
+    val lastChanged: Instant,
     val value: T,
     val attributes: StateAttributes,
-    val lastUpdated: OffsetDateTime
+    val lastUpdated: Instant
 )
 
 inline fun <reified T> StateAttributes.safeGet(key: String): T {

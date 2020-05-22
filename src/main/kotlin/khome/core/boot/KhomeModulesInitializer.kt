@@ -1,7 +1,7 @@
 package khome.core.boot
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.HassApi
+import khome.communicating.HassApi
 import khome.KhomeSession
 import khome.core.koin.KhomeKoinContext
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -14,7 +14,7 @@ internal class KhomeModulesInitializer(
 
     private val systemBeansModule =
         module {
-            single { HassApi(khomeSession, get(), get(), get()) }
+            single { HassApi(khomeSession, get(), get()) }
         }
 
     override suspend fun runBootSequence() {

@@ -6,10 +6,11 @@ import khome.core.ConfigurationInterface
 import khome.core.clients.WebSocketClient
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
+import java.net.ConnectException
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-internal class KhomeClient(
+internal class HassClient(
     private val config: ConfigurationInterface,
     private val httpClient: WebSocketClient
 ) {
@@ -41,7 +42,9 @@ internal class KhomeClient(
                     block = { block(KhomeSession(this)) }
                 )
             }
-        } catch (exception: Exception) {
+        } catch (exception: ConnectException) {
             logger.error(exception) { "Could not establish a connection to your homeassistant instance." }
+        } catch (exception: RuntimeException) {
+            logger.error(exception) { "Could not boot khome due to: ${exception.message}" }
         }
 }

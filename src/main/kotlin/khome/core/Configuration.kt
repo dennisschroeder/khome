@@ -6,8 +6,4 @@ interface ConfigurationInterface {
     var port: Int
     var accessToken: String
     var secure: Boolean
-    var enableDefaultErrorResponseHandler: Boolean
-    var enableDefaultStateChangeListenerExceptionHandler: Boolean
-    var enableHassEventListenerExceptionHandler: Boolean
-    var enableErrorResponseListenerExceptionHandler: Boolean
 }

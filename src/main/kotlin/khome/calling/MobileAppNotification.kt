@@ -3,7 +3,7 @@ package khome.calling
 import com.google.gson.annotations.SerializedName
 import io.ktor.http.URLBuilder
 
-abstract class NotifyMobileApp(device: ServiceInterface) : ServiceCall(Domain.NOTIFY, device) {
+abstract class NotifyMobileApp(device: ServiceInterface) : ServiceCall(HassDomain.NOTIFY, device) {
     val serviceData = NotificationMessage()
     fun serviceData(builder: NotificationMessage.() -> Unit) =
         serviceData.apply(builder)

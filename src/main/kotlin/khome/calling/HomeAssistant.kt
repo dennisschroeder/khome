@@ -7,7 +7,7 @@ package khome.calling
  * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 class TurnOn :
-    EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_ON)
+    EntityIdOnlyServiceCall(HassDomain.HOMEASSISTANT, HomeAssistantService.TURN_ON)
 
 /**
  * Turns off an entity that is capable of being turned off.
@@ -16,7 +16,7 @@ class TurnOn :
  * @param entity An object that inherits the [EntitySubjectInterface] that represents an entity in home-assistant.
  */
 class TurnOff :
-    EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TURN_OFF)
+    EntityIdOnlyServiceCall(HassDomain.HOMEASSISTANT, HomeAssistantService.TURN_OFF)
 
 /**
  * Toggles an entity that is capable of being turned on and off.
@@ -26,7 +26,7 @@ class TurnOff :
  */
 
 class Toggle :
-    EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.TOGGLE)
+    EntityIdOnlyServiceCall(HassDomain.HOMEASSISTANT, HomeAssistantService.TOGGLE)
 
 /**
  * Updates an entity..
@@ -36,7 +36,7 @@ class Toggle :
  */
 
 class UpdateEntity :
-    EntityIdOnlyServiceCall(Domain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY)
+    EntityIdOnlyServiceCall(HassDomain.HOMEASSISTANT, HomeAssistantService.UPDATE_ENTITY)
 
 /**
  * Stops the home-assistant instance.
@@ -44,7 +44,7 @@ class UpdateEntity :
  */
 
 class StopHomeAssistant : ServiceCall(
-    Domain.HOMEASSISTANT,
+    HassDomain.HOMEASSISTANT,
     HomeAssistantService.STOP
 ) {
     val serviceData: ServiceDataInterface? = null
@@ -55,7 +55,7 @@ class StopHomeAssistant : ServiceCall(
  * More on [that](https://www.home-assistant.io/docs/scripts/service-calls/) in the official home-assistant documentation.
  */
 class RestartHomeAssistant : ServiceCall(
-    Domain.HOMEASSISTANT,
+    HassDomain.HOMEASSISTANT,
     HomeAssistantService.RESTART
 ) {
     val serviceData: ServiceDataInterface? = null

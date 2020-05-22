@@ -1,15 +1,15 @@
 package khome.calling
 
 class TurnOnLight :
-    EntityBasedServiceCall(Domain.LIGHT, LightService.TURN_ON) {
+    EntityBasedServiceCall(HassDomain.LIGHT, LightService.TURN_ON) {
     override val serviceData: LightData = LightData()
     fun configure(builder: LightData.() -> Unit) = serviceData.apply(builder)
 }
 
-class TurnOffLight : EntityIdOnlyServiceCall(Domain.LIGHT, LightService.TURN_OFF)
+class TurnOffLight : EntityIdOnlyServiceCall(HassDomain.LIGHT, LightService.TURN_OFF)
 
 class ToggleLight :
-    EntityBasedServiceCall(Domain.LIGHT, LightService.TOGGLE) {
+    EntityBasedServiceCall(HassDomain.LIGHT, LightService.TOGGLE) {
     override val serviceData: LightData = LightData()
     fun configure(builder: LightData.() -> Unit) = serviceData.apply(builder)
 }

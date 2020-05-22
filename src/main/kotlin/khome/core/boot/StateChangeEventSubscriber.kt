@@ -2,17 +2,16 @@ package khome.core.boot
 
 import khome.KhomeSession
 import khome.core.ResultResponse
-import khome.core.koin.CallerID
+import khome.communicating.CALLER_ID
 import mu.KotlinLogging
 
 internal class StateChangeEventSubscriber(
-    override val khomeSession: KhomeSession,
-    private val callerID: CallerID
+    override val khomeSession: KhomeSession
 ) : BootSequenceInterface {
 
     private val logger = KotlinLogging.logger { }
     private val id
-        get() = callerID.incrementAndGet()
+        get() = CALLER_ID.incrementAndGet()
 
     override suspend fun runBootSequence() {
         sendEventListenerRequest()

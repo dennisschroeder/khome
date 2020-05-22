@@ -1,7 +1,7 @@
 package khome.observability
 
 import khome.core.ConfigurationInterface
-import khome.core.koin.KhomeKoinComponent
+import khome.core.koin.KhomeComponent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import mu.KotlinLogging
 import org.koin.core.inject
@@ -9,7 +9,7 @@ import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
 internal class DefaultEntityObserverExceptionHandler : AbstractCoroutineContextElement(CoroutineExceptionHandler),
-    EntityObserverExceptionHandler, KhomeKoinComponent {
+    EntityObserverExceptionHandler, KhomeComponent {
     private val config: ConfigurationInterface by inject()
     private val logger = KotlinLogging.logger { }
     override fun handleException(context: CoroutineContext, exception: Throwable) {

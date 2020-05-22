@@ -1,7 +1,9 @@
 package khome.observability
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 interface Observer<State> {
-    var enabled: Boolean // todo: Consider thread safety
+    var enabled: AtomicBoolean
     fun update(state: WithHistory<State>)
 }
 
@@ -18,10 +20,10 @@ interface ObservableHistory<State> : WithHistory<State>, Observable<State>
 
 internal class ObserverImpl<T>(
     private val f: (WithHistory<T>) -> Unit,
-    override var enabled: Boolean = true
+    override var enabled: AtomicBoolean = AtomicBoolean(true)
 ) : Observer<T> {
     override fun update(state: WithHistory<T>) {
-        if (!enabled) {
+        if (!enabled.get()) {
             return
         }
         f(state)

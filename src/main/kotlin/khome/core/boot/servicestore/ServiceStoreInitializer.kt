@@ -2,17 +2,16 @@ package khome.core.boot.servicestore
 
 import khome.KhomeSession
 import khome.core.boot.BootSequenceInterface
-import khome.core.koin.CallerID
+import khome.communicating.CALLER_ID
 import mu.KotlinLogging
 
 internal class ServiceStoreInitializer (
     override val khomeSession: KhomeSession,
-    callerID: CallerID,
     private val serviceStore: ServiceStoreInterface
 ) : BootSequenceInterface {
     private val logger = KotlinLogging.logger { }
     private val servicesRequest =
-        ServicesRequest(callerID.incrementAndGet())
+        ServicesRequest(CALLER_ID.incrementAndGet())
 
     override suspend fun runBootSequence() {
         sendServicesRequest()

@@ -2,7 +2,7 @@ package khome
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.ConfigurationInterface
-import khome.core.koin.KhomeKoinComponent
+import khome.core.koin.KhomeComponent
 import khome.core.koin.KhomeKoinContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -18,20 +18,27 @@ import org.koin.core.inject
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun khomeApplication(init: Khome.() -> Unit): KhomeApplicationImpl {
-    val khome = Khome()
-    khome.apply(init)
-    return khome.createApplication()
-}
+fun khomeApplication(init: Khome.() -> Unit = {}): KhomeApplication =
+    KhomeImpl().apply(init).createApplication()
 
 /**
- * The main application Class.
+ * The main application interface.
  * Serves all the tools necessary for the application to run.
  *
  * @author Dennis Schröder
  */
+interface Khome {
+    /**
+     * Configure your Khome instance. See all available properties in
+     * the [ConfigurationInterface] data class.
+     *
+     * @param builder Lambda with receiver to configure Khome
+     */
+    fun configure(builder: ConfigurationInterface.() -> Unit): ConfigurationInterface
+}
+
 @OptIn(ExperimentalStdlibApi::class, KtorExperimentalAPI::class, ObsoleteCoroutinesApi::class)
-class Khome : KhomeKoinComponent {
+private class KhomeImpl : Khome, KhomeComponent {
 
     init {
         KhomeKoinContext.startKoinApplication()
@@ -39,14 +46,7 @@ class Khome : KhomeKoinComponent {
 
     private val config: ConfigurationInterface by inject()
 
-    /**
-     * Configure your Khome instance. See all available properties in
-     * the [ConfigurationInterface] data class.
-     *
-     * @param builder Lambda with receiver to configure Khome
-     * @see [ConfigurationInterface]
-     */
-    fun configure(builder: ConfigurationInterface.() -> Unit) =
+    override fun configure(builder: ConfigurationInterface.() -> Unit) =
         config.apply(builder)
 
     internal fun createApplication() = KhomeApplicationImpl()

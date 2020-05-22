@@ -1,40 +1,40 @@
 package khome.calling
 
 class TurnOnMediaPlayer :
-    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_ON)
+    EntityIdOnlyServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.TURN_ON)
 
 class TurnOffMediaPlayer :
-    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TURN_OFF)
+    EntityIdOnlyServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.TURN_OFF)
 
 class ToggleMediaPlayer :
-    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.TOGGLE)
+    EntityIdOnlyServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.TOGGLE)
 
 class SetVolume :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_SET) {
+    ServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.VOLUME_SET) {
     val serviceData: VolumeData = VolumeData(null, null)
     fun volumeLevel(level: Float) = serviceData.apply { volumeLevel = level }
 }
 
 class VolumeDown :
-    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_DOWN)
+    EntityIdOnlyServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.VOLUME_DOWN)
 
 class VolumeUp :
-    EntityIdOnlyServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_UP)
+    EntityIdOnlyServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.VOLUME_UP)
 
 class MutePlayer :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.VOLUME_MUTE) {
+    ServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.VOLUME_MUTE) {
     val serviceData: MuteData = MuteData(null, true)
     fun unMute() = serviceData.apply { isVolumeMuted = false }
 }
 
 class SelectSource :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.SELECT_SOURCE) {
+    ServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.SELECT_SOURCE) {
     val serviceData: SourceData = SourceData(null, null)
     fun configure(builder: SourceData.() -> Unit) = serviceData.apply(builder)
 }
 
 class PlayMedia :
-    ServiceCall(Domain.MEDIA_PLAYER, MediaPlayerService.PLAY_MEDIA) {
+    ServiceCall(HassDomain.MEDIA_PLAYER, MediaPlayerService.PLAY_MEDIA) {
     val serviceData: ContentData = ContentData(null, null, null)
     fun configure(builder: ContentData.() -> Unit) = serviceData.apply(builder)
 }

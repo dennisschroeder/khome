@@ -1,7 +1,7 @@
 package khome.entities
 
-data class EntityId(val domain: String, val name: String) {
-    override fun toString(): String = "$domain.$name"
+data class EntityId(val domain: String, val objectId: String) {
+    override fun toString(): String = "$domain.$objectId"
 
     companion object {
         fun fromString(apiName: String): EntityId {

@@ -25,10 +25,10 @@ internal class SensorImpl<S>(private val type: KClass<*>) : Sensor<S> {
     ) {
         @Suppress("UNCHECKED_CAST")
         (this as SensorImpl<Any>).measurement.state = State(
-            lastChanged = lastChanged,
+            lastChanged = lastChanged.toInstant(),
             value = type.cast(newValue),
             attributes = attributes,
-            lastUpdated = lastUpdated
+            lastUpdated = lastUpdated.toInstant()
         )
     }
 }

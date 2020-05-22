@@ -3,24 +3,23 @@ package khome.core.boot.statehandling
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.core.boot.BootSequenceInterface
-import khome.core.koin.CallerID
-import khome.core.koin.KhomeKoinComponent
+import khome.core.koin.KhomeComponent
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
+import khome.communicating.CALLER_ID
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 
 @OptIn(ObsoleteCoroutinesApi::class, KtorExperimentalAPI::class)
 internal class EntityStateInitializer(
     override val khomeSession: KhomeSession,
-    private val callerID: CallerID,
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater
-) : BootSequenceInterface, KhomeKoinComponent {
+) : BootSequenceInterface, KhomeComponent {
 
     private val logger = KotlinLogging.logger { }
     private val id
-        get() = callerID.incrementAndGet()
+        get() = CALLER_ID.incrementAndGet()
 
     private val statesRequest = StatesRequest(id)
 
@@ -43,6 +42,7 @@ internal class EntityStateInitializer(
             false -> logger.error { "Could not fetch initial states from homeassistant" }
             true -> {
                 statesResponse.result.forEach { initialState ->
+                    logger.debug { "Initial state for: ${initialState.entityId} is $initialState" }
                     sensorStateUpdater(initialState)
                     actuatorStateUpdater(initialState)
                 }
