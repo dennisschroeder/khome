@@ -2,10 +2,10 @@ package khome.communicating
 
 interface DesiredState<T> {
     var value: T?
-    val attributes: Map<String, Any>?
+    val attributes: CommandDataWithEntityId?
 }
 
 internal data class DesiredStateImpl<T>(
     override var value: T?,
-    override val attributes: Map<String, Any>?
+    override val attributes: CommandDataWithEntityId?
 ) : DesiredState<T>

@@ -17,14 +17,18 @@ import java.util.concurrent.atomic.AtomicInteger
 internal val CALLER_ID = AtomicInteger(0)
 
 internal enum class CommandType {
-    @SerializedName("call_service") CALL_SERVICE,
-    @SerializedName("subscribe_events") SUBSCRIBE_EVENTS,
-    @SerializedName("get_services") GET_SERVICES,
-    @SerializedName("get_states") GET_STATES
+    @SerializedName("call_service")
+    CALL_SERVICE,
+    @SerializedName("subscribe_events")
+    SUBSCRIBE_EVENTS,
+    @SerializedName("get_services")
+    GET_SERVICES,
+    @SerializedName("get_states")
+    GET_STATES
 }
 
 interface CommandDataWithEntityId {
-    val entityId: EntityId
+    var entityId: EntityId
 }
 
 internal interface HassApiCommand {
@@ -32,16 +36,18 @@ internal interface HassApiCommand {
     var id: Int?
 }
 
-internal data class EntityIdOnlyServiceData(override val entityId: EntityId) : CommandDataWithEntityId
+abstract class DesiredServiceData : CommandDataWithEntityId {
+    override lateinit var entityId: EntityId
+}
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 internal data class HassApiCommandImpl<SD>(
-    val domain: String,
-    val service: String,
-    override val type: CommandType = CommandType.CALL_SERVICE,
+    var domain: String? = null,
+    val service: ServiceTypeIdentifier,
     override var id: Int? = null,
-    val serviceData: SD? = null
+    val serviceData: SD? = null,
+    override val type: CommandType = CommandType.CALL_SERVICE
 ) : HassApiCommand
 
 @KtorExperimentalAPI
@@ -56,9 +62,9 @@ internal class HassApi(
     fun sendHassApiCommand(command: HassApiCommand) =
         launch(ServiceCoroutineContext()) {
             command.id = CALLER_ID.incrementAndGet() // has to be called within single thread to prevent race conditions
-            objectMapper.toJson(command).let { serializedRequest ->
-                khomeSession.callWebSocketApi(serializedRequest)
-                    .also { logger.info { "Called hass api with message: $serializedRequest" } }
+            objectMapper.toJson(command).let { serializedCommand ->
+                khomeSession.callWebSocketApi(serializedCommand)
+                    .also { logger.info { "Called hass api with message: $serializedCommand" } }
             }
         }
 }

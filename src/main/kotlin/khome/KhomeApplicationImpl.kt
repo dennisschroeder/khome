@@ -1,12 +1,10 @@
 package khome
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.communicating.CommandDispatcher
-import khome.communicating.CommandDispatcherImpl
-import khome.communicating.DesiredState
+import khome.communicating.CommandDataWithEntityId
 import khome.communicating.HassApi
 import khome.communicating.HassApiCommandImpl
-import khome.communicating.ServiceId
+import khome.communicating.ServiceTypeResolver
 import khome.core.State
 import khome.core.boot.EventResponseConsumer
 import khome.core.boot.KhomeModulesInitializer
@@ -37,17 +35,15 @@ import kotlin.reflect.KClass
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*>, EntityId>
-internal typealias CommandDispatcherByInstance = MutableMap<CommandDispatcher<*>, ServiceId>
+internal typealias ServiceTypeResolverByDomain = MutableMap<String, ServiceTypeResolver<*>>
 
 interface KhomeApplication {
     suspend fun run()
-    fun <S> createSensor(id: EntityId, type: KClass<*>): Sensor<S>
-    fun <S> createActuator(id: EntityId, type: KClass<*>): Actuator<S>
-    fun <SD> createCommandDispatcher(id: ServiceId): CommandDispatcher<SD>
+    fun <S> createSensor(id: EntityId, stateValueType: KClass<*>): Sensor<S>
+    fun <S> createActuator(id: EntityId, stateValueType: KClass<*>): Actuator<S>
     fun <S> createObserver(f: (WithHistory<State<S>>) -> Unit): Observer<State<S>>
     fun <S> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S>>) -> Unit): Observer<State<S>>
-
-    companion object
+    fun <S> registerServiceTypeMapper(domain: String, resolver: ServiceTypeResolver<S>)
 }
 
 @OptIn(
@@ -65,22 +61,28 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val sensorsByApiName: SensorsByApiName = mutableMapOf()
     private val actuatorsByApiName: ActuatorsByApiName = mutableMapOf()
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
-    private val commandDispatcherByInstance: CommandDispatcherByInstance = mutableMapOf()
 
-    override fun <S> createSensor(id: EntityId, type: KClass<*>): Sensor<S> =
-        SensorImpl<S>(type).also { registerSensor(id, it) }
+    private val serviceTypeResolverByDomain: ServiceTypeResolverByDomain = mutableMapOf()
 
-    override fun <S> createActuator(id: EntityId, type: KClass<*>): Actuator<S> =
-        ActuatorImpl<S>(this, type).also { registerActuator(id, it) }
+    override fun <S> createSensor(id: EntityId, stateValueType: KClass<*>): Sensor<S> =
+        SensorImpl<S>(stateValueType).also { registerSensor(id, it) }
 
-    override fun <SD> createCommandDispatcher(id: ServiceId): CommandDispatcher<SD> =
-        CommandDispatcherImpl<SD>(this).also { registerCommandDispatcher(id, it) }
+    override fun <S> createActuator(id: EntityId, stateValueType: KClass<*>): Actuator<S> =
+        ActuatorImpl<S>(this, getServiceTypeResolver(id.domain), stateValueType).also { registerActuator(id, it) }
 
     override fun <S> createObserver(f: (WithHistory<State<S>>) -> Unit): Observer<State<S>> =
         ObserverImpl(f)
 
     override fun <S> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S>>) -> Unit): Observer<State<S>> =
         AsyncObserver(f)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <S> registerServiceTypeMapper(domain: String, resolver: ServiceTypeResolver<S>) {
+        serviceTypeResolverByDomain[domain] = resolver as ServiceTypeResolver<*>
+    }
+
+    private fun getServiceTypeResolver(domain: String) = serviceTypeResolverByDomain[domain]
+        ?: throw RuntimeException("No service type resolver found for $domain. Please register one.")
 
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*>) {
         sensorsByApiName[entityId] = sensor
@@ -93,24 +95,16 @@ internal class KhomeApplicationImpl : KhomeApplication {
         logger.info { "Registered actuator with id: $entityId" }
     }
 
-    private fun registerCommandDispatcher(serviceId: ServiceId, dispatcher: CommandDispatcher<*>) {
-        commandDispatcherByInstance[dispatcher] = serviceId
-        logger.info { "Registered command dispatcher with id: $serviceId" }
-    }
-
-    internal fun <State> enqueueStateChange(actuator: ActuatorImpl<State>, desiredState: DesiredState<State>) {
+    internal fun <State> enqueueStateChange(
+        actuator: ActuatorImpl<State>,
+        commandImpl: HassApiCommandImpl<CommandDataWithEntityId>
+    ) {
         val entityId = actuatorsByEntity[actuator] ?: throw RuntimeException("Entity not registered: $actuator")
-    }
-
-    internal fun <SD> enqueueServiceCommand(dispatcher: CommandDispatcher<SD>, commandData: SD) {
-        val serviceId = commandDispatcherByInstance[dispatcher] ?: throw RuntimeException("Dispatcher not registered: $dispatcher")
-        val command = HassApiCommandImpl<SD>(
-            domain = serviceId.domain,
-            service = serviceId.service,
-            serviceData = commandData
-        )
-
-        hassApi.sendHassApiCommand(command)
+        commandImpl.apply {
+            domain = entityId.domain
+            serviceData?.entityId = entityId
+        }
+        hassApi.sendHassApiCommand(commandImpl)
     }
 
     override suspend fun run() =
