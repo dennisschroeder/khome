@@ -4,8 +4,9 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.util.KtorExperimentalAPI
+import khome.EventHandlerByEventType
 import khome.KhomeSession
-import khome.core.MessageInterface
+import khome.core.EventResponse
 import khome.core.ResolverResponse
 import khome.core.ResponseType
 import khome.core.ResultResponse
@@ -26,7 +27,8 @@ internal class EventResponseConsumer(
     override val khomeSession: KhomeSession,
     private val objectMapper: ObjectMapper,
     private val sensorStateUpdater: SensorStateUpdater,
-    private val actuatorStateUpdater: ActuatorStateUpdater
+    private val actuatorStateUpdater: ActuatorStateUpdater,
+    private val eventHandlerByEventType: EventHandlerByEventType
 ) : BootSequenceInterface {
     private val logger = KotlinLogging.logger { }
 
@@ -36,6 +38,7 @@ internal class EventResponseConsumer(
             when (response.type) {
                 ResponseType.EVENT -> {
                     handleStateChangedResponse(frameText)
+                    handleEventResponse(frameText)
                 }
                 ResponseType.RESULT -> {
                     handleSuccessResultResponse(frameText)
@@ -45,7 +48,7 @@ internal class EventResponseConsumer(
         }
     }
 
-    private inline fun <reified Response : MessageInterface> mapFrameTextToResponse(frameText: Frame.Text): Response =
+    private inline fun <reified Response> mapFrameTextToResponse(frameText: Frame.Text): Response =
         objectMapper.fromJson(frameText.readText())
 
     private suspend inline fun WebSocketSession.consumeEachMappedToResponse(action: (ResolverResponse, Frame.Text) -> Unit) =
@@ -65,12 +68,22 @@ internal class EventResponseConsumer(
                 }
             }
 
+    private fun handleEventResponse(frameText: Frame.Text) {
+        mapFrameTextToResponse<EventResponse>(frameText)
+            .takeIf { it.event.eventType in eventHandlerByEventType }
+            ?.let { eventResponse ->
+                eventHandlerByEventType[eventResponse.event.eventType]
+                    ?.invokeEventHandler(eventResponse.event.data)
+                    ?: logger.warn { "No event found for event type: ${eventResponse.event.eventType}" }
+            }
+    }
+
     private fun handleSuccessResultResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<ResultResponse>(frameText)
             .takeIf { resultResponse -> resultResponse.success }
             ?.let { resultResponse -> logSuccessResult(resultResponse) }
 
-    private suspend fun handleErrorResultResponse(frameText: Frame.Text) =
+    private fun handleErrorResultResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<ResultResponse>(frameText)
             .takeIf { resultResponse -> !resultResponse.success }
             ?.let { resultResponse ->
@@ -81,5 +94,5 @@ internal class EventResponseConsumer(
         logger.info { "Result-Id: ${resultResponse.id} | Success: ${resultResponse.success}" }
 
     private fun logFailureResponse(resultResponse: ResultResponse) =
-        logger.error { "CallId: ${resultResponse.id} -  errorCode: ${resultResponse.error!!.code} ${resultResponse.error.message}" }
+        logger.error { "CommandId: ${resultResponse.id} -  errorCode: ${resultResponse.error!!.code} ${resultResponse.error.message}" }
 }

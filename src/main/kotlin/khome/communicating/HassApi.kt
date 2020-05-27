@@ -3,7 +3,8 @@ package khome.communicating
 import com.google.gson.annotations.SerializedName
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
-import khome.calling.ServiceCoroutineContext
+import khome.communicating.CommandType.CALL_SERVICE
+import khome.communicating.CommandType.SUBSCRIBE_EVENTS
 import khome.core.clients.RestApiClient
 import khome.core.mapping.ObjectMapper
 import khome.entities.EntityId
@@ -36,18 +37,25 @@ internal interface HassApiCommand {
     var id: Int?
 }
 
+internal class SubscribeEventCommand(private val eventType: String) : HassApiCommand {
+    override val type: CommandType = SUBSCRIBE_EVENTS
+    override var id: Int? = null
+}
+
 abstract class DesiredServiceData : CommandDataWithEntityId {
     override lateinit var entityId: EntityId
 }
 
+class EntityIdOnlyServiceData : DesiredServiceData()
+
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-internal data class HassApiCommandImpl<SD>(
+internal data class ServiceCommandImpl<SD>(
     var domain: String? = null,
     val service: ServiceTypeIdentifier,
     override var id: Int? = null,
     val serviceData: SD? = null,
-    override val type: CommandType = CommandType.CALL_SERVICE
+    override val type: CommandType = CALL_SERVICE
 ) : HassApiCommand
 
 @KtorExperimentalAPI

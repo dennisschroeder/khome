@@ -8,7 +8,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.dsl.module
 
 @OptIn(ObsoleteCoroutinesApi::class, ExperimentalStdlibApi::class, KtorExperimentalAPI::class)
-internal class KhomeModulesInitializer(
+internal class HassApiInitializer(
     override val khomeSession: KhomeSession
 ) : BootSequenceInterface {
 

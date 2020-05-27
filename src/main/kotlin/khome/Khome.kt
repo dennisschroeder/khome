@@ -8,6 +8,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.inject
 
+typealias KhomeBuilder = Khome.() -> Unit
+
 /**
  * The main entry point to start your application
  *
@@ -18,7 +20,7 @@ import org.koin.core.inject
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun khomeApplication(init: Khome.() -> Unit = {}): KhomeApplication =
+fun khomeApplication(init: KhomeBuilder = {}): KhomeApplication =
     KhomeImpl().apply(init).createApplication()
 
 /**

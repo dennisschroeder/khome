@@ -1,4 +1,4 @@
-package khome.calling
+package khome.communicating
 
 import kotlinx.coroutines.newSingleThreadContext
 import kotlin.coroutines.CoroutineContext

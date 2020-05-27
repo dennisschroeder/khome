@@ -1,6 +1,10 @@
 package khome.observability
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.CoroutineContext
 
 interface Observer<State> {
     var enabled: AtomicBoolean
@@ -23,9 +27,18 @@ internal class ObserverImpl<T>(
     override var enabled: AtomicBoolean = AtomicBoolean(true)
 ) : Observer<T> {
     override fun update(state: WithHistory<T>) {
-        if (!enabled.get()) {
-            return
-        }
+        if (!enabled.get()) return
         f(state)
+    }
+}
+
+internal class AsyncObserver<S>(
+    private val f: suspend CoroutineScope.(snapshot: WithHistory<S>) -> Unit,
+    override var enabled: AtomicBoolean = AtomicBoolean(true),
+    context: CoroutineContext = Dispatchers.IO + DefaultAsyncObserverExceptionHandler()
+) : Observer<S>, CoroutineScope by CoroutineScope(context) {
+    override fun update(state: WithHistory<S>) {
+        if (!enabled.get()) return
+        launch { f.invoke(this, state) }
     }
 }

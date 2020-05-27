@@ -1,24 +1,21 @@
 package khome.core
 
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
-import khome.core.exceptions.InvalidAttributeValueTypeException
 import khome.entities.EntityId
 import java.time.Instant
 import java.time.OffsetDateTime
 
-typealias StateAttributes = Map<String, Any>
-
 data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
-data class StateChangedResponse(val id: Int, val type: ResponseType, val event: EventData) : MessageInterface
-data class EventData(
+data class StateChangedResponse(val id: Int, val type: ResponseType, val event: StateChangedEventData) : MessageInterface
+data class StateChangedEventData(
     override val eventType: String,
-    val data: Data,
+    val data: StateChangedData,
     override val timeFired: OffsetDateTime,
     override val origin: String
-) :
-    MessageInterface, EventDtoInterface
+) : MessageInterface, EventDtoInterface
 
-data class Data(val entityId: String, val oldState: StateResponse?, val newState: StateResponse?) : MessageInterface
+data class StateChangedData(val entityId: String, val oldState: StateResponse?, val newState: StateResponse?) : MessageInterface
 
 interface EventDtoInterface {
     val eventType: String
@@ -30,23 +27,24 @@ data class StateResponse(
     val entityId: EntityId,
     val lastChanged: OffsetDateTime,
     val state: Any,
-    val attributes: StateAttributes,
+    val attributes: JsonElement,
     val lastUpdated: OffsetDateTime
 )
 
-data class State<T>(
+data class State<T, SA>(
     val lastChanged: Instant,
     val value: T,
-    val attributes: StateAttributes,
+    val attributes: SA,
     val lastUpdated: Instant
 )
 
-inline fun <reified T> StateAttributes.safeGet(key: String): T {
-    return get(key) as? T ?: throw InvalidAttributeValueTypeException(
-        "Attribute value for $key is of type: ${(get(key)
-            ?: error("Key not valid"))::class}."
-    )
-}
+data class EventResponse(val id: Int, val type: ResponseType, val event: Event)
+data class Event(
+    override val eventType: String,
+    val data: JsonElement,
+    override val timeFired: OffsetDateTime,
+    override val origin: String
+) : MessageInterface, EventDtoInterface
 
 data class ResultResponse(
     val id: Int,

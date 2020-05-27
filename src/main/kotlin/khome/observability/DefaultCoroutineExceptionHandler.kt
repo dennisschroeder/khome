@@ -1,20 +1,26 @@
 package khome.observability
 
-import khome.core.ConfigurationInterface
-import khome.core.koin.KhomeComponent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import mu.KotlinLogging
-import org.koin.core.inject
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-internal class DefaultEntityObserverExceptionHandler : AbstractCoroutineContextElement(CoroutineExceptionHandler),
-    EntityObserverExceptionHandler, KhomeComponent {
-    private val config: ConfigurationInterface by inject()
+internal class DefaultAsyncObserverExceptionHandler : AbstractCoroutineContextElement(CoroutineExceptionHandler),
+    EntityObserverExceptionHandler {
     private val logger = KotlinLogging.logger { }
     override fun handleException(context: CoroutineContext, exception: Throwable) {
-        logger.error(exception) { "Caught Exception observer}" }
+        logger.error(exception) { "Caught Exception in observer" }
     }
 }
 
 interface EntityObserverExceptionHandler : CoroutineExceptionHandler
+
+internal class DefaultAsyncEventHandlerExceptionHandler : AbstractCoroutineContextElement(CoroutineExceptionHandler),
+    EventHandlerExceptionHandler {
+    private val logger = KotlinLogging.logger { }
+    override fun handleException(context: CoroutineContext, exception: Throwable) {
+        logger.error(exception) { "Caught Exception in observer" }
+    }
+}
+
+interface EventHandlerExceptionHandler : CoroutineExceptionHandler
