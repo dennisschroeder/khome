@@ -1,5 +1,6 @@
 package khome
 
+import io.ktor.client.statement.HttpResponse
 import io.ktor.util.KtorExperimentalAPI
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.HassApi
@@ -25,15 +26,15 @@ import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
 import khome.events.AsyncEventHandler
-import khome.events.EventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
-import khome.helper.SWITCHABLE_RESOLVER
+import khome.helper.SWITCHABLE_VALUE_RESOLVER
 import khome.observability.AsyncObserver
-import khome.observability.Observer
 import khome.observability.ObserverImpl
+import khome.observability.Switchable
 import khome.observability.WithHistory
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
@@ -51,12 +52,14 @@ interface KhomeApplication {
     suspend fun run()
     fun <S, SA> createSensor(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Sensor<S, SA>
     fun <S, SA> createActuator(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Actuator<S, SA>
-    fun <S, SA> createObserver(f: (WithHistory<State<S, SA>>) -> Unit): Observer<State<S, SA>>
-    fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S, SA>>) -> Unit): Observer<State<S, SA>>
+    fun <S, SA> createObserver(f: (WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
+    fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
     fun <S> registerServiceTypeResolver(domain: String, resolver: ServiceTypeResolver<S>)
-    fun <ED> attachEventHandler(eventType: String, eventHandler: EventHandler<ED>, eventDataType: KClass<*>)
-    fun <ED> createEventHandler(f: (ED) -> Unit): EventHandler<ED>
-    fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED) -> Unit): EventHandler<ED>
+    fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
+    fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable
+    fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
+    fun emitEvent(eventType: String, eventData: Any? = null)
+    fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
     fun <PB> callService(domain: String, service: ServiceTypeIdentifier, parameterBag: PB)
 }
 
@@ -81,8 +84,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
     init {
-        registerServiceTypeResolver("input_boolean", SWITCHABLE_RESOLVER)
-        registerServiceTypeResolver("light", SWITCHABLE_RESOLVER)
+        registerServiceTypeResolver("input_boolean", SWITCHABLE_VALUE_RESOLVER)
+        registerServiceTypeResolver("light", SWITCHABLE_VALUE_RESOLVER)
     }
 
     override fun <S, SA> createSensor(
@@ -105,10 +108,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
             attributesValueType
         ).also { registerActuator(id, it) }
 
-    override fun <T, SA> createObserver(f: (WithHistory<State<T, SA>>) -> Unit): Observer<State<T, SA>> =
+    override fun <T, SA> createObserver(f: (WithHistory<State<T, SA>>, Switchable) -> Unit): Switchable =
         ObserverImpl(f)
 
-    override fun <T, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<T, SA>>) -> Unit): Observer<State<T, SA>> =
+    override fun <T, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<T, SA>>, Switchable) -> Unit): Switchable =
         AsyncObserver(f)
 
     @Suppress("UNCHECKED_CAST")
@@ -116,16 +119,27 @@ internal class KhomeApplicationImpl : KhomeApplication {
         serviceTypeResolverByDomain[domain] = resolver as ServiceTypeResolver<*>
     }
 
-    override fun <ED> attachEventHandler(eventType: String, eventHandler: EventHandler<ED>, eventDataType: KClass<*>) {
+    override fun attachEventHandler(
+        eventType: String,
+        eventHandler: Switchable,
+        eventDataType: KClass<*>
+    ) {
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
             ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
     }
 
-    override fun <ED> createEventHandler(f: (ED) -> Unit): EventHandler<ED> =
+    override fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable =
         EventHandlerImpl(f)
 
-    override fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED) -> Unit): EventHandler<ED> =
+    override fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable =
         AsyncEventHandler(f)
+
+    override fun emitEvent(eventType: String, eventData: Any?) {
+        hassApi.emitEvent(eventType, eventData)
+    }
+
+    override fun emitEventAsync(eventType: String, eventData: Any?): Deferred<HttpResponse> =
+        hassApi.emitEventAsync(eventType, eventData)
 
     override fun <PB> callService(domain: String, service: ServiceTypeIdentifier, parameterBag: PB) {
         ServiceCommandImpl<PB>(
@@ -181,11 +195,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
             eventSubscriptionsByEventType.forEach { entry ->
                 SubscribeEventCommand(entry.key).also { command -> hassApi.sendHassApiCommand(command) }
+                consumeSingleMessage<ResultResponse>()
+                    .takeIf { resultResponse -> resultResponse.success }
+                    ?.let { logger.info { "Subscribed to event: ${entry.key}" } }
             }
-
-            consumeSingleMessage<ResultResponse>()
-                .takeIf { resultResponse -> resultResponse.success }
-                ?.let { logger.info { "Subscribed to events" } }
 
             EntityStateInitializer(
                 khomeSession = this,

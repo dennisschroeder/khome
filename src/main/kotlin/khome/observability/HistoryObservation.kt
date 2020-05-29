@@ -20,9 +20,10 @@ internal class ObservableHistoryNoInitial<T>(maxHistory: Int = 10) : ObservableH
 
     private val _history = CircularBuffer<T>(maxHistory)
 
-    override fun attachObserver(observer: Observer<T>) {
-        observers.add(observer)
+    @Suppress("UNCHECKED_CAST")
+    override fun attachObserver(observer: Switchable) {
+        observers.add(observer as SwitchableObserver<T>)
     }
 
-    private val observers = mutableListOf<Observer<T>>()
+    private val observers = mutableListOf<SwitchableObserver<T>>()
 }

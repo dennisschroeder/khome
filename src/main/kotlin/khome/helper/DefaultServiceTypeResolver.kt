@@ -3,9 +3,9 @@ package khome.helper
 import khome.communicating.ServiceType
 import khome.communicating.ServiceTypeResolver
 
-val SWITCHABLE_RESOLVER: ServiceTypeResolver<Switchable> = { desiredState ->
+val SWITCHABLE_VALUE_RESOLVER: ServiceTypeResolver<SwitchableValue> = { desiredState ->
     when (desiredState.value) {
-        Switchable.ON -> ServiceType.TURN_ON
-        Switchable.OFF -> ServiceType.TURN_OFF
+        SwitchableValue.ON -> ServiceType.TURN_ON
+        SwitchableValue.OFF -> ServiceType.TURN_OFF
     }
 }

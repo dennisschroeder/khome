@@ -1,6 +1,8 @@
 package khome.communicating
 
 import com.google.gson.annotations.SerializedName
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.utils.EmptyContent
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.communicating.CommandType.CALL_SERVICE
@@ -11,6 +13,7 @@ import khome.entities.EntityId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import java.util.concurrent.atomic.AtomicInteger
@@ -20,10 +23,13 @@ internal val CALLER_ID = AtomicInteger(0)
 internal enum class CommandType {
     @SerializedName("call_service")
     CALL_SERVICE,
+
     @SerializedName("subscribe_events")
     SUBSCRIBE_EVENTS,
+
     @SerializedName("get_services")
     GET_SERVICES,
+
     @SerializedName("get_states")
     GET_STATES
 }
@@ -73,6 +79,23 @@ internal class HassApi(
             objectMapper.toJson(command).let { serializedCommand ->
                 khomeSession.callWebSocketApi(serializedCommand)
                     .also { logger.info { "Called hass api with message: $serializedCommand" } }
+            }
+        }
+
+    fun emitEvent(eventType: String, eventData: Any?) {
+        launch(Dispatchers.IO) {
+            restApiClient.post<HttpResponse> {
+                url { encodedPath = "/api/events/$eventType" }
+                body = eventData ?: EmptyContent
+            }
+        }
+    }
+
+    fun emitEventAsync(eventType: String, eventData: Any?) =
+        async(Dispatchers.IO) {
+            restApiClient.post<HttpResponse> {
+                url { encodedPath = "/api/events/$eventType" }
+                body = eventData ?: EmptyContent
             }
         }
 }

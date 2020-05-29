@@ -2,7 +2,7 @@ package khome.helper
 
 import com.google.gson.annotations.SerializedName
 
-enum class Switchable {
+enum class SwitchableValue {
     @SerializedName("on") ON,
     @SerializedName("off") OFF
 }

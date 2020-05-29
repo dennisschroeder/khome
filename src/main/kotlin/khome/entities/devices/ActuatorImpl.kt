@@ -16,6 +16,8 @@ import khome.observability.Observable
 import khome.observability.ObservableHistory
 import khome.observability.ObservableHistoryNoInitial
 import khome.observability.Observer
+import khome.observability.Switchable
+import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import java.time.OffsetDateTime
 import kotlin.reflect.KClass
@@ -83,7 +85,7 @@ internal class ActuatorImpl<S, SA>(
         )
     }
 
-    override fun attachObserver(observer: Observer<State<S, SA>>) {
+    override fun attachObserver(observer: Switchable) {
         actualState.attachObserver(observer)
     }
 
