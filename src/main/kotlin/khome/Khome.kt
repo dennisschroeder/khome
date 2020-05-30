@@ -1,7 +1,7 @@
 package khome
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.ConfigurationInterface
+import khome.core.Configuration
 import khome.core.koin.KhomeComponent
 import khome.core.koin.KhomeKoinContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,11 +32,11 @@ fun khomeApplication(init: KhomeBuilder = {}): KhomeApplication =
 interface Khome {
     /**
      * Configure your Khome instance. See all available properties in
-     * the [ConfigurationInterface] data class.
+     * the [Configuration] data class.
      *
      * @param builder Lambda with receiver to configure Khome
      */
-    fun configure(builder: ConfigurationInterface.() -> Unit): ConfigurationInterface
+    fun configure(builder: Configuration.() -> Unit): Configuration
 }
 
 @OptIn(ExperimentalStdlibApi::class, KtorExperimentalAPI::class, ObsoleteCoroutinesApi::class)
@@ -46,9 +46,9 @@ private class KhomeImpl : Khome, KhomeComponent {
         KhomeKoinContext.startKoinApplication()
     }
 
-    private val config: ConfigurationInterface by inject()
+    private val config: Configuration by inject()
 
-    override fun configure(builder: ConfigurationInterface.() -> Unit) =
+    override fun configure(builder: Configuration.() -> Unit) =
         config.apply(builder)
 
     internal fun createApplication() = KhomeApplicationImpl()

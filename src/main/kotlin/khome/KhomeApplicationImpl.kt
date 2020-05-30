@@ -20,6 +20,7 @@ import khome.core.koin.KhomeComponent
 import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
 import khome.entities.EntityId
+import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
 import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
@@ -37,6 +38,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.koin.core.get
 import org.koin.core.inject
@@ -49,7 +51,7 @@ internal typealias ServiceTypeResolverByDomain = MutableMap<String, ServiceTypeR
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
 
 interface KhomeApplication {
-    suspend fun run()
+    fun run()
     fun <S, SA> createSensor(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Sensor<S, SA>
     fun <S, SA> createActuator(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Actuator<S, SA>
     fun <S, SA> createObserver(f: (WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
@@ -154,13 +156,11 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*, *>) {
         sensorsByApiName[entityId] = sensor
-        logger.info { "Registered sensor with id: $entityId" }
     }
 
     private fun registerActuator(entityId: EntityId, actuator: ActuatorImpl<*, *>) {
         actuatorsByApiName[entityId] = actuator
         actuatorsByEntity[actuator] = entityId
-        logger.info { "Registered actuator with id: $entityId" }
     }
 
     private fun registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
@@ -178,42 +178,45 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.sendHassApiCommand(commandImpl)
     }
 
-    override suspend fun run() =
-        hassClient.startSession {
+    override fun run() =
+        runBlocking {
+            hassClient.startSession {
 
-            Authenticator(
-                khomeSession = this,
-                configuration = get()
-            ).runBootSequence()
+                Authenticator(
+                    khomeSession = this,
+                    configuration = get()
+                ).runStartSequenceStep()
 
-            ServiceStoreInitializer(
-                khomeSession = this,
-                serviceStore = get()
-            ).runBootSequence()
+                ServiceStoreInitializer(
+                    khomeSession = this,
+                    serviceStore = get()
+                ).runStartSequenceStep()
 
-            HassApiInitializer(khomeSession = this).runBootSequence()
+                HassApiInitializer(khomeSession = this).runStartSequenceStep()
 
-            eventSubscriptionsByEventType.forEach { entry ->
-                SubscribeEventCommand(entry.key).also { command -> hassApi.sendHassApiCommand(command) }
-                consumeSingleMessage<ResultResponse>()
-                    .takeIf { resultResponse -> resultResponse.success }
-                    ?.let { logger.info { "Subscribed to event: ${entry.key}" } }
+                eventSubscriptionsByEventType.forEach { entry ->
+                    SubscribeEventCommand(entry.key).also { command -> hassApi.sendHassApiCommand(command) }
+                    consumeSingleMessage<ResultResponse>()
+                        .takeIf { resultResponse -> resultResponse.success }
+                        ?.let { logger.info { "Subscribed to event: ${entry.key}" } }
+                }
+
+                EntityStateInitializer(
+                    khomeSession = this,
+                    sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
+                    actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
+                    entityRegistrationValidation = EntityRegistrationValidation(actuatorsByApiName, sensorsByApiName)
+                ).runStartSequenceStep()
+
+                StateChangeEventSubscriber(khomeSession = this).runStartSequenceStep()
+
+                EventResponseConsumer(
+                    khomeSession = this,
+                    objectMapper = get(),
+                    sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
+                    actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
+                    eventHandlerByEventType = eventSubscriptionsByEventType
+                ).runStartSequenceStep()
             }
-
-            EntityStateInitializer(
-                khomeSession = this,
-                sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
-                actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName)
-            ).runBootSequence()
-
-            StateChangeEventSubscriber(khomeSession = this).runBootSequence()
-
-            EventResponseConsumer(
-                khomeSession = this,
-                objectMapper = get(),
-                sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
-                actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
-                eventHandlerByEventType = eventSubscriptionsByEventType
-            ).runBootSequence()
         }
 }

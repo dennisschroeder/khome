@@ -1,6 +1,6 @@
 package khome.core
 
-interface ConfigurationInterface {
+interface Configuration {
     var name: String
     var host: String
     var port: Int

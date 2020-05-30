@@ -25,7 +25,7 @@ internal class KhomeSession(
         send(message).also { logger.debug { "Called hass api with message: $message" } }
 
     suspend fun callWebSocketApi(message: MessageInterface) =
-        send(message.toJson()).also { logger.info { "Called hass api with message: ${message.toJson()}" } }
+        send(message.toJson()).also { logger.debug { "Called hass api with message: ${message.toJson()}" } }
 
     suspend inline fun <reified M : Any> consumeSingleMessage(): M = incoming.receive().asObject()
     inline fun <reified M : Any> Frame.asObject() = (this as Frame.Text).toObject<M>()

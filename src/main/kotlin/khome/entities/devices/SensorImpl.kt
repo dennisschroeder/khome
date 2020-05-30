@@ -1,6 +1,7 @@
 package khome.entities.devices
 
 import com.google.gson.JsonElement
+import io.ktor.util.KtorExperimentalAPI
 import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
@@ -26,6 +27,7 @@ internal class SensorImpl<S, SA>(
         measurement.attachObserver(observer)
     }
 
+    @KtorExperimentalAPI
     @ExperimentalStdlibApi
     fun trySetMeasurementFromAny(
         newValue: Any,

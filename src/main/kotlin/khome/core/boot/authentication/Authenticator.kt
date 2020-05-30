@@ -1,16 +1,16 @@
 package khome.core.boot.authentication
 
 import khome.KhomeSession
-import khome.core.ConfigurationInterface
-import khome.core.boot.BootSequenceInterface
+import khome.core.Configuration
+import khome.core.boot.StartSequenceStep
 import mu.KotlinLogging
 
 internal class Authenticator(
     override val khomeSession: KhomeSession,
-    configuration: ConfigurationInterface
-) : BootSequenceInterface {
+    configuration: Configuration
+) : StartSequenceStep {
 
-    override suspend fun runBootSequence() =
+    override suspend fun runStartSequenceStep() =
         consumeInitialResponse()
             .let { initialResponse ->
                 when (initialResponse.type) {

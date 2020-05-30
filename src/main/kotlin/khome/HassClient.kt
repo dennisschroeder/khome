@@ -2,7 +2,7 @@ package khome
 
 import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.ConfigurationInterface
+import khome.core.Configuration
 import khome.core.clients.WebSocketClient
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
@@ -11,7 +11,7 @@ import java.net.ConnectException
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 internal class HassClient(
-    private val config: ConfigurationInterface,
+    private val config: Configuration,
     private val httpClient: WebSocketClient
 ) {
     private val logger = KotlinLogging.logger { }
@@ -45,6 +45,6 @@ internal class HassClient(
         } catch (exception: ConnectException) {
             logger.error(exception) { "Could not establish a connection to your homeassistant instance." }
         } catch (exception: RuntimeException) {
-            logger.error(exception) { "Could not boot khome due to: ${exception.message}" }
+            logger.error(exception) { "Could not start khome due to: ${exception.message}" }
         }
 }

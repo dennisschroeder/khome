@@ -2,7 +2,7 @@ package khome.core.boot
 
 import khome.KhomeSession
 
-internal interface BootSequenceInterface {
+internal interface StartSequenceStep {
     val khomeSession: KhomeSession
-    suspend fun runBootSequence()
+    suspend fun runStartSequenceStep()
 }

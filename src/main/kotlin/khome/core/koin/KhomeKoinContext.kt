@@ -15,7 +15,7 @@ import io.ktor.client.request.host
 import io.ktor.client.request.port
 import khome.HassClient
 import khome.KhomeApplicationImpl
-import khome.core.ConfigurationInterface
+import khome.core.Configuration
 import khome.core.DefaultConfiguration
 import khome.core.boot.servicestore.ServiceStore
 import khome.core.boot.servicestore.ServiceStoreInterface
@@ -62,7 +62,7 @@ internal object KhomeKoinContext {
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<ServiceStoreInterface> { ServiceStore() }
-            single<ConfigurationInterface> {
+            single<Configuration> {
                 DefaultConfiguration(
                     name = getProperty(NAME, "[Give your application a unique name]"),
                     host = getProperty(HOST, "localhost"),
@@ -82,7 +82,7 @@ internal object KhomeKoinContext {
                         }
                     }
 
-                    val config = get<ConfigurationInterface>()
+                    val config = get<Configuration>()
 
                     defaultRequest {
                         host = config.host

@@ -7,13 +7,13 @@ import mu.KotlinLogging
 
 internal class StateChangeEventSubscriber(
     override val khomeSession: KhomeSession
-) : BootSequenceInterface {
+) : StartSequenceStep {
 
     private val logger = KotlinLogging.logger { }
     private val id
         get() = CALLER_ID.incrementAndGet()
 
-    override suspend fun runBootSequence() {
+    override suspend fun runStartSequenceStep() {
         sendEventListenerRequest()
         consumeResultResponse().let { resultResponse ->
             when (resultResponse.success) {

@@ -10,14 +10,14 @@ import org.koin.dsl.module
 @OptIn(ObsoleteCoroutinesApi::class, ExperimentalStdlibApi::class, KtorExperimentalAPI::class)
 internal class HassApiInitializer(
     override val khomeSession: KhomeSession
-) : BootSequenceInterface {
+) : StartSequenceStep {
 
     private val systemBeansModule =
         module {
             single { HassApi(khomeSession, get(), get()) }
         }
 
-    override suspend fun runBootSequence() {
+    override suspend fun runStartSequenceStep() {
         KhomeKoinContext.application?.modules(systemBeansModule)
     }
 }

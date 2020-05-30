@@ -29,11 +29,11 @@ internal class EventResponseConsumer(
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater,
     private val eventHandlerByEventType: EventHandlerByEventType
-) : BootSequenceInterface {
+) : StartSequenceStep {
     private val logger = KotlinLogging.logger { }
 
     @ExperimentalStdlibApi
-    override suspend fun runBootSequence() = coroutineScope {
+    override suspend fun runStartSequenceStep() = coroutineScope {
         khomeSession.consumeEachMappedToResponse { response, frameText ->
             when (response.type) {
                 ResponseType.EVENT -> {

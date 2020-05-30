@@ -6,4 +6,4 @@ data class DefaultConfiguration(
     override var port: Int,
     override var accessToken: String,
     override var secure: Boolean
-) : ConfigurationInterface
+) : Configuration
