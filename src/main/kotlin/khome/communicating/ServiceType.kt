@@ -6,5 +6,5 @@ package khome.communicating
 interface ServiceTypeIdentifier
 
 enum class ServiceType : ServiceTypeIdentifier {
-    TURN_ON, TURN_OFF, SET_COVER_POSITION
+    TURN_ON, TURN_OFF, SET_COVER_POSITION, SET_VALUE
 }

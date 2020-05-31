@@ -29,7 +29,8 @@ import khome.entities.devices.SensorImpl
 import khome.events.AsyncEventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
-import khome.helper.SWITCHABLE_VALUE_RESOLVER
+import khome.extending.INPUT_TEXT_RESOLVER
+import khome.extending.SWITCHABLE_VALUE_RESOLVER
 import khome.observability.AsyncObserver
 import khome.observability.ObserverImpl
 import khome.observability.Switchable
@@ -88,6 +89,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
     init {
         registerServiceTypeResolver("input_boolean", SWITCHABLE_VALUE_RESOLVER)
         registerServiceTypeResolver("light", SWITCHABLE_VALUE_RESOLVER)
+        registerServiceTypeResolver("input_text", INPUT_TEXT_RESOLVER)
     }
 
     override fun <S, SA> createSensor(
