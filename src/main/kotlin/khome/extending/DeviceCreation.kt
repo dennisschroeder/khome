@@ -1,9 +1,10 @@
-package khome.helper
+package khome.extending
 
 import khome.KhomeApplication
 import khome.entities.EntityId
 
-typealias AttributesMap = Map<String, Any>
+fun KhomeApplication.createInputText(objectId: String) =
+    createActuator<String, InputTextAttributes>(EntityId("input_text", objectId))
 
 inline fun <reified Attributes> KhomeApplication.createInputNumber(objectId: String) =
     createActuator<Double, Attributes>(EntityId("input_number", objectId))

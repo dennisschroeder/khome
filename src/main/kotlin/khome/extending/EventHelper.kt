@@ -1,4 +1,4 @@
-package khome.helper
+package khome.extending
 
 import khome.KhomeApplication
 import khome.observability.Switchable

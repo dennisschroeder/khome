@@ -1,4 +1,4 @@
-package khome.helper
+package khome.extending
 
 import com.google.gson.annotations.SerializedName
 
