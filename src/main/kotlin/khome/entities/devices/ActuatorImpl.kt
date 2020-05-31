@@ -7,9 +7,9 @@ import khome.communicating.CommandDataWithEntityId
 import khome.communicating.DesiredState
 import khome.communicating.DesiredStateImpl
 import khome.communicating.EntityIdOnlyServiceData
+import khome.communicating.ServiceCallResolver
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceTypeIdentifier
-import khome.communicating.ServiceTypeResolver
 import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
@@ -36,7 +36,7 @@ interface Actuator<S, SA> : Observable<State<S, SA>> {
 internal class ActuatorImpl<S, SA>(
     private val app: KhomeApplicationImpl,
     private val mapper: ObjectMapper,
-    private val resolver: ServiceTypeResolver<S>,
+    private val resolver: ServiceCallResolver<S>,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Actuator<S, SA> {
@@ -46,9 +46,10 @@ internal class ActuatorImpl<S, SA>(
     override var desiredState: DesiredState<S>? = null
         set(newDesiredState) {
             newDesiredState?.let {
+                val resolvedServiceCommand = resolver(newDesiredState)
                 ServiceCommandImpl(
-                    service = resolver(newDesiredState),
-                    serviceData = newDesiredState.attributes
+                    service = resolvedServiceCommand.service,
+                    serviceData = resolvedServiceCommand.serviceData
                 ).also { app.enqueueStateChange(this, it) }
             }
             field = newDesiredState

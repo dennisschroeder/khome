@@ -4,9 +4,9 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.util.KtorExperimentalAPI
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.HassApi
+import khome.communicating.ServiceCallResolver
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceTypeIdentifier
-import khome.communicating.ServiceTypeResolver
 import khome.communicating.SubscribeEventCommand
 import khome.core.ResultResponse
 import khome.core.State
@@ -29,6 +29,8 @@ import khome.entities.devices.SensorImpl
 import khome.events.AsyncEventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
+import khome.extending.INPUT_NUMBER_RESOLVER
+import khome.extending.INPUT_SELECT_RESOLVER
 import khome.extending.INPUT_TEXT_RESOLVER
 import khome.extending.SWITCHABLE_VALUE_RESOLVER
 import khome.observability.AsyncObserver
@@ -48,7 +50,7 @@ import kotlin.reflect.KClass
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
-internal typealias ServiceTypeResolverByDomain = MutableMap<String, ServiceTypeResolver<*>>
+internal typealias ServiceCallResolverByDomain = MutableMap<String, ServiceCallResolver<*>>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
 
 interface KhomeApplication {
@@ -57,7 +59,7 @@ interface KhomeApplication {
     fun <S, SA> createActuator(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Actuator<S, SA>
     fun <S, SA> createObserver(f: (WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
     fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
-    fun <S> registerServiceTypeResolver(domain: String, resolver: ServiceTypeResolver<S>)
+    fun <S> registerServiceCallResolver(domain: String, resolver: ServiceCallResolver<S>)
     fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
     fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable
     fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
@@ -83,13 +85,14 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByApiName: ActuatorsByApiName = mutableMapOf()
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
-    private val serviceTypeResolverByDomain: ServiceTypeResolverByDomain = mutableMapOf()
+    private val serviceCallResolverByDomain: ServiceCallResolverByDomain = mutableMapOf()
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
     init {
-        registerServiceTypeResolver("input_boolean", SWITCHABLE_VALUE_RESOLVER)
-        registerServiceTypeResolver("light", SWITCHABLE_VALUE_RESOLVER)
-        registerServiceTypeResolver("input_text", INPUT_TEXT_RESOLVER)
+        registerServiceCallResolver("input_boolean", SWITCHABLE_VALUE_RESOLVER)
+        registerServiceCallResolver("input_number", INPUT_NUMBER_RESOLVER)
+        registerServiceCallResolver("input_text", INPUT_TEXT_RESOLVER)
+        registerServiceCallResolver("input_select", INPUT_SELECT_RESOLVER)
     }
 
     override fun <S, SA> createSensor(
@@ -119,8 +122,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
         AsyncObserver(f)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <S> registerServiceTypeResolver(domain: String, resolver: ServiceTypeResolver<S>) {
-        serviceTypeResolverByDomain[domain] = resolver as ServiceTypeResolver<*>
+    override fun <S> registerServiceCallResolver(domain: String, resolver: ServiceCallResolver<S>) {
+        serviceCallResolverByDomain[domain] = resolver as ServiceCallResolver<*>
     }
 
     override fun attachEventHandler(
@@ -153,14 +156,16 @@ internal class KhomeApplicationImpl : KhomeApplication {
         ).also { hassApi.sendHassApiCommand(it) }
     }
 
-    private fun getServiceTypeResolver(domain: String) = serviceTypeResolverByDomain[domain]
-        ?: throw RuntimeException("No service type resolver found for $domain. Please register one.")
+    private fun getServiceTypeResolver(domain: String): ServiceCallResolver<*> = serviceCallResolverByDomain[domain]
+        ?: throw RuntimeException("No service call resolver found for $domain. Please register one.")
 
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*, *>) {
+        check(!sensorsByApiName.containsKey(entityId)) { "Sensor with id: $entityId already exists." }
         sensorsByApiName[entityId] = sensor
     }
 
     private fun registerActuator(entityId: EntityId, actuator: ActuatorImpl<*, *>) {
+        check(!actuatorsByApiName.containsKey(entityId)) { "Actuator with id: $entityId already exists." }
         actuatorsByApiName[entityId] = actuator
         actuatorsByEntity[actuator] = entityId
     }

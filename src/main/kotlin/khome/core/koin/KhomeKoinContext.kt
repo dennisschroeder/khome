@@ -78,6 +78,7 @@ internal object KhomeKoinContext {
                             setPrettyPrinting()
                             setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                             registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
+                            registerTypeAdapter(EntityId::class.java, EntityIdConverter().nullSafe())
                             create()!!
                         }
                     }

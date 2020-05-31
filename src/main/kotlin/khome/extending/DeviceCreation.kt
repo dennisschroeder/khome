@@ -6,11 +6,14 @@ import khome.entities.EntityId
 fun KhomeApplication.createInputText(objectId: String) =
     createActuator<String, InputTextAttributes>(EntityId("input_text", objectId))
 
-inline fun <reified Attributes> KhomeApplication.createInputNumber(objectId: String) =
-    createActuator<Double, Attributes>(EntityId("input_number", objectId))
+fun KhomeApplication.createInputNumber(objectId: String) =
+    createActuator<Float, InputNumberAttributes>(EntityId("input_number", objectId))
 
-inline fun <reified Attributes> KhomeApplication.createInputBoolean(objectId: String) =
-    createActuator<SwitchableValue, Attributes>(EntityId("input_boolean", objectId))
+fun KhomeApplication.createInputBoolean(objectId: String) =
+    createActuator<SwitchableValue, InputBooleanAttributes>(EntityId("input_boolean", objectId))
+
+inline fun<reified State : Enum<State>> KhomeApplication.createInputSelect(objectId: String) =
+    createActuator<State, InputSelectAttributes>(EntityId("input_select", objectId))
 
 inline fun <reified State, reified Attributes> KhomeApplication.createMediaPlayer(objectId: String) =
     createActuator<State, Attributes>(EntityId("media_player", objectId))

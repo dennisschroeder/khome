@@ -1,13 +1,36 @@
 package khome.extending
 
+import khome.communicating.DesiredServiceData
+import khome.communicating.EntityIdOnlyServiceData
+import khome.communicating.DefaultResolvedServiceCommand
+import khome.communicating.ServiceCallResolver
 import khome.communicating.ServiceType
-import khome.communicating.ServiceTypeResolver
 
-internal val SWITCHABLE_VALUE_RESOLVER: ServiceTypeResolver<SwitchableValue> = { desiredState ->
+internal val SWITCHABLE_VALUE_RESOLVER: ServiceCallResolver<SwitchableValue> = { desiredState ->
     when (desiredState.value) {
-        SwitchableValue.ON -> ServiceType.TURN_ON
-        SwitchableValue.OFF -> ServiceType.TURN_OFF
+        SwitchableValue.ON -> DefaultResolvedServiceCommand(
+            service = ServiceType.TURN_ON,
+            serviceData = EntityIdOnlyServiceData()
+        )
+        SwitchableValue.OFF -> DefaultResolvedServiceCommand(
+            service = ServiceType.TURN_ON,
+            serviceData = EntityIdOnlyServiceData()
+        )
     }
 }
 
-internal val INPUT_TEXT_RESOLVER : ServiceTypeResolver<String> = { ServiceType.SET_VALUE }
+internal data class SettableInputValueDesiredAttributes<S>(private val value: S) : DesiredServiceData()
+
+internal val INPUT_TEXT_RESOLVER: ServiceCallResolver<String> = { desiredState ->
+    DefaultResolvedServiceCommand(service = ServiceType.SET_VALUE, serviceData = SettableInputValueDesiredAttributes(desiredState.value))
+}
+
+internal val INPUT_NUMBER_RESOLVER: ServiceCallResolver<Float> = { desiredState ->
+    DefaultResolvedServiceCommand(service = ServiceType.SET_VALUE, serviceData = SettableInputValueDesiredAttributes(desiredState.value))
+}
+
+internal data class InputSelectDesiredAttributes(val option: String) : DesiredServiceData()
+
+internal val INPUT_SELECT_RESOLVER: ServiceCallResolver<Enum<*>> = { desiredState ->
+    DefaultResolvedServiceCommand(service = ServiceType.SELECT_OPTION, serviceData = InputSelectDesiredAttributes(desiredState.value.name))
+}
