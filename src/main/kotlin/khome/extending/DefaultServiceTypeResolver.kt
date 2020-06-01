@@ -22,19 +22,19 @@ internal val SWITCHABLE_VALUE_RESOLVER: ServiceCallResolver<SwitchableValue> = {
     }
 }
 
-internal data class SettableInputValueServiceData<S>(private val value: S) : DesiredServiceData()
+internal data class SettableStateValueServiceData<S>(private val value: S) : DesiredServiceData()
 
 internal val INPUT_TEXT_RESOLVER: ServiceCallResolver<String> = { desiredState ->
     DefaultResolvedServiceCommand(
         service = ServiceType.SET_VALUE,
-        serviceData = SettableInputValueServiceData(desiredState.value)
+        serviceData = SettableStateValueServiceData(desiredState.value)
     )
 }
 
 internal val INPUT_NUMBER_RESOLVER: ServiceCallResolver<Float> = { desiredState ->
     DefaultResolvedServiceCommand(
         service = ServiceType.SET_VALUE,
-        serviceData = SettableInputValueServiceData(desiredState.value)
+        serviceData = SettableStateValueServiceData(desiredState.value)
     )
 }
 
@@ -70,5 +70,4 @@ internal val INPUT_DATETIME_RESOLVER: ServiceCallResolver<Any> = { desiredState 
         )
         else -> throw IllegalStateException("${desiredState.value::class.simpleName} is not supported by this service call resolver.")
     }
-
 }

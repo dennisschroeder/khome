@@ -8,6 +8,7 @@ import khome.observability.Observable
 import khome.observability.ObservableHistory
 import khome.observability.ObservableHistoryNoInitial
 import khome.observability.Switchable
+import mu.KotlinLogging
 import java.time.OffsetDateTime
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
@@ -21,6 +22,7 @@ internal class SensorImpl<S, SA>(
     private val stateType: KClass<*>,
     private val attributesValueType: KClass<*>
 ) : Sensor<S, SA> {
+    private val logger = KotlinLogging.logger {  }
     override var measurement = ObservableHistoryNoInitial<State<S, SA>>()
 
     override fun attachObserver(observer: Switchable) {
@@ -37,8 +39,9 @@ internal class SensorImpl<S, SA>(
     ) {
         fun mapToEnumOrNull(value: String) =
             try {
-                mapper.fromJson(value, stateType.java)
+                mapper.fromJson("\"$value\"", stateType.java)
             } catch (e: Exception) {
+                logger.warn(e) { "$value could not be mapped to ${stateType.simpleName}"}
                 null
             }
 

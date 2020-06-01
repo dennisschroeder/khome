@@ -8,11 +8,13 @@ internal class HistorySnapshot<T>(
 ) : WithHistory<T>
 
 internal class ObservableHistoryNoInitial<T>(maxHistory: Int = 10) : ObservableHistory<T> {
+    private var dirty: Boolean = false
     override var state: T
         get() = _history.last() ?: throw IllegalStateException("No value available yet.")
         set(newValue) {
-            observers.forEach { it.update(HistorySnapshot(newValue, history)) }
+            if (dirty) observers.forEach { it.update(HistorySnapshot(newValue, history)) }
             _history.add(newValue)
+            dirty = true
         }
 
     override val history: List<T>
