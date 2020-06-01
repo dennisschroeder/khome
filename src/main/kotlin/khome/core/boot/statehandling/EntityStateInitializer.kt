@@ -7,6 +7,7 @@ import khome.core.koin.KhomeComponent
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
 import khome.communicating.CALLER_ID
+import khome.entities.EntityId
 import khome.entities.EntityRegistrationValidation
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging

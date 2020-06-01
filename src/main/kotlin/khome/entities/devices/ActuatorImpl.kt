@@ -17,6 +17,7 @@ import khome.observability.ObservableHistory
 import khome.observability.ObservableHistoryNoInitial
 import khome.observability.Switchable
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mu.KotlinLogging
 import java.time.OffsetDateTime
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
@@ -40,6 +41,7 @@ internal class ActuatorImpl<S, SA>(
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Actuator<S, SA> {
+    private val logger = KotlinLogging.logger {  }
     override var actualState = ObservableHistoryNoInitial<State<S, SA>>()
 
     @KtorExperimentalAPI
@@ -68,17 +70,18 @@ internal class ActuatorImpl<S, SA>(
         attributes: JsonElement,
         lastUpdated: OffsetDateTime
     ) {
-        fun mapToEnumOrNull(value: String) =
+        fun mapToStateOrNull(value: String) =
             try {
-                mapper.fromJson(value, stateType.java)
+                mapper.fromJson("\"$value\"", stateType.java)
             } catch (e: Exception) {
+                logger.warn(e) { "$value could not be mapped to ${stateType.simpleName}" }
                 null
             }
 
         @Suppress("UNCHECKED_CAST")
         (this as ActuatorImpl<Any, Any>).actualState.state = State(
             lastChanged = lastChanged.toInstant(),
-            value = mapToEnumOrNull(newValue as String) ?: stateType.cast(newValue),
+            value = mapToStateOrNull(newValue as String) ?: stateType.cast(newValue),
             attributes = mapper.fromJson(attributes, attributesType.java),
             lastUpdated = lastUpdated.toInstant()
         )

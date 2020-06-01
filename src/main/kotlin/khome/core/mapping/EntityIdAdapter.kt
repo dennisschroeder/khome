@@ -5,7 +5,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import khome.entities.EntityId
 
-class EntityIdConverter : TypeAdapter<EntityId>() {
+class EntityIdAdapter : TypeAdapter<EntityId>() {
     override fun write(jsonWriter: JsonWriter, value: EntityId) {
         jsonWriter.value(value.toString())
     }

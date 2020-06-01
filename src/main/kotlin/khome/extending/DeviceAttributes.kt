@@ -28,7 +28,36 @@ data class InputBooleanAttributes(
 )
 
 data class InputSelectAttributes(
-    val options: List<String>, //List of options as comma separated string
+    val options: List<String>,
     val editable: Boolean,
+    val friendly_name: String
+)
+
+data class InputDateAttributes(
+    val editable: Boolean,
+    val has_date: Boolean,
+    val has_time: Boolean,
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val friendly_name: String
+)
+
+data class InputTimeAttributes(
+    val editable: Boolean,
+    val has_date: Boolean,
+    val has_time: Boolean,
+    val timestamp: Int,
+    val friendly_name: String
+)
+
+data class InputDateTimeAttributes(
+    val editable: Boolean,
+    val has_date: Boolean,
+    val has_time: Boolean,
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val timestamp: Int,
     val friendly_name: String
 )

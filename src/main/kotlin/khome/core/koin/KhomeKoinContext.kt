@@ -21,7 +21,10 @@ import khome.core.boot.servicestore.ServiceStore
 import khome.core.boot.servicestore.ServiceStoreInterface
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
-import khome.core.mapping.EntityIdConverter
+import khome.core.mapping.EntityIdAdapter
+import khome.core.mapping.LocalDateAdapter
+import khome.core.mapping.LocalDateTimeAdapter
+import khome.core.mapping.LocalTimeAdapter
 import khome.core.mapping.ObjectMapper
 import khome.core.mapping.ObjectMapperInterface
 import khome.core.mapping.OffsetDateTimeAdapter
@@ -32,6 +35,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.OffsetDateTime
 
 /**
@@ -57,14 +63,17 @@ internal object KhomeKoinContext {
                     .setPrettyPrinting()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
-                    .registerTypeAdapter(EntityId::class.java, EntityIdConverter().nullSafe())
+                    .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter().nullSafe())
+                    .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter().nullSafe())
+                    .registerTypeAdapter(LocalTime::class.java, LocalTimeAdapter().nullSafe())
+                    .registerTypeAdapter(EntityId::class.java, EntityIdAdapter().nullSafe())
                     .create()!!
             }
             single<ObjectMapperInterface> { ObjectMapper(get()) } bind ObjectMapper::class
             single<ServiceStoreInterface> { ServiceStore() }
             single<Configuration> {
                 DefaultConfiguration(
-                    name = getProperty(NAME, "[Give your application a unique name]"),
+                    name = getProperty(NAME, "Khome"),
                     host = getProperty(HOST, "localhost"),
                     port = getProperty(PORT, 8123),
                     accessToken = getProperty(ACCESS_TOKEN, "<some-fancy-access-token>"),
@@ -78,7 +87,9 @@ internal object KhomeKoinContext {
                             setPrettyPrinting()
                             setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                             registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
-                            registerTypeAdapter(EntityId::class.java, EntityIdConverter().nullSafe())
+                            registerTypeAdapter(EntityId::class.java, EntityIdAdapter().nullSafe())
+                            registerTypeAdapter(LocalDate::class.java, LocalDateAdapter().nullSafe())
+                            registerTypeAdapter(LocalTime::class.java, LocalTimeAdapter().nullSafe())
                             create()!!
                         }
                     }

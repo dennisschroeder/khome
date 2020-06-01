@@ -13,10 +13,3 @@ enum class SunValue {
     @SerializedName("below_horizon")
     BELOW_HORIZON
 }
-
-enum class CoverValue {
-    @SerializedName("open")
-    OPEN,
-    @SerializedName("closed")
-    CLOSED
-}

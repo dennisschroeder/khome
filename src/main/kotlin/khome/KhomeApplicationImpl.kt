@@ -29,6 +29,7 @@ import khome.entities.devices.SensorImpl
 import khome.events.AsyncEventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
+import khome.extending.INPUT_DATETIME_RESOLVER
 import khome.extending.INPUT_NUMBER_RESOLVER
 import khome.extending.INPUT_SELECT_RESOLVER
 import khome.extending.INPUT_TEXT_RESOLVER
@@ -93,6 +94,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
         registerServiceCallResolver("input_number", INPUT_NUMBER_RESOLVER)
         registerServiceCallResolver("input_text", INPUT_TEXT_RESOLVER)
         registerServiceCallResolver("input_select", INPUT_SELECT_RESOLVER)
+        registerServiceCallResolver("input_datetime",INPUT_DATETIME_RESOLVER)
     }
 
     override fun <S, SA> createSensor(
