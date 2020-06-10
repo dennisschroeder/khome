@@ -5,13 +5,9 @@
 
 # Khome
 
-Khome is a smart home-automation library for **Home Assistant**, written in Kotlin. It makes heavy usage of the **Kotlin-DSL** 
-for a good programming experience. This library let's you write your own application, that can listen to (state change) events 
+Khome is a smart home-automation library for **Home Assistant**, written in Kotlin. This library let's you write your own application, that can listen to (state change) events 
 and fires actions via the [Home Assistant Websocket API](https://developers.home-assistant.io/docs/en/external_api_websocket.html).
 Or you can call any other third party code or API.
-
-The heart of Khome is the [Ktor-Websocket-Client](https://ktor.io/clients/websockets.html). Khome uses ktor for the communication 
-between your application and your Home-Assistant Server.
 
 Simple Example:
 ```kotlin

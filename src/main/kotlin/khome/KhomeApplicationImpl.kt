@@ -1,13 +1,15 @@
+@file:Suppress("FunctionName")
+
 package khome
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.KtorExperimentalAPI
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.HassApi
-import khome.communicating.ServiceCallResolver
 import khome.communicating.ServiceCommandImpl
-import khome.communicating.ServiceTypeIdentifier
+import khome.communicating.ServiceCommandResolver
 import khome.communicating.SubscribeEventCommand
+import khome.core.Attributes
 import khome.core.ResultResponse
 import khome.core.State
 import khome.core.boot.EventResponseConsumer
@@ -29,13 +31,9 @@ import khome.entities.devices.SensorImpl
 import khome.events.AsyncEventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
-import khome.extending.INPUT_DATETIME_RESOLVER
-import khome.extending.INPUT_NUMBER_RESOLVER
-import khome.extending.INPUT_SELECT_RESOLVER
-import khome.extending.INPUT_TEXT_RESOLVER
-import khome.extending.SWITCHABLE_VALUE_RESOLVER
 import khome.observability.AsyncObserver
 import khome.observability.ObserverImpl
+import khome.observability.StateWithAttributes
 import khome.observability.Switchable
 import khome.observability.WithHistory
 import kotlinx.coroutines.CoroutineScope
@@ -51,22 +49,32 @@ import kotlin.reflect.KClass
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
-internal typealias ServiceCallResolverByDomain = MutableMap<String, ServiceCallResolver<*>>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
 
 interface KhomeApplication {
     fun run()
-    fun <S, SA> createSensor(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Sensor<S, SA>
-    fun <S, SA> createActuator(id: EntityId, stateValueType: KClass<*>, attributesValueType: KClass<*>): Actuator<S, SA>
-    fun <S, SA> createObserver(f: (WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
-    fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<S, SA>>, Switchable) -> Unit): Switchable
-    fun <S> registerServiceCallResolver(domain: String, resolver: ServiceCallResolver<S>)
+    fun <S : State<*>, SA : Attributes> Sensor(
+        id: EntityId,
+        stateValueType: KClass<*>,
+        attributesValueType: KClass<*>
+    ): Sensor<S, SA>
+
+    fun <S : State<*>, SA : Attributes> Actuator(
+        id: EntityId,
+        stateValueType: KClass<*>,
+        attributesValueType: KClass<*>,
+        serviceCommandResolver: ServiceCommandResolver<S>
+    ): Actuator<S, SA>
+
+    fun <S, SA> createObserver(f: (WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable
+    fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable
+
     fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
     fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable
     fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
     fun emitEvent(eventType: String, eventData: Any? = null)
     fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
-    fun <PB> callService(domain: String, service: ServiceTypeIdentifier, parameterBag: PB)
+    fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB)
 }
 
 @OptIn(
@@ -86,53 +94,37 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByApiName: ActuatorsByApiName = mutableMapOf()
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
-    private val serviceCallResolverByDomain: ServiceCallResolverByDomain = mutableMapOf()
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
-    init {
-        registerServiceCallResolver("input_boolean", SWITCHABLE_VALUE_RESOLVER)
-        registerServiceCallResolver("input_number", INPUT_NUMBER_RESOLVER)
-        registerServiceCallResolver("input_text", INPUT_TEXT_RESOLVER)
-        registerServiceCallResolver("input_select", INPUT_SELECT_RESOLVER)
-        registerServiceCallResolver("input_datetime",INPUT_DATETIME_RESOLVER)
-    }
-
-    override fun <S, SA> createSensor(
+    override fun <S : State<*>, SA : Attributes> Sensor(
         id: EntityId,
         stateValueType: KClass<*>,
         attributesValueType: KClass<*>
     ): Sensor<S, SA> =
         SensorImpl<S, SA>(mapper, stateValueType, attributesValueType).also { registerSensor(id, it) }
 
-    override fun <S, SA> createActuator(
+    override fun <S : State<*>, SA : Attributes> Actuator(
         id: EntityId,
         stateValueType: KClass<*>,
-        attributesValueType: KClass<*>
+        attributesValueType: KClass<*>,
+        serviceCommandResolver: ServiceCommandResolver<S>
     ): Actuator<S, SA> =
         ActuatorImpl<S, SA>(
             this,
             mapper,
-            getServiceTypeResolver(id.domain),
+            serviceCommandResolver,
             stateValueType,
             attributesValueType
         ).also { registerActuator(id, it) }
 
-    override fun <T, SA> createObserver(f: (WithHistory<State<T, SA>>, Switchable) -> Unit): Switchable =
+    override fun <S, SA> createObserver(f: (WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable =
         ObserverImpl(f)
 
-    override fun <T, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<State<T, SA>>, Switchable) -> Unit): Switchable =
+    override fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable =
         AsyncObserver(f)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <S> registerServiceCallResolver(domain: String, resolver: ServiceCallResolver<S>) {
-        serviceCallResolverByDomain[domain] = resolver as ServiceCallResolver<*>
-    }
-
     override fun attachEventHandler(
-        eventType: String,
-        eventHandler: Switchable,
-        eventDataType: KClass<*>
-    ) {
+        eventType: String, eventHandler: Switchable, eventDataType: KClass<*>) {
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
             ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
     }
@@ -150,16 +142,13 @@ internal class KhomeApplicationImpl : KhomeApplication {
     override fun emitEventAsync(eventType: String, eventData: Any?): Deferred<HttpResponse> =
         hassApi.emitEventAsync(eventType, eventData)
 
-    override fun <PB> callService(domain: String, service: ServiceTypeIdentifier, parameterBag: PB) {
+    override fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB) {
         ServiceCommandImpl<PB>(
             domain = domain,
             service = service,
             serviceData = parameterBag
         ).also { hassApi.sendHassApiCommand(it) }
     }
-
-    private fun getServiceTypeResolver(domain: String): ServiceCallResolver<*> = serviceCallResolverByDomain[domain]
-        ?: throw RuntimeException("No service call resolver found for $domain. Please register one.")
 
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*, *>) {
         check(!sensorsByApiName.containsKey(entityId)) { "Sensor with id: $entityId already exists." }
@@ -175,8 +164,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private fun registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
         EventSubscription(mapper, eventDataType).also { eventSubscriptionsByEventType[eventType] = it }
 
-    internal fun <State, StateAttributes> enqueueStateChange(
-        actuator: ActuatorImpl<State, StateAttributes>,
+    internal fun <S : State<*>, SA : Attributes> enqueueStateChange(
+        actuator: ActuatorImpl<S, SA>,
         commandImpl: ServiceCommandImpl<CommandDataWithEntityId>
     ) {
         val entityId = actuatorsByEntity[actuator] ?: throw RuntimeException("Entity not registered: $actuator")

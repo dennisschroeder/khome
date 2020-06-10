@@ -1,11 +1,11 @@
 package khome.core.boot.statehandling
 
+import com.google.gson.JsonObject
 import khome.core.MessageInterface
-import khome.core.StateResponse
 
 class StatesResponse(
     val id: Int,
     val type: String,
     val success: Boolean,
-    val result: Array<StateResponse>
+    val result: Array<JsonObject>
 ) : MessageInterface

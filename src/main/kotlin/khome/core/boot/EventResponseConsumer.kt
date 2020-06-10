@@ -11,6 +11,7 @@ import khome.core.ResolverResponse
 import khome.core.ResponseType
 import khome.core.ResultResponse
 import khome.core.StateChangedResponse
+import khome.core.boot.statehandling.flattenStateAttributes
 import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
@@ -63,8 +64,8 @@ internal class EventResponseConsumer(
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
                 stateChangedResponse.event.data.newState?.let { newState ->
-                    sensorStateUpdater(newState)
-                    actuatorStateUpdater(newState)
+                    sensorStateUpdater(flattenStateAttributes(newState.asJsonObject),stateChangedResponse.event.data.entityId)
+                    actuatorStateUpdater(flattenStateAttributes(newState.asJsonObject), stateChangedResponse.event.data.entityId)
                 }
             }
 

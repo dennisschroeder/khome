@@ -2,7 +2,6 @@ package khome.entities
 
 import khome.ActuatorsByApiName
 import khome.SensorsByApiName
-import khome.core.StateResponse
 import mu.KotlinLogging
 
 internal class EntityRegistrationValidation(
@@ -13,8 +12,7 @@ internal class EntityRegistrationValidation(
 
     private val failedIds = mutableListOf<EntityId>()
 
-    fun validate(stateResponses: Array<StateResponse>) {
-        val entityIds = stateResponses.map { it.entityId }
+    fun validate(entityIds: List<EntityId>) {
         runActuatorsCheck(entityIds)
         runSensorsCheck(entityIds)
 
@@ -52,7 +50,7 @@ internal class EntityRegistrationValidation(
             Entity registration validation failed!
             Could not register the following entities:
             
-            ${failedIds.joinToString("\n            ")}
+            ${failedIds.joinToString("\n")}
             
             These entities could not be found in your 
             homeassistant instance. Please check your

@@ -1,56 +1,50 @@
 package khome.entities.devices
 
-import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
+import khome.core.Attributes
 import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
-import khome.observability.ObservableHistory
-import khome.observability.ObservableHistoryNoInitial
+import khome.observability.ObservableHistoryNoInitialDelegate
+import khome.observability.StateWithAttributes
 import khome.observability.Switchable
+import khome.observability.SwitchableObserver
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
-import java.time.OffsetDateTime
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
-interface Sensor<S, SA> : Observable<State<S, SA>> {
-    val measurement: ObservableHistory<State<S, SA>>
+interface Sensor<S : State<*>, SA : Attributes> : Observable<S> {
+    val measurement: S
+    val attributes: SA
 }
 
-internal class SensorImpl<S, SA>(
+internal class SensorImpl<S : State<*>, SA : Attributes>(
     private val mapper: ObjectMapper,
     private val stateType: KClass<*>,
-    private val attributesValueType: KClass<*>
+    private val attributesType: KClass<*>
 ) : Sensor<S, SA> {
-    private val logger = KotlinLogging.logger {  }
-    override var measurement = ObservableHistoryNoInitial<State<S, SA>>()
+    private val observers: MutableList<SwitchableObserver<S, SA, StateWithAttributes<S, SA>>> = mutableListOf()
+    override lateinit var attributes: SA
+    override var measurement: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
 
+    @Suppress("UNCHECKED_CAST")
     override fun attachObserver(observer: Switchable) {
-        measurement.attachObserver(observer)
+        observers.add(observer as SwitchableObserver<S, SA, StateWithAttributes<S, SA>>)
     }
 
+    @ObsoleteCoroutinesApi
     @KtorExperimentalAPI
     @ExperimentalStdlibApi
-    fun trySetMeasurementFromAny(
-        newValue: Any,
-        attributes: JsonElement,
-        lastUpdated: OffsetDateTime,
-        lastChanged: OffsetDateTime
-    ) {
-        fun mapToEnumOrNull(value: String) =
-            try {
-                mapper.fromJson("\"$value\"", stateType.java)
-            } catch (e: Exception) {
-                logger.warn(e) { "$value could not be mapped to ${stateType.simpleName}"}
-                null
-            }
-
+    fun trySetActualStateFromAny(newState: JsonObject) {
         @Suppress("UNCHECKED_CAST")
-        (this as SensorImpl<Any, Any>).measurement.state = State(
-            lastChanged = lastChanged.toInstant(),
-            value = mapToEnumOrNull(newValue as String) ?: stateType.cast(newValue),
-            attributes = mapper.fromJson(attributes, attributesValueType.java),
-            lastUpdated = lastUpdated.toInstant()
-        )
+        measurement = mapper.fromJson(newState, stateType.java) as S
+    }
+
+    @ObsoleteCoroutinesApi
+    @KtorExperimentalAPI
+    fun trySetAttributesFromAny(newAttributes: JsonObject) {
+        @Suppress("UNCHECKED_CAST")
+        attributes = mapper.fromJson(newAttributes, attributesType.java) as SA
     }
 }

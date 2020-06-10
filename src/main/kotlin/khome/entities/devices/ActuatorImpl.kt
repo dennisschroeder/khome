@@ -1,54 +1,50 @@
 package khome.entities.devices
 
-import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeApplicationImpl
 import khome.communicating.CommandDataWithEntityId
-import khome.communicating.DesiredState
-import khome.communicating.DesiredStateImpl
 import khome.communicating.EntityIdOnlyServiceData
-import khome.communicating.ServiceCallResolver
 import khome.communicating.ServiceCommandImpl
-import khome.communicating.ServiceTypeIdentifier
+import khome.communicating.ServiceCommandResolver
+import khome.core.Attributes
 import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
-import khome.observability.ObservableHistory
-import khome.observability.ObservableHistoryNoInitial
+import khome.observability.ObservableHistoryNoInitialDelegate
+import khome.observability.StateWithAttributes
 import khome.observability.Switchable
+import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
-import java.time.OffsetDateTime
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
-interface Actuator<S, SA> : Observable<State<S, SA>> {
-    val actualState: ObservableHistory<State<S, SA>>
-    var desiredState: DesiredState<S>?
-    fun createDesiredState(
-        desiredValue: S,
-        desiredAttributes: CommandDataWithEntityId = EntityIdOnlyServiceData()
-    ): DesiredState<S>
-
-    fun callService(service: ServiceTypeIdentifier, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
+interface Actuator<S : State<*>, SA : Attributes> : Observable<S> {
+    val actualState: S
+    var attributes: SA
+    var desiredState: S?
+    fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
 }
 
+@KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-internal class ActuatorImpl<S, SA>(
+internal class ActuatorImpl<S : State<*>, SA : Attributes>(
     private val app: KhomeApplicationImpl,
     private val mapper: ObjectMapper,
-    private val resolver: ServiceCallResolver<S>,
+    private val resolver: ServiceCommandResolver<S>,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Actuator<S, SA> {
-    private val logger = KotlinLogging.logger {  }
-    override var actualState = ObservableHistoryNoInitial<State<S, SA>>()
+    private val logger = KotlinLogging.logger { }
+    private val observers: MutableList<SwitchableObserver<S, SA, StateWithAttributes<S, SA>>> = mutableListOf()
+    override lateinit var attributes: SA
+    override var actualState: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
 
     @KtorExperimentalAPI
-    override var desiredState: DesiredState<S>? = null
+    override var desiredState: S? = null
         set(newDesiredState) {
-            newDesiredState?.let {
-                val resolvedServiceCommand = resolver(newDesiredState)
+            newDesiredState?.let { desiredState ->
+                val resolvedServiceCommand = resolver.resolve(desiredState)
                 ServiceCommandImpl(
                     service = resolvedServiceCommand.service,
                     serviceData = resolvedServiceCommand.serviceData
@@ -57,45 +53,26 @@ internal class ActuatorImpl<S, SA>(
             field = newDesiredState
         }
 
-    override fun createDesiredState(
-        desiredValue: S,
-        desiredAttributes: CommandDataWithEntityId
-    ): DesiredState<S> = DesiredStateImpl(value = desiredValue, attributes = desiredAttributes)
-
-    @KtorExperimentalAPI
-    @ExperimentalStdlibApi
-    fun trySetActualStateFromAny(
-        lastChanged: OffsetDateTime,
-        newValue: Any,
-        attributes: JsonElement,
-        lastUpdated: OffsetDateTime
-    ) {
-        fun mapToStateOrNull(value: String) =
-            try {
-                mapper.fromJson("\"$value\"", stateType.java)
-            } catch (e: Exception) {
-                logger.warn(e) { "$value could not be mapped to ${stateType.simpleName}" }
-                null
-            }
-
+    fun trySetActualStateFromAny(newState: JsonObject) {
         @Suppress("UNCHECKED_CAST")
-        (this as ActuatorImpl<Any, Any>).actualState.state = State(
-            lastChanged = lastChanged.toInstant(),
-            value = mapToStateOrNull(newValue as String) ?: stateType.cast(newValue),
-            attributes = mapper.fromJson(attributes, attributesType.java),
-            lastUpdated = lastUpdated.toInstant()
-        )
+        actualState = mapper.fromJson(newState, stateType.java) as S
     }
 
-    override fun attachObserver(observer: Switchable) {
-        actualState.attachObserver(observer)
+    fun trySetAttributesFromAny(newAttributes: JsonObject) {
+        @Suppress("UNCHECKED_CAST")
+        attributes = mapper.fromJson(newAttributes, attributesType.java) as SA
     }
 
     @KtorExperimentalAPI
-    override fun callService(service: ServiceTypeIdentifier, parameterBag: CommandDataWithEntityId) {
+    override fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId) {
         ServiceCommandImpl(
             service = service,
             serviceData = parameterBag
         ).also { app.enqueueStateChange(this, it) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun attachObserver(observer: Switchable) {
+        observers.add(observer as SwitchableObserver<S, SA, StateWithAttributes<S, SA>>)
     }
 }

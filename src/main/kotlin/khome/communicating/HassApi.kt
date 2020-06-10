@@ -58,7 +58,7 @@ class EntityIdOnlyServiceData : DesiredServiceData()
 @KtorExperimentalAPI
 internal data class ServiceCommandImpl<SD>(
     var domain: String? = null,
-    val service: ServiceTypeIdentifier,
+    val service: Enum<*>,
     override var id: Int? = null,
     val serviceData: SD? = null,
     override val type: CommandType = CALL_SERVICE

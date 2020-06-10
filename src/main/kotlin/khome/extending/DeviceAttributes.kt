@@ -1,6 +1,13 @@
 package khome.extending
 
-typealias AttributesMap = Map<String, Any>
+import khome.core.Attributes
+import java.time.Instant
+
+data class DefaultAttributes(
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+) : Attributes
 
 data class InputTextAttributes(
     val editable: Boolean,
@@ -8,8 +15,10 @@ data class InputTextAttributes(
     val max: Int,
     val pattern: String,
     val mode: String,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputNumberAttributes(
     val initial: Float,
@@ -18,46 +27,73 @@ data class InputNumberAttributes(
     val max: Float,
     val step: Float,
     val mode: String,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputBooleanAttributes(
     val editable: Boolean,
-    val friendly_name: String,
-    val icon: String
-)
+    val icon: String,
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputSelectAttributes(
     val options: List<String>,
     val editable: Boolean,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputDateAttributes(
     val editable: Boolean,
-    val has_date: Boolean,
-    val has_time: Boolean,
+    val hasDate: Boolean,
+    val hasTime: Boolean,
     val year: Int,
     val month: Int,
     val day: Int,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputTimeAttributes(
     val editable: Boolean,
-    val has_date: Boolean,
-    val has_time: Boolean,
+    val hasDate: Boolean,
+    val hasTime: Boolean,
     val timestamp: Int,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
 
 data class InputDateTimeAttributes(
     val editable: Boolean,
-    val has_date: Boolean,
-    val has_time: Boolean,
+    val hasDate: Boolean,
+    val hasTime: Boolean,
     val year: Int,
     val month: Int,
     val day: Int,
     val timestamp: Int,
-    val friendly_name: String
-)
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
+
+data class LightAttributes(
+    val supported_features: Int,
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes
+
+data class DimmableLightAttributes(
+    val powerConsumption: Double,
+    val supported_features: Int,
+    override val friendlyName: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant
+): Attributes

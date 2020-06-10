@@ -1,11 +1,7 @@
 package khome.communicating
 
-interface DesiredState<T> {
-    var value: T
-    val attributes: CommandDataWithEntityId?
-}
+import khome.core.State
 
-internal data class DesiredStateImpl<T>(
-    override var value: T,
-    override val attributes: CommandDataWithEntityId?
-) : DesiredState<T>
+interface DesiredState<T> : State<T> {
+    override var value: T
+}

@@ -1,14 +1,15 @@
 package khome.core.boot.statehandling
 
+import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
+import khome.communicating.CALLER_ID
 import khome.core.boot.StartSequenceStep
 import khome.core.koin.KhomeComponent
 import khome.entities.ActuatorStateUpdater
-import khome.entities.SensorStateUpdater
-import khome.communicating.CALLER_ID
 import khome.entities.EntityId
 import khome.entities.EntityRegistrationValidation
+import khome.entities.SensorStateUpdater
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 
@@ -40,17 +41,30 @@ internal class EntityStateInitializer(
         khomeSession.consumeSingleMessage<StatesResponse>()
 
     @ExperimentalStdlibApi
-    private fun setInitialEntityState(statesResponse: StatesResponse) =
-        when (statesResponse.success) {
-            false -> logger.error { "Could not fetch initial states from homeassistant" }
-            true -> {
-                entityRegistrationValidation.validate(statesResponse.result)
-                statesResponse.result.forEach { initialState ->
-                    logger.debug { "Initial state for: ${initialState.entityId} is $initialState" }
-                    sensorStateUpdater(initialState)
-                    actuatorStateUpdater(initialState)
-                }
-                logger.info { "All initial entity states are set." }
+    private fun setInitialEntityState(stateResponse: StatesResponse) {
+        if (stateResponse.success) {
+            val statesByEntityId = stateResponse.result.associateBy { state ->
+                khomeSession.objectMapper.fromJson(state["entity_id"], EntityId::class.java)
+            }
+            entityRegistrationValidation.validate(statesByEntityId.map { it.key })
+            for (state in statesByEntityId) {
+                sensorStateUpdater(flattenStateAttributes(state.value), state.key)
+                actuatorStateUpdater(flattenStateAttributes(state.value), state.key)
             }
         }
+    }
+}
+
+internal fun flattenStateAttributes(stateResponse: JsonObject): JsonObject {
+    val attributesAsJsonObject: JsonObject = stateResponse.getAsJsonObject("attributes")
+    val tempStateAsJsonObject: JsonObject = JsonObject()
+
+    tempStateAsJsonObject.add("value", stateResponse["state"])
+    tempStateAsJsonObject.add("last_updated", stateResponse["last_updated"])
+    tempStateAsJsonObject.add("last_changed", stateResponse["last_changed"])
+    for (attribute: String in attributesAsJsonObject.keySet()) {
+        tempStateAsJsonObject.add(attribute, attributesAsJsonObject[attribute])
+    }
+
+    return tempStateAsJsonObject
 }

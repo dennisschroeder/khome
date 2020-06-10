@@ -22,6 +22,7 @@ import khome.core.boot.servicestore.ServiceStoreInterface
 import khome.core.clients.RestApiClient
 import khome.core.clients.WebSocketClient
 import khome.core.mapping.EntityIdAdapter
+import khome.core.mapping.InstantAdapter
 import khome.core.mapping.LocalDateAdapter
 import khome.core.mapping.LocalDateTimeAdapter
 import khome.core.mapping.LocalTimeAdapter
@@ -35,6 +36,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -63,6 +65,7 @@ internal object KhomeKoinContext {
                     .setPrettyPrinting()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeAdapter().nullSafe())
+                    .registerTypeAdapter(Instant::class.java, InstantAdapter().nullSafe())
                     .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter().nullSafe())
                     .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter().nullSafe())
                     .registerTypeAdapter(LocalTime::class.java, LocalTimeAdapter().nullSafe())

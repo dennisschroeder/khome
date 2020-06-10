@@ -1,5 +1,6 @@
 package khome
 
+import com.google.gson.JsonObject
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.http.cio.websocket.Frame
@@ -20,7 +21,7 @@ internal class KhomeSession(
 ) : KhomeComponent, ClientWebSocketSession by delegate {
 
     private val logger = KotlinLogging.logger {}
-    private val objectMapper: ObjectMapper = get()
+    val objectMapper: ObjectMapper = get()
     suspend fun callWebSocketApi(message: String) =
         send(message).also { logger.debug { "Called hass api with message: $message" } }
 
