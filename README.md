@@ -6,7 +6,7 @@
 # Khome
 
 Khome is a smart home automation library for **Home Assistant**, written in Kotlin. It enables you write your own **Home Assistant** automation applications, that can observe state changes, listen to events and much more.
-Khome was written with safeness in mind. That means we wrote Khome with a fail first approach in Mind. See more about this in the "Safeties first Section" (coming soon).
+Khome was written with safeness in mind. That means we wrote Khome with a fail first approach in Mind. See more about this in the "Safety`s first Section" (coming soon).
 
 Simple Example:
 ```kotlin
