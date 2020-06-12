@@ -1,5 +1,6 @@
 package khome.extending
 
+import com.google.gson.annotations.SerializedName
 import khome.core.Attributes
 import java.time.Instant
 
@@ -18,7 +19,7 @@ data class InputTextAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputNumberAttributes(
     val initial: Float,
@@ -30,7 +31,7 @@ data class InputNumberAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputBooleanAttributes(
     val editable: Boolean,
@@ -38,7 +39,7 @@ data class InputBooleanAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputSelectAttributes(
     val options: List<String>,
@@ -46,7 +47,7 @@ data class InputSelectAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputDateAttributes(
     val editable: Boolean,
@@ -58,7 +59,7 @@ data class InputDateAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputTimeAttributes(
     val editable: Boolean,
@@ -68,7 +69,7 @@ data class InputTimeAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class InputDateTimeAttributes(
     val editable: Boolean,
@@ -81,14 +82,14 @@ data class InputDateTimeAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class LightAttributes(
     val supported_features: Int,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
 
 data class DimmableLightAttributes(
     val powerConsumption: Double,
@@ -96,4 +97,31 @@ data class DimmableLightAttributes(
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
-): Attributes
+) : Attributes
+
+data class SunAttributes(
+    val next_dawn: Instant,
+    val next_dusk: Instant,
+    val next_midnight: Instant,
+    val next_noon: Instant,
+    val next_rising: Instant,
+    val next_setting: Instant,
+    val elevation: Double,
+    val azimuth: Double,
+    val rising: Boolean,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant,
+    override val friendlyName: String
+) : Attributes
+
+enum class Working {
+    @SerializedName("Yes") YES,
+    @SerializedName("No") NO
+}
+
+data class PositionableCoverAttributes(
+    val working: Working,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant,
+    override val friendlyName: String
+) : Attributes

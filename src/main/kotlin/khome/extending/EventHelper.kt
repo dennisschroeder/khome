@@ -8,7 +8,7 @@ inline fun <reified ED> KhomeApplication.createAndAttachAsyncEventHandler(
     eventType: String,
     noinline f: suspend CoroutineScope.(ED, Switchable) -> Unit
 ) {
-    val eventHandler = createAsyncEventHandler(f)
+    val eventHandler = AsyncEventHandler(f)
     attachEventHandler<ED>(eventType, eventHandler)
 }
 
@@ -16,7 +16,7 @@ inline fun <reified ED> KhomeApplication.createAndAttachEventHandler(
     eventType: String,
     noinline f: (ED, Switchable) -> Unit
 ) {
-    val eventHandler = createEventHandler(f)
+    val eventHandler = EventHandler(f)
     attachEventHandler<ED>(eventType, eventHandler)
 }
 

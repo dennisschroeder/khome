@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 class LocalDateTimeAdapter : TypeAdapter<LocalDateTime>() {
     override fun write(jsonWriter: JsonWriter, date: LocalDateTime) {
-        jsonWriter.value(LocalDateTime.of(date.year,date.monthValue, date.dayOfMonth, date.hour, date.minute, date.second).toString())
+        jsonWriter.value(LocalDateTime.of(date.year, date.monthValue, date.dayOfMonth, date.hour, date.minute, date.second).toString())
     }
 
     override fun read(jsonReader: JsonReader): LocalDateTime {

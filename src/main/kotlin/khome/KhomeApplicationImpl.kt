@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package khome
 
 import io.ktor.client.statement.HttpResponse
@@ -28,14 +26,13 @@ import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
-import khome.events.AsyncEventHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
-import khome.observability.AsyncObserver
+import khome.observability.AsyncObserverImpl
+import khome.observability.HistorySnapshot
 import khome.observability.ObserverImpl
-import khome.observability.StateWithAttributes
+import khome.observability.StateAndAttributes
 import khome.observability.Switchable
-import khome.observability.WithHistory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,13 +43,16 @@ import org.koin.core.get
 import org.koin.core.inject
 import kotlin.reflect.KClass
 
+typealias StateAndAttributesHistorySnapshot<S, A> = HistorySnapshot<S, A, StateAndAttributes<S, A>>
+
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
 
+@Suppress("FunctionName")
 interface KhomeApplication {
-    fun run()
+    fun runBlocking()
     fun <S : State<*>, SA : Attributes> Sensor(
         id: EntityId,
         stateValueType: KClass<*>,
@@ -66,12 +66,12 @@ interface KhomeApplication {
         serviceCommandResolver: ServiceCommandResolver<S>
     ): Actuator<S, SA>
 
-    fun <S, SA> createObserver(f: (WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable
-    fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable
+    fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
+    fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
 
     fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
-    fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable
-    fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
+    fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable
+    fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
     fun emitEvent(eventType: String, eventData: Any? = null)
     fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
     fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB)
@@ -96,20 +96,20 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
-    override fun <S : State<*>, SA : Attributes> Sensor(
+    override fun <S : State<*>, A : Attributes> Sensor(
         id: EntityId,
         stateValueType: KClass<*>,
         attributesValueType: KClass<*>
-    ): Sensor<S, SA> =
-        SensorImpl<S, SA>(mapper, stateValueType, attributesValueType).also { registerSensor(id, it) }
+    ): Sensor<S, A> =
+        SensorImpl<S, A>(mapper, stateValueType, attributesValueType).also { registerSensor(id, it) }
 
-    override fun <S : State<*>, SA : Attributes> Actuator(
+    override fun <S : State<*>, A : Attributes> Actuator(
         id: EntityId,
         stateValueType: KClass<*>,
         attributesValueType: KClass<*>,
         serviceCommandResolver: ServiceCommandResolver<S>
-    ): Actuator<S, SA> =
-        ActuatorImpl<S, SA>(
+    ): Actuator<S, A> =
+        ActuatorImpl<S, A>(
             this,
             mapper,
             serviceCommandResolver,
@@ -117,22 +117,25 @@ internal class KhomeApplicationImpl : KhomeApplication {
             attributesValueType
         ).also { registerActuator(id, it) }
 
-    override fun <S, SA> createObserver(f: (WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable =
+    override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
         ObserverImpl(f)
 
-    override fun <S, SA> createAsyncObserver(f: suspend CoroutineScope.(snapshot: WithHistory<S, SA, StateWithAttributes<S, SA>>, Switchable) -> Unit): Switchable =
-        AsyncObserver(f)
+    override fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
+        AsyncObserverImpl(f)
 
     override fun attachEventHandler(
-        eventType: String, eventHandler: Switchable, eventDataType: KClass<*>) {
+        eventType: String,
+        eventHandler: Switchable,
+        eventDataType: KClass<*>
+    ) {
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
             ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
     }
 
-    override fun <ED> createEventHandler(f: (ED, Switchable) -> Unit): Switchable =
+    override fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable =
         EventHandlerImpl(f)
 
-    override fun <ED> createAsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable =
+    override fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable =
         AsyncEventHandler(f)
 
     override fun emitEvent(eventType: String, eventData: Any?) {
@@ -145,7 +148,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
     override fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB) {
         ServiceCommandImpl<PB>(
             domain = domain,
-            service = service,
+            service = service.name,
             serviceData = parameterBag
         ).also { hassApi.sendHassApiCommand(it) }
     }
@@ -176,7 +179,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.sendHassApiCommand(commandImpl)
     }
 
-    override fun run() =
+    override fun runBlocking() =
         runBlocking {
             hassClient.startSession {
 

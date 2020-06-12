@@ -64,7 +64,7 @@ internal class EventResponseConsumer(
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
                 stateChangedResponse.event.data.newState?.let { newState ->
-                    sensorStateUpdater(flattenStateAttributes(newState.asJsonObject),stateChangedResponse.event.data.entityId)
+                    sensorStateUpdater(flattenStateAttributes(newState.asJsonObject), stateChangedResponse.event.data.entityId)
                     actuatorStateUpdater(flattenStateAttributes(newState.asJsonObject), stateChangedResponse.event.data.entityId)
                 }
             }

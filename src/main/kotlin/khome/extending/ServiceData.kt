@@ -14,3 +14,7 @@ data class InputDateTimeServiceData(private val datetime: LocalDateTime) : Desir
 data class InputTimeServiceData(private val time: LocalTime) : DesiredServiceData()
 
 data class DimmableLightServiceData(private val brightness: Int) : DesiredServiceData()
+
+data class InputSelectServiceData(val option: String) : DesiredServiceData()
+
+data class PositionableCoverServiceData(val position: Int) : DesiredServiceData()

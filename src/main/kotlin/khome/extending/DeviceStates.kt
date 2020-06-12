@@ -18,3 +18,9 @@ data class InputDateState(override val value: LocalDate) : State<LocalDate>
 data class InputTimeState(override val value: LocalTime) : State<LocalTime>
 
 data class InputDateTimeState(override val value: LocalDateTime) : State<LocalDateTime>
+
+data class DimmableLightState(override val value: SwitchableValue, val brightness: Int? = null) : State<SwitchableValue>
+
+data class SunState(override val value: SunValue) : State<SunValue>
+
+data class CoverState(override val value: CoverValue, val currentPosition: Int? = null) : State<CoverValue>

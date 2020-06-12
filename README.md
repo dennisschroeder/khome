@@ -1,35 +1,35 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-18%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-9%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
 
-Khome is a smart home-automation library for **Home Assistant**, written in Kotlin. This library let's you write your own application, that can listen to (state change) events 
-and fires actions via the [Home Assistant Websocket API](https://developers.home-assistant.io/docs/en/external_api_websocket.html).
-Or you can call any other third party code or API.
+Khome is a smart home automation library for **Home Assistant**, written in Kotlin. It enables you write your own **Home Assistant** automation applications, that can observe state changes, listen to events and much more.
+Khome was written with safeness in mind. That means we wrote Khome with a fail first approach in Mind. See more about this in the "Safeties first Section" (coming soon).
 
 Simple Example:
 ```kotlin
+val KHOME = khomeApplication()
 
-class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
-class LivingRoomLight : AbstractLightEntity("livingroom_main")
+val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
+val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
-beans {
-    bean { LivingRoomLuminance() }
-    bean { LivingRoomLight() }
-    service { TurnOn() }
-}
+fun main() {
+    val luminanceObserver = KHOME.SwitchableLightObserver { snapshot, _ ->
+        if (snapshot.state.value < 3.0) LivingRoomMainLight.desiredState = SwitchableState(ON)
+    }
+        
+    LivingRoomLuminance.attachObserver(luminanceObserver)
 
-onStateChange<LivingRoomLuminance> { 
-    if(stateValue <= 3.0) callService<TurnOn> { entity<LivingRoomLight>() }
+    KHOME.runBlocking()
 }
 ```
 
-Khome is influenced by AppDeamon. AppDaemon is a loosely coupled, multithreaded, sandboxed, pluggable 
-python execution environment for writing automation apps for Home-Assistant-home-automation software.
+In this little example, we observed the luminance sensor in the living room and when the measurement of the luminance drops under 3 lux, we change the state of the main light in the living room to ON.
+As you can see here, Khome encourages you to think in states rather than services you have to call, to achieve what you want. This is less error prone and distinguishes Khome from most other automation libraries.
 
-[AppDeamon@github](https://github.com/home-assistant/appdaemon) | [AppDeamon Documentation](https://appdaemon.readthedocs.io/en/latest/)
+Khome comes with a lot of predefined factory functions and data classes for generic entity types but also with a low level api that let´s you develop your own special entities.
 
 ## Home Assistant
  
@@ -45,8 +45,8 @@ Changes in the API, removal of features or other changes will occur. Of course, 
 ## If you are from...
 
 #### ... the Kotlin World:
-Since you Home Assistant is written in Python 3, you may ask yourself if you need to write Python code on the Home Assistant
-side. But you don't have to. All you need to do is configuring it via `.yaml` files. But you need to install and run it on 
+Since Home Assistant is written in Python 3, you may ask yourself if you need to write Python code on the Home Assistant
+side. But you don't have to. All you need to do is configuring it via `.yaml` files and/or the user interface. But you need to install and run it on 
 your own server. There is plenty of information and tutorials on the web to support you with that. [Google](https://google.com)
 will help you. Also there is a [Discord channel](https://discordapp.com/invite/c5DvZ4e) to get in touch easily with the community.
 
@@ -99,8 +99,8 @@ dependencies {
 
 ## Documentation
 
-Khome has no opinion on how you want to run your application, what other libraries or pattern you choose or what else  is best for what you like to build.
-All Khome needs is an Kotlin environment to run properly. All dependencies comes with it.
+Khome has no opinion on how you want to run your application, what other libraries or pattern you choose or what else is best for what you like to build.
+All Khome needs is a Kotlin environment to run properly.
 
 Again, if you are new to Kotlin, you might check out [Getting Started with Intellij IDEA](https://kotlinlang.org/docs/tutorials/getting-started.html)
 or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorials/command-line.html).
@@ -110,7 +110,7 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 
 #### Initialization & Configuration
 
-To start listening to state change events and call services, you need to initialize and configure khome. Here you have three choices to configure khome
+To start listening to state change events and call services, you need to initialize and configure khome. Here you have two choices to configure Khome
 
 1. The functional way
 ```kotlin
@@ -123,25 +123,9 @@ khomeApplication { // this: Khome
      }
 }
 ```
-2. Use dependency injection
-Alternatively you can use a configuration bean.
 
-```kotlin
-data class MyConfiguration(
-    override var host: String = "localhost",
-    override var port: Int = 8123,
-    override var accessToken: String = "Your super secret token"
-    override var secure = false
-) : ConfigurationInterface
-
-khomeApplication { // this: Khome
-    beans {
-        bean<ConfigurationInterface>(override = true) { MyConfiguration() }
-    }
-}
-```
-3. Set environment variables
-You can use env variables to configure home.
+2. Set environment variables
+Alternatively,you can use env variables to configure home.
 ```.env
 HOST=192.169.178.101
 ```
@@ -160,69 +144,23 @@ You can do so within the Lovelace ui. Just go to your user profile, scroll to th
 #### Connect to the web socket api
 
 ```kotlin
-khomeApplication {
-    beans {/*...*/}
-}.runApplication()
-```
+val KHOME = khomeApplication()
 
-By calling the .runApplication() method, you establish a connection to the Home-Assistant websocket api, run the authentication process and start the state
-change streaming. When all went as supposed, you should see the following output in the console. 
+fun main() {
+    //...
+    KHOME.runBlocking()
+}
+```
+By calling the `KhomeApplication::runBlocking` method, you establish a connection to the Home-Assistant websocket api and run the start sequences like authentication, entity registration validation and so on.
+When all went as supposed, you should see the following output in your console. 
 
 ```bash
-[main] INFO khome.core.Logger - Authentication required!
-[main] INFO khome.core.Logger - Sending authentication message.
-[main] INFO khome.core.Logger - Authenticated successfully.
+[main] INFO Authenticator - Authentication required!
+[main] INFO Authenticator - Sending authentication message.
+[main] INFO Authenticator - Authenticated successfully to homeassistant version 0.111.0
+[main] INFO ServiceStoreInitializer - Requested registered homeassistant services
+[main] INFO ServiceStoreInitializer - Stored homeassistant services in local service store
+[main] INFO EntityStateInitializer - Requested initial entity states
+[main] INFO EntityRegistrationValidation - Entity registration validation succeeded
+[main] INFO StateChangeEventSubscriber - Successfully started listening to state changes
 ```
-
-#### React to state changes
-No you can build your application with Khome by writing callbacks that get executed when a state change occurs.
-```kotlin
-class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
-class LivingRoomLight : AbstractLightEntity("livingroom_main")
-
-khomeApplication {
-    beans {
-        bean { LivingRoomLuminance() }
-        bean { LivingRoomLight() }
-        bean { TurnOn() }
-    }
-   
-}.runApplication { // this: BaseKhomeComponent
-     onStateChange<LivingRoomLuminance> {
-         if (stateValue <= 3) callService<TurnOn> { entity<LivingRoomLight>() }
-    }
-}
-```
-If you prefer to write your code in OOP style, you can also do so nicely with Khome.
-Khome supports this with an abstract helper called ``KhomeComponent()``. But let's see how this works by rewriting the
-above example in OOP style: 
-
-```kotlin
-
-class LivingRoomLightHandler : KhomeComponent() {
-    
-    init {
-        turnOnLightAtCertainLuminance()
-    }
-
-    private fun turnOnLightAtCertainLuminance() = 
-        onStateChange<LivingRoomLuminance> {
-            if (stateValue <= 3) callService<TurnOn> { entity<LivingRoomLight>() }
-        }
-
-}
-
-class LivingRoomLuminance : AbstractSensorEntity("livingroom_luminance")
-class LivingRoomLight : AbstractLightEntity("livingroom_main")
-
-khomeApplication {
-    beans {
-        bean { LivingRoomLuminance() }
-        bean { LivingRoomLight() }
-        service { TurnOn() }
-        bean { LivingRoomLightHandler() }
-    }
-}.runApplication()
-``` 
-It is important that you register your state change listeners e.g. ``onStateChange<LivingRoomLuminance>()`` in the init block
-of your class. If you don't do this, nothing will happen. Same if you don't declare your class instance in Khomes beans section.

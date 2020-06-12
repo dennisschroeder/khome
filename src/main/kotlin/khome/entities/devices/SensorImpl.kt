@@ -7,14 +7,13 @@ import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
 import khome.observability.ObservableHistoryNoInitialDelegate
-import khome.observability.StateWithAttributes
+import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import mu.KotlinLogging
 import kotlin.reflect.KClass
 
-interface Sensor<S : State<*>, SA : Attributes> : Observable<S> {
+interface Sensor<S : State<*>, SA : Attributes> : Observable {
     val measurement: S
     val attributes: SA
 }
@@ -24,13 +23,13 @@ internal class SensorImpl<S : State<*>, SA : Attributes>(
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Sensor<S, SA> {
-    private val observers: MutableList<SwitchableObserver<S, SA, StateWithAttributes<S, SA>>> = mutableListOf()
+    private val observers: MutableList<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>> = mutableListOf()
     override lateinit var attributes: SA
     override var measurement: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
 
     @Suppress("UNCHECKED_CAST")
     override fun attachObserver(observer: Switchable) {
-        observers.add(observer as SwitchableObserver<S, SA, StateWithAttributes<S, SA>>)
+        observers.add(observer as SwitchableObserver<S, SA, StateAndAttributes<S, SA>>)
     }
 
     @ObsoleteCoroutinesApi

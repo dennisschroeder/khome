@@ -1,6 +1,5 @@
 package khome
 
-import com.google.gson.JsonObject
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.http.cio.websocket.Frame

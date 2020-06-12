@@ -12,14 +12,14 @@ import khome.core.State
 import khome.core.mapping.ObjectMapper
 import khome.observability.Observable
 import khome.observability.ObservableHistoryNoInitialDelegate
-import khome.observability.StateWithAttributes
+import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import kotlin.reflect.KClass
 
-interface Actuator<S : State<*>, SA : Attributes> : Observable<S> {
+interface Actuator<S : State<*>, SA : Attributes> : Observable {
     val actualState: S
     var attributes: SA
     var desiredState: S?
@@ -36,7 +36,7 @@ internal class ActuatorImpl<S : State<*>, SA : Attributes>(
     private val attributesType: KClass<*>
 ) : Actuator<S, SA> {
     private val logger = KotlinLogging.logger { }
-    private val observers: MutableList<SwitchableObserver<S, SA, StateWithAttributes<S, SA>>> = mutableListOf()
+    private val observers: MutableList<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>> = mutableListOf()
     override lateinit var attributes: SA
     override var actualState: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
 
@@ -46,7 +46,7 @@ internal class ActuatorImpl<S : State<*>, SA : Attributes>(
             newDesiredState?.let { desiredState ->
                 val resolvedServiceCommand = resolver.resolve(desiredState)
                 ServiceCommandImpl(
-                    service = resolvedServiceCommand.service,
+                    service = resolvedServiceCommand.service.name,
                     serviceData = resolvedServiceCommand.serviceData
                 ).also { app.enqueueStateChange(this, it) }
             }
@@ -66,13 +66,13 @@ internal class ActuatorImpl<S : State<*>, SA : Attributes>(
     @KtorExperimentalAPI
     override fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId) {
         ServiceCommandImpl(
-            service = service,
+            service = service.name,
             serviceData = parameterBag
         ).also { app.enqueueStateChange(this, it) }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun attachObserver(observer: Switchable) {
-        observers.add(observer as SwitchableObserver<S, SA, StateWithAttributes<S, SA>>)
+        observers.add(observer as SwitchableObserver<S, SA, StateAndAttributes<S, SA>>)
     }
 }

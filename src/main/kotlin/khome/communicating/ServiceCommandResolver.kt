@@ -5,7 +5,7 @@ import khome.core.State
 typealias ServiceCallResolverFunction<S> = (S) -> ResolvedServiceCommand
 
 @Suppress("FunctionName")
-fun<S : State<*>> ServiceCommandResolver(resolverFunction: ServiceCallResolverFunction<S>): ServiceCommandResolver<S> =
+fun <S : State<*>> ServiceCommandResolver(resolverFunction: ServiceCallResolverFunction<S>): ServiceCommandResolver<S> =
     ServiceCommandResolverImpl(resolverFunction)
 
 interface ServiceCommandResolver<S> {

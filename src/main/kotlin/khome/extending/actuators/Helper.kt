@@ -4,7 +4,6 @@ package khome.extending.actuators
 
 import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
-import khome.communicating.DesiredServiceData
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.ServiceType
 import khome.core.State
@@ -20,6 +19,7 @@ import khome.extending.InputDateTimeState
 import khome.extending.InputNumberAttributes
 import khome.extending.InputNumberState
 import khome.extending.InputSelectAttributes
+import khome.extending.InputSelectServiceData
 import khome.extending.InputTextAttributes
 import khome.extending.InputTextState
 import khome.extending.InputTimeAttributes
@@ -28,9 +28,6 @@ import khome.extending.InputTimeState
 import khome.extending.SettableStateValueServiceData
 import khome.extending.SwitchableState
 import khome.extending.mapSwitchable
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 fun KhomeApplication.InputText(objectId: String) =
     Actuator<InputTextState, InputTextAttributes>(EntityId("input_text", objectId),
@@ -59,8 +56,6 @@ fun KhomeApplication.InputBoolean(objectId: String) =
         }
     )
 
-data class InputSelectServiceData(val option: String) : DesiredServiceData()
-
 inline fun <reified S : State<Enum<*>>> KhomeApplication.InputSelect(objectId: String) =
     Actuator<S, InputSelectAttributes>(
         EntityId("input_select", objectId),
@@ -73,7 +68,7 @@ inline fun <reified S : State<Enum<*>>> KhomeApplication.InputSelect(objectId: S
 
 fun KhomeApplication.InputDate(objectId: String) =
     Actuator<InputDateState, InputDateAttributes>(EntityId("input_datetime", objectId),
-        ServiceCommandResolver{ desiredState ->
+        ServiceCommandResolver { desiredState ->
             DefaultResolvedServiceCommand(
                 service = ServiceType.SET_DATETIME,
                 serviceData = InputDateServiceData(desiredState.value)
