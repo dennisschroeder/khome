@@ -6,7 +6,7 @@
 # Khome
 
 Khome is a smart home automation library for **Home Assistant**, written in Kotlin. It enables you to write your own **Home Assistant** automation applications, that can observe state changes, listen to events and much more.
-Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the "Safety's first Section" (coming soon).
+Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the ["Safety's first Section"](https://github.com/dennisschroeder/khome/wiki/Safety's-first-Section) (coming soon).
 
 Simple Example:
 ```kotlin
@@ -106,61 +106,5 @@ Again, if you are new to Kotlin, you might check out [Getting Started with Intel
 or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorials/command-line.html).
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
-### Quickstart
-
-#### Initialization & Configuration
-
-To start listening to state change events and call services, you need to initialize and configure khome. Here you have two choices to configure Khome
-
-1. The functional way
-```kotlin
-khomeApplication { // this: Khome
-    configure { // this: Configuration
-        host = "localhost"
-        port = 8123
-        accessToken = "Your super secret token"
-        secure = false
-     }
-}
-```
-
-2. Set environment variables
-Alternatively,you can use env variables to configure home.
-```.env
-HOST=192.169.178.101
-```
-
-##### Required Parameters
-
-- **host**: String <br> Local ip address or url from your Home-Assistant server instance
-
-- **port**: Int <br> The port of Home-Assistant (defaults to 8123)
-
-- **accessToken**: String <br> You need to create a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token).
-You can do so within the Lovelace ui. Just go to your user profile, scroll to the bottom and generate one.
-
-- **secure**: Boolean <br> If you want to establish a secure websocket connection, you need to set this parameter to true (defaults to false).
-
-#### Connect to the web socket api
-
-```kotlin
-val KHOME = khomeApplication()
-
-fun main() {
-    //...
-    KHOME.runBlocking()
-}
-```
-By calling the `KhomeApplication::runBlocking` method, you establish a connection to the Home-Assistant websocket api and run the start sequences like authentication, entity registration validation and so on.
-When all went as supposed, you should see the following output in your console. 
-
-```bash
-[main] INFO Authenticator - Authentication required!
-[main] INFO Authenticator - Sending authentication message.
-[main] INFO Authenticator - Authenticated successfully to homeassistant version 0.111.0
-[main] INFO ServiceStoreInitializer - Requested registered homeassistant services
-[main] INFO ServiceStoreInitializer - Stored homeassistant services in local service store
-[main] INFO EntityStateInitializer - Requested initial entity states
-[main] INFO EntityRegistrationValidation - Entity registration validation succeeded
-[main] INFO StateChangeEventSubscriber - Successfully started listening to state changes
-```
+### Working with Khome
+[HOME](https://github.com/dennisschroeder/khome/wiki)
