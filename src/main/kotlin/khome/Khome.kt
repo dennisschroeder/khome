@@ -1,13 +1,14 @@
 package khome
 
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.ConfigurationInterface
-import khome.core.dependencyInjection.KhomeKoinComponent
-import khome.core.dependencyInjection.KhomeKoinContext
-import khome.core.dependencyInjection.KhomeModule
+import khome.core.Configuration
+import khome.core.koin.KhomeComponent
+import khome.core.koin.KhomeKoinContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.koin.core.get
+import org.koin.core.inject
+
+typealias KhomeBuilder = Khome.() -> Unit
 
 /**
  * The main entry point to start your application
@@ -19,37 +20,36 @@ import org.koin.core.get
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-fun khomeApplication(init: Khome.() -> Unit): KhomeApplication {
-    KhomeKoinContext.startKoinApplication()
-    val koinComponent = object : KhomeKoinComponent {}
-    Khome(koinComponent.get()).apply(init)
-    return koinComponent.get()
-}
+fun khomeApplication(init: KhomeBuilder = {}): KhomeApplication =
+    KhomeImpl().apply(init).createApplication()
 
 /**
- * The main application Class.
+ * The main application interface.
  * Serves all the tools necessary for the application to run.
  *
  * @author Dennis Schröder
  */
-@ObsoleteCoroutinesApi
-@KtorExperimentalAPI
-class Khome(private val config: ConfigurationInterface) {
-    companion object {
-        var beanDeclarations: KhomeModule.() -> Unit = {}
-    }
-
+interface Khome {
     /**
      * Configure your Khome instance. See all available properties in
-     * the [ConfigurationInterface] data class.
+     * the [Configuration] data class.
      *
      * @param builder Lambda with receiver to configure Khome
-     * @see [ConfigurationInterface]
      */
-    fun configure(builder: ConfigurationInterface.() -> Unit) =
+    fun configure(builder: Configuration.() -> Unit): Configuration
+}
+
+@OptIn(ExperimentalStdlibApi::class, KtorExperimentalAPI::class, ObsoleteCoroutinesApi::class)
+private class KhomeImpl : Khome, KhomeComponent {
+
+    init {
+        KhomeKoinContext.startKoinApplication()
+    }
+
+    private val config: Configuration by inject()
+
+    override fun configure(builder: Configuration.() -> Unit) =
         config.apply(builder)
 
-    fun beans(beanDeclarations: KhomeModule.() -> Unit) {
-        Khome.beanDeclarations = beanDeclarations
-    }
+    internal fun createApplication() = KhomeApplicationImpl()
 }

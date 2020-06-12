@@ -1,0 +1,26 @@
+package khome.extending
+
+import khome.StateAndAttributesHistorySnapshot
+import khome.core.State
+
+typealias InputTextSnapshot = StateAndAttributesHistorySnapshot<InputTextState, InputTextAttributes>
+
+typealias InputNumberSnapshot = StateAndAttributesHistorySnapshot<InputNumberState, InputNumberAttributes>
+
+typealias InputBooleanSnapshot = StateAndAttributesHistorySnapshot<SwitchableState, InputBooleanAttributes>
+
+typealias InputSelectSnapshot<S> = StateAndAttributesHistorySnapshot<State<S>, InputSelectAttributes>
+
+typealias InputDateSnapshot = StateAndAttributesHistorySnapshot<InputDateState, InputDateAttributes>
+
+typealias InputTimeSnapshot = StateAndAttributesHistorySnapshot<InputTimeState, InputTimeAttributes>
+
+typealias InputDateTimeSnapshot = StateAndAttributesHistorySnapshot<InputDateTimeState, InputDateTimeAttributes>
+
+typealias SwitchableLightSnapshot = StateAndAttributesHistorySnapshot<SwitchableState, LightAttributes>
+
+typealias DimmableLightSnapshot = StateAndAttributesHistorySnapshot<DimmableLightState, DimmableLightAttributes>
+
+typealias SunSnapshot = StateAndAttributesHistorySnapshot<SunState, SunAttributes>
+
+typealias PositionableCoverSnapshot = StateAndAttributesHistorySnapshot<CoverState, PositionableCoverAttributes>
