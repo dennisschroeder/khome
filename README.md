@@ -6,7 +6,7 @@
 # Khome
 
 Khome is a smart home automation library for **Home Assistant**, written in Kotlin. It enables you to write your own **Home Assistant** automation applications, that can observe state changes, listen to events and much more.
-Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the ["Safety's first Section"](https://github.com/dennisschroeder/khome/wiki/Safety's-first-Section) (coming soon).
+Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the ["Safety's first Section"](https://github.com/dennisschroeder/khome/wiki/Safety's-first).
 
 Simple Example:
 ```kotlin
@@ -17,7 +17,9 @@ val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
     val luminanceObserver = KHOME.SwitchableLightObserver { snapshot, _ ->
-        if (snapshot.state.value < 3.0) LivingRoomMainLight.desiredState = SwitchableState(ON)
+        if (snapshot.state.value < 3.0) {
+            LivingRoomMainLight.desiredState = SwitchableState(ON)
+        }
     }
         
     LivingRoomLuminance.attachObserver(luminanceObserver)
@@ -107,4 +109,4 @@ or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorial
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
 ### Working with Khome
-[HOME](https://github.com/dennisschroeder/khome/wiki)
+[Quickstart](https://github.com/dennisschroeder/khome/wiki)
