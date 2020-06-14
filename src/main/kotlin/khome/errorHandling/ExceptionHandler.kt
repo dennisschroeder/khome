@@ -16,7 +16,8 @@ internal class ObserverExceptionHandler(private val f: ExceptionHandlerFunction)
     }
 }
 
-internal class AsyncObserverExceptionHandler(private val f: ExceptionHandlerFunction): AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
+internal class AsyncObserverExceptionHandler(private val f: ExceptionHandlerFunction) :
+    AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
     override fun handleException(context: CoroutineContext, exception: Throwable) {
         f(exception)
     }
@@ -28,7 +29,8 @@ internal class EventHandlerExceptionHandler(private val f: ExceptionHandlerFunct
     }
 }
 
-internal class AsyncEventHandlerExceptionHandler(private val f: ExceptionHandlerFunction): AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
+internal class AsyncEventHandlerExceptionHandler(private val f: ExceptionHandlerFunction) :
+    AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
     override fun handleException(context: CoroutineContext, exception: Throwable) {
         f(exception)
     }

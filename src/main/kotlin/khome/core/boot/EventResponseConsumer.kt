@@ -4,6 +4,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.util.KtorExperimentalAPI
+import khome.ErrorResponseHandler
 import khome.EventHandlerByEventType
 import khome.KhomeSession
 import khome.core.EventResponse
@@ -15,6 +16,8 @@ import khome.core.boot.statehandling.flattenStateAttributes
 import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
+import khome.errorHandling.ErrorResponseData
+import khome.events.EventHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -29,7 +32,8 @@ internal class EventResponseConsumer(
     private val objectMapper: ObjectMapper,
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater,
-    private val eventHandlerByEventType: EventHandlerByEventType
+    private val eventHandlerByEventType: EventHandlerByEventType,
+    private val errorResponseHandler: ErrorResponseHandler
 ) : StartSequenceStep {
     private val logger = KotlinLogging.logger { }
 
@@ -64,8 +68,14 @@ internal class EventResponseConsumer(
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
                 stateChangedResponse.event.data.newState?.let { newState ->
-                    sensorStateUpdater(flattenStateAttributes(newState.asJsonObject), stateChangedResponse.event.data.entityId)
-                    actuatorStateUpdater(flattenStateAttributes(newState.asJsonObject), stateChangedResponse.event.data.entityId)
+                    sensorStateUpdater(
+                        flattenStateAttributes(newState.asJsonObject),
+                        stateChangedResponse.event.data.entityId
+                    )
+                    actuatorStateUpdater(
+                        flattenStateAttributes(newState.asJsonObject),
+                        stateChangedResponse.event.data.entityId
+                    )
                 }
             }
 
@@ -84,16 +94,22 @@ internal class EventResponseConsumer(
             .takeIf { resultResponse -> resultResponse.success }
             ?.let { resultResponse -> logSuccessResult(resultResponse) }
 
+    @Suppress("UNCHECKED_CAST")
     private fun handleErrorResultResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<ResultResponse>(frameText)
             .takeIf { resultResponse -> !resultResponse.success }
             ?.let { resultResponse ->
-                logFailureResponse(resultResponse)
+                errorResponseHandler.forEach { handler ->
+                    handler as EventHandler<ErrorResponseData>
+                    handler.handle(
+                        ErrorResponseData(
+                            commandId = resultResponse.id,
+                            errorResponse = resultResponse.error!!
+                        )
+                    )
+                }
             }
 
     private fun logSuccessResult(resultResponse: ResultResponse) =
         logger.info { "Result-Id: ${resultResponse.id} | Success: ${resultResponse.success}" }
-
-    private fun logFailureResponse(resultResponse: ResultResponse) =
-        logger.error { "CommandId: ${resultResponse.id} -  errorCode: ${resultResponse.error!!.code} ${resultResponse.error.message}" }
 }

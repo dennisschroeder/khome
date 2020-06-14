@@ -53,7 +53,7 @@ data class ResultResponse(
     val id: Int,
     val type: String,
     val success: Boolean,
-    val error: ErrorResult?,
+    val error: ErrorResponse?,
     val result: Any?
 ) : MessageInterface
 

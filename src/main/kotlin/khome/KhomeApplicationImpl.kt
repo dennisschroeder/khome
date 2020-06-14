@@ -28,6 +28,8 @@ import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
 import khome.errorHandling.AsyncEventHandlerExceptionHandler
 import khome.errorHandling.AsyncObserverExceptionHandler
+import khome.errorHandling.ErrorResponseData
+import khome.errorHandling.ErrorResponseHandlerImpl
 import khome.errorHandling.EventHandlerExceptionHandler
 import khome.errorHandling.ObserverExceptionHandler
 import khome.events.AsyncEventHandlerImpl
@@ -54,6 +56,7 @@ internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
+internal typealias ErrorResponseHandler = MutableList<Switchable>
 
 @Suppress("FunctionName")
 interface KhomeApplication {
@@ -86,6 +89,9 @@ interface KhomeApplication {
     fun emitEvent(eventType: String, eventData: Any? = null)
     fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
 
+    fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): Switchable
+    fun attachErrorResponseHandler(errorResponseHandler: Switchable)
+
     fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB)
 }
 
@@ -107,6 +113,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
+    private val errorResponseSubscriptions: ErrorResponseHandler = mutableListOf()
 
     private var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in observer" }
@@ -114,6 +121,14 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     private var eventHandlerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in event handler" }
+    }
+
+    init {
+        val defaultErrorResponseHandler = ErrorResponseHandler { errorResponseData ->
+            logger.error { "CommandId: ${errorResponseData.commandId} -  errorCode: ${errorResponseData.errorResponse.code} ${errorResponseData.errorResponse.message}" }
+        }
+
+        attachErrorResponseHandler(defaultErrorResponseHandler)
     }
 
     override fun <S : State<*>, A : Attributes> Sensor(
@@ -168,6 +183,13 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     override fun emitEventAsync(eventType: String, eventData: Any?): Deferred<HttpResponse> =
         hassApi.emitEventAsync(eventType, eventData)
+
+    override fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): Switchable =
+        ErrorResponseHandlerImpl(f)
+
+    override fun attachErrorResponseHandler(errorResponseHandler: Switchable) {
+        errorResponseSubscriptions.add(errorResponseHandler)
+    }
 
     override fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB) {
         ServiceCommandImpl<PB>(
@@ -240,7 +262,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
                     objectMapper = get(),
                     sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
                     actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
-                    eventHandlerByEventType = eventSubscriptionsByEventType
+                    eventHandlerByEventType = eventSubscriptionsByEventType,
+                    errorResponseHandler = errorResponseSubscriptions
                 ).runStartSequenceStep()
             }
         }
