@@ -1,6 +1,5 @@
 package khome.observability
 
-import khome.errorHandling.DefaultAsyncObserverExceptionHandler
 import khome.errorHandling.ObserverExceptionHandler
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

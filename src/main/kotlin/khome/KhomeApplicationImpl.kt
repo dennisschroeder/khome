@@ -26,8 +26,11 @@ import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
+import khome.errorHandling.AsyncEventHandlerExceptionHandler
 import khome.errorHandling.AsyncObserverExceptionHandler
+import khome.errorHandling.EventHandlerExceptionHandler
 import khome.errorHandling.ObserverExceptionHandler
+import khome.events.AsyncEventHandlerImpl
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
 import khome.observability.AsyncObserverImpl
@@ -77,6 +80,9 @@ interface KhomeApplication {
     fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
     fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable
     fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
+
+    fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit)
+
     fun emitEvent(eventType: String, eventData: Any? = null)
     fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
 
@@ -103,7 +109,11 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
     private var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
+        logger.error(exception) { "Caught exception in observer" }
+    }
 
+    private var eventHandlerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
+        logger.error(exception) { "Caught exception in event handler" }
     }
 
     override fun <S : State<*>, A : Attributes> Sensor(
@@ -143,10 +153,14 @@ internal class KhomeApplicationImpl : KhomeApplication {
     }
 
     override fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable =
-        EventHandlerImpl(f)
+        EventHandlerImpl(f, EventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
 
     override fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable =
-        AsyncEventHandler(f)
+        AsyncEventHandlerImpl(f, AsyncEventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
+
+    override fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
+        eventHandlerExceptionHandlerFunction = f
+    }
 
     override fun emitEvent(eventType: String, eventData: Any?) {
         hassApi.emitEvent(eventType, eventData)
