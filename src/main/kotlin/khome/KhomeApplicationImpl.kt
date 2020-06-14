@@ -26,6 +26,8 @@ import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
+import khome.errorHandling.AsyncObserverExceptionHandler
+import khome.errorHandling.ObserverExceptionHandler
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
 import khome.observability.AsyncObserverImpl
@@ -53,6 +55,7 @@ internal typealias EventHandlerByEventType = MutableMap<String, EventSubscriptio
 @Suppress("FunctionName")
 interface KhomeApplication {
     fun runBlocking()
+
     fun <S : State<*>, SA : Attributes> Sensor(
         id: EntityId,
         stateValueType: KClass<*>,
@@ -69,11 +72,14 @@ interface KhomeApplication {
     fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
     fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
 
+    fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit)
+
     fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
     fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable
     fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
     fun emitEvent(eventType: String, eventData: Any? = null)
     fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
+
     fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB)
 }
 
@@ -95,6 +101,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
+
+    private var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
+
+    }
 
     override fun <S : State<*>, A : Attributes> Sensor(
         id: EntityId,
@@ -118,16 +128,16 @@ internal class KhomeApplicationImpl : KhomeApplication {
         ).also { registerActuator(id, it) }
 
     override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
-        ObserverImpl(f)
+        ObserverImpl(f, ObserverExceptionHandler(observerExceptionHandlerFunction))
 
     override fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
-        AsyncObserverImpl(f)
+        AsyncObserverImpl(f, AsyncObserverExceptionHandler(observerExceptionHandlerFunction))
 
-    override fun attachEventHandler(
-        eventType: String,
-        eventHandler: Switchable,
-        eventDataType: KClass<*>
-    ) {
+    override fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit) {
+        observerExceptionHandlerFunction = f
+    }
+
+    override fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>) {
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
             ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
     }

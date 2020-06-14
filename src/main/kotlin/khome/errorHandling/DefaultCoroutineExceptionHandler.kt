@@ -1,4 +1,4 @@
-package khome.observability
+package khome.errorHandling
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import mu.KotlinLogging
