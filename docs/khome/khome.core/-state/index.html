@@ -8,75 +8,91 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core</a>&nbsp;/&nbsp;<a href="./index.html">State</a><br/>
 <br/>
 <h1>State</h1>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">State</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-state-interface/index.html"><span class="identifier">StateInterface</span></a></code>
-<h3>Constructors</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="-init-.html">&lt;init&gt;</a></p>
-</td>
-<td>
-<code><span class="identifier">State</span><span class="symbol">(</span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/entityId">entityId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/lastChanged">lastChanged</span><span class="symbol">:</span>&nbsp;<span class="identifier">OffsetDateTime</span><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/state">state</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/attributes">attributes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.core.State$<init>(kotlin.String, java.time.OffsetDateTime, kotlin.Any, kotlin.collections.Map((kotlin.String, kotlin.Any)), java.time.OffsetDateTime)/lastUpdated">lastUpdated</span><span class="symbol">:</span>&nbsp;<span class="identifier">OffsetDateTime</span><span class="symbol">)</span></code></td>
-</tr>
-</tbody>
-</table>
+<code><span class="keyword">interface </span><span class="identifier">State</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
 <h3>Properties</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="attributes.html">attributes</a></p>
+<p><a href="value.html">value</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="entity-id.html">entityId</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">entityId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="last-changed.html">lastChanged</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">lastChanged</span><span class="symbol">: </span><span class="identifier">OffsetDateTime</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="last-updated.html">lastUpdated</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">lastUpdated</span><span class="symbol">: </span><span class="identifier">OffsetDateTime</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="state.html">state</a></p>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">state</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">value</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code></td>
 </tr>
 </tbody>
 </table>
-<h3>Functions</h3>
+<h3>Inheritors</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="get-attribute.html">getAttribute</a></p>
+<p><a href="../../khome.extending/-boolean-state/index.html">BooleanState</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">getAttribute</span><span class="symbol">(</span><span class="identifier" id="khome.core.State$getAttribute(kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-attribute.html#T"><span class="identifier">T</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BooleanState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="get-value.html">getValue</a></p>
+<p><a href="../../khome.extending/-cover-state/index.html">CoverState</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">getValue</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="get-value.html#T"><span class="identifier">T</span></a></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">CoverState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="../../khome.extending/-cover-value/index.html"><span class="identifier">CoverValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-dimmable-light-state/index.html">DimmableLightState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">DimmableLightState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="../../khome.extending/-switchable-value/index.html"><span class="identifier">SwitchableValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-input-date-state/index.html">InputDateState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">InputDateState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">LocalDate</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-input-date-time-state/index.html">InputDateTimeState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">InputDateTimeState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">LocalDateTime</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-input-number-state/index.html">InputNumberState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">InputNumberState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-input-text-state/index.html">InputTextState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">InputTextState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-input-time-state/index.html">InputTimeState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">InputTimeState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">LocalTime</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-sun-state/index.html">SunState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SunState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="../../khome.extending/-sun-value/index.html"><span class="identifier">SunValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../khome.extending/-switchable-state/index.html">SwitchableState</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SwitchableState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="../../khome.extending/-switchable-value/index.html"><span class="identifier">SwitchableValue</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>

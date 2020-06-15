@@ -1,2 +1,0 @@
-# Khome best practises
-

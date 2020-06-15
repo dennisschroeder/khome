@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>EventDtoInterface - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core</a>&nbsp;/&nbsp;<a href="./index.html">EventDtoInterface</a><br/>
+<br/>
+<h1>EventDtoInterface</h1>
+<code><span class="keyword">interface </span><span class="identifier">EventDtoInterface</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="event-type.html">eventType</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">eventType</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="origin.html">origin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">origin</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="time-fired.html">timeFired</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">timeFired</span><span class="symbol">: </span><span class="identifier">OffsetDateTime</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-event/index.html">Event</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Event</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-message-interface.html"><span class="identifier">MessageInterface</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">EventDtoInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-state-changed-event-data/index.html">StateChangedEventData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">StateChangedEventData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-message-interface.html"><span class="identifier">MessageInterface</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">EventDtoInterface</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

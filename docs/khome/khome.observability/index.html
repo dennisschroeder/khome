@@ -1,0 +1,120 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.observability - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.observability</a><br/>
+<br/>
+<h2>Package khome.observability</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-history-snapshot.html">HistorySnapshot</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">HistorySnapshot</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-with-state/index.html"><span class="identifier">WithState</span></a><span class="symbol">&lt;</span><a href="-history-snapshot.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-with-attributes/index.html"><span class="identifier">WithAttributes</span></a><span class="symbol">&lt;</span><a href="-history-snapshot.html#A"><span class="identifier">A</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-with-history/index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="-history-snapshot.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-ios-action-event-data/index.html">IosActionEventData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">IosActionEventData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-ios-action-event-data-interface/index.html"><span class="identifier">IosActionEventDataInterface</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-ios-action-event-data-interface/index.html">IosActionEventDataInterface</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">IosActionEventDataInterface</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observable/index.html">Observable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Observable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observable-history-delegate.html">ObservableHistoryDelegate</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ObservableHistoryDelegate</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-with-history/index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="-observable-history-delegate.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="-observable-history-delegate.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observer/index.html">Observer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Observer</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-and-attributes.html">StateAndAttributes</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StateAndAttributes</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-with-state/index.html"><span class="identifier">WithState</span></a><span class="symbol">&lt;</span><a href="-state-and-attributes.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-with-attributes/index.html"><span class="identifier">WithAttributes</span></a><span class="symbol">&lt;</span><a href="-state-and-attributes.html#A"><span class="identifier">A</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-switchable/index.html">Switchable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Switchable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-switchable-observer.html">SwitchableObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SwitchableObserver</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-observer/index.html"><span class="identifier">Observer</span></a><span class="symbol">&lt;</span><a href="-switchable-observer.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="-switchable-observer.html#A"><span class="identifier">A</span></a><span class="symbol">,</span>&nbsp;<a href="-switchable-observer.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-with-attributes/index.html">WithAttributes</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WithAttributes</span><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-with-history/index.html">WithHistory</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WithHistory</span><span class="symbol">&lt;</span><span class="identifier">H</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-with-state/index.html">WithState</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WithState</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="on-ios-action-event.html">onIosActionEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onIosActionEvent</span><span class="symbol">(</span><span class="identifier" id="khome.observability$onIosActionEvent(kotlin.coroutines.SuspendFunction1((khome.observability.IosActionEventDataInterface, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="symbol">(</span><a href="-ios-action-event-data-interface/index.html"><span class="identifier">IosActionEventDataInterface</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="on-ios-notification-action-event.html">onIosNotificationActionEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onIosNotificationActionEvent</span><span class="symbol">(</span><span class="identifier" id="khome.observability$onIosNotificationActionEvent(kotlin.coroutines.SuspendFunction1((khome.observability.IosActionEventDataInterface, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="symbol">(</span><a href="-ios-action-event-data-interface/index.html"><span class="identifier">IosActionEventDataInterface</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
