@@ -10,7 +10,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
-    id("com.github.dawnwords.jacoco.badge") version "0.1.0"
+    id("com.github.dawnwords.jacoco.badge") version "0.2.0"
 }
 
 group = "com.dennisschroeder"
