@@ -104,5 +104,5 @@ or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorial
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
 ### Working with Khome
-[Quickstart](https://github.com/dennisschroeder/khome/wiki)
+[Quickstart](https://github.com/dennisschroeder/khome/wiki/Quickstart)
 [Safty's first](https://github.com/dennisschroeder/khome/wiki/Safety's-first)
