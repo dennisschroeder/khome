@@ -4,40 +4,29 @@ import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeApplicationImpl
 import khome.communicating.CommandDataWithEntityId
-import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
-import khome.core.Attributes
-import khome.core.State
 import khome.core.mapping.ObjectMapper
-import khome.observability.Observable
+import khome.entities.Attributes
+import khome.entities.State
 import khome.observability.ObservableHistoryNoInitialDelegate
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import mu.KotlinLogging
 import kotlin.reflect.KClass
-
-interface Actuator<S : State<*>, SA : Attributes> : Observable {
-    val actualState: S
-    var attributes: SA
-    var desiredState: S?
-    fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
-}
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-internal class ActuatorImpl<S : State<*>, SA : Attributes>(
+internal class ActuatorImpl<S : State<*>, A : Attributes>(
     private val app: KhomeApplicationImpl,
     private val mapper: ObjectMapper,
     private val resolver: ServiceCommandResolver<S>,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
-) : Actuator<S, SA> {
-    private val logger = KotlinLogging.logger { }
-    private val observers: MutableList<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>> = mutableListOf()
-    override lateinit var attributes: SA
+) : Actuator<S, A> {
+    private val observers: MutableList<SwitchableObserver<S, A, StateAndAttributes<S, A>>> = mutableListOf()
+    override lateinit var attributes: A
     override var actualState: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
 
     @KtorExperimentalAPI
@@ -60,7 +49,7 @@ internal class ActuatorImpl<S : State<*>, SA : Attributes>(
 
     fun trySetAttributesFromAny(newAttributes: JsonObject) {
         @Suppress("UNCHECKED_CAST")
-        attributes = mapper.fromJson(newAttributes, attributesType.java) as SA
+        attributes = mapper.fromJson(newAttributes, attributesType.java) as A
     }
 
     @KtorExperimentalAPI
@@ -73,6 +62,6 @@ internal class ActuatorImpl<S : State<*>, SA : Attributes>(
 
     @Suppress("UNCHECKED_CAST")
     override fun attachObserver(observer: Switchable) {
-        observers.add(observer as SwitchableObserver<S, SA, StateAndAttributes<S, SA>>)
+        observers.add(observer as SwitchableObserver<S, A, StateAndAttributes<S, A>>)
     }
 }

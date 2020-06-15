@@ -3,19 +3,18 @@ package khome.core
 import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 import khome.entities.EntityId
-import java.time.Instant
 import java.time.OffsetDateTime
 
-data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
-data class StateChangedResponse(val id: Int, val type: ResponseType, val event: StateChangedEventData) : MessageInterface
-data class StateChangedEventData(
+internal data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
+internal data class StateChangedResponse(val id: Int, val type: ResponseType, val event: StateChangedEventData) : MessageInterface
+internal data class StateChangedEventData(
     override val eventType: String,
     val data: StateChangedData,
     override val timeFired: OffsetDateTime,
     override val origin: String
 ) : MessageInterface, EventDtoInterface
 
-data class StateChangedData(val entityId: EntityId, val oldState: JsonElement?, val newState: JsonElement?) : MessageInterface
+internal data class StateChangedData(val entityId: EntityId, val oldState: JsonElement?, val newState: JsonElement?) : MessageInterface
 
 interface EventDtoInterface {
     val eventType: String
@@ -23,7 +22,7 @@ interface EventDtoInterface {
     val origin: String
 }
 
-data class StateResponse(
+internal data class StateResponse(
     val entityId: EntityId,
     val lastChanged: OffsetDateTime,
     val state: Any,
@@ -31,25 +30,15 @@ data class StateResponse(
     val lastUpdated: OffsetDateTime
 )
 
-interface Attributes {
-    val lastChanged: Instant
-    val lastUpdated: Instant
-    val friendlyName: String
-}
-
-interface State<T> {
-    val value: T
-}
-
-data class EventResponse(val id: Int, val type: ResponseType, val event: Event)
-data class Event(
+internal data class EventResponse(val id: Int, val type: ResponseType, val event: Event)
+internal data class Event(
     override val eventType: String,
     val data: JsonElement,
     override val timeFired: OffsetDateTime,
     override val origin: String
 ) : MessageInterface, EventDtoInterface
 
-data class ResultResponse(
+internal data class ResultResponse(
     val id: Int,
     val type: String,
     val success: Boolean,
@@ -57,7 +46,7 @@ data class ResultResponse(
     val result: Any?
 ) : MessageInterface
 
-enum class ResponseType {
+internal enum class ResponseType {
     @SerializedName("event")
     EVENT,
 

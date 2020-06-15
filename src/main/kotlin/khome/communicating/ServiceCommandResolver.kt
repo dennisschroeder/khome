@@ -1,6 +1,6 @@
 package khome.communicating
 
-import khome.core.State
+import khome.entities.State
 
 typealias ServiceCallResolverFunction<S> = (S) -> ResolvedServiceCommand
 

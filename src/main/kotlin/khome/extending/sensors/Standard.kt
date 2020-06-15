@@ -1,9 +1,9 @@
 package khome.extending.sensors
 
 import khome.KhomeApplication
-import khome.core.Attributes
-import khome.core.State
+import khome.entities.Attributes
 import khome.entities.EntityId
+import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.Sensor
 

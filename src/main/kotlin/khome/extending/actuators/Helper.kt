@@ -6,8 +6,8 @@ import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.ServiceType
-import khome.core.State
 import khome.entities.EntityId
+import khome.entities.State
 import khome.extending.Actuator
 import khome.extending.InputBooleanAttributes
 import khome.extending.InputDateAttributes

@@ -6,10 +6,10 @@ import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.ServiceType
-import khome.core.Attributes
-import khome.core.State
 import khome.core.koin.KhomeKoinContext
+import khome.entities.Attributes
 import khome.entities.EntityId
+import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
 import org.junit.jupiter.api.BeforeAll

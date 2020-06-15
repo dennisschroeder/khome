@@ -7,9 +7,7 @@ import khome.communicating.HassApi
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.SubscribeEventCommand
-import khome.core.Attributes
 import khome.core.ResultResponse
-import khome.core.State
 import khome.core.boot.EventResponseConsumer
 import khome.core.boot.HassApiInitializer
 import khome.core.boot.StateChangeEventSubscriber
@@ -19,9 +17,11 @@ import khome.core.boot.statehandling.EntityStateInitializer
 import khome.core.koin.KhomeComponent
 import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
+import khome.entities.Attributes
 import khome.entities.EntityId
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
+import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor

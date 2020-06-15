@@ -66,12 +66,14 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val dokka by tasks.getting(DokkaTask::class) {
-    outputFormat = "html"
-    outputDirectory = "docs"
-}
+tasks {
+    val dokka by getting(DokkaTask::class)
 
-defaultTasks("dokka")
+    dokka {
+        outputFormat = "html"
+        outputDirectory = "$buildDir/docs"
+    }
+}
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
