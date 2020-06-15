@@ -44,7 +44,7 @@ dependencies {
     compile("io.ktor:ktor-client-json-jvm:$ktorVersion")
     compile("io.ktor:ktor-client-gson:$ktorVersion")
     implementation("org.koin:koin-core:$koinVersion")
-    compile("org.slf4j:slf4j-simple:1.7.26")
+    compile("org.slf4j:slf4j-simple:1.7.30")
     compile("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
     testImplementation("org.koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
