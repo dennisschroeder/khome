@@ -71,9 +71,11 @@ tasks {
 
     dokka {
         outputFormat = "html"
-        outputDirectory = "$buildDir/docs"
+        outputDirectory = "$rootDir/docs"
     }
 }
+
+defaultTasks("dokka")
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"

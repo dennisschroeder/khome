@@ -35,7 +35,7 @@ interface Actuator<S : State<*>, A : Attributes> : Observable {
     var desiredState: S?
 
     /**
-     * Sends a service command dover the Websocket API to home assistant
+     * Sends a service command over the Websocket API to home assistant
      *
      * @param service the name of the action/service to execute
      * @param parameterBag the service parameter object. Has to inherit [CommandDataWithEntityId].
