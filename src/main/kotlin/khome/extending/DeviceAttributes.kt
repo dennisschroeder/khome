@@ -1,7 +1,7 @@
 package khome.extending
 
 import com.google.gson.annotations.SerializedName
-import khome.core.Attributes
+import khome.entities.Attributes
 import java.time.Instant
 
 data class DefaultAttributes(

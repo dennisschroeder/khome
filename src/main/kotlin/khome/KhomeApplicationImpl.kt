@@ -1,15 +1,12 @@
 package khome
 
-import io.ktor.client.statement.HttpResponse
 import io.ktor.util.KtorExperimentalAPI
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.HassApi
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.SubscribeEventCommand
-import khome.core.Attributes
 import khome.core.ResultResponse
-import khome.core.State
 import khome.core.boot.EventResponseConsumer
 import khome.core.boot.HassApiInitializer
 import khome.core.boot.StateChangeEventSubscriber
@@ -19,9 +16,11 @@ import khome.core.boot.statehandling.EntityStateInitializer
 import khome.core.koin.KhomeComponent
 import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
+import khome.entities.Attributes
 import khome.entities.EntityId
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
+import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
@@ -41,7 +40,6 @@ import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -57,43 +55,6 @@ internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
 internal typealias ErrorResponseHandler = MutableList<Switchable>
-
-@Suppress("FunctionName")
-interface KhomeApplication {
-    fun runBlocking()
-
-    fun <S : State<*>, SA : Attributes> Sensor(
-        id: EntityId,
-        stateValueType: KClass<*>,
-        attributesValueType: KClass<*>
-    ): Sensor<S, SA>
-
-    fun <S : State<*>, SA : Attributes> Actuator(
-        id: EntityId,
-        stateValueType: KClass<*>,
-        attributesValueType: KClass<*>,
-        serviceCommandResolver: ServiceCommandResolver<S>
-    ): Actuator<S, SA>
-
-    fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
-    fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable
-
-    fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit)
-
-    fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>)
-    fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable
-    fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable
-
-    fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit)
-
-    fun emitEvent(eventType: String, eventData: Any? = null)
-    fun emitEventAsync(eventType: String, eventData: Any? = null): Deferred<HttpResponse>
-
-    fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): Switchable
-    fun attachErrorResponseHandler(errorResponseHandler: Switchable)
-
-    fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB)
-}
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -133,10 +94,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     override fun <S : State<*>, A : Attributes> Sensor(
         id: EntityId,
-        stateValueType: KClass<*>,
-        attributesValueType: KClass<*>
+        stateType: KClass<*>,
+        attributesType: KClass<*>
     ): Sensor<S, A> =
-        SensorImpl<S, A>(mapper, stateValueType, attributesValueType).also { registerSensor(id, it) }
+        SensorImpl<S, A>(mapper, stateType, attributesType).also { registerSensor(id, it) }
 
     override fun <S : State<*>, A : Attributes> Actuator(
         id: EntityId,
@@ -181,9 +142,6 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.emitEvent(eventType, eventData)
     }
 
-    override fun emitEventAsync(eventType: String, eventData: Any?): Deferred<HttpResponse> =
-        hassApi.emitEventAsync(eventType, eventData)
-
     override fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): Switchable =
         ErrorResponseHandlerImpl(f)
 
@@ -191,10 +149,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
         errorResponseSubscriptions.add(errorResponseHandler)
     }
 
-    override fun <PB> callService(domain: String, service: Enum<*>, parameterBag: PB) {
+    override fun <PB> callService(domain: String, service: String, parameterBag: PB) {
         ServiceCommandImpl<PB>(
             domain = domain,
-            service = service.name,
+            service = service,
             serviceData = parameterBag
         ).also { hassApi.sendHassApiCommand(it) }
     }

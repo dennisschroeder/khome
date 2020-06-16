@@ -2,21 +2,15 @@ package khome.entities.devices
 
 import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
-import khome.core.Attributes
-import khome.core.State
 import khome.core.mapping.ObjectMapper
-import khome.observability.Observable
+import khome.entities.Attributes
+import khome.entities.State
 import khome.observability.ObservableHistoryNoInitialDelegate
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
-
-interface Sensor<S : State<*>, SA : Attributes> : Observable {
-    val measurement: S
-    val attributes: SA
-}
 
 internal class SensorImpl<S : State<*>, SA : Attributes>(
     private val mapper: ObjectMapper,

@@ -1,7 +1,7 @@
 package khome.extending
 
 import khome.StateAndAttributesHistorySnapshot
-import khome.core.State
+import khome.entities.State
 
 typealias InputTextSnapshot = StateAndAttributesHistorySnapshot<InputTextState, InputTextAttributes>
 

@@ -66,9 +66,13 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val dokka by tasks.getting(DokkaTask::class) {
-    outputFormat = "html"
-    outputDirectory = "docs"
+tasks {
+    val dokka by getting(DokkaTask::class)
+
+    dokka {
+        outputFormat = "html"
+        outputDirectory = "$rootDir/docs"
+    }
 }
 
 defaultTasks("dokka")
