@@ -8,7 +8,14 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.entities.devices</a>&nbsp;/&nbsp;<a href="./index.html">Sensor</a><br/>
 <br/>
 <h1>Sensor</h1>
-<code><span class="keyword">interface </span><span class="identifier">Sensor</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">SA</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a></code>
+<code><span class="keyword">interface </span><span class="identifier">Sensor</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a></code>
+<p>An Sensor holding entity state and attributes</p>
+<p>In Khome, the Sensor is the immutable representation of an entity in home assistant.</p>
+<h3>Parameters</h3>
+<p><a name="S"></a>
+<code>S</code> - the type of the state object that represents all state values of the entity. Has to implement the <a href="../../khome.entities/-state/index.html">State</a> interface.</p>
+<p><a name="A"></a>
+<code>A</code> - the type of the attributes object that represents all attribute values of the entity. Has to implement the <a href="../../khome.entities/-attributes/index.html">Attributes</a> interface.</p>
 <h3>Properties</h3>
 <table>
 <tbody>
@@ -17,14 +24,18 @@
 <p><a href="attributes.html">attributes</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="index.html#SA"><span class="identifier">SA</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="index.html#A"><span class="identifier">A</span></a></code>
+<p>Represents the current attributes of the entity in Khome.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="measurement.html">measurement</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">measurement</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">measurement</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a></code>
+<p>Represents the current state object of the entity in Khome.</p>
+</td>
 </tr>
 </tbody>
 </table>

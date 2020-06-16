@@ -4,10 +4,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.71"
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.1"
     `maven-publish`
     id("io.gitlab.arturbosch.detekt") version "1.9.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
     id("com.github.dawnwords.jacoco.badge") version "0.2.0"
@@ -66,9 +66,13 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val dokka by tasks.getting(DokkaTask::class) {
-    outputFormat = "html"
-    outputDirectory = "docs"
+tasks {
+    val dokka by getting(DokkaTask::class)
+
+    dokka {
+        outputFormat = "html"
+        outputDirectory = "$rootDir/docs"
+    }
 }
 
 defaultTasks("dokka")

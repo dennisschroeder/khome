@@ -4,9 +4,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-typealias ExceptionHandlerFunction = (Throwable) -> Unit
+typealias ExceptionHandlerFunction = (exception: Throwable) -> Unit
 
-interface ExceptionHandler {
+internal interface ExceptionHandler {
     fun handleExceptions(exception: Throwable)
 }
 

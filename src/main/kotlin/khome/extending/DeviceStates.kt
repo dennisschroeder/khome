@@ -1,6 +1,6 @@
 package khome.extending
 
-import khome.core.State
+import khome.entities.State
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

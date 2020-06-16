@@ -8,7 +8,14 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.entities.devices</a>&nbsp;/&nbsp;<a href="./index.html">Actuator</a><br/>
 <br/>
 <h1>Actuator</h1>
-<code><span class="keyword">interface </span><span class="identifier">Actuator</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">SA</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a></code>
+<code><span class="keyword">interface </span><span class="identifier">Actuator</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a></code>
+<p>An Actuator holding entity state and attributes</p>
+<p>In Khome, the Actuator is the mutable representation of an entity in home assistant.</p>
+<h3>Parameters</h3>
+<p><a name="S"></a>
+<code>S</code> - the type of the state object that represents all mutable state values of the entity. Has to implement the <a href="../../khome.entities/-state/index.html">State</a> interface.</p>
+<p><a name="A"></a>
+<code>A</code> - the type of the attributes object that represents all immutable attribute values of the entity. Has to implement the <a href="../../khome.entities/-attributes/index.html">Attributes</a> interface.</p>
 <h3>Properties</h3>
 <table>
 <tbody>
@@ -17,21 +24,31 @@
 <p><a href="actual-state.html">actualState</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">actualState</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">actualState</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a></code>
+<p>Represents the current state object of the entity in Khome.
+Holds all state values that can be mutated directly.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="attributes.html">attributes</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="index.html#SA"><span class="identifier">SA</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="index.html#A"><span class="identifier">A</span></a></code>
+<p>Represents the current attributes of the entity in Khome
+Holds all state attributes that can not directly be mutated.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="desired-state.html">desiredState</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">desiredState</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">desiredState</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code>
+<p>Set this property to a desired version of the state to mutate it in home assistant.
+The setter of this property will interfere the setting, and translates the new (desired) state
+to an service command that mutates the state in home assistant.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -43,7 +60,9 @@
 <p><a href="call-service.html">callService</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">callService</span><span class="symbol">(</span><span class="identifier" id="khome.entities.devices.Actuator$callService(kotlin.Enum(()), khome.communicating.CommandDataWithEntityId)/service">service</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.entities.devices.Actuator$callService(kotlin.Enum(()), khome.communicating.CommandDataWithEntityId)/parameterBag">parameterBag</span><span class="symbol">:</span>&nbsp;<a href="../../khome.communicating/-command-data-with-entity-id/index.html"><span class="identifier">CommandDataWithEntityId</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EntityIdOnlyServiceData()<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">callService</span><span class="symbol">(</span><span class="identifier" id="khome.entities.devices.Actuator$callService(kotlin.Enum(()), khome.communicating.CommandDataWithEntityId)/service">service</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.entities.devices.Actuator$callService(kotlin.Enum(()), khome.communicating.CommandDataWithEntityId)/parameterBag">parameterBag</span><span class="symbol">:</span>&nbsp;<a href="../../khome.communicating/-command-data-with-entity-id/index.html"><span class="identifier">CommandDataWithEntityId</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EntityIdOnlyServiceData()<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sends a service command over the Websocket API to home assistant</p>
+</td>
 </tr>
 </tbody>
 </table>
