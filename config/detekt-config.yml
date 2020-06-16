@@ -1,16 +1,9 @@
-autoCorrect: false
-failFast: false
-
 console-reports:
   active: true
   exclude:
     - 'ProjectStatisticsReport'
     - 'ComplexityReport'
     - 'NotificationReport'
-
-# don't check tests
-test-pattern:
-  active: false
 
 # disabled rule-sets
 comments:
@@ -41,8 +34,7 @@ empty-blocks:
   EmptyForBlock:
     active: true
   EmptyFunctionBlock:
-    active: true
-    ignoreOverriddenFunctions: false
+    ignoreOverriddenFunctions: true
   EmptyIfBlock:
     active: true
   EmptyInitBlock:

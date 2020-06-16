@@ -78,7 +78,7 @@ internal object KhomeKoinContext {
                 DefaultConfiguration(
                     name = getProperty(NAME, "Khome"),
                     host = getProperty(HOST, "localhost"),
-                    port = getProperty(PORT, 8123),
+                    port = getProperty(PORT, "8123").toInt(),
                     accessToken = getProperty(ACCESS_TOKEN, "<some-fancy-access-token>"),
                     secure = getProperty(SECURE, "false").toBoolean()
                 )
