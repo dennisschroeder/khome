@@ -101,16 +101,16 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     override fun <S : State<*>, A : Attributes> Actuator(
         id: EntityId,
-        stateValueType: KClass<*>,
-        attributesValueType: KClass<*>,
+        stateType: KClass<*>,
+        attributesType: KClass<*>,
         serviceCommandResolver: ServiceCommandResolver<S>
     ): Actuator<S, A> =
         ActuatorImpl<S, A>(
             this,
             mapper,
             serviceCommandResolver,
-            stateValueType,
-            attributesValueType
+            stateType,
+            attributesType
         ).also { registerActuator(id, it) }
 
     override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
