@@ -4,10 +4,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.71"
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.1"
     `maven-publish`
-    id("io.gitlab.arturbosch.detekt") version "1.0.0-RC16"
-    id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.9.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
     id("com.github.dawnwords.jacoco.badge") version "0.2.0"
@@ -44,7 +44,7 @@ dependencies {
     compile("io.ktor:ktor-client-json-jvm:$ktorVersion")
     compile("io.ktor:ktor-client-gson:$ktorVersion")
     implementation("org.koin:koin-core:$koinVersion")
-    compile("org.slf4j:slf4j-simple:1.7.26")
+    compile("org.slf4j:slf4j-simple:1.7.30")
     compile("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
     testImplementation("org.koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
