@@ -6,7 +6,7 @@
 # Khome
 
 Khome is a smart home automation library for **Home Assistant**, written in Kotlin. It enables you to write your own **Home Assistant** automation applications, that can observe state changes, listen to events, and much more.
-Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the ["Safety's first Section"](https://github.com/dennisschroeder/khome/wiki/Safety's-first).
+Khome was written with safeness in mind. That means we wrote Khome with a fail first approach. See more about this in the ["Safety's first Section"](docs/Safety'sFirst.md).
 
 Simple Example:
 ```kotlin
@@ -73,7 +73,7 @@ repositories {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.dennisschroeder:khome:[replace with a version]'
+    implementation 'com.github.dennisschroeder:khome:${replace with a version}'
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 <dependency>
         <groupId>com.github.dennisschroeder</groupId>
         <artifactId>khome</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>${replace with a version}</version>
 </dependency>
 
 ```
@@ -104,5 +104,5 @@ or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorial
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
 ### Working with Khome
-[Quickstart](https://github.com/dennisschroeder/khome/wiki/Quickstart)
-[Safty's first](https://github.com/dennisschroeder/khome/wiki/Safety's-first)
+- [Quick start](docs/Quickstart.md)
+- [Safety's first](docs/Safety'sFirst.md)
