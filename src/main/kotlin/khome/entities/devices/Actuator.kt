@@ -5,6 +5,8 @@ import khome.communicating.EntityIdOnlyServiceData
 import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.Observable
+import khome.observability.StateAndAttributes
+import khome.observability.WithHistory
 
 /**
  * An Actuator holding entity state and attributes
@@ -14,7 +16,7 @@ import khome.observability.Observable
  * @param S the type of the state object that represents all mutable state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all immutable attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Actuator<S : State<*>, A : Attributes> : Observable {
+interface Actuator<S : State<*>, A : Attributes> : Observable, WithHistory<StateAndAttributes<S, A>> {
     /**
      * Represents the current state object of the entity in Khome.
      * Holds all state values that can be mutated directly.

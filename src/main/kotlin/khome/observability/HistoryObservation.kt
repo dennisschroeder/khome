@@ -35,14 +35,12 @@ interface ObservableHistoryDelegate<S, H> : WithHistory<H>, ReadWriteProperty<An
 
 internal class ObservableHistoryNoInitialDelegate<S, SA>(
     private val observers: List<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>>,
-    maxHistory: Int = 10,
+    private val _history: CircularBuffer<StateAndAttributes<S, SA>>,
     private val attributes: () -> SA
 ) : ObservableHistoryDelegate<S, StateAndAttributes<S, SA>> {
     private var dirty: Boolean = false
     override val history: List<StateAndAttributes<S, SA>>
         get() = _history.snapshot()
-
-    private val _history = CircularBuffer<StateAndAttributes<S, SA>>(maxHistory)
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): S =
         _history.last()?.state ?: throw IllegalStateException("No value available yet.")

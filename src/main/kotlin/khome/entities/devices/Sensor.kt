@@ -3,6 +3,8 @@ package khome.entities.devices
 import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.Observable
+import khome.observability.StateAndAttributes
+import khome.observability.WithHistory
 
 /**
  * An Sensor holding entity state and attributes
@@ -12,7 +14,7 @@ import khome.observability.Observable
  * @param S the type of the state object that represents all state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Sensor<S : State<*>, A : Attributes> : Observable {
+interface Sensor<S : State<*>, A : Attributes> : Observable, WithHistory<StateAndAttributes<S, A>> {
     /**
      * Represents the current state object of the entity in Khome.
      */
