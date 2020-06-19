@@ -7,6 +7,7 @@ import khome.communicating.CommandDataWithEntityId
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
 import khome.core.mapping.ObjectMapper
+import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.ObservableHistoryNoInitialDelegate
@@ -27,7 +28,8 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
 ) : Actuator<S, A> {
     private val observers: MutableList<SwitchableObserver<S, A, StateAndAttributes<S, A>>> = mutableListOf()
     override lateinit var attributes: A
-    override var actualState: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
+    private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
+    override var actualState: S by ObservableHistoryNoInitialDelegate(observers, _history) { attributes }
 
     @KtorExperimentalAPI
     override var desiredState: S? = null
@@ -64,4 +66,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     override fun attachObserver(observer: Switchable) {
         observers.add(observer as SwitchableObserver<S, A, StateAndAttributes<S, A>>)
     }
+
+    override val history: List<StateAndAttributes<S, A>>
+        get() = _history.snapshot()
 }

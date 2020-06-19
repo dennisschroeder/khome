@@ -3,6 +3,7 @@ package khome.entities.devices
 import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.mapping.ObjectMapper
+import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.ObservableHistoryNoInitialDelegate
@@ -12,18 +13,19 @@ import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
 
-internal class SensorImpl<S : State<*>, SA : Attributes>(
+internal class SensorImpl<S : State<*>, A : Attributes>(
     private val mapper: ObjectMapper,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
-) : Sensor<S, SA> {
-    private val observers: MutableList<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>> = mutableListOf()
-    override lateinit var attributes: SA
-    override var measurement: S by ObservableHistoryNoInitialDelegate(observers) { attributes }
+) : Sensor<S, A> {
+    private val observers: MutableList<SwitchableObserver<S, A, StateAndAttributes<S, A>>> = mutableListOf()
+    override lateinit var attributes: A
+    private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
+    override var measurement: S by ObservableHistoryNoInitialDelegate(observers, _history) { attributes }
 
     @Suppress("UNCHECKED_CAST")
     override fun attachObserver(observer: Switchable) {
-        observers.add(observer as SwitchableObserver<S, SA, StateAndAttributes<S, SA>>)
+        observers.add(observer as SwitchableObserver<S, A, StateAndAttributes<S, A>>)
     }
 
     @ObsoleteCoroutinesApi
@@ -38,6 +40,9 @@ internal class SensorImpl<S : State<*>, SA : Attributes>(
     @KtorExperimentalAPI
     fun trySetAttributesFromAny(newAttributes: JsonObject) {
         @Suppress("UNCHECKED_CAST")
-        attributes = mapper.fromJson(newAttributes, attributesType.java) as SA
+        attributes = mapper.fromJson(newAttributes, attributesType.java) as A
     }
+
+    override val history: List<StateAndAttributes<S, A>>
+        get() = _history.snapshot()
 }
