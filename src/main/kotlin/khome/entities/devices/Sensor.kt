@@ -14,7 +14,7 @@ import khome.observability.WithHistory
  * @param S the type of the state object that represents all state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Sensor<S : State<*>, A : Attributes> : Observable, WithHistory<StateAndAttributes<S, A>> {
+interface Sensor<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory<StateAndAttributes<S, A>> {
     /**
      * Represents the current state object of the entity in Khome.
      */

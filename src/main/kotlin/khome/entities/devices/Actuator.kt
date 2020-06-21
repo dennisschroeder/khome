@@ -16,7 +16,7 @@ import khome.observability.WithHistory
  * @param S the type of the state object that represents all mutable state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all immutable attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Actuator<S : State<*>, A : Attributes> : Observable, WithHistory<StateAndAttributes<S, A>> {
+interface Actuator<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory<StateAndAttributes<S, A>> {
     /**
      * Represents the current state object of the entity in Khome.
      * Holds all state values that can be mutated directly.
@@ -42,5 +42,5 @@ interface Actuator<S : State<*>, A : Attributes> : Observable, WithHistory<State
      * @param service the name of the action/service to execute
      * @param parameterBag the service parameter object. Has to inherit [CommandDataWithEntityId].
      */
-    fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
+    fun callService(service: String, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
 }

@@ -7,13 +7,13 @@ typealias InputTextSnapshot = StateAndAttributesHistorySnapshot<InputTextState, 
 
 typealias InputNumberSnapshot = StateAndAttributesHistorySnapshot<InputNumberState, InputNumberAttributes>
 
-typealias InputBooleanSnapshot = StateAndAttributesHistorySnapshot<SwitchableState, InputBooleanAttributes>
-
 typealias InputSelectSnapshot<S> = StateAndAttributesHistorySnapshot<State<S>, InputSelectAttributes>
 
-typealias InputDateSnapshot = StateAndAttributesHistorySnapshot<InputDateState, InputDateAttributes>
+typealias InputBooleanSnapshot = StateAndAttributesHistorySnapshot<SwitchableState, InputBooleanAttributes>
 
 typealias InputTimeSnapshot = StateAndAttributesHistorySnapshot<InputTimeState, InputTimeAttributes>
+
+typealias InputDateSnapshot = StateAndAttributesHistorySnapshot<InputDateState, InputDateAttributes>
 
 typealias InputDateTimeSnapshot = StateAndAttributesHistorySnapshot<InputDateTimeState, InputDateTimeAttributes>
 

@@ -1,7 +1,6 @@
 package khome.events
 
 import khome.errorHandling.EventHandlerExceptionHandler
-import khome.observability.Switchable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +12,15 @@ interface EventHandler<EventData> {
     fun handle(eventData: EventData)
 }
 
+interface SwitchableEventHandler<EventData> {
+    val enabled: AtomicBoolean
+}
+
 internal class EventHandlerImpl<EventData>(
-    private val f: (EventData, switchable: Switchable) -> Unit,
+    private val f: (EventData, switchable: SwitchableEventHandler<EventData>) -> Unit,
     private val exceptionHandler: EventHandlerExceptionHandler,
-    override var enabled: AtomicBoolean = AtomicBoolean(true)
-) : EventHandler<EventData>, Switchable {
+    override val enabled: AtomicBoolean = AtomicBoolean(true)
+) : EventHandler<EventData>, SwitchableEventHandler<EventData> {
     override fun handle(eventData: EventData) {
         if (!enabled.get()) return
         try {
@@ -29,11 +32,11 @@ internal class EventHandlerImpl<EventData>(
 }
 
 internal class AsyncEventHandlerImpl<EventData>(
-    private val f: suspend CoroutineScope.(EventData, switchable: Switchable) -> Unit,
+    private val f: suspend CoroutineScope.(EventData, handler: SwitchableEventHandler<EventData>) -> Unit,
     private val exceptionHandler: CoroutineExceptionHandler,
-    override var enabled: AtomicBoolean = AtomicBoolean(true),
+    override val enabled: AtomicBoolean = AtomicBoolean(true),
     context: CoroutineContext = Dispatchers.IO
-) : EventHandler<EventData>, Switchable {
+) : EventHandler<EventData>, SwitchableEventHandler<EventData> {
 
     private val coroutineScope: CoroutineScope =
         CoroutineScope(context)

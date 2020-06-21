@@ -2,7 +2,7 @@ package khome.errorHandling
 
 import khome.core.ErrorResponse
 import khome.events.EventHandler
-import khome.observability.Switchable
+import khome.events.SwitchableEventHandler
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -16,8 +16,8 @@ data class ErrorResponseData(val commandId: Int, val errorResponse: ErrorRespons
 
 internal class ErrorResponseHandlerImpl(
     private val f: (ErrorResponseData) -> Unit,
-    override var enabled: AtomicBoolean = AtomicBoolean(true)
-) : EventHandler<ErrorResponseData>, Switchable {
+    override val enabled: AtomicBoolean = AtomicBoolean(true)
+) : EventHandler<ErrorResponseData>, SwitchableEventHandler<ErrorResponseData> {
     override fun handle(eventData: ErrorResponseData) {
         f(eventData)
     }

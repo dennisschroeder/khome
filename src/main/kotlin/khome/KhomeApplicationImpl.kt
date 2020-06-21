@@ -34,11 +34,12 @@ import khome.errorHandling.ObserverExceptionHandler
 import khome.events.AsyncEventHandlerImpl
 import khome.events.EventHandlerImpl
 import khome.events.EventSubscription
+import khome.events.SwitchableEventHandler
 import khome.observability.AsyncObserverImpl
 import khome.observability.HistorySnapshot
 import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
-import khome.observability.Switchable
+import khome.observability.SwitchableObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -54,7 +55,7 @@ internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
-internal typealias ErrorResponseHandler = MutableList<Switchable>
+internal typealias ErrorResponseHandler = MutableList<SwitchableEventHandler<*>>
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -113,25 +114,25 @@ internal class KhomeApplicationImpl : KhomeApplication {
             attributesType
         ).also { registerActuator(id, it) }
 
-    override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
+    override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A> =
         ObserverImpl(f, ObserverExceptionHandler(observerExceptionHandlerFunction))
 
-    override fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, Switchable) -> Unit): Switchable =
+    override fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A> =
         AsyncObserverImpl(f, AsyncObserverExceptionHandler(observerExceptionHandlerFunction))
 
     override fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit) {
         observerExceptionHandlerFunction = f
     }
 
-    override fun attachEventHandler(eventType: String, eventHandler: Switchable, eventDataType: KClass<*>) {
+    override fun <ED> attachEventHandler(eventType: String, eventHandler: SwitchableEventHandler<ED>, eventDataType: KClass<*>) {
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
             ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
     }
 
-    override fun <ED> EventHandler(f: (ED, Switchable) -> Unit): Switchable =
+    override fun <ED> EventHandler(f: (ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED> =
         EventHandlerImpl(f, EventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
 
-    override fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, Switchable) -> Unit): Switchable =
+    override fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED> =
         AsyncEventHandlerImpl(f, AsyncEventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
 
     override fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
@@ -142,10 +143,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.emitEvent(eventType, eventData)
     }
 
-    override fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): Switchable =
+    override fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): SwitchableEventHandler<ErrorResponseData> =
         ErrorResponseHandlerImpl(f)
 
-    override fun attachErrorResponseHandler(errorResponseHandler: Switchable) {
+    override fun attachErrorResponseHandler(errorResponseHandler: SwitchableEventHandler<ErrorResponseData>) {
         errorResponseSubscriptions.add(errorResponseHandler)
     }
 
