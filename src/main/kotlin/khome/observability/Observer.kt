@@ -8,25 +8,23 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-interface Switchable {
-    var enabled: AtomicBoolean
-}
-
 interface Observer<S, A, H> {
     fun update(state: HistorySnapshot<S, A, H>)
 }
 
-interface SwitchableObserver<S, A, H> : Observer<S, A, H>, Switchable
+interface SwitchableObserver<S, A> {
+    val enabled: AtomicBoolean
+}
 
-interface Observable {
-    fun attachObserver(observer: Switchable)
+interface Observable<S, A> {
+    fun attachObserver(observer: SwitchableObserver<S, A>)
 }
 
 internal class ObserverImpl<S, A, H>(
-    private val f: (snapshot: HistorySnapshot<S, A, H>, observer: Switchable) -> Unit,
+    private val f: (snapshot: HistorySnapshot<S, A, H>, observer: SwitchableObserver<S, A>) -> Unit,
     private val exceptionHandler: ObserverExceptionHandler,
-    override var enabled: AtomicBoolean = AtomicBoolean(true)
-) : SwitchableObserver<S, A, H> {
+    override val enabled: AtomicBoolean = AtomicBoolean(true)
+) : SwitchableObserver<S, A>, Observer<S, A, H> {
     override fun update(state: HistorySnapshot<S, A, H>) {
         if (!enabled.get()) return
         try {
@@ -38,11 +36,11 @@ internal class ObserverImpl<S, A, H>(
 }
 
 internal class AsyncObserverImpl<S, A, H>(
-    private val f: suspend CoroutineScope.(snapshot: HistorySnapshot<S, A, H>, switchable: Switchable) -> Unit,
+    private val f: suspend CoroutineScope.(snapshot: HistorySnapshot<S, A, H>, switchable: SwitchableObserver<S, A>) -> Unit,
     private val exceptionHandler: CoroutineExceptionHandler,
-    override var enabled: AtomicBoolean = AtomicBoolean(true),
+    override val enabled: AtomicBoolean = AtomicBoolean(true),
     context: CoroutineContext = Dispatchers.IO
-) : SwitchableObserver<S, A, H> {
+) : SwitchableObserver<S, A>, Observer<S, A, H> {
     private val coroutineScope: CoroutineScope = CoroutineScope(context)
     override fun update(state: HistorySnapshot<S, A, H>) {
         if (!enabled.get()) return

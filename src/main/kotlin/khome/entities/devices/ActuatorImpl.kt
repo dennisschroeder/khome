@@ -11,8 +11,8 @@ import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.ObservableHistoryNoInitialDelegate
+import khome.observability.Observer
 import khome.observability.StateAndAttributes
-import khome.observability.Switchable
 import khome.observability.SwitchableObserver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
@@ -26,7 +26,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Actuator<S, A> {
-    private val observers: MutableList<SwitchableObserver<S, A, StateAndAttributes<S, A>>> = mutableListOf()
+    private val observers: MutableList<Observer<S, A, StateAndAttributes<S, A>>> = mutableListOf()
     override lateinit var attributes: A
     private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
     override var actualState: S by ObservableHistoryNoInitialDelegate(observers, _history) { attributes }
@@ -55,16 +55,16 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     }
 
     @KtorExperimentalAPI
-    override fun callService(service: Enum<*>, parameterBag: CommandDataWithEntityId) {
+    override fun callService(service: String, parameterBag: CommandDataWithEntityId) {
         ServiceCommandImpl(
-            service = service.name,
+            service = service,
             serviceData = parameterBag
         ).also { app.enqueueStateChange(this, it) }
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun attachObserver(observer: Switchable) {
-        observers.add(observer as SwitchableObserver<S, A, StateAndAttributes<S, A>>)
+    override fun attachObserver(observer: SwitchableObserver<S, A>) {
+        observers.add(observer as Observer<S, A, StateAndAttributes<S, A>>)
     }
 
     override val history: List<StateAndAttributes<S, A>>

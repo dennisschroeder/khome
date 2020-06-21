@@ -27,11 +27,11 @@ fun mapSwitchable(switchableValue: SwitchableValue) =
  */
 
 @Suppress("FunctionName")
-inline fun <reified S : State<*>, reified SA : Attributes> KhomeApplication.Sensor(id: EntityId) =
-    Sensor<S, SA>(id, S::class, SA::class)
+inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Sensor(id: EntityId) =
+    Sensor<S, A>(id, S::class, A::class)
 
 @Suppress("FunctionName")
-inline fun <reified S : State<*>, reified SA : Attributes> KhomeApplication.Actuator(
+inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Actuator(
     id: EntityId,
     serviceCommandResolver: ServiceCommandResolver<S>
-) = Actuator<S, SA>(id, S::class, SA::class, serviceCommandResolver)
+) = Actuator<S, A>(id, S::class, A::class, serviceCommandResolver)

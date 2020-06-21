@@ -23,6 +23,13 @@ internal class StateAndAttributesImpl<S, A>(
     override val attributes: A
 ) : StateAndAttributes<S, A>
 
+/**
+ * Represents the state, the attributes and an history with former state and attributes
+ *
+ * @property state the state object
+ * @property attributes the attributes object
+ * @property history the state and attributes history
+ */
 interface HistorySnapshot<S, A, H> : WithState<S>, WithAttributes<A>, WithHistory<H>
 
 internal class HistorySnapshotIml<S, A, H>(
@@ -31,10 +38,10 @@ internal class HistorySnapshotIml<S, A, H>(
     override val history: List<H>
 ) : HistorySnapshot<S, A, H>
 
-interface ObservableHistoryDelegate<S, H> : WithHistory<H>, ReadWriteProperty<Any?, S>
+internal interface ObservableHistoryDelegate<S, H> : WithHistory<H>, ReadWriteProperty<Any?, S>
 
 internal class ObservableHistoryNoInitialDelegate<S, SA>(
-    private val observers: List<SwitchableObserver<S, SA, StateAndAttributes<S, SA>>>,
+    private val observers: List<Observer<S, SA, StateAndAttributes<S, SA>>>,
     private val _history: CircularBuffer<StateAndAttributes<S, SA>>,
     private val attributes: () -> SA
 ) : ObservableHistoryDelegate<S, StateAndAttributes<S, SA>> {
