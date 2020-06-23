@@ -1,24 +1,18 @@
 package khome.extending
 
 import khome.KhomeApplication
-import khome.events.SwitchableEventHandler
-import kotlinx.coroutines.CoroutineScope
+import khome.events.AsyncEventHandlerFunction
+import khome.events.EventHandlerFunction
+import khome.observability.Switchable
 
-inline fun <reified ED> KhomeApplication.createAndAttachAsyncEventHandler(
+inline fun <reified ED> KhomeApplication.attachEventHandler(
     eventType: String,
-    noinline f: suspend CoroutineScope.(ED, SwitchableEventHandler<ED>) -> Unit
-) {
-    val eventHandler = AsyncEventHandler(f)
-    attachEventHandler<ED>(eventType, eventHandler)
-}
-
-inline fun <reified ED> KhomeApplication.createAndAttachEventHandler(
-    eventType: String,
-    noinline f: (ED, SwitchableEventHandler<ED>) -> Unit
-) {
-    val eventHandler = EventHandler(f)
-    attachEventHandler<ED>(eventType, eventHandler)
-}
-
-inline fun <reified ED> KhomeApplication.attachEventHandler(eventType: String, eventHandler: SwitchableEventHandler<ED>) =
+    noinline eventHandler: EventHandlerFunction<ED>
+): Switchable =
     attachEventHandler(eventType, eventHandler, ED::class)
+
+inline fun <reified ED> KhomeApplication.attachAsyncEventHandler(
+    eventType: String,
+    noinline eventHandler: AsyncEventHandlerFunction<ED>
+): Switchable =
+    attachAsyncEventHandler(eventType, eventHandler, ED::class)
