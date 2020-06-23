@@ -16,7 +16,7 @@ val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    val luminanceObserver = KHOME.SwitchableLightObserver { snapshot, _ ->
+    val luminanceObserver = KHOME.LuminanceObserver { snapshot, _ ->
         if (snapshot.state.value < 3.0) {
             LivingRoomMainLight.desiredState = SwitchableState(ON)
         }
@@ -31,7 +31,7 @@ fun main() {
 In this little example, we observed the luminance sensor in the living room and when the measurement of the luminance drops under 3 lux, we change the state of the main light in the living room to ON.
 As you can see here, Khome encourages you to think in states rather than services you have to call. This is less error-prone and helps the developer to stay in the mindset of states. This distinguishes Khome from most other automation libraries.
 
-Khome comes with a lot of predefined factory functions, data classes, and observers for generic entity types but also with a low-level API that lets you develop your own custom entities as needed.
+Khome comes with a lot of predefined factory functions, data classes, observers and more for generic entity types but also with a low-level API that lets you develop your own custom entities as needed.
 
 ## Home Assistant
  
@@ -52,7 +52,7 @@ side. But you don't have to. All you need to do is configuring it via `.yaml` fi
 will help you. Also, there is a [Discord channel](https://discordapp.com/invite/c5DvZ4e) to get in touch easily with the community.
 
 #### ... the Python World:
-Yes, you need to learn Kotlin. It is definitely worth a try. In my personal opinion, it is worth even more. But that's a different story. Probably the fastest way for you to get into Kotlin is the [Kotlin for Python Introduction](https://kotlinlang.org/docs/tutorials/kotlin-for-py/introduction.html)
+Yes, you need to learn Kotlin. It is definitely worth a try. In my opinion, it is worth even more. But that's a different story. Probably the fastest way for you to get into Kotlin is the [Kotlin for Python Introduction](https://kotlinlang.org/docs/tutorials/kotlin-for-py/introduction.html)
 from the official Kotlin documentation. Here is a list of the most important [Kotlin online resources](https://kotlinlang.org/community/#kotlin-online-resources).
 
 ## Installation
@@ -104,5 +104,9 @@ or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorial
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
 ### Working with Khome
-- [Quick start](docs/Quickstart.md)
+- [Quick start](docs/Quickstart.md) (to be finished)
+- [Sensors, Actuators and Observers](docs/SensorsAndActuators.md)
+- [Home Assistant Events](docs/HomeAssistantEvents.md) (coming soon)
+- [Predefined entity types](docs/PredefinedEntityTypes.md) (to be finished)
+- [Build entity types from scratch](docs/BuildEntitiesFromScratch.md) (coming soon)
 - [Safety's first](docs/Safety'sFirst.md)

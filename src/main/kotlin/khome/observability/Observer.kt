@@ -11,13 +11,31 @@ import kotlin.coroutines.CoroutineContext
 typealias ObserverFunction<S, A, H> = (snapshot: HistorySnapshot<S, A, H>, observer: Switchable) -> Unit
 typealias AsyncObserverFunction<S, A, H> = suspend CoroutineScope.(snapshot: HistorySnapshot<S, A, H>, switchable: Switchable) -> Unit
 
-interface Observer<S, A, H> {
+internal interface Observer<S, A, H> {
     fun update(state: HistorySnapshot<S, A, H>)
 }
 
+/**
+ * A Switchable instance
+ *
+ * Controls the observer function execution
+ * Is enabled by default
+ */
 interface Switchable {
+    /**
+     * Returns the current state
+     * @return Boolean
+     */
     fun isEnabled(): Boolean
+
+    /**
+     * Enables the observer function execution
+     */
     fun enable()
+
+    /**
+     * Disables the observer function execution
+     */
     fun disable()
 }
 
