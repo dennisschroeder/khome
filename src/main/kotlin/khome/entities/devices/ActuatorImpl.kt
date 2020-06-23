@@ -10,10 +10,16 @@ import khome.core.mapping.ObjectMapper
 import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
+import khome.errorHandling.AsyncEventHandlerExceptionHandler
+import khome.errorHandling.ObserverExceptionHandler
+import khome.observability.AsyncObserverFunction
+import khome.observability.AsyncObserverImpl
 import khome.observability.ObservableHistoryNoInitialDelegate
 import khome.observability.Observer
+import khome.observability.ObserverFunction
+import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
-import khome.observability.SwitchableObserver
+import khome.observability.Switchable
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
 
@@ -62,10 +68,17 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
         ).also { app.enqueueStateChange(this, it) }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun attachObserver(observer: SwitchableObserver<S, A>) {
-        observers.add(observer as Observer<S, A, StateAndAttributes<S, A>>)
-    }
+    override fun attachObserver(observer: ObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+        ObserverImpl(
+            observer,
+            ObserverExceptionHandler(app.observerExceptionHandlerFunction)
+        ).also { observers.add(it) }
+
+    override fun attachAsyncObserver(observer: AsyncObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+        AsyncObserverImpl(
+            observer,
+            AsyncEventHandlerExceptionHandler(app.observerExceptionHandlerFunction)
+        ).also { observers.add(it) }
 
     override val history: List<StateAndAttributes<S, A>>
         get() = _history.snapshot()

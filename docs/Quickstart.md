@@ -61,5 +61,12 @@ When all went as supposed, you should see the following output in your console.
 [main] INFO StateChangeEventSubscriber - Successfully started listening to state changes
 ```
 
-## Sensors & Actuators
-Khome differentiates between Sensors and Actuators.
+## Start writing your home automation application
+
+Basically, a Khome application is a collection of observers attached to some entities. For your convenience, Khome comes with a lot of predefined entity types. 
+For most uses cases, [here is all you need](PredefinedEntityTypes.md) to build your application. Since home assistant evolves rapidly and has the ability to be extended with custom integrations,
+it comes along with a low-level API to build your own entities, based on your needs. You find more on that topic in the [Build your own entities](BuildEntitiesFromScratch.md) section.
+
+The following examples to get you off and running are based on the [predefined entity types](PredefinedEntityTypes.md) provided by Khome.
+For a deeper understanding of Khome's capabilities, we encourage you to read the [Sensors, Actuators, and Observer](SensorsAndActuators.md) section.
+
