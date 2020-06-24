@@ -1,6 +1,7 @@
 package khome.events
 
 import khome.errorHandling.EventHandlerExceptionHandler
+import khome.observability.Switchable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -8,19 +9,24 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
+typealias EventHandlerFunction<EventData> = (EventData, switchable: Switchable) -> Unit
+typealias AsyncEventHandlerFunction<EventData> = suspend CoroutineScope.(EventData, handler: Switchable) -> Unit
+
 interface EventHandler<EventData> {
     fun handle(eventData: EventData)
 }
 
-interface SwitchableEventHandler<EventData> {
-    val enabled: AtomicBoolean
-}
-
 internal class EventHandlerImpl<EventData>(
-    private val f: (EventData, switchable: SwitchableEventHandler<EventData>) -> Unit,
-    private val exceptionHandler: EventHandlerExceptionHandler,
-    override val enabled: AtomicBoolean = AtomicBoolean(true)
-) : EventHandler<EventData>, SwitchableEventHandler<EventData> {
+    private val f: EventHandlerFunction<EventData>,
+    private val exceptionHandler: EventHandlerExceptionHandler
+) : EventHandler<EventData>, Switchable {
+
+    private val enabled: AtomicBoolean = AtomicBoolean(true)
+
+    override fun enable() = enabled.set(true)
+    override fun disable() = enabled.set(false)
+    override fun isEnabled(): Boolean = enabled.get()
+
     override fun handle(eventData: EventData) {
         if (!enabled.get()) return
         try {
@@ -32,14 +38,18 @@ internal class EventHandlerImpl<EventData>(
 }
 
 internal class AsyncEventHandlerImpl<EventData>(
-    private val f: suspend CoroutineScope.(EventData, handler: SwitchableEventHandler<EventData>) -> Unit,
+    private val f: AsyncEventHandlerFunction<EventData>,
     private val exceptionHandler: CoroutineExceptionHandler,
-    override val enabled: AtomicBoolean = AtomicBoolean(true),
     context: CoroutineContext = Dispatchers.IO
-) : EventHandler<EventData>, SwitchableEventHandler<EventData> {
+) : EventHandler<EventData>, Switchable {
 
-    private val coroutineScope: CoroutineScope =
-        CoroutineScope(context)
+    private val enabled: AtomicBoolean = AtomicBoolean(true)
+
+    override fun enable() = enabled.set(true)
+    override fun disable() = enabled.set(false)
+    override fun isEnabled(): Boolean = enabled.get()
+
+    private val coroutineScope: CoroutineScope = CoroutineScope(context)
 
     override fun handle(eventData: EventData) {
         if (!enabled.get()) return

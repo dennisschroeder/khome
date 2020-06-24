@@ -2,18 +2,26 @@ package khome.entities.devices
 
 import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
+import khome.KhomeApplicationImpl
 import khome.core.mapping.ObjectMapper
 import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
+import khome.errorHandling.AsyncEventHandlerExceptionHandler
+import khome.errorHandling.ObserverExceptionHandler
+import khome.observability.AsyncObserverFunction
+import khome.observability.AsyncObserverImpl
 import khome.observability.ObservableHistoryNoInitialDelegate
 import khome.observability.Observer
+import khome.observability.ObserverFunction
+import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
-import khome.observability.SwitchableObserver
+import khome.observability.Switchable
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
 
 internal class SensorImpl<S : State<*>, A : Attributes>(
+    private val app: KhomeApplicationImpl,
     private val mapper: ObjectMapper,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
@@ -23,10 +31,17 @@ internal class SensorImpl<S : State<*>, A : Attributes>(
     private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
     override var measurement: S by ObservableHistoryNoInitialDelegate(observers, _history) { attributes }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun attachObserver(observer: SwitchableObserver<S, A>) {
-        observers.add(observer as Observer<S, A, StateAndAttributes<S, A>>)
-    }
+    override fun attachObserver(observer: ObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+        ObserverImpl(
+            observer,
+            ObserverExceptionHandler(app.observerExceptionHandlerFunction)
+        ).also { observers.add(it) }
+
+    override fun attachAsyncObserver(observer: AsyncObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+        AsyncObserverImpl(
+            observer,
+            AsyncEventHandlerExceptionHandler(app.observerExceptionHandlerFunction)
+        ).also { observers.add(it) }
 
     @ObsoleteCoroutinesApi
     @KtorExperimentalAPI

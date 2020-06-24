@@ -4,7 +4,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.util.KtorExperimentalAPI
-import khome.ErrorResponseHandler
+import khome.ErrorResponseHandlerRegistry
 import khome.EventHandlerByEventType
 import khome.KhomeSession
 import khome.core.EventResponse
@@ -33,7 +33,7 @@ internal class EventResponseConsumer(
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater,
     private val eventHandlerByEventType: EventHandlerByEventType,
-    private val errorResponseHandler: ErrorResponseHandler
+    private val errorResponseHandlerRegistry: ErrorResponseHandlerRegistry
 ) : StartSequenceStep {
     private val logger = KotlinLogging.logger { }
 
@@ -99,7 +99,7 @@ internal class EventResponseConsumer(
         mapFrameTextToResponse<ResultResponse>(frameText)
             .takeIf { resultResponse -> !resultResponse.success }
             ?.let { resultResponse ->
-                errorResponseHandler.forEach { handler ->
+                errorResponseHandlerRegistry.forEach { handler ->
                     handler as EventHandler<ErrorResponseData>
                     handler.handle(
                         ErrorResponseData(

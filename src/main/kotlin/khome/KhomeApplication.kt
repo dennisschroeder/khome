@@ -7,9 +7,9 @@ import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
 import khome.errorHandling.ErrorResponseData
-import khome.events.SwitchableEventHandler
-import khome.observability.SwitchableObserver
-import kotlinx.coroutines.CoroutineScope
+import khome.events.AsyncEventHandlerFunction
+import khome.events.EventHandlerFunction
+import khome.observability.Switchable
 import kotlin.reflect.KClass
 
 /**
@@ -67,35 +67,6 @@ interface KhomeApplication {
     ): Actuator<S, A>
 
     /**
-     * Observer factory function
-     *
-     * Creates a fresh instance of a observer.
-     *
-     * @param S the type of the state that represents all state values of the entity.
-     * @param A the type of the attributes that represents all attribute values of the entity.
-     *
-     * @param f the action that gets executed at any state change of the entity it gets attached to.
-     *
-     * @return [SwitchableObserver]
-     */
-    @Suppress("FunctionName")
-    fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A>
-
-    /**
-     * AsyncObserver factory function
-     *
-     * Creates a fresh instance of an asynchronous observer.
-     *
-     * @param S the type of the state that represents all state values of the entity.
-     * @param A the type of the attributes that represents all attribute values of the entity.
-     * @param f the action that gets executed asynchronously at any state change of the entity it gets attached to.
-     *
-     * @return [SwitchableObserver]
-     */
-    @Suppress("FunctionName")
-    fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A>
-
-    /**
      * Overwrites the default observer exception handler action.
      *
      * @param f the action that gets executed when the observer action executes with an exception.
@@ -103,35 +74,22 @@ interface KhomeApplication {
     fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit)
 
     /**
-     * EventHandler factory function
-     *
-     * Creates a fresh instance of a event handler.
-     *
-     * @param ED the type of the event data.
-     * @param f the action that gets executed any time the home assistant event gets emitted.
-     *
-     * @return [SwitchableObserver]
+     * Attaches an [EventHandlerFunction] to Khome and starts the home assistant event subscription.
      */
-    @Suppress("FunctionName")
-    fun <ED> EventHandler(f: (ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED>
+    fun <ED> attachEventHandler(
+        eventType: String,
+        eventHandler: EventHandlerFunction<ED>,
+        eventDataType: KClass<*>
+    ): Switchable
 
     /**
-     * AsyncEventHandler factory function.
-     *
-     * Creates a fresh instance of an asynchronous event handler.
-     *
-     * @param ED the type of the event data.
-     * @param f the action that gets executed asynchronously any time the home assistant event gets emitted.
-     *
-     * @return [SwitchableObserver]
+     * Attaches an [AsyncEventHandlerFunction] to Khome and starts the home assistant event subscription.
      */
-    @Suppress("FunctionName")
-    fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED>
-
-    /**
-     * Attaches an [EventHandler] or [AsyncEventHandler] to Khome and starts the home assistant event subscription.
-     */
-    fun <ED> attachEventHandler(eventType: String, eventHandler: SwitchableEventHandler<ED>, eventDataType: KClass<*>)
+    fun <ED> attachAsyncEventHandler(
+        eventType: String,
+        eventHandler: AsyncEventHandlerFunction<ED>,
+        eventDataType: KClass<*>
+    ): Switchable
 
     /**
      * Overwrites the default event handler exception handler action.
@@ -149,22 +107,11 @@ interface KhomeApplication {
     fun emitEvent(eventType: String, eventData: Any? = null)
 
     /**
-     * Error response handler factory function.
-     *
-     * Creates a fresh instance of an error response handler.
-     * @param f the action that gets executed when home assistant responds with an error.
-     *
-     * @return [SwitchableObserver]
-     */
-    @Suppress("FunctionName")
-    fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): SwitchableEventHandler<ErrorResponseData>
-
-    /**
-     * Attaches an [ErrorResponseHandler] to Khome.
+     * Attaches an [ErrorResponseHandlerRegistry] to Khome.
      *
      * @param errorResponseHandler the handler to be attached.
      */
-    fun attachErrorResponseHandler(errorResponseHandler: SwitchableEventHandler<ErrorResponseData>)
+    fun attachErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit)
 
     /**
      * Sends a service command to home assistant.

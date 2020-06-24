@@ -25,22 +25,15 @@ import khome.entities.devices.Actuator
 import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
-import khome.errorHandling.AsyncEventHandlerExceptionHandler
-import khome.errorHandling.AsyncObserverExceptionHandler
 import khome.errorHandling.ErrorResponseData
 import khome.errorHandling.ErrorResponseHandlerImpl
-import khome.errorHandling.EventHandlerExceptionHandler
-import khome.errorHandling.ObserverExceptionHandler
-import khome.events.AsyncEventHandlerImpl
-import khome.events.EventHandlerImpl
+import khome.events.AsyncEventHandlerFunction
+import khome.events.EventHandler
+import khome.events.EventHandlerFunction
 import khome.events.EventSubscription
-import khome.events.SwitchableEventHandler
-import khome.observability.AsyncObserverImpl
 import khome.observability.HistorySnapshot
-import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
-import khome.observability.SwitchableObserver
-import kotlinx.coroutines.CoroutineScope
+import khome.observability.Switchable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -54,8 +47,8 @@ typealias StateAndAttributesHistorySnapshot<S, A> = HistorySnapshot<S, A, StateA
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
-internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription>
-internal typealias ErrorResponseHandler = MutableList<SwitchableEventHandler<*>>
+internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription<*>>
+internal typealias ErrorResponseHandlerRegistry = MutableList<EventHandler<*>>
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -75,22 +68,21 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
-    private val errorResponseSubscriptions: ErrorResponseHandler = mutableListOf()
+    private val errorResponseSubscriptions: ErrorResponseHandlerRegistry = mutableListOf()
 
-    private var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
+    var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in observer" }
     }
 
-    private var eventHandlerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
+    var eventHandlerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in event handler" }
     }
 
     init {
-        val defaultErrorResponseHandler = ErrorResponseHandler { errorResponseData ->
+
+        attachErrorResponseHandler { errorResponseData ->
             logger.error { "CommandId: ${errorResponseData.commandId} -  errorCode: ${errorResponseData.errorResponse.code} ${errorResponseData.errorResponse.message}" }
         }
-
-        attachErrorResponseHandler(defaultErrorResponseHandler)
     }
 
     override fun <S : State<*>, A : Attributes> Sensor(
@@ -98,7 +90,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
         stateType: KClass<*>,
         attributesType: KClass<*>
     ): Sensor<S, A> =
-        SensorImpl<S, A>(mapper, stateType, attributesType).also { registerSensor(id, it) }
+        SensorImpl<S, A>(this, mapper, stateType, attributesType).also { registerSensor(id, it) }
 
     override fun <S : State<*>, A : Attributes> Actuator(
         id: EntityId,
@@ -114,26 +106,27 @@ internal class KhomeApplicationImpl : KhomeApplication {
             attributesType
         ).also { registerActuator(id, it) }
 
-    override fun <S, A> Observer(f: (snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A> =
-        ObserverImpl(f, ObserverExceptionHandler(observerExceptionHandlerFunction))
-
-    override fun <S, A> AsyncObserver(f: suspend CoroutineScope.(snapshot: StateAndAttributesHistorySnapshot<S, A>, SwitchableObserver<S, A>) -> Unit): SwitchableObserver<S, A> =
-        AsyncObserverImpl(f, AsyncObserverExceptionHandler(observerExceptionHandlerFunction))
-
     override fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit) {
         observerExceptionHandlerFunction = f
     }
 
-    override fun <ED> attachEventHandler(eventType: String, eventHandler: SwitchableEventHandler<ED>, eventDataType: KClass<*>) {
-        eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler)
-            ?: registerEventSubscription(eventType, eventDataType).attachEventHandler(eventHandler)
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun <ED> attachEventHandler(
+        eventType: String,
+        eventHandler: EventHandlerFunction<ED>,
+        eventDataType: KClass<*>
+    ): Switchable =
+        eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as EventHandlerFunction<Any?>)
+            ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
 
-    override fun <ED> EventHandler(f: (ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED> =
-        EventHandlerImpl(f, EventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
-
-    override fun <ED> AsyncEventHandler(f: suspend CoroutineScope.(ED, SwitchableEventHandler<ED>) -> Unit): SwitchableEventHandler<ED> =
-        AsyncEventHandlerImpl(f, AsyncEventHandlerExceptionHandler(eventHandlerExceptionHandlerFunction))
+    @Suppress("UNCHECKED_CAST")
+    override fun <ED> attachAsyncEventHandler(
+        eventType: String,
+        eventHandler: AsyncEventHandlerFunction<ED>,
+        eventDataType: KClass<*>
+    ): Switchable =
+        eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as AsyncEventHandlerFunction<Any?>)
+            ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
 
     override fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
         eventHandlerExceptionHandlerFunction = f
@@ -143,11 +136,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.emitEvent(eventType, eventData)
     }
 
-    override fun ErrorResponseHandler(f: (ErrorResponseData) -> Unit): SwitchableEventHandler<ErrorResponseData> =
-        ErrorResponseHandlerImpl(f)
-
-    override fun attachErrorResponseHandler(errorResponseHandler: SwitchableEventHandler<ErrorResponseData>) {
-        errorResponseSubscriptions.add(errorResponseHandler)
+    override fun attachErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit) {
+        errorResponseSubscriptions.add(ErrorResponseHandlerImpl(errorResponseHandler))
     }
 
     override fun <PB> callService(domain: String, service: String, parameterBag: PB) {
@@ -169,8 +159,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
         actuatorsByEntity[actuator] = entityId
     }
 
-    private fun registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
-        EventSubscription(mapper, eventDataType).also { eventSubscriptionsByEventType[eventType] = it }
+    private fun <ED> registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
+        EventSubscription<ED>(this, mapper, eventDataType).also { eventSubscriptionsByEventType[eventType] = it }
 
     internal fun <S : State<*>, SA : Attributes> enqueueStateChange(
         actuator: ActuatorImpl<S, SA>,
@@ -222,7 +212,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
                     sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
                     actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
                     eventHandlerByEventType = eventSubscriptionsByEventType,
-                    errorResponseHandler = errorResponseSubscriptions
+                    errorResponseHandlerRegistry = errorResponseSubscriptions
                 ).runStartSequenceStep()
             }
         }
