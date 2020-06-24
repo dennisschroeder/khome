@@ -2,12 +2,12 @@
 
 Every entity in a smart home system can either be a sensor or an actuator.
 The main difference is the mutability of the state in an actuator. Or the immutability in a Sensor.
-Observers, on the other hand, get attached to both and executes a user-defined action, whenever a state change occurs.
+
+Observers, on the other hand, get attached to both and execute a user-defined action, whenever a state change occurs.
 
 ## Sensor
-A Sensor in Khome consists of the **state**, the **attributes**, and an **observable** property.
-In a sensor, the observable property is the one who holds the state. Since sensors usually measure something,
-this property is called "measurement" in Khome.
+A Sensor in Khome consists of the **observable state** and **attributes**. Since sensors usually measure something,
+the state is called "measurement" in Khome.
 
 A sensor fulfills 2 purposes:
 
@@ -51,10 +51,10 @@ In an Actuator, the observable property is the one who holds the state. Since Ac
 in your application, but over home assistant, we need to differentiate between the actual state and the desired state.
 
 Most home automation libraries require you to call a service to mutate the state of an entity.
-This can be quite cumbersome and error-prone since it requires you to resolve the matching service 
-name and parameters, that does the desired mutation for you, every time it is needed.  
+This can be quite cumbersome and error-prone since it requires you to resolve the matching service
+name and parameters, that does the desired mutation for you, every time it is needed.
 
-Khome therefore let you stay in the mindset of states.
+Khome, therefore, lets you stay in the mindset of states.
 
 An actuator fulfills 3 purposes:
 
@@ -65,7 +65,7 @@ val KHOME = khomeApplication()
 
 val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
 
-fun main() {        
+fun main() {
     BedRoomCoverOne.attachObserver { snapshot, _ ->
        // gets executed every time a state change occurs
        // attribute change also triggers a state change
@@ -94,7 +94,7 @@ fun main() {
 3. Mutate state
 
 ```kotlin
-val KHOME = khomeApplication() 
+val KHOME = khomeApplication()
 
 val Sun = KHOME.Sun()
 val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
@@ -110,16 +110,17 @@ fun main() {
 }
 ```
 
-Under the hood, home assistant still only offers a [service based API](https://developers.home-assistant.io/docs/api/websocket/#calling-a-service). Therefore, Khome resolves the matching service call from the desired state.
+Under the hood, home assistant still offers a [service based API](https://developers.home-assistant.io/docs/api/websocket/#calling-a-service). Therefore, Khome resolves the matching service call from the desired state.
 To learn more about this, read the [Service-Command-Resolver](./SensorsAndActuators.md#service-command-resolver) Section.
 
-We are aware of the fact, that there are reasons to call a service instead of the setting a desired state. We detected two reasons. First, some of you might feel more
+We are aware of the fact, that there are reasons to call a service instead of setting a desired state. We detected two reasons. First, some of you might feel more
+
 comfortable calling services (still we encourage you to at least try out the desired state version). Secondly, home assistant offers some functionality that does affect the entity without
 setting the state or attribute value directly. And some services do not affect the entity at all.
 
 Therefore, an Actuator has the [`::callService`](https://dennisschroeder.github.io/khome/khome/khome.entities.devices/-actuator/call-service.html) method.
 
-The following example showcases this. We will build a cover lock. When the lock is active, every time the cover is changing its position, we call the [`stop_cover`](https://www.home-assistant.io/integrations/cover/) 
+The following example showcases this. We will build a cover lock. When the lock is active, every time the cover is changing its position, we call the [`stop_cover`](https://www.home-assistant.io/integrations/cover/)
 service from the cover domain in home assistant, to prevent opening/closing.
 
 ```kotlin
@@ -134,17 +135,17 @@ fun main() {
             BedRoomCoverOne.callService("stop_cover")
         }
     }
-    
+
     KHOME.runBlocking()
 }
-``` 
+```
 
 See more about Actuators in the [source code](../src/main/kotlin/khome/entities/devices/Actuator.kt) or [kdocs](https://dennisschroeder.github.io/khome/khome/khome.entities.devices/-actuator/index.html).
 
 
 ### Service command resolver
-Since home assistant is awaiting a [service call](https://developers.home-assistant.io/docs/api/websocket/#calling-a-service), and we only want to think in states, somebody needs to 
-translate between those different concepts. It's the responsibility of the service command resolver. Basically it is a just a [factory function](../src/main/kotlin/khome/communicating/ServiceCommandResolver.kt), that you pass an lambda 
+Since home assistant is awaiting a [service call](https://developers.home-assistant.io/docs/api/websocket/#calling-a-service), and we only want to think in states, somebody needs to
+translate between those different concepts. It's the responsibility of the service command resolver. Basically it is a just a [factory function](../src/main/kotlin/khome/communicating/ServiceCommandResolver.kt), that you pass an lambda
 which has access to the desired state and returns a [ResolvedServiceCommand](../src/main/kotlin/khome/communicating/ServiceCommandResolver.kt) instance.
 
 Let's take a look at a simple example from the InputBoolean entity:
@@ -186,7 +187,7 @@ data class DefaultResolvedServiceCommand(
 ```
 A class, that later gets mapped to a ServiceCommand which then gets serialized and send to home assistant. Therefore, the `DefaultResolvedServiceCommand` has to answer two questions:
 
-1. What `service` should be called? 
+1. What `service` should be called?
 2. What `serviceData` (parameters) should be attached to the call?
 
 In our example, we need two different services `TURN_ON` and `TURN_OFF` and as a parameter, we need to tell home assistant which entity to be turned on/off.
@@ -226,28 +227,29 @@ ServiceCommandResolver { desiredState ->
 ```
 
 ## Observer
-The heart of Khome is the ability to observe state changes. The Sensor, as already mentioned above, has an observable property named measurement. 
-The Actuators pendant gets called actualState. 
+The heart of Khome is the ability to observe state changes. The Sensor, as already mentioned above, has an observable property named measurement.
+The Actuators pendant gets called actualState.
 
 To execute an action every time a state has changed, you can create and attach an Observer to the entity you like to observe.
 
-```kotlin 
+```kotlin
 SomeCover.attachObserver { snapshot, _ ->
  //...
 }
 ```
 
 An Observer is bound to a specific type of Sensor or Actuator since Khome injects a `snapshot` of the state and attributes that caused the state change event.
-Besides an immutable version from the current state and attributes, the snapshot contains an immutable snapshot from
-the state and attributes history, which holds the maximum of 10 versions except for the current.
 
-In most use cases, you don't want your action to be executed every single time a state change occurs. Depending on the entity type, this can happen pretty often. 
-A dimmable light, for example, has a couple of state changes when turning on due to the power consumption attribute that decreases till the light is on at the 
-desired brightness level. 
+Besides an immutable version of the current state and attributes, the snapshot contains a history of the states and attributes,
+reaching back up to 10 versions (current state excluded).
 
-**Remember**: 
+In most use cases, you don't want your action to be executed every single time a state change occurs. Depending on the entity type, this can happen pretty often.
+A dimmable light, for example, has a couple of state changes when turning on due to the power consumption attribute that decreases till the light is on at the
+desired brightness level.
+
+**Remember**:
 ***
-The attributes are also a part of the entity state. 
+The attributes are also a part of the entity state.
 Therefore, a state change event gets emitted by home assistant also when only
 an attribute gets updated.
 ***
@@ -293,14 +295,14 @@ InputBoolean.attachObserver { snapshot, _ ->
 **Here is some context to the example, for clarification:**
 
 We have an input boolean in home assistant, that serves as a switch to turn on/off a scene called tv time.
-When we activate it, the cover in the living room gets closed, some nice mood light, and the tv turned on, etc. 
+When we activate it, the cover in the living room gets closed, some nice mood light, and the tv turned on, etc.
 And in our example, we observe this input boolean and when it gets deactivated, we roll back the living room cover
 to its position that was before, which was stored in the history of the living room cover.
 
 ### Take over control
 
-You might already discover the second variable, that was injected into the observer, which when unused marked as "_" 
-underscore due to Kotlin coding conventions. Behind this mysterious variable is a [Switchable]() instance as representation of the observer which lets you 
+You might already discover the second variable, that was injected into the observer, which when unused marked as "_"
+underscore due to Kotlin coding conventions. Behind this mysterious variable is a [Switchable]() instance as representation of the observer which lets you
 enable/disable your observer. Let's take a look at an example:
 
 ```kotlin
