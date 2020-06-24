@@ -16,13 +16,11 @@ val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    val luminanceObserver = KHOME.LuminanceObserver { snapshot, _ ->
+    LivingRoomLuminance.attachObserver { snapshot, _ ->
         if (snapshot.state.value < 3.0) {
             LivingRoomMainLight.desiredState = SwitchableState(ON)
         }
     }
-        
-    LivingRoomLuminance.attachObserver(luminanceObserver)
 
     KHOME.runBlocking()
 }
