@@ -13,87 +13,74 @@
 <tbody>
 <tr>
 <td>
-<p><a href="-command-data-with-entity-id/index.html">CommandDataWithEntityId</a></p>
+<h4><a href="-command-data-with-entity-id/index.html">CommandDataWithEntityId</a></h4>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">CommandDataWithEntityId</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-default-resolved-service-command/index.html">DefaultResolvedServiceCommand</a></p>
+<h4><a href="-default-resolved-service-command/index.html">DefaultResolvedServiceCommand</a></h4>
 </td>
 <td>
 <code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">DefaultResolvedServiceCommand</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-resolved-service-command/index.html"><span class="identifier">ResolvedServiceCommand</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-desired-service-data/index.html">DesiredServiceData</a></p>
+<h4><a href="-desired-service-data/index.html">DesiredServiceData</a></h4>
 </td>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">DesiredServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-command-data-with-entity-id/index.html"><span class="identifier">CommandDataWithEntityId</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-entity-id-only-service-data/index.html">EntityIdOnlyServiceData</a></p>
+<h4><a href="-entity-id-only-service-data/index.html">EntityIdOnlyServiceData</a></h4>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">EntityIdOnlyServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-desired-service-data/index.html"><span class="identifier">DesiredServiceData</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-resolved-service-command/index.html">ResolvedServiceCommand</a></p>
+<h4><a href="-resolved-service-command/index.html">ResolvedServiceCommand</a></h4>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">ResolvedServiceCommand</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-service-command-resolver/index.html">ServiceCommandResolver</a></p>
+<h4><a href="-service-command-resolver/index.html">ServiceCommandResolver</a></h4>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">ServiceCommandResolver</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-service-command-resolver-impl/index.html">ServiceCommandResolverImpl</a></p>
+<h4><a href="-service-command-resolver-function.html">ServiceCommandResolverFunction</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">ServiceCommandResolverImpl</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-command-resolver/index.html"><span class="identifier">ServiceCommandResolver</span></a><span class="symbol">&lt;</span><a href="-service-command-resolver-impl/index.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">typealias </span><span class="identifier">ServiceCommandResolverFunction</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><span class="identifier">S</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="-resolved-service-command/index.html"><span class="identifier">ResolvedServiceCommand</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-service-coroutine-context/index.html">ServiceCoroutineContext</a></p>
+<h4><a href="-service-coroutine-context/index.html">ServiceCoroutineContext</a></h4>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">ServiceCoroutineContext</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-coroutine-context/index.html"><span class="identifier">CoroutineContext</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-service-type/index.html">ServiceType</a></p>
+<h4><a href="-service-type/index.html">ServiceType</a></h4>
 </td>
 <td>
 <code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ServiceType</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-service-type-identifier.html"><span class="identifier">ServiceTypeIdentifier</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="-service-type-identifier.html">ServiceTypeIdentifier</a></p>
+<h4><a href="-service-type-identifier.html">ServiceTypeIdentifier</a></h4>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">ServiceTypeIdentifier</span></code>
 <p>Main entry point to create new service enum classes</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3>Type Aliases</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="-service-call-resolver-function.html">ServiceCallResolverFunction</a></p>
-</td>
-<td>
-<code><span class="keyword">typealias </span><span class="identifier">ServiceCallResolverFunction</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><a href="-service-call-resolver-function.html#S"><span class="identifier">S</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="-resolved-service-command/index.html"><span class="identifier">ResolvedServiceCommand</span></a></code></td>
+<code><span class="keyword">interface </span><span class="identifier">ServiceTypeIdentifier</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -102,10 +89,10 @@
 <tbody>
 <tr>
 <td>
-<p><a href="-service-command-resolver.html">ServiceCommandResolver</a></p>
+<h4><a href="-service-command-resolver.html">ServiceCommandResolver</a></h4>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <span class="identifier">ServiceCommandResolver</span><span class="symbol">(</span><span class="identifier" id="khome.communicating$ServiceCommandResolver(kotlin.Function1((khome.communicating.ServiceCommandResolver.S, khome.communicating.ResolvedServiceCommand)))/resolverFunction">resolverFunction</span><span class="symbol">:</span>&nbsp;<a href="-service-call-resolver-function.html"><span class="identifier">ServiceCallResolverFunction</span></a><span class="symbol">&lt;</span><a href="-service-command-resolver.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-service-command-resolver/index.html"><span class="identifier">ServiceCommandResolver</span></a><span class="symbol">&lt;</span><a href="-service-command-resolver.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <span class="identifier">ServiceCommandResolver</span><span class="symbol">(</span><span class="identifier" id="khome.communicating$ServiceCommandResolver(kotlin.Function1((khome.communicating.ServiceCommandResolver.S, khome.communicating.ResolvedServiceCommand)))/resolverFunction">resolverFunction</span><span class="symbol">:</span>&nbsp;<a href="-service-command-resolver-function.html"><span class="identifier">ServiceCommandResolverFunction</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-service-command-resolver/index.html"><span class="identifier">ServiceCommandResolver</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>

@@ -1,10 +1,11 @@
 package khome.core.boot
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.readText
 import io.ktor.util.KtorExperimentalAPI
-import khome.ErrorResponseHandlerRegistry
 import khome.EventHandlerByEventType
 import khome.KhomeSession
 import khome.core.EventResponse
@@ -17,7 +18,7 @@ import khome.core.mapping.ObjectMapper
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
 import khome.errorHandling.ErrorResponseData
-import khome.events.EventHandler
+import khome.errorHandling.ErrorResponseHandlerImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -33,7 +34,7 @@ internal class EventResponseConsumer(
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater,
     private val eventHandlerByEventType: EventHandlerByEventType,
-    private val errorResponseHandlerRegistry: ErrorResponseHandlerRegistry
+    private val errorResponseHandler: (ErrorResponseData) -> Unit
 ) : StartSequenceStep {
     private val logger = KotlinLogging.logger { }
 
@@ -67,7 +68,8 @@ internal class EventResponseConsumer(
         mapFrameTextToResponse<StateChangedResponse>(frameText)
             .takeIf { it.event.eventType == "state_changed" }
             ?.let { stateChangedResponse ->
-                stateChangedResponse.event.data.newState?.let { newState ->
+                logger.debug { "State change response: $stateChangedResponse" }
+                stateChangedResponse.event.data.newState.getOrNull()?.let { newState ->
                     sensorStateUpdater(
                         flattenStateAttributes(newState.asJsonObject),
                         stateChangedResponse.event.data.entityId
@@ -83,6 +85,7 @@ internal class EventResponseConsumer(
         mapFrameTextToResponse<EventResponse>(frameText)
             .takeIf { it.event.eventType in eventHandlerByEventType }
             ?.let { eventResponse ->
+                logger.debug { "Event response: $eventResponse" }
                 eventHandlerByEventType[eventResponse.event.eventType]
                     ?.invokeEventHandler(eventResponse.event.data)
                     ?: logger.warn { "No event found for event type: ${eventResponse.event.eventType}" }
@@ -94,22 +97,20 @@ internal class EventResponseConsumer(
             .takeIf { resultResponse -> resultResponse.success }
             ?.let { resultResponse -> logSuccessResult(resultResponse) }
 
-    @Suppress("UNCHECKED_CAST")
     private fun handleErrorResultResponse(frameText: Frame.Text) =
         mapFrameTextToResponse<ResultResponse>(frameText)
             .takeIf { resultResponse -> !resultResponse.success }
             ?.let { resultResponse ->
-                errorResponseHandlerRegistry.forEach { handler ->
-                    handler as EventHandler<ErrorResponseData>
-                    handler.handle(
-                        ErrorResponseData(
-                            commandId = resultResponse.id,
-                            errorResponse = resultResponse.error!!
-                        )
+                ErrorResponseHandlerImpl(errorResponseHandler).handle(
+                    ErrorResponseData(
+                        commandId = resultResponse.id,
+                        errorResponse = resultResponse.error!!
                     )
-                }
+                )
             }
 
     private fun logSuccessResult(resultResponse: ResultResponse) =
         logger.info { "Result-Id: ${resultResponse.id} | Success: ${resultResponse.success}" }
 }
+
+private fun JsonElement.getOrNull(): JsonElement? = if (this is JsonNull) null else this

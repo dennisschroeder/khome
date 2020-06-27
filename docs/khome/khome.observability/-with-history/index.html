@@ -14,10 +14,10 @@
 <tbody>
 <tr>
 <td>
-<p><a href="history.html">history</a></p>
+<h4><a href="history.html">history</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">history</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="index.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">history</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">H</span><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -26,17 +26,27 @@
 <tbody>
 <tr>
 <td>
-<p><a href="../-history-snapshot.html">HistorySnapshot</a></p>
+<h4><a href="../../khome.entities.devices/-actuator/index.html">Actuator</a></h4>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">HistorySnapshot</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-with-state/index.html"><span class="identifier">WithState</span></a><span class="symbol">&lt;</span><a href="../-history-snapshot.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-with-attributes/index.html"><span class="identifier">WithAttributes</span></a><span class="symbol">&lt;</span><a href="../-history-snapshot.html#A"><span class="identifier">A</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="../-history-snapshot.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span></code></td>
+<p>An Actuator holding entity state and attributes</p>
+<code><span class="keyword">interface </span><span class="identifier">Actuator</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-observable/index.html"><span class="identifier">Observable</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="../-state-and-attributes.html"><span class="identifier">StateAndAttributes</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="../-observable-history-delegate.html">ObservableHistoryDelegate</a></p>
+<h4><a href="../-history-snapshot.html">HistorySnapshot</a></h4>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">ObservableHistoryDelegate</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="../-observable-history-delegate.html#H"><span class="identifier">H</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="../-observable-history-delegate.html#S"><span class="identifier">S</span></a><span class="symbol">&gt;</span></code></td>
+<p>Represents the state, the attributes and an history with former state and attributes</p>
+<code><span class="keyword">interface </span><span class="identifier">HistorySnapshot</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-with-state/index.html"><span class="identifier">WithState</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-with-attributes/index.html"><span class="identifier">WithAttributes</span></a><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><span class="identifier">H</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../khome.entities.devices/-sensor/index.html">Sensor</a></h4>
+</td>
+<td>
+<p>An Sensor holding entity state and attributes</p>
+<code><span class="keyword">interface </span><span class="identifier">Sensor</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-observable/index.html"><span class="identifier">Observable</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="../-state-and-attributes.html"><span class="identifier">StateAndAttributes</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>

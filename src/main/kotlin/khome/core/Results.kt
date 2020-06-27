@@ -6,7 +6,9 @@ import khome.entities.EntityId
 import java.time.OffsetDateTime
 
 internal data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface
-internal data class StateChangedResponse(val id: Int, val type: ResponseType, val event: StateChangedEventData) : MessageInterface
+internal data class StateChangedResponse(val id: Int, val type: ResponseType, val event: StateChangedEventData) :
+    MessageInterface
+
 internal data class StateChangedEventData(
     override val eventType: String,
     val data: StateChangedData,
@@ -14,7 +16,8 @@ internal data class StateChangedEventData(
     override val origin: String
 ) : MessageInterface, EventDtoInterface
 
-internal data class StateChangedData(val entityId: EntityId, val oldState: JsonElement?, val newState: JsonElement?) : MessageInterface
+internal data class StateChangedData(val entityId: EntityId, val newState: JsonElement) :
+    MessageInterface
 
 interface EventDtoInterface {
     val eventType: String

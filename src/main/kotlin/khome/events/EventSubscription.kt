@@ -29,7 +29,7 @@ internal class EventSubscription<ED>(
 
     @Suppress("UNCHECKED_CAST")
     fun invokeEventHandler(eventData: JsonElement) {
-        val mappedEventData = mapper.fromJson(eventData, eventDataType.java) as ED
+        val mappedEventData: ED = mapper.fromJson(eventData, eventDataType.java) as ED
         eventHandler.forEach { handler -> handler.handle(mappedEventData) }
     }
 }

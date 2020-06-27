@@ -26,9 +26,7 @@ import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
 import khome.errorHandling.ErrorResponseData
-import khome.errorHandling.ErrorResponseHandlerImpl
 import khome.events.AsyncEventHandlerFunction
-import khome.events.EventHandler
 import khome.events.EventHandlerFunction
 import khome.events.EventSubscription
 import khome.observability.HistorySnapshot
@@ -48,7 +46,6 @@ internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription<*>>
-internal typealias ErrorResponseHandlerRegistry = MutableList<EventHandler<*>>
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -68,7 +65,6 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
-    private val errorResponseSubscriptions: ErrorResponseHandlerRegistry = mutableListOf()
 
     var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in observer" }
@@ -78,11 +74,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
         logger.error(exception) { "Caught exception in event handler" }
     }
 
-    init {
-
-        attachErrorResponseHandler { errorResponseData ->
-            logger.error { "CommandId: ${errorResponseData.commandId} -  errorCode: ${errorResponseData.errorResponse.code} ${errorResponseData.errorResponse.message}" }
-        }
+    var errorResponseHandlerFunction: (ErrorResponseData) -> Unit = { errorResponseData ->
+        logger.error { "CommandId: ${errorResponseData.commandId} - errorCode: ${errorResponseData.errorResponse.code} | message: ${errorResponseData.errorResponse.message}" }
     }
 
     override fun <S : State<*>, A : Attributes> Sensor(
@@ -106,15 +99,15 @@ internal class KhomeApplicationImpl : KhomeApplication {
             attributesType
         ).also { registerActuator(id, it) }
 
-    override fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit) {
+    override fun setObserverExceptionHandler(f: (Throwable) -> Unit) {
         observerExceptionHandlerFunction = f
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <ED> attachEventHandler(
         eventType: String,
-        eventHandler: EventHandlerFunction<ED>,
-        eventDataType: KClass<*>
+        eventDataType: KClass<*>,
+        eventHandler: EventHandlerFunction<ED>
     ): Switchable =
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as EventHandlerFunction<Any?>)
             ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
@@ -122,13 +115,13 @@ internal class KhomeApplicationImpl : KhomeApplication {
     @Suppress("UNCHECKED_CAST")
     override fun <ED> attachAsyncEventHandler(
         eventType: String,
-        eventHandler: AsyncEventHandlerFunction<ED>,
-        eventDataType: KClass<*>
+        eventDataType: KClass<*>,
+        eventHandler: AsyncEventHandlerFunction<ED>
     ): Switchable =
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as AsyncEventHandlerFunction<Any?>)
             ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
 
-    override fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
+    override fun setEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
         eventHandlerExceptionHandlerFunction = f
     }
 
@@ -136,8 +129,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.emitEvent(eventType, eventData)
     }
 
-    override fun attachErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit) {
-        errorResponseSubscriptions.add(ErrorResponseHandlerImpl(errorResponseHandler))
+    override fun setErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit) {
+        errorResponseHandlerFunction = errorResponseHandler
     }
 
     override fun <PB> callService(domain: String, service: String, parameterBag: PB) {
@@ -212,7 +205,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
                     sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
                     actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
                     eventHandlerByEventType = eventSubscriptionsByEventType,
-                    errorResponseHandlerRegistry = errorResponseSubscriptions
+                    errorResponseHandler = errorResponseHandlerFunction
                 ).runStartSequenceStep()
             }
         }
