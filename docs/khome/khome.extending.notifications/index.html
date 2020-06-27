@@ -1,0 +1,109 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.extending.notifications - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.extending.notifications</a><br/>
+<br/>
+<h2>Package khome.extending.notifications</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-apns-headers/index.html">ApnsHeaders</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ApnsHeaders</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-attachment-data/index.html">AttachmentData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AttachmentData</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-map-action-data/index.html">MapActionData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MapActionData</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-message-data/index.html">MessageData</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MessageData</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-notification-message/index.html">NotificationMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">NotificationMessage</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-notification-with-data-message/index.html">NotificationWithDataMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NotificationWithDataMessage</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-push-data/index.html">PushData</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PushData</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-sound-data/index.html">SoundData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SoundData</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="create-persistent-notification.html">createPersistentNotification</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">createPersistentNotification</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$createPersistentNotification(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$createPersistentNotification(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/title">title</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$createPersistentNotification(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/notificationId">notificationId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="dismiss-persistent-notification.html">dismissPersistentNotification</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">dismissPersistentNotification</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$dismissPersistentNotification(khome.KhomeApplication, kotlin.String)/notificationId">notificationId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mark-persistent-notification-as-read.html">markPersistentNotificationAsRead</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">markPersistentNotificationAsRead</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$markPersistentNotificationAsRead(khome.KhomeApplication, kotlin.String)/notificationId">notificationId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="notify-device.html">notifyDevice</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">notifyDevice</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.Enum(()), kotlin.String, kotlin.String)/device">device</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.Enum(()), kotlin.String, kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.Enum(()), kotlin.String, kotlin.String)/title">title</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">notifyDevice</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/device">device</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.String, kotlin.String, kotlin.String)/title">title</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">notifyDevice</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.Enum(()), kotlin.Function1((khome.extending.notifications.NotificationWithDataMessage, kotlin.Unit)))/device">device</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.Enum(()), kotlin.Function1((khome.extending.notifications.NotificationWithDataMessage, kotlin.Unit)))/messageBuilder">messageBuilder</span><span class="symbol">:</span>&nbsp;<a href="-notification-with-data-message/index.html"><span class="identifier">NotificationWithDataMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">notifyDevice</span><span class="symbol">(</span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.String, kotlin.Function1((khome.extending.notifications.NotificationWithDataMessage, kotlin.Unit)))/device">device</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.notifications$notifyDevice(khome.KhomeApplication, kotlin.String, kotlin.Function1((khome.extending.notifications.NotificationWithDataMessage, kotlin.Unit)))/messageBuilder">messageBuilder</span><span class="symbol">:</span>&nbsp;<a href="-notification-with-data-message/index.html"><span class="identifier">NotificationWithDataMessage</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

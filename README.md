@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-9%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-8%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
@@ -108,3 +108,7 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 - [Predefined entity types](docs/PredefinedEntityTypes.md) (to be finished)
 - [Build entity types from scratch](docs/BuildEntitiesFromScratch.md) (coming soon)
 - [Safety's first](docs/Safety'sFirst.md)
+
+
+## Credits
+

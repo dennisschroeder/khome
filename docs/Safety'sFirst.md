@@ -29,13 +29,11 @@ If you wish to add your custom error handler, that e.g. sends a push notificatio
 ```kotlin
 val KHOME: KhomeApplication = khomeApplication()
 
-val customErrorResponseHandler = KHOME.ErrorResponseHandler { errorResponseData ->
+KHOME.setErrorResponseHandler { errorResponseData ->
     // Place your custom error response logic in here
     // You can use errorResponseData.commandId, errorResponseData.errorResponse.code and 
     // errorResponseData.errorResponse.message in your logic
 }
-
-attachErrorResponseHandler(customErrorResponseHandler)
 // ... 
 KHOME.runBlocking()
 ```
@@ -62,7 +60,7 @@ If the default exception handler does not fit your expectations, you can overwri
 
 ```kotlin
 val KHOME: KhomeApplication = khomeApplication()
-KHOME.overwriteObserverExceptionHandler { exception: Throwable ->
+KHOME.setObserverExceptionHandler { exception: Throwable ->
     // Place your custom exception handler logic in here
 }
 //...

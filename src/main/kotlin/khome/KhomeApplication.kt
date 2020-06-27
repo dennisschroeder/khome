@@ -71,15 +71,15 @@ interface KhomeApplication {
      *
      * @param f the action that gets executed when the observer action executes with an exception.
      */
-    fun overwriteObserverExceptionHandler(f: (Throwable) -> Unit)
+    fun setObserverExceptionHandler(f: (Throwable) -> Unit)
 
     /**
      * Attaches an [EventHandlerFunction] to Khome and starts the home assistant event subscription.
      */
     fun <ED> attachEventHandler(
         eventType: String,
-        eventHandler: EventHandlerFunction<ED>,
-        eventDataType: KClass<*>
+        eventDataType: KClass<*>,
+        eventHandler: EventHandlerFunction<ED>
     ): Switchable
 
     /**
@@ -87,8 +87,8 @@ interface KhomeApplication {
      */
     fun <ED> attachAsyncEventHandler(
         eventType: String,
-        eventHandler: AsyncEventHandlerFunction<ED>,
-        eventDataType: KClass<*>
+        eventDataType: KClass<*>,
+        eventHandler: AsyncEventHandlerFunction<ED>
     ): Switchable
 
     /**
@@ -96,7 +96,7 @@ interface KhomeApplication {
      *
      * @param f the action that gets executed when the event handler action executes with an exception.
      */
-    fun overwriteEventHandlerExceptionHandler(f: (Throwable) -> Unit)
+    fun setEventHandlerExceptionHandler(f: (Throwable) -> Unit)
 
     /**
      * Emits a home assistant event with optional event data.
@@ -111,7 +111,7 @@ interface KhomeApplication {
      *
      * @param errorResponseHandler the handler to be attached.
      */
-    fun attachErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit)
+    fun setErrorResponseHandler(errorResponseHandler: (ErrorResponseData) -> Unit)
 
     /**
      * Sends a service command to home assistant.

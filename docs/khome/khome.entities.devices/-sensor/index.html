@@ -8,7 +8,7 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.entities.devices</a>&nbsp;/&nbsp;<a href="./index.html">Sensor</a><br/>
 <br/>
 <h1>Sensor</h1>
-<code><span class="keyword">interface </span><span class="identifier">Sensor</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a></code>
+<code><span class="keyword">interface </span><span class="identifier">Sensor</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-observable/index.html"><span class="identifier">Observable</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../khome.observability/-with-history/index.html"><span class="identifier">WithHistory</span></a><span class="symbol">&lt;</span><a href="../../khome.observability/-state-and-attributes.html"><span class="identifier">StateAndAttributes</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
 <p>An Sensor holding entity state and attributes</p>
 <p>In Khome, the Sensor is the immutable representation of an entity in home assistant.</p>
 <h3>Parameters</h3>
@@ -21,33 +21,19 @@
 <tbody>
 <tr>
 <td>
-<p><a href="attributes.html">attributes</a></p>
+<h4><a href="attributes.html">attributes</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="index.html#A"><span class="identifier">A</span></a></code>
 <p>Represents the current attributes of the entity in Khome.</p>
-</td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><span class="identifier">A</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="measurement.html">measurement</a></p>
+<h4><a href="measurement.html">measurement</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">measurement</span><span class="symbol">: </span><a href="index.html#S"><span class="identifier">S</span></a></code>
 <p>Represents the current state object of the entity in Khome.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3>Inherited Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="../../khome.observability/-observable/attach-observer.html">attachObserver</a></p>
-</td>
-<td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">attachObserver</span><span class="symbol">(</span><span class="identifier" id="khome.observability.Observable$attachObserver(khome.observability.Switchable)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">measurement</span><span class="symbol">: </span><span class="identifier">S</span></code></td>
 </tr>
 </tbody>
 </table>
