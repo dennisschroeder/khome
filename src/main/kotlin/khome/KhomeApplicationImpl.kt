@@ -144,12 +144,14 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*, *>) {
         check(!sensorsByApiName.containsKey(entityId)) { "Sensor with id: $entityId already exists." }
         sensorsByApiName[entityId] = sensor
+        logger.info { "Registered Sensor with id: $entityId" }
     }
 
     private fun registerActuator(entityId: EntityId, actuator: ActuatorImpl<*, *>) {
         check(!actuatorsByApiName.containsKey(entityId)) { "Actuator with id: $entityId already exists." }
         actuatorsByApiName[entityId] = actuator
         actuatorsByEntity[actuator] = entityId
+        logger.info { "Registered Actuator with id: $entityId" }
     }
 
     private fun <ED> registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
