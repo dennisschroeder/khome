@@ -70,11 +70,14 @@ internal class HassApi(
     private val khomeSession: KhomeSession,
     private val objectMapper: ObjectMapper,
     private val restApiClient: RestApiClient
-) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+) {
     private val logger = KotlinLogging.logger { }
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val serviceContext = ServiceCoroutineContext()
 
+    @Synchronized
     fun sendHassApiCommand(command: HassApiCommand) =
-        launch(ServiceCoroutineContext()) {
+        coroutineScope.launch(serviceContext) {
             command.id = CALLER_ID.incrementAndGet() // has to be called within single thread to prevent race conditions
             objectMapper.toJson(command).let { serializedCommand ->
                 khomeSession.callWebSocketApi(serializedCommand)
@@ -83,7 +86,7 @@ internal class HassApi(
         }
 
     fun emitEvent(eventType: String, eventData: Any?) {
-        launch(Dispatchers.IO) {
+        coroutineScope.launch {
             restApiClient.post<HttpResponse> {
                 url { encodedPath = "/api/events/$eventType" }
                 body = eventData ?: EmptyContent
@@ -92,7 +95,7 @@ internal class HassApi(
     }
 
     fun emitEventAsync(eventType: String, eventData: Any?) =
-        async(Dispatchers.IO) {
+        coroutineScope.async {
             restApiClient.post<HttpResponse> {
                 url { encodedPath = "/api/events/$eventType" }
                 body = eventData ?: EmptyContent
