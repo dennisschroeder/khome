@@ -4,6 +4,7 @@ import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.Observable
 import khome.observability.StateAndAttributes
+import khome.observability.WithAttributes
 import khome.observability.WithHistory
 
 /**
@@ -14,7 +15,7 @@ import khome.observability.WithHistory
  * @param S the type of the state object that represents all state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Sensor<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory<StateAndAttributes<S, A>> {
+interface Sensor<S : State<*>, A : Attributes> : Observable<Sensor<S, A>>, WithHistory<StateAndAttributes<S, A>>, WithAttributes<A> {
     /**
      * Represents the current state object of the entity in Khome.
      */
@@ -23,5 +24,5 @@ interface Sensor<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory<S
     /**
      * Represents the current attributes of the entity in Khome.
      */
-    val attributes: A
+    override val attributes: A
 }

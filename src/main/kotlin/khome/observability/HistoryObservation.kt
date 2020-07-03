@@ -1,6 +1,8 @@
 package khome.observability
 
 import khome.core.observing.CircularBuffer
+import khome.entities.Attributes
+import khome.entities.State
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -32,29 +34,22 @@ internal class StateAndAttributesImpl<S, A>(
  */
 interface HistorySnapshot<S, A, H> : WithState<S>, WithAttributes<A>, WithHistory<H>
 
-internal class HistorySnapshotIml<S, A, H>(
-    override val state: S,
-    override val attributes: A,
-    override val history: List<H>
-) : HistorySnapshot<S, A, H>
+internal interface ObservableDelegate<S, H> : ReadWriteProperty<Any?, S>
 
-internal interface ObservableHistoryDelegate<S, H> : WithHistory<H>, ReadWriteProperty<Any?, S>
-
-internal class ObservableHistoryNoInitialDelegate<S, SA>(
-    private val observers: List<Observer<S, SA, StateAndAttributes<S, SA>>>,
-    private val _history: CircularBuffer<StateAndAttributes<S, SA>>,
-    private val attributes: () -> SA
-) : ObservableHistoryDelegate<S, StateAndAttributes<S, SA>> {
+internal class ObservableDelegateNoInitial<S : State<*>, A : Attributes, E>(
+    private val entity: E,
+    private val observers: List<Observer<E>>,
+    private val history: CircularBuffer<StateAndAttributes<S, A>>
+) : ObservableDelegate<S, StateAndAttributes<S, A>> {
     private var dirty: Boolean = false
-    override val history: List<StateAndAttributes<S, SA>>
-        get() = _history.snapshot
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): S =
-        _history.first?.state ?: throw IllegalStateException("No value available yet.")
+        history.first?.state ?: throw IllegalStateException("No value available yet.")
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: S) {
-        if (dirty) observers.forEach { it.update(HistorySnapshotIml(value, attributes(), history)) }
-        _history.addFirst(StateAndAttributesImpl(value, attributes()))
+        @Suppress("UNCHECKED_CAST")
+        history.addFirst(StateAndAttributesImpl(value, (entity as WithAttributes<A>).attributes))
+        if (dirty) observers.forEach { it.update(entity) }
         dirty = true
     }
 }
