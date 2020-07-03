@@ -47,14 +47,14 @@ internal class ObservableHistoryNoInitialDelegate<S, SA>(
 ) : ObservableHistoryDelegate<S, StateAndAttributes<S, SA>> {
     private var dirty: Boolean = false
     override val history: List<StateAndAttributes<S, SA>>
-        get() = _history.snapshot()
+        get() = _history.snapshot
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): S =
-        _history.last()?.state ?: throw IllegalStateException("No value available yet.")
+        _history.first?.state ?: throw IllegalStateException("No value available yet.")
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: S) {
         if (dirty) observers.forEach { it.update(HistorySnapshotIml(value, attributes(), history)) }
-        _history.add(StateAndAttributesImpl(value, attributes()))
+        _history.addFirst(StateAndAttributesImpl(value, attributes()))
         dirty = true
     }
 }

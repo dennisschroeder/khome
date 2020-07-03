@@ -134,7 +134,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
     }
 
     override fun <PB> callService(domain: String, service: String, parameterBag: PB) {
-        ServiceCommandImpl<PB>(
+        ServiceCommandImpl(
             domain = domain,
             service = service,
             serviceData = parameterBag

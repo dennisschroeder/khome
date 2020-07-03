@@ -59,5 +59,5 @@ internal class SensorImpl<S : State<*>, A : Attributes>(
     }
 
     override val history: List<StateAndAttributes<S, A>>
-        get() = _history.snapshot()
+        get() = _history.snapshot
 }

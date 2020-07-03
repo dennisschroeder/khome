@@ -81,5 +81,5 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
         ).also { observers.add(it) }
 
     override val history: List<StateAndAttributes<S, A>>
-        get() = _history.snapshot()
+        get() = _history.snapshot
 }
