@@ -14,7 +14,7 @@ import khome.errorHandling.AsyncEventHandlerExceptionHandler
 import khome.errorHandling.ObserverExceptionHandler
 import khome.observability.AsyncObserverFunction
 import khome.observability.AsyncObserverImpl
-import khome.observability.ObservableHistoryNoInitialDelegate
+import khome.observability.ObservableDelegateNoInitial
 import khome.observability.Observer
 import khome.observability.ObserverFunction
 import khome.observability.ObserverImpl
@@ -32,10 +32,10 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
 ) : Actuator<S, A> {
-    private val observers: MutableList<Observer<S, A, StateAndAttributes<S, A>>> = mutableListOf()
+    private val observers: MutableList<Observer<Actuator<S, A>>> = mutableListOf()
     override lateinit var attributes: A
     private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
-    override var actualState: S by ObservableHistoryNoInitialDelegate(observers, _history) { attributes }
+    override var actualState: S by ObservableDelegateNoInitial(this, observers, _history)
 
     @KtorExperimentalAPI
     override var desiredState: S? = null
@@ -68,18 +68,18 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
         ).also { app.enqueueStateChange(this, it) }
     }
 
-    override fun attachObserver(observer: ObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+    override fun attachObserver(observer: ObserverFunction<Actuator<S, A>>): Switchable =
         ObserverImpl(
             observer,
             ObserverExceptionHandler(app.observerExceptionHandlerFunction)
         ).also { observers.add(it) }
 
-    override fun attachAsyncObserver(observer: AsyncObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable =
+    override fun attachAsyncObserver(observer: AsyncObserverFunction<Actuator<S, A>>): Switchable =
         AsyncObserverImpl(
             observer,
             AsyncEventHandlerExceptionHandler(app.observerExceptionHandlerFunction)
         ).also { observers.add(it) }
 
     override val history: List<StateAndAttributes<S, A>>
-        get() = _history.snapshot()
+        get() = _history.snapshot
 }

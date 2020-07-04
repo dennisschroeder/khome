@@ -8,11 +8,11 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-typealias ObserverFunction<S, A, H> = (snapshot: HistorySnapshot<S, A, H>, observer: Switchable) -> Unit
-typealias AsyncObserverFunction<S, A, H> = suspend CoroutineScope.(snapshot: HistorySnapshot<S, A, H>, switchable: Switchable) -> Unit
+typealias ObserverFunction<E> = E.(observer: Switchable) -> Unit
+typealias AsyncObserverFunction<E> = suspend E.(observer: Switchable, coroutineScope: CoroutineScope) -> Unit
 
-internal interface Observer<S, A, H> {
-    fun update(state: HistorySnapshot<S, A, H>)
+internal interface Observer<E> {
+    fun update(entity: E)
 }
 
 /**
@@ -39,15 +39,15 @@ interface Switchable {
     fun disable()
 }
 
-interface Observable<S, A> {
-    fun attachObserver(observer: ObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable
-    fun attachAsyncObserver(observer: AsyncObserverFunction<S, A, StateAndAttributes<S, A>>): Switchable
+interface Observable<E> {
+    fun attachObserver(observer: ObserverFunction<E>): Switchable
+    fun attachAsyncObserver(observer: AsyncObserverFunction<E>): Switchable
 }
 
-internal class ObserverImpl<S, A, H>(
-    private val f: ObserverFunction<S, A, H>,
+internal class ObserverImpl<E>(
+    private val f: ObserverFunction<E>,
     private val exceptionHandler: ObserverExceptionHandler
-) : Switchable, Observer<S, A, H> {
+) : Switchable, Observer<E> {
 
     private val enabled: AtomicBoolean = AtomicBoolean(true)
 
@@ -55,21 +55,21 @@ internal class ObserverImpl<S, A, H>(
     override fun disable() = enabled.set(false)
     override fun isEnabled(): Boolean = enabled.get()
 
-    override fun update(state: HistorySnapshot<S, A, H>) {
+    override fun update(entity: E) {
         if (!enabled.get()) return
         try {
-            f(state, this@ObserverImpl)
+            f(entity, this@ObserverImpl)
         } catch (e: Throwable) {
             exceptionHandler.handleExceptions(e)
         }
     }
 }
 
-internal class AsyncObserverImpl<S, A, H>(
-    private val f: AsyncObserverFunction<S, A, H>,
+internal class AsyncObserverImpl<E>(
+    private val f: AsyncObserverFunction<E>,
     private val exceptionHandler: CoroutineExceptionHandler,
     context: CoroutineContext = Dispatchers.IO
-) : Switchable, Observer<S, A, H> {
+) : Switchable, Observer<E> {
 
     private val enabled: AtomicBoolean = AtomicBoolean(true)
 
@@ -78,8 +78,8 @@ internal class AsyncObserverImpl<S, A, H>(
     override fun isEnabled(): Boolean = enabled.get()
 
     private val coroutineScope: CoroutineScope = CoroutineScope(context)
-    override fun update(state: HistorySnapshot<S, A, H>) {
+    override fun update(entity: E) {
         if (!enabled.get()) return
-        coroutineScope.launch(exceptionHandler) { f.invoke(this, state, this@AsyncObserverImpl) }
+        coroutineScope.launch(exceptionHandler) { f.invoke(entity, this@AsyncObserverImpl, this) }
     }
 }

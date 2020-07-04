@@ -22,8 +22,8 @@ val KHOME: KhomeApplication = khomeApplication()
 val SleepMode = KHOME.InputBoolean("sleep_mode")
 
 fun main() { 
-    SleepMode.attachObserver { snapshot, _ ->
-        if (snapshot.state.value = SwitchableValue.ON) {
+    SleepMode.attachObserver { //this:Actuator<SwitchableState,InputBooleanAttributes>
+        if (actualState.value = SwitchableValue.ON) {
             //... turn off lights, close covers, activate the alarm, etc.
         }
     }

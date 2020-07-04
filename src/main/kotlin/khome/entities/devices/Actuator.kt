@@ -6,6 +6,7 @@ import khome.entities.Attributes
 import khome.entities.State
 import khome.observability.Observable
 import khome.observability.StateAndAttributes
+import khome.observability.WithAttributes
 import khome.observability.WithHistory
 
 /**
@@ -16,7 +17,7 @@ import khome.observability.WithHistory
  * @param S the type of the state object that represents all mutable state values of the entity. Has to implement the [State] interface.
  * @param A the type of the attributes object that represents all immutable attribute values of the entity. Has to implement the [Attributes] interface.
  */
-interface Actuator<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory<StateAndAttributes<S, A>> {
+interface Actuator<S : State<*>, A : Attributes> : Observable<Actuator<S, A>>, WithHistory<StateAndAttributes<S, A>>, WithAttributes<A> {
     /**
      * Represents the current state object of the entity in Khome.
      * Holds all state values that can be mutated directly.
@@ -27,7 +28,7 @@ interface Actuator<S : State<*>, A : Attributes> : Observable<S, A>, WithHistory
      * Represents the current attributes of the entity in Khome
      * Holds all state attributes that can not directly be mutated.
      */
-    var attributes: A
+    override var attributes: A
 
     /**
      * Set this property to a desired version of the state to mutate it in home assistant.

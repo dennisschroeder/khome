@@ -66,7 +66,7 @@ val KHOME = khomeApplication()
 val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
 
 fun main() {
-    BedRoomCoverOne.attachObserver { snapshot, _ ->
+    BedRoomCoverOne.attachObserver {
        // gets executed every time a state change occurs
        // attribute change also triggers a state change
     }
@@ -100,8 +100,8 @@ val Sun = KHOME.Sun()
 val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
 
 fun main() {
-    Sun.attachObserver { snapshot, _ ->
-        if (snapshot.measurement.value == ABOVE_HORIZON) {
+    Sun.attachObserver { //this:Sensor<SunState,SunAttributes>
+        if (measurement.value == ABOVE_HORIZON) {
             BedRoomCoverOne.desiredState = CoverState(value = OPEN, currentPosition = 50 )
         }
     }
@@ -130,8 +130,8 @@ val CoverLock = KHOME.InputBoolean("cover_lock")
 val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
 
 fun main() {
-    BedRoomCoverOne.attachObserver { snapshot, _ ->
-        if (snapshot.attributes.working == YES && CoverLock.actualState.value == ON) {
+    BedRoomCoverOne.attachObserver { // this: Actuator<CoverState,PositionalCoverAttributes>
+        if (attributes.working == YES && CoverLock.actualState.value == ON) {
             BedRoomCoverOne.callService("stop_cover")
         }
     }
@@ -233,16 +233,21 @@ The Actuators pendant gets called actualState.
 To execute an action every time a state has changed, you can create and attach an Observer to the entity you like to observe.
 
 ```kotlin
-SomeCover.attachObserver { snapshot, _ ->
+SomeCover.attachObserver { // this: Actuator<CoverState,PositionalCoverAttributes>
  //...
 }
 ```
 
-An Observer is bound to a specific type of Sensor or Actuator since Khome injects a `snapshot` of the state and attributes that caused the state change event.
+An Observer is bound to a specific type of Sensor or Actuator since Khome injects a reference to it as a [receiver of the observer function literal](https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver).
+Inside the body of the function literal, the receiver object passed to a call becomes an implicit this, so that you can access the members of that receiver object without any additional qualifiers,
+or access the receiver object using a this expression.
 
-Besides an immutable version of the current state and attributes, the snapshot contains a history of the states and attributes,
-reaching back up to 10 versions (current state excluded).
+This behavior is similar to [extension functions](https://kotlinlang.org/docs/reference/extensions.html#extension-functions), which also allow you to access the members of the receiver object inside the body of the function.
 
+With the Sensor or Actuator as an implicit this you get access to the current state (measurement or actualState) the history of its states and attributes. The history stores the youngest 10 states and attributes combinations, 
+where index 0 is the current and index 10 would be the 10th youngest entry in the history.
+
+### Constraints
 In most use cases, you don't want your action to be executed every single time a state change occurs. Depending on the entity type, this can happen pretty often.
 A dimmable light, for example, has a couple of state changes when turning on due to the power consumption attribute that decreases till the light is on at the
 desired brightness level.
@@ -260,24 +265,24 @@ using the current state and the history data.
 Let's take a look at some examples to show you the idea behind snapshot data and constraints:
 
 ```kotlin
-InputBoolean.attachObserver { snapshot, _ ->
-    if (snapshot.state.value == SwitchableValue.ON) {
+InputBoolean.attachObserver { //this: Actuator<SwitchableState,InputBooleanAttributes>
+    if (actualState.value == SwitchableValue.ON) {
         //...
     }
 }
 ```
 
 ```kotlin
-DimmableLight.attachObserver { snapshot, _ ->
+DimmableLight.attachObserver { //this: Actuator<DimmableLightState,DimmableLightAttributes>
     if (
-            snapshot.history.last().state.value == SwitchableValue.OFF &&
-            snapshot.state.value == SwitchableValue.ON
+            history[1].state.value == SwitchableValue.OFF &&
+            actualState.value == SwitchableValue.ON
         ) { /*..*/ }
 }
 ```
 
 ```kotlin
-PositionalCover.attachObserver { snapshot, _ ->
+PositionalCover.attachObserver { //this: Actuator<CoverState,PositionalCoverAttributes>
     if (snapshot.attributes.working) {
         //..
     }
@@ -286,7 +291,7 @@ PositionalCover.attachObserver { snapshot, _ ->
 Another practical usage of the history snapshot is to set an entity state to a former value taken from the history.
 
  ```kotlin
-InputBoolean.attachObserver { snapshot, _ ->
+TvTime.attachObserver { //this: Actuator<SwitchableState,InputBooleanAttributes>
      if (TvTime.actualState.value == SwitchableValue.OFF) {
          LivingRoomCover.desiredState = LivingRoomCover.history[1].state
      }
@@ -301,12 +306,13 @@ to its position that was before, which was stored in the history of the living r
 
 ### Take over control
 
-You might already discover the second variable, that was injected into the observer, which when unused marked as "_"
-underscore due to Kotlin coding conventions. Behind this mysterious variable is a [Switchable]() instance as representation of the observer which lets you
-enable/disable your observer. Let's take a look at an example:
+Inside the observer, we passed you a reference to itself as a [Switchable](https://dennisschroeder.github.io/khome/khome/khome.observability/-switchable/index.html) which gives you the ability to enable/disable the observer action.
+Since it is the only parameter available in your function literal, it is available as "it", or you can name it whatever you like.
+
+Let's take a look at an example:
 
 ```kotlin
-InputBoolean.attacheObserver { snapshot, observer ->
+InputBoolean.attacheObserver { observer ->
     //... run some logic that should only be executed once
     observer.disable()
 }
@@ -316,14 +322,14 @@ Besides using the Switchable inside the observer, you can get a reference to the
 we see in this example:
 
 ```kotlin
-val luminanceSwitchable: Switchable = LuminanceSensor.attachObserver { snapshot, _ ->
-    if (snapshot.state.value < 5.0) {
+val luminanceSwitchable: Switchable = LuminanceSensor.attachObserver {
+    if (actualState.value < 5.0) {
         Light.desiredState = SwitchableState(ON)
     }
 }
 
-InputBoolean.attacheObserver { snapshot, _ ->
-    when(snapshot.state.value) {
+InputBoolean.attacheObserver {
+    when(actualState.value) {
         ON -> luminanceSwitchable.enable()
         OFF -> luminanceSwitchable.disable()
     }
