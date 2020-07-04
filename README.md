@@ -16,8 +16,8 @@ val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    LivingRoomLuminance.attachObserver { snapshot, _ ->
-        if (snapshot.state.value < 3.0) {
+    LivingRoomLuminance.attachObserver { //this: Actuator<LuminanceState,LuminanceAttributes>
+        if (actualState.value < 3.0) {
             LivingRoomMainLight.desiredState = SwitchableState(ON)
         }
     }
@@ -111,4 +111,12 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 
 
 ## Credits
+Even though the idea to build Khome and the implementation was made by [me](https://github.com/dennisschroeder), you'll find the word "we" quite often in the documentation.
+That is because I had the pleasure to work with [Tobias Hermann](https://github.com/Dobiasd) on this project who served me as a sparring partner by challenging my ideas and design decisions, 
+introducing new ideas and designs, reviewing some parts of the code, and an overall consultant in the field of software engineering. So using I in the documentation would
+just be incorrect.
 
+Therefore, a special thank goes out to [Tobias](https://github.com/Dobiasd). 
+
+Check out his awesome work, especially [frugally-deep](https://github.com/Dobiasd/frugally-deep), [functionalPlus](https://github.com/Dobiasd/FunctionalPlus), and his [thoughts on programming](https://github.com/Dobiasd/articles)
+and leave a star or two ;-). 

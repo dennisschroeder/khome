@@ -6,8 +6,8 @@ Before you can start your Khome application, you need to initialize and configur
 
 1. The functional way
 ```kotlin
-khomeApplication { // this: Khome
-    configure { // this: Configuration
+khomeApplication { //this: Khome
+    configure { //this: Configuration
         host = "localhost"
         port = 8123
         accessToken = "Your super secret token"

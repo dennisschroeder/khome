@@ -26,5 +26,4 @@ class CircularBuffer<E>(private val maxCapacity: Int) : CircularBufferInterface<
                 backend.removeAt(backend.size - 1)
             }
         }
-
 }
