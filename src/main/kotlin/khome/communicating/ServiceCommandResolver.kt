@@ -17,11 +17,13 @@ internal class ServiceCommandResolverImpl<S>(private val resolverFunction: Servi
 }
 
 interface ResolvedServiceCommand {
+    var domain: String?
     val service: Enum<*>
     val serviceData: CommandDataWithEntityId?
 }
 
 data class DefaultResolvedServiceCommand(
+    override var domain: String? = null,
     override val service: Enum<*>,
     override val serviceData: CommandDataWithEntityId
 ) : ResolvedServiceCommand

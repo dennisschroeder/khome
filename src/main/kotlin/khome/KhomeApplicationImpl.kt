@@ -163,7 +163,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
     ) {
         val entityId = actuatorsByEntity[actuator] ?: throw RuntimeException("Entity not registered: $actuator")
         commandImpl.apply {
-            domain = entityId.domain
+            if (domain == null) domain = entityId.domain
             serviceData?.entityId = entityId
         }
         hassApi.sendHassApiCommand(commandImpl)
