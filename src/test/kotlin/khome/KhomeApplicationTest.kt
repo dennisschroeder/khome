@@ -12,6 +12,7 @@ import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -73,5 +74,10 @@ internal class KhomeApplicationTest {
 
             assertThat(actuator).isInstanceOf(Actuator::class)
         }
+    }
+
+    @AfterAll
+    fun stopKoin() {
+        KhomeKoinContext.application?.close()
     }
 }
