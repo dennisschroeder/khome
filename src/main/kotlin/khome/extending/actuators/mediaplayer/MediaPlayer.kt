@@ -1,4 +1,4 @@
-package khome.extending.actuators
+package khome.extending.actuators.mediaplayer
 
 import khome.KhomeApplication
 import khome.communicating.ServiceCommandResolver
