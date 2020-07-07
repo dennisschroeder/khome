@@ -24,6 +24,16 @@ inline fun KhomeApplication.notifyDevice(device: String, messageBuilder: Notific
         parameterBag = NotificationWithDataMessage().apply(messageBuilder)
     )
 
+fun KhomeApplication.notifyDevices(vararg devices: Enum<*>, title: String, message: String) {
+    for (device in devices) notifyDevice(device, message, title)
+}
+
+fun KhomeApplication.notifyDevices(vararg devices: String, title: String, message: String) =
+    devices.forEach { device -> notifyDevice(device, message, title) }
+
+fun KhomeApplication.notifyDevices(vararg devices: Enum<*>, messageBuilder: NotificationWithDataMessage.() -> Unit) =
+    devices.forEach { device -> notifyDevice(device, messageBuilder) }
+
 data class NotificationMessage(
     val title: String? = null,
     val message: String
