@@ -1,4 +1,4 @@
-package khome.extending.sensors
+package khome.extending.sensors.binary
 
 import khome.KhomeApplication
 import khome.entities.Attributes

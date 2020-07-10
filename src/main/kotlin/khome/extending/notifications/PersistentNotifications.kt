@@ -10,11 +10,11 @@ import khome.extending.notifications.PersistentNotification.MARK_READ
 fun KhomeApplication.createPersistentNotification(message: String, title: String? = null, notificationId: String? = null) =
     callService(PERSISTENT_NOTIFICATION, CREATE, PersistentNotificationMessage(message, title, notificationId))
 
-fun KhomeApplication.dismissPersistentNotification(notificationId: String) =
-    callService(PERSISTENT_NOTIFICATION, DISMISS, PersistentNotificationId(notificationId))
+fun KhomeApplication.dismissPersistentNotification(id: String) =
+    callService(PERSISTENT_NOTIFICATION, DISMISS, PersistentNotificationId(id))
 
-fun KhomeApplication.markPersistentNotificationAsRead(notificationId: String) =
-    callService(PERSISTENT_NOTIFICATION, MARK_READ, PersistentNotificationId(notificationId))
+fun KhomeApplication.markPersistentNotificationAsRead(id: String) =
+    callService(PERSISTENT_NOTIFICATION, MARK_READ, PersistentNotificationId(id))
 
 internal data class PersistentNotificationMessage(
     val message: String,

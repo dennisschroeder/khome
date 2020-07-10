@@ -53,6 +53,7 @@ internal class ActuatorTest {
             mapper = mapper,
             resolver = ServiceCommandResolver {
                 DefaultResolvedServiceCommand(
+                    null,
                     ServiceType.TURN_ON,
                     EntityIdOnlyServiceData()
                 )
@@ -107,6 +108,7 @@ internal class ActuatorTest {
             mapper = mapper,
             resolver = ServiceCommandResolver {
                 DefaultResolvedServiceCommand(
+                    null,
                     ServiceType.TURN_ON,
                     EntityIdOnlyServiceData()
                 )

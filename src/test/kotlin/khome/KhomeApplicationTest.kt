@@ -69,7 +69,7 @@ internal class KhomeApplicationTest {
                     EntityId("light", "some_light"),
                     SensorState::class,
                     SensorAttributes::class,
-                    ServiceCommandResolver { DefaultResolvedServiceCommand(ServiceType.TURN_ON, EntityIdOnlyServiceData()) }
+                    ServiceCommandResolver { DefaultResolvedServiceCommand(null, ServiceType.TURN_ON, EntityIdOnlyServiceData()) }
                 )
 
             assertThat(actuator).isInstanceOf(Actuator::class)

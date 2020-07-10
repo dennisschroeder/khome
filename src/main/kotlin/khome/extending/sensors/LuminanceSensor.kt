@@ -1,2 +1,21 @@
 package khome.extending.sensors
 
+import khome.KhomeApplication
+import khome.entities.Attributes
+import khome.entities.State
+import khome.entities.devices.Sensor
+import java.time.Instant
+
+typealias LuminanceSensor = Sensor<LuminanceState,LuminanceAttributes>
+
+data class LuminanceState(override val value: Double) : State<Double>
+
+data class LuminanceAttributes(
+    val unitOfMeasurement: String,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant,
+    override val friendlyName: String
+) : Attributes
+
+@Suppress("FunctionName")
+fun KhomeApplication.LuminanceSensor(objectId: String): LuminanceSensor = Sensor(objectId)
