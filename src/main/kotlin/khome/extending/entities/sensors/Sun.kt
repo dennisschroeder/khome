@@ -37,4 +37,3 @@ data class SunAttributes(
     override val lastUpdated: Instant,
     override val friendlyName: String
 ) : Attributes
-

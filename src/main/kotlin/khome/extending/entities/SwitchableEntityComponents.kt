@@ -13,6 +13,7 @@ data class SwitchableState(override val value: SwitchableValue) : State<Switchab
 enum class SwitchableValue {
     @SerializedName("on")
     ON,
+
     @SerializedName("off")
     OFF
 }
@@ -34,11 +35,3 @@ fun mapSwitchable(switchableValue: SwitchableValue) =
             serviceData = EntityIdOnlyServiceData()
         )
     }
-
-
-
-
-
-
-
-

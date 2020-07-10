@@ -9,7 +9,6 @@ import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
-import khome.extending.SettableStateValueServiceData
 import java.time.Instant
 
 typealias InputText = Actuator<InputTextState, InputTextAttributes>

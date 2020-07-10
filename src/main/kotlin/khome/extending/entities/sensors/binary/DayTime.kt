@@ -19,5 +19,3 @@ data class DayTimeAttributes(
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
-
-

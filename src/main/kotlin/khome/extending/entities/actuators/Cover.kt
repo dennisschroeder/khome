@@ -45,7 +45,6 @@ fun KhomeApplication.PositionableCover(objectId: String): Actuator<CoverState, P
 
 data class CoverState(override val value: CoverValue, val currentPosition: Int? = null) : State<CoverValue>
 
-
 enum class CoverValue {
     @SerializedName("open") OPEN,
     @SerializedName("closed") CLOSED

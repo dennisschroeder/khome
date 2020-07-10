@@ -16,4 +16,3 @@ data class MotionSensorAttributes(
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
-
