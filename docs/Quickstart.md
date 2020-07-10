@@ -70,7 +70,7 @@ it comes along with a low-level API to build your own entities, based on your ne
 The following examples to get you off and running are based on the [predefined entity types](PredefinedEntityTypes.md) and the [notification API](NotificationApi.md) provided by Khome.
 For a deeper understanding of Khome's capabilities, we encourage you to read the [Sensors, Actuators, and Observer](SensorsAndActuators.md) section.
 
-### Low complexity
+### Lower complexity
 
 1. Turn on a light, when a motion sensor detects movement, and the sun is below horizon.
 
@@ -121,7 +121,7 @@ fun main() {
 
 ### Intermediate complexity
 
-1. Send a notification to your mobile app when door sensor reports shed door open at night.
+1. Send a notification to your mobile app when door sensor reports "door open" at night.
 
 ```kotlin
 val KHOME = khomeApplication()
@@ -151,3 +151,41 @@ fun main() {
 }
 ```
 
+### Higher complexity
+
+1. When the Television got turned on, the livin groom covers get set to a specific position to comfortably watch some tv.
+The previous positions get stored in a state store and when the tv got turned off, the covers get reset to the former positions.
+
+```kotlin
+val KHOME = khomeApplication()
+
+val TelevisionLivingroom = KHOME.Television("tv_livingroom")
+val ResetStateHistory = mutableMapOf<Cover,CoverState>()
+
+val televisionWatchingCoverPosition = 
+    KHOME.InputNumber("television_watching_cover_position").actualState.toInt()
+val defaultCoverPosition = 75
+
+val LivingRoomCovers = listOf(
+    KHOME.PositionableCover("livingroom_one"),
+    KHOME.PositionableCover("livingroom_two"),
+    KHOME.PositionableCover("livingroom_three")
+)
+
+fun main() {
+    TelevisionLivingroom.attachObserver {
+        if (turnedOn) {
+            for (cover in LivingRoomCovers) {
+                ResetStateHistory[cover] = cover.actualState
+                cover.setDesiredState = CoverState(CoverValue.OPEN, televisionWatchingCoverPosition)
+            }
+        }
+        
+        if (turnedOff) {
+            for (cover in LivingRoomCovers) {
+                cover.setDesiredState = ResetStateHistory[cover] ?: CoverState(CoverValue.OPEN, defaultCoverPosition)
+            }
+        }
+    }   
+}
+```
