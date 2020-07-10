@@ -14,7 +14,6 @@ used within conditions of automation. See [home assistant documentation](https:/
 | Factory    | InputBoolean   |  [Link](../src/main/kotlin/khome/extending/actuators/Helper.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending.actuators/-input-boolean.html)      |
 | State      | SwitchableState     |  [Link](../src/main/kotlin/khome/extending/DeviceStates.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-switchable-state/index.html)      |
 | Attributes | InputBooleanAttributes    |  [Link](../src/main/kotlin/khome/extending/DeviceAttributes.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-boolean-attributes/index.html)      |
-| Snapshot   | InputBooleanSnapshot     | [Link](../src/main/kotlin/khome/extending/StateAndAttributesSnapshots.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-boolean-snapshot.html)      |
 
 Example:
 ```kotlin
