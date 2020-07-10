@@ -67,6 +67,87 @@ Basically, a Khome application is a collection of observers attached to some ent
 For most uses cases, [here is all you need](PredefinedEntityTypes.md) to build your application. Since home assistant evolves rapidly and has the ability to be extended with custom integrations,
 it comes along with a low-level API to build your own entities, based on your needs. You find more on that topic in the [Build your own entities](BuildEntitiesFromScratch.md) section.
 
-The following examples to get you off and running are based on the [predefined entity types](PredefinedEntityTypes.md) provided by Khome.
+The following examples to get you off and running are based on the [predefined entity types](PredefinedEntityTypes.md) and the [notification API](NotificationApi.md) provided by Khome.
 For a deeper understanding of Khome's capabilities, we encourage you to read the [Sensors, Actuators, and Observer](SensorsAndActuators.md) section.
+
+### Low complexity
+
+1. Turn on a light, when a motion sensor detects movement, and the sun is below horizon.
+
+```kotlin
+val KHOME = khomeApplication()
+
+val HallwayLight = KHOME.DimmableLight("hallway_main")
+val HallwayMotionSensor = KHOME.MotionSensor("hallway")
+val Sun = KHOME.Sun()
+
+fun main() {
+    HallwayMotionSensor.attacheObserver {
+        if (Sun.measurement.value == SunValue.BELOW_HORIZON) {
+            when(measurement.value) {
+                ON -> HallwayLight.desiredState = SwitchableState(ON)
+                OFF -> HallwayLight.desiredState = SwitchableState(OFF)
+            }
+        }
+    }
+    KHOME.runBlocking()
+}
+```
+
+2. Iterate over a list of covers and set them to a specific position when the sun has risen.
+
+```kotlin
+val KHOME = khomeApplication()
+val Sun = KHOME.Sun()
+val BedRoomCovers = listOf(
+    KHOME.PositionableCover("bedroom_one"),
+    KHOME.PositionableCover("bedroom_two"),
+    KHOME.PositionableCover("bedroom_three"),
+    KHOME.PositionableCover("bedroom_four"),
+)
+
+fun main() {
+    Sun.attachObserver {
+        if (history[1].state.value == SunValue.BELOW_HORIZON &&
+            measurement.value == SunValue.ABOVE_HORIZON
+        ) {
+            for (cover in BedRoomCovers) {
+                cover.desiredState = CoverState(value = CoverValue.OPEN, position = 60)
+            }
+        }
+    }   
+}
+```
+
+### Intermediate complexity
+
+1. Send a notification to your mobile app when door sensor reports shed door open at night.
+
+```kotlin
+val KHOME = khomeApplication()
+
+val GardenShedDoor = KHOME.ContactSensor("garden_shed")
+val LateNight = KHOME.DayTime("late_night")
+
+enum class MobilePhone {
+    MY_PHONE
+}
+
+fun main() {
+    GardenShedDoor.attachObserver {
+        if (LateNight.measurement.value == SwitchableValue.ON &&
+            history[1].state.value == ContactValue.CLOSED &&
+            measurement.value == ContactValue.OPEN
+        ) {
+           KHOME.notifyMobileApp(MobilePhone.MY_PHONE) {
+                title = "INTRUDER ALARM"
+                message = "Garden shed door opened"
+                data {
+                    sound(critical = 1, volume = 1.0)
+                }        
+           }
+        }
+    }
+}
+```
 

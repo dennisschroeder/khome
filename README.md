@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-11%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-10%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
@@ -107,6 +107,7 @@ I recommend using Kotlin with Intellij IDEA to get started. It's the best way to
 - [Home Assistant Events](docs/HomeAssistantEvents.md) (coming soon)
 - [Predefined entity types](docs/PredefinedEntityTypes.md) (to be finished)
 - [Build entity types from scratch](docs/BuildEntitiesFromScratch.md) (coming soon)
+- [Notifications API](docs/NotificationApi.md)
 - [Safety's first](docs/Safety'sFirst.md)
 
 
@@ -118,5 +119,5 @@ just be incorrect.
 
 Therefore, a special thank goes out to [Tobias](https://github.com/Dobiasd). 
 
-Check out his awesome work, especially [frugally-deep](https://github.com/Dobiasd/frugally-deep), [functionalPlus](https://github.com/Dobiasd/FunctionalPlus), and his [thoughts on programming](https://github.com/Dobiasd/articles)
-and leave a star or two ;-). 
+Check out his awesome work, especially [frugally-deep](https://github.com/Dobiasd/frugally-deep), [functionalPlus](https://github.com/Dobiasd/FunctionalPlus), and his [thoughts on programming](https://github.com/Dobiasd/articles).
+Oh and leave a star or two ;-). 
