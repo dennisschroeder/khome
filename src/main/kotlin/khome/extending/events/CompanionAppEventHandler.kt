@@ -1,12 +1,15 @@
-package khome.extending
+package khome.extending.events
 
 import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
 import khome.events.AsyncEventHandlerFunction
 import khome.events.EventHandlerFunction
-import khome.extending.IosEventType.ACTION_FIRED
-import khome.extending.IosEventType.NOTIFICATION_ACTION_FIRED
+import khome.extending.events.IosEventType.ACTION_FIRED
+import khome.extending.events.IosEventType.NOTIFICATION_ACTION_FIRED
 import khome.observability.Switchable
+
+fun KhomeApplication.attachIosActionHandler(eventHandler: EventHandlerFunction<IosActionEventData>): Switchable =
+    attachEventHandler(ACTION_FIRED.type, eventHandler)
 
 data class IosActionEventData(
     @SerializedName("sourceDeviceID")
@@ -27,9 +30,6 @@ data class IosActionEventData(
     @SerializedName("triggerSource")
     val triggerSource: String
 )
-
-fun KhomeApplication.attachIosActionHandler(eventHandler: EventHandlerFunction<IosActionEventData>): Switchable =
-    attachEventHandler(ACTION_FIRED.type, eventHandler)
 
 fun KhomeApplication.attachAsyncIosActionHandler(eventHandler: AsyncEventHandlerFunction<IosActionEventData>): Switchable =
     attachAsyncEventHandler(ACTION_FIRED.type, eventHandler)

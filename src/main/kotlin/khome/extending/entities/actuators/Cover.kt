@@ -1,7 +1,9 @@
-package khome.extending.actuators
+package khome.extending.entities.actuators
 
+import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
+import khome.communicating.DesiredServiceData
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
 import khome.communicating.ServiceType
@@ -9,11 +11,8 @@ import khome.entities.Attributes
 import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
-import khome.extending.Actuator
-import khome.extending.CoverState
-import khome.extending.CoverValue
-import khome.extending.PositionableCoverAttributes
-import khome.extending.PositionableCoverServiceData
+import khome.extending.entities.Actuator
+import java.time.Instant
 
 @Suppress("FunctionName")
 inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Cover(
@@ -28,7 +27,9 @@ fun KhomeApplication.PositionableCover(objectId: String): Actuator<CoverState, P
             CoverValue.OPEN -> state.currentPosition?.let { position ->
                 DefaultResolvedServiceCommand(
                     service = ServiceType.SET_COVER_POSITION,
-                    serviceData = PositionableCoverServiceData(position)
+                    serviceData = PositionableCoverServiceData(
+                        position
+                    )
                 )
             } ?: DefaultResolvedServiceCommand(
                 service = ServiceType.OPEN_COVER,
@@ -41,3 +42,24 @@ fun KhomeApplication.PositionableCover(objectId: String): Actuator<CoverState, P
             )
         }
     })
+
+data class CoverState(override val value: CoverValue, val currentPosition: Int? = null) : State<CoverValue>
+
+enum class CoverValue {
+    @SerializedName("open") OPEN,
+    @SerializedName("closed") CLOSED
+}
+
+enum class Working {
+    @SerializedName("Yes") YES,
+    @SerializedName("No") NO
+}
+
+data class PositionableCoverAttributes(
+    val working: Working,
+    override val lastChanged: Instant,
+    override val lastUpdated: Instant,
+    override val friendlyName: String
+) : Attributes
+
+data class PositionableCoverServiceData(val position: Int) : DesiredServiceData()

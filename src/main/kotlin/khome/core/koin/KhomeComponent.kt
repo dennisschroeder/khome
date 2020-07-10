@@ -12,3 +12,5 @@ internal interface KhomeComponent : KoinComponent {
     override fun getKoin(): Koin =
         checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
+
+object KoinContainer : KhomeComponent

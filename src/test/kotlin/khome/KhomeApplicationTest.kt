@@ -12,6 +12,7 @@ import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -68,10 +69,15 @@ internal class KhomeApplicationTest {
                     EntityId("light", "some_light"),
                     SensorState::class,
                     SensorAttributes::class,
-                    ServiceCommandResolver { DefaultResolvedServiceCommand(ServiceType.TURN_ON, EntityIdOnlyServiceData()) }
+                    ServiceCommandResolver { DefaultResolvedServiceCommand(null, ServiceType.TURN_ON, EntityIdOnlyServiceData()) }
                 )
 
             assertThat(actuator).isInstanceOf(Actuator::class)
         }
+    }
+
+    @AfterAll
+    fun stopKoin() {
+        KhomeKoinContext.application?.close()
     }
 }

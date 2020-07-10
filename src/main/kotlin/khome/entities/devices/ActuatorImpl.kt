@@ -43,6 +43,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
             newDesiredState?.let { desiredState ->
                 val resolvedServiceCommand = resolver.resolve(desiredState)
                 ServiceCommandImpl(
+                    domain = resolvedServiceCommand.domain,
                     service = resolvedServiceCommand.service.name,
                     serviceData = resolvedServiceCommand.serviceData
                 ).also { app.enqueueStateChange(this, it) }

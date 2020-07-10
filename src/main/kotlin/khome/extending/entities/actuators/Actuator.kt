@@ -1,4 +1,4 @@
-package khome.extending.actuators
+package khome.extending.entities.actuators
 
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.EntityIdOnlyServiceData

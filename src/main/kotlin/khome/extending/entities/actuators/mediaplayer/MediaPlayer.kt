@@ -1,11 +1,11 @@
-package khome.extending.actuators
+package khome.extending.entities.actuators.mediaplayer
 
 import khome.KhomeApplication
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
 import khome.entities.EntityId
 import khome.entities.State
-import khome.extending.Actuator
+import khome.extending.entities.Actuator
 
 @Suppress("FunctionName")
 inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.MediaPlayer(
