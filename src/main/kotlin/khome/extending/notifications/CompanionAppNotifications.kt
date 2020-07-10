@@ -2,37 +2,53 @@ package khome.extending.notifications
 
 import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
+import khome.entities.EntityId
 import khome.extending.Domain.NOTIFY
 
-fun KhomeApplication.notifyDevice(device: Enum<*>, message: String, title: String? = null) =
-    notifyDevice(device.name, message, title)
+private const val REQUEST_LOCATION_UPDATE = "request_location_update"
 
-fun KhomeApplication.notifyDevice(device: String, message: String, title: String? = null) =
+fun KhomeApplication.notifyMobileApp(device: Enum<*>, message: String, title: String? = null) =
+    notifyMobileApp(device.name, message, title)
+
+fun KhomeApplication.notifyMobileApp(device: String, message: String, title: String? = null) =
     callService(
         domain = NOTIFY.name,
         service = device,
         parameterBag = NotificationMessage(message = message, title = title)
     )
 
-fun KhomeApplication.notifyDevice(device: Enum<*>, messageBuilder: NotificationWithDataMessage.() -> Unit) =
-    notifyDevice(device.name, messageBuilder)
+fun KhomeApplication.notifyMobileApp(device: Enum<*>, messageBuilder: NotificationWithDataMessage.() -> Unit) =
+    notifyMobileApp(device.name, messageBuilder)
 
-inline fun KhomeApplication.notifyDevice(device: String, messageBuilder: NotificationWithDataMessage.() -> Unit) =
+inline fun KhomeApplication.notifyMobileApp(device: String, messageBuilder: NotificationWithDataMessage.() -> Unit) =
     callService(
         domain = NOTIFY.name,
         service = device,
         parameterBag = NotificationWithDataMessage().apply(messageBuilder)
     )
 
-fun KhomeApplication.notifyDevices(vararg devices: Enum<*>, title: String, message: String) {
-    for (device in devices) notifyDevice(device, message, title)
-}
+fun KhomeApplication.notifyMobileApp(vararg devices: Enum<*>, title: String, message: String) =
+    devices.forEach { device -> notifyMobileApp(device, message, title) }
 
-fun KhomeApplication.notifyDevices(vararg devices: String, title: String, message: String) =
-    devices.forEach { device -> notifyDevice(device, message, title) }
+fun KhomeApplication.notifyMobileApp(vararg devices: String, title: String, message: String) =
+    devices.forEach { device -> notifyMobileApp(device, message, title) }
 
-fun KhomeApplication.notifyDevices(vararg devices: Enum<*>, messageBuilder: NotificationWithDataMessage.() -> Unit) =
-    devices.forEach { device -> notifyDevice(device, messageBuilder) }
+fun KhomeApplication.notifyMobileApp(
+    vararg devices: Enum<*>,
+    messageBuilder: NotificationWithDataMessage.() -> Unit
+) = devices.forEach { device -> notifyMobileApp(device, messageBuilder) }
+
+fun KhomeApplication.requestLocationUpdate(device: String) =
+    notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE)
+
+fun KhomeApplication.requestLocationUpdate(device: Enum<*>) =
+    notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE)
+
+fun KhomeApplication.requestLocationUpdate(vararg devices: String) =
+    devices.forEach { device -> notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE) }
+
+fun KhomeApplication.requestLocationUpdate(vararg devices: Enum<*>) =
+    devices.forEach { device -> notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE) }
 
 data class NotificationMessage(
     val title: String? = null,
@@ -54,6 +70,7 @@ class MessageData {
     private var attachment: AttachmentData? = null
 
     var actionData: Any? = null
+    var entityId: EntityId? = null
 
     enum class PresentationOptions {
         ALERT, BATCH, SOUND
@@ -63,13 +80,14 @@ class MessageData {
     fun mapActionData(builder: MapActionData.() -> Unit) {
         actionData = MapActionData().apply(builder)
     }
-    fun attachment(url: String, contentType: String? = null, hideThumbnail: Boolean = false) {
+
+    fun attachment(url: String? = null, contentType: String? = null, hideThumbnail: Boolean = false) {
         attachment = AttachmentData(url = url, contentType = contentType, hideThumbnail = hideThumbnail)
     }
 }
 
 data class AttachmentData(
-    val url: String,
+    val url: String?,
     @SerializedName("content-type")
     val contentType: String?,
     @SerializedName("hide-thumbnail")
@@ -79,16 +97,16 @@ data class AttachmentData(
 class PushData {
     @SerializedName("thread-id")
     var threadId: String? = null
-    var sound: SoundData? = null
+    private var sound: SoundData? = null
     var badge: Int? = null
     var category: String? = null
 
-    fun sound(critical: Int, volume: Double, name: String = "default") {
+    fun sound(name: String = "default", critical: Int? = null, volume: Double? = null) {
         sound = SoundData(name, critical, volume)
     }
 }
 
-data class SoundData(var name: String, var critical: Int, var volume: Double)
+data class SoundData(var name: String, var critical: Int?, var volume: Double?)
 
 data class MapActionData(
     var latitude: String? = null,
