@@ -15,6 +15,7 @@ data class DayTimeAttributes(
     val after: Instant,
     val before: Instant,
     val nextUpdate: Instant,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

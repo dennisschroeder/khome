@@ -21,6 +21,7 @@ fun KhomeApplication.InputBoolean(objectId: String): InputBoolean =
 data class InputBooleanAttributes(
     val editable: Boolean,
     val icon: String,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

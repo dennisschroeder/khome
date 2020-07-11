@@ -31,6 +31,7 @@ data class InputTimeAttributes(
     val hasDate: Boolean,
     val hasTime: Boolean,
     val timestamp: Int,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

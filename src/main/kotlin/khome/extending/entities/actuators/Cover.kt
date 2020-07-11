@@ -57,6 +57,7 @@ enum class Working {
 
 data class PositionableCoverAttributes(
     val working: Working,
+    override val userId: String?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String

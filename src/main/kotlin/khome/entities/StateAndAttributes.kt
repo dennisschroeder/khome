@@ -19,6 +19,7 @@ interface State<T> {
  * Defines the minimum structure of a valid attributes object.
  * */
 interface Attributes {
+    val userId: String?
     val lastChanged: Instant
     val lastUpdated: Instant
     val friendlyName: String

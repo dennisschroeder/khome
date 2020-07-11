@@ -24,6 +24,7 @@ fun KhomeApplication.PowerSwitch(objectId: String): PowerSwitch = Switch(objectI
 
 data class PowerSwitchAttributes(
     val powerConsumption: Double,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

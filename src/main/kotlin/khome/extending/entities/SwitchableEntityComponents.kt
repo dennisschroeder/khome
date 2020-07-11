@@ -19,6 +19,7 @@ enum class SwitchableValue {
 }
 
 data class DefaultAttributes(
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
