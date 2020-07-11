@@ -71,6 +71,7 @@ data class DimmableLightState(override val value: SwitchableValue, val brightnes
 
 data class LightAttributes(
     val supported_features: Int,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
@@ -79,6 +80,7 @@ data class LightAttributes(
 data class DimmableLightAttributes(
     val powerConsumption: Double,
     val supported_features: Int,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

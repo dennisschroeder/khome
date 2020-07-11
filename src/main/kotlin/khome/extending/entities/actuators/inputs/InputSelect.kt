@@ -28,6 +28,7 @@ inline fun <reified S : State<Enum<*>>> KhomeApplication.InputSelect(objectId: S
 data class InputSelectAttributes(
     val options: List<String>,
     val editable: Boolean,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

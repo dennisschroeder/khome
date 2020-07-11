@@ -24,6 +24,7 @@ enum class ContactStateValue {
 }
 
 data class ContactAttributes(
+    override val userId: String?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String

@@ -15,6 +15,7 @@ data class LuminanceState(override val value: Double) : State<Double>
 
 data class LuminanceAttributes(
     val unitOfMeasurement: String,
+    override val userId: String?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String

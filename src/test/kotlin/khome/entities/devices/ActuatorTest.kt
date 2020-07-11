@@ -32,6 +32,7 @@ internal class ActuatorTest {
     data class ActuatorTestAttributes(
         val arrayAttribute: List<Int>,
         val doubleAttribute: Double,
+        override val userId: String?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
         override val friendlyName: String
@@ -66,21 +67,24 @@ internal class ActuatorTest {
             sut.actualState
         }
 
-        val testStateJson = """
-        {
-            "entity_id":"test.object_id",
-            "last_changed":"2016-11-26T01:37:24.265390+00:00",
-            "state":"on",
-            "attributes":{
-                "array_attribute": [1,2,3,4,5],
-                "int_attribute": 73,
-                "double_attribute": 30.0,
-                "boolean_attribute": true,
-                "friendly_name":"Test Entity"
-            },
-            "last_updated":"2016-11-26T01:37:24.265390+00:00"
-         }
-    """.trimIndent()
+        val testStateJson =
+            //language=json
+            """
+                {
+                    "entity_id":"test.object_id",
+                    "last_changed":"2016-11-26T01:37:24.265390+00:00",
+                    "state":"on",
+                    "attributes":{
+                        "array_attribute": [1,2,3,4,5],
+                        "int_attribute": 73,
+                        "double_attribute": 30.0,
+                        "boolean_attribute": true,
+                        "friendly_name":"Test Entity"
+                    },
+                    "last_updated":"2016-11-26T01:37:24.265390+00:00",
+                    "context": { "user_id": null }
+                 }
+            """.trimIndent()
 
         val stateAsJsonObject = mapper.fromJson<JsonObject>(testStateJson)
 
@@ -117,37 +121,43 @@ internal class ActuatorTest {
             attributesType = ActuatorTestAttributes::class
         )
 
-        val firstTestState = """
-        {
-            "entity_id":"test.object_id",
-            "last_changed":"2016-11-26T01:37:24.265390+00:00",
-            "state":"off",
-            "attributes":{
-                "array_attribute": [1,2,3,4,5],
-                "int_attribute": 73,
-                "double_attribute": 30.0,
-                "boolean_attribute": true,
-                "friendly_name":"Test Entity"
-            },
-            "last_updated":"2016-11-26T01:37:24.265390+00:00"
-         }
-    """.trimIndent()
+        val firstTestState =
+            //language=json
+            """ 
+                {
+                    "entity_id":"test.object_id",
+                    "last_changed":"2016-11-26T01:37:24.265390+00:00",
+                    "state":"off",
+                    "attributes":{
+                        "array_attribute": [1,2,3,4,5],
+                        "int_attribute": 73,
+                        "double_attribute": 30.0,
+                        "boolean_attribute": true,
+                        "friendly_name":"Test Entity"
+                    },
+                    "last_updated":"2016-11-26T01:37:24.265390+00:00",
+                    "context": { "user_id": null }
+                 }
+            """.trimIndent()
 
-        val secondTestState = """
-        {
-            "entity_id":"test.object_id",
-            "last_changed":"2016-11-26T01:37:24.265390+00:00",
-            "state":"on",
-            "attributes":{
-                "array_attribute": [1,2,3,4,5],
-                "int_attribute": 73,
-                "double_attribute": 30.0,
-                "boolean_attribute": true,
-                "friendly_name":"Test Entity"
-            },
-            "last_updated":"2016-11-26T01:37:24.265390+00:00"
-         }
-    """.trimIndent()
+        val secondTestState =
+            //language=json
+            """
+                {
+                    "entity_id":"test.object_id",
+                    "last_changed":"2016-11-26T01:37:24.265390+00:00",
+                    "state":"on",
+                    "attributes":{
+                        "array_attribute": [1,2,3,4,5],
+                        "int_attribute": 73,
+                        "double_attribute": 30.0,
+                        "boolean_attribute": true,
+                        "friendly_name":"Test Entity"
+                    },
+                    "last_updated":"2016-11-26T01:37:24.265390+00:00",
+                    "context": { "user_id": null }
+                 }
+            """.trimIndent()
 
         val firstStateAsJsonObject = mapper.fromJson<JsonObject>(firstTestState)
 

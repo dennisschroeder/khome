@@ -56,3 +56,35 @@ internal enum class ResponseType {
     @SerializedName("result")
     RESULT
 }
+
+/*
+
+ State change response:
+    StateChangedResponse(
+        id=3,
+        type=EVENT,
+        event=StateChangedEventData(
+            eventType=state_changed,
+            data=StateChangedData(
+                entityId=light.decoration_downstairs,
+                newState={
+                    "entity_id":"light.decoration_downstairs",
+                    "state":"on",
+                    "attributes":{
+                        "friendly_name":"decoration_downstairs",
+                        "supported_features":0
+                     },
+                    "last_changed":"2020-07-11T15:50:53.288535+00:00",
+                    "last_updated":"2020-07-11T15:50:53.288535+00:00",
+                    "context":{
+                        "id":"1f31710a4739448e8753ced2a0c984a2",
+                        "parent_id":null,
+                        "user_id":"857af942982e4c4a8fa991edd0974466"
+                     }
+                 }
+             ),
+             timeFired=2020-07-11T15:50:53.288558Z,
+             origin=LOCAL)
+   )
+
+ */

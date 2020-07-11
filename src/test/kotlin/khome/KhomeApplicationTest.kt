@@ -32,6 +32,7 @@ internal class KhomeApplicationTest {
     data class SensorState(override val value: String) : State<String>
 
     data class SensorAttributes(
+        override val userId: String?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
         override val friendlyName: String
@@ -55,6 +56,7 @@ internal class KhomeApplicationTest {
 
     data class ActuatorState(override val value: String) : State<String>
     data class ActuatorAttributes(
+        override val userId: String?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
         override val friendlyName: String

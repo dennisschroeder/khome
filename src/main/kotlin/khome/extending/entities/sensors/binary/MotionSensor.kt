@@ -12,6 +12,7 @@ typealias MotionSensor = Sensor<SwitchableState, MotionSensorAttributes>
 fun KhomeApplication.MotionSensor(objectId: String): MotionSensor = BinarySensor(objectId)
 
 data class MotionSensorAttributes(
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

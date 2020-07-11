@@ -27,6 +27,7 @@ data class TelevisionAttributes(
     val mediaContentId: String,
     val mediaTitle: String,
     val mediaContentType: String,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

@@ -33,6 +33,7 @@ data class SunAttributes(
     val elevation: Double,
     val azimuth: Double,
     val rising: Boolean,
+    override val userId: String?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String

@@ -32,6 +32,7 @@ data class InputTextAttributes(
     val max: Int,
     val pattern: String,
     val mode: String,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

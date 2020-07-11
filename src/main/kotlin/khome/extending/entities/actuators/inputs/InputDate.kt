@@ -33,6 +33,7 @@ data class InputDateAttributes(
     val year: Int,
     val month: Int,
     val day: Int,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

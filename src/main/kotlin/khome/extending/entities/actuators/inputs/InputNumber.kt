@@ -33,6 +33,7 @@ data class InputNumberAttributes(
     val max: Float,
     val step: Float,
     val mode: String,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

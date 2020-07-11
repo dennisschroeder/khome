@@ -34,6 +34,7 @@ data class PlayStationState(override val value: PlaystationStateValue, val sourc
 
 data class PlaystationAttributes(
     val sourceList: List<String>,
+    override val userId: String?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

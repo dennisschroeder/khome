@@ -62,6 +62,7 @@ internal fun flattenStateAttributes(stateResponse: JsonObject): JsonObject {
     tempStateAsJsonObject.add("value", stateResponse["state"])
     tempStateAsJsonObject.add("last_updated", stateResponse["last_updated"])
     tempStateAsJsonObject.add("last_changed", stateResponse["last_changed"])
+    tempStateAsJsonObject.add("user_id", stateResponse["context"].asJsonObject["user_id"])
     for (attribute: String in attributesAsJsonObject.keySet()) {
         tempStateAsJsonObject.add(attribute, attributesAsJsonObject[attribute])
     }
