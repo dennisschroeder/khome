@@ -177,13 +177,13 @@ fun main() {
         if (turnedOn) {
             for (cover in LivingRoomCovers) {
                 ResetStateHistory[cover] = cover.actualState
-                cover.setDesiredState = CoverState(CoverValue.OPEN, televisionWatchingCoverPosition)
+                cover.desiredState = CoverState(CoverValue.OPEN, televisionWatchingCoverPosition)
             }
         }
         
         if (turnedOff) {
             for (cover in LivingRoomCovers) {
-                cover.setDesiredState = ResetStateHistory[cover] ?: CoverState(CoverValue.OPEN, defaultCoverPosition)
+                cover.desiredState = ResetStateHistory[cover] ?: CoverState(CoverValue.OPEN, defaultCoverPosition)
             }
         }
     }   
