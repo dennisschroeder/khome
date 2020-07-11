@@ -169,7 +169,6 @@ An actionable notification in Khome just looks like this:
 KHOME.notifyMobileApp(MobilePhones.MY_DEVICE) {
     title = "New message for you"
     message = "This is a notification"
-    attachement()
     data {
         push {
             category = "my_custom_category"
