@@ -24,30 +24,32 @@ val Actuator<SwitchableState, Attributes>.isOn
 val Actuator<SwitchableState, Attributes>.isOff
     get() = actualState.value == SwitchableValue.OFF
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.turnOn() {
+fun <A : Attributes> Actuator<SwitchableState, A>.turnOn() {
     desiredState = SwitchableState(SwitchableValue.ON)
 }
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.turnOff() {
+fun <A : Attributes> Actuator<SwitchableState, A>.turnOff() {
     desiredState = SwitchableState(SwitchableValue.OFF)
 }
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.onActivation(crossinline f: Actuator<SwitchableState, A>.() -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON)) f(this)
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onActivation(crossinline f: Actuator<SwitchableState, A>.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON)) f(this, observer)
     }
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.onActivationAsync(crossinline f: suspend Actuator<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onActivationAsync(crossinline f: suspend Actuator<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, scope ->
         if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON)) f(this, observer, scope)
     }
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.onDeactivation(crossinline f: Actuator<SwitchableState, A>.() -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF)) f(this)
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onDeactivation(crossinline f: Actuator<SwitchableState, A>.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
+            f(this, observer)
     }
 
-inline fun <reified A : Attributes> Actuator<SwitchableState, A>.onDeactivationAsync(crossinline f: suspend Actuator<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onDeactivationAsync(crossinline f: suspend Actuator<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, scope ->
-        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF)) f(this, observer, scope)
+        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
+            f(this, observer, scope)
     }

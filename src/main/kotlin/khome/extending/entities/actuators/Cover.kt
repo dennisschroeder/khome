@@ -94,12 +94,12 @@ fun PositionableCover.setCoverPosition(position: Int) {
     desiredState = PositionableCoverState(PositionableCoverValue.OPEN, position)
 }
 
-fun PositionableCover.onStartWorking(f: PositionableCover.() -> Unit) =
-    attachObserver {
+fun PositionableCover.onStartWorking(f: PositionableCover.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (history[1].attributes.working == Working.NO &&
             attributes.working == Working.YES
         ) {
-            f(this)
+            f(this, observer)
         }
     }
 
@@ -112,12 +112,12 @@ fun PositionableCover.onStartWorkingAsync(f: suspend PositionableCover.(Switchab
         }
     }
 
-fun PositionableCover.onStopWorking(f: PositionableCover.() -> Unit) =
-    attachObserver {
+fun PositionableCover.onStopWorking(f: PositionableCover.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (history[1].attributes.working == Working.YES &&
             attributes.working == Working.NO
         ) {
-            f(this)
+            f(this, observer)
         }
     }
 
@@ -130,10 +130,10 @@ fun PositionableCover.onStopWorkingAsync(f: suspend PositionableCover.(Switchabl
         }
     }
 
-fun PositionableCover.onClosing(f: PositionableCover.() -> Unit) =
-    attachObserver {
+fun PositionableCover.onClosing(f: PositionableCover.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (stateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED))
-            f(this)
+            f(this, observer)
     }
 
 fun PositionableCover.onClosingAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =
@@ -141,10 +141,10 @@ fun PositionableCover.onClosingAsync(f: suspend PositionableCover.(Switchable, C
         if (stateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED)) f(this, observer, scope)
     }
 
-fun PositionableCover.onOpening(f: PositionableCover.() -> Unit) =
-    attachObserver {
+fun PositionableCover.onOpening(f: PositionableCover.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (stateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN))
-            f(this)
+            f(this, observer)
     }
 
 fun PositionableCover.onOpeningAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =

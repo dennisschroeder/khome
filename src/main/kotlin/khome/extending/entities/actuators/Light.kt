@@ -99,10 +99,10 @@ fun DimmableLight.setBrightnessTo(level: Int) {
     desiredState = DimmableLightState(SwitchableValue.ON, level)
 }
 
-fun DimmableLight.onActivation(f: DimmableLight.() -> Unit) =
-    attachObserver {
+fun DimmableLight.onActivation(f: DimmableLight.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this)
+            f(this, observer)
     }
 
 fun DimmableLight.onActivationAsync(f: suspend DimmableLight.(Switchable, CoroutineScope) -> Unit) =
@@ -111,10 +111,10 @@ fun DimmableLight.onActivationAsync(f: suspend DimmableLight.(Switchable, Corout
             f(this, observer, scope)
     }
 
-fun DimmableLight.onDeactivation(f: DimmableLight.() -> Unit) =
-    attachObserver {
+fun DimmableLight.onDeactivation(f: DimmableLight.(Switchable) -> Unit) =
+    attachObserver { observer ->
         if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this)
+            f(this, observer)
     }
 
 fun DimmableLight.onDeactivationAsync(f: suspend DimmableLight.(Switchable, CoroutineScope) -> Unit) =

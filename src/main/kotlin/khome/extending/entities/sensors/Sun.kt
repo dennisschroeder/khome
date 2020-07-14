@@ -7,6 +7,8 @@ import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
+import khome.observability.Switchable
+import kotlinx.coroutines.CoroutineScope
 import java.time.Instant
 
 typealias Sun = Sensor<SunState, SunAttributes>
@@ -41,14 +43,32 @@ data class SunAttributes(
     override val friendlyName: String
 ) : Attributes
 
-val Sun.hasRisen
-    get() = changedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON)
-
-val Sun.hasSet
-    get() = changedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON)
-
 val Sun.isAboveHorizon
     get() = measurement.value == SunValue.ABOVE_HORIZON
 
 val Sun.isBelowHorizon
     get() = measurement.value == SunValue.BELOW_HORIZON
+
+fun Sun.onSunrise(f: Sun.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (measurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON))
+            f(this, observer)
+    }
+
+fun Sun.onSunriseAsync(f: suspend Sun.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (measurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON))
+            f(this, observer, coroutineScope)
+    }
+
+fun Sun.onSunset(f: Sun.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (measurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON))
+            f(this, observer)
+    }
+
+fun Sun.onSunsetAsync(f: suspend Sun.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (measurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON))
+            f(this, observer, coroutineScope)
+    }

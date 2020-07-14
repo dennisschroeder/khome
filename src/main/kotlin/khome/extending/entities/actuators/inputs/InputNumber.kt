@@ -38,4 +38,3 @@ data class InputNumberAttributes(
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
-
