@@ -6,6 +6,7 @@ import khome.entities.Attributes
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.sensors.Sensor
+import khome.extending.entities.sensors.changedFrom
 import java.time.Instant
 
 typealias ContactSensor = Sensor<ContactState, ContactAttributes>
@@ -29,3 +30,15 @@ data class ContactAttributes(
     override val lastUpdated: Instant,
     override val friendlyName: String
 ) : Attributes
+
+val ContactSensor.isOpen
+    get() = measurement.value == ContactStateValue.OPEN
+
+val ContactSensor.isClosed
+    get() = measurement.value == ContactStateValue.OPEN
+
+val ContactSensor.hasClosed
+    get() = changedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED)
+
+val ContactSensor.hasOpened
+    get() = changedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN)

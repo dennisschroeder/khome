@@ -4,6 +4,8 @@ import khome.KhomeApplication
 import khome.entities.Attributes
 import khome.entities.devices.Sensor
 import khome.extending.entities.SwitchableState
+import khome.extending.entities.SwitchableValue
+import khome.extending.entities.sensors.changedFrom
 import java.time.Instant
 
 typealias MotionSensor = Sensor<SwitchableState, MotionSensorAttributes>
@@ -17,3 +19,11 @@ data class MotionSensorAttributes(
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
+
+val MotionSensor.motionDetected
+    get() = changedFrom(SwitchableValue.OFF to SwitchableValue.ON)
+
+inline fun MotionSensor.onMotion(crossinline f: MotionSensor.() -> Unit) =
+    attachObserver {
+        if (motionDetected) f(this)
+    }

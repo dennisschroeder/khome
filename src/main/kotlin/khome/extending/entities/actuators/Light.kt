@@ -14,6 +14,8 @@ import khome.extending.entities.Actuator
 import khome.extending.entities.SwitchableState
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.mapSwitchable
+import khome.observability.Switchable
+import kotlinx.coroutines.CoroutineScope
 import java.time.Instant
 
 typealias SwitchableLight = Actuator<SwitchableState, LightAttributes>
@@ -23,15 +25,12 @@ typealias DimmableLight = Actuator<DimmableLightState, DimmableLightAttributes>
 inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Light(
     objectId: String,
     serviceCommandResolver: ServiceCommandResolver<S>
-): Actuator<S, A> =
-    Actuator(EntityId("light", objectId), serviceCommandResolver)
+): Actuator<S, A> = Actuator(EntityId("light", objectId), serviceCommandResolver)
 
 @Suppress("FunctionName")
 fun KhomeApplication.SwitchableLight(objectId: String): SwitchableLight =
     Light(objectId, ServiceCommandResolver { desiredState ->
-        mapSwitchable(
-            desiredState.value
-        )
+        mapSwitchable(desiredState.value)
     })
 
 @Suppress("FunctionName")
@@ -67,8 +66,6 @@ fun KhomeApplication.DimmableLight(objectId: String): DimmableLight =
         }
     })
 
-data class DimmableLightState(override val value: SwitchableValue, val brightness: Int? = null) : State<SwitchableValue>
-
 data class LightAttributes(
     val supported_features: Int,
     override val userId: String?,
@@ -76,6 +73,8 @@ data class LightAttributes(
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
+
+data class DimmableLightState(override val value: SwitchableValue, val brightness: Int? = null) : State<SwitchableValue>
 
 data class DimmableLightAttributes(
     val powerConsumption: Double,
@@ -87,3 +86,39 @@ data class DimmableLightAttributes(
 ) : Attributes
 
 data class DimmableLightServiceData(private val brightness: Int) : DesiredServiceData()
+
+fun DimmableLight.turnOn() {
+    desiredState = DimmableLightState(SwitchableValue.ON)
+}
+
+fun DimmableLight.turnOff() {
+    desiredState = DimmableLightState(SwitchableValue.OFF)
+}
+
+fun DimmableLight.setBrightnessTo(level: Int) {
+    desiredState = DimmableLightState(SwitchableValue.ON, level)
+}
+
+fun DimmableLight.onActivation(f: DimmableLight.() -> Unit) =
+    attachObserver {
+        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
+            f(this)
+    }
+
+fun DimmableLight.onActivationAsync(f: suspend DimmableLight.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, scope ->
+        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
+            f(this, observer, scope)
+    }
+
+fun DimmableLight.onDeactivation(f: DimmableLight.() -> Unit) =
+    attachObserver {
+        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
+            f(this)
+    }
+
+fun DimmableLight.onDeactivationAsync(f: suspend DimmableLight.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, scope ->
+        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
+            f(this, observer, scope)
+    }
