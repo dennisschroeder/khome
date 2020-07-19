@@ -16,8 +16,8 @@ val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    LivingRoomLuminance.attachObserver { //this: Actuator<LuminanceState,LuminanceAttributes>
-        if (actualState.value < 3.0) {
+    LivingRoomLuminance.attachObserver { //this: Sensor<LuminanceState,LuminanceAttributes>
+        if (measurement.value < 3.0) {
             LivingRoomMainLight.desiredState = SwitchableState(ON)
         }
     }
@@ -30,6 +30,23 @@ In this little example, we observed the luminance sensor in the living room and 
 As you can see here, Khome encourages you to think in states rather than services you have to call. This is less error-prone and helps the developer to stay in the mindset of states. This distinguishes Khome from most other automation libraries.
 
 Khome comes with a lot of predefined factory functions, data classes, observers and more for generic entity types but also with a low-level API that lets you develop your own custom entities as needed.
+
+To achieve the same result than shown above, we can also use Khomes higher-level API which lets you write concise code.
+
+```kotlin
+val KHOME = khomeApplication()
+
+val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
+val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
+
+fun main() {
+    LivingRoomLuminance.onDecreasing(3.0) { //this: LuminanceSensor
+        LivingRoomMainLight.turnOn()
+    }
+
+    KHOME.runBlocking()
+}
+```
 
 ## Home Assistant
  
