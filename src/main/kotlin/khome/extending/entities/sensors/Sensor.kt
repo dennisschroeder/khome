@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Sensor(objectId: String): Sensor<S, A> =
     Sensor(EntityId("sensor", objectId))
 
-inline fun <reified S : State<*>, reified A : Attributes, SV> Sensor<S, A>.measurementValueChangedFrom(values: Pair<SV, SV>) =
+fun <S : State<*>, A : Attributes, SV> Sensor<S, A>.measurementValueChangedFrom(values: Pair<SV, SV>) =
     history[1].state.value == values.first && measurement.value == values.second
 
 val Sensor<SwitchableState, *>.isOn
@@ -24,25 +24,25 @@ val Sensor<SwitchableState, *>.isOn
 val Sensor<SwitchableState, *>.isOff
     get() = measurement.value == SwitchableValue.OFF
 
-inline fun Sensor<SwitchableState, Attributes>.onActivation(crossinline f: Sensor<SwitchableState, Attributes>.(Switchable) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onActivation(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer)
     }
 
-inline fun Sensor<SwitchableState, Attributes>.onActivationAsync(crossinline f: suspend Sensor<SwitchableState, Attributes>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onActivationAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer, coroutineScope)
     }
 
-inline fun Sensor<SwitchableState, Attributes>.onDeactivation(crossinline f: Sensor<SwitchableState, Attributes>.(Switchable) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onDeactivation(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer)
     }
 
-inline fun Sensor<SwitchableState, Attributes>.onDeactivationAsync(crossinline f: suspend Sensor<SwitchableState, Attributes>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onDeactivationAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer, coroutineScope)

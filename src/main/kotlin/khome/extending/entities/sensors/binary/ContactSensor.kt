@@ -7,6 +7,8 @@ import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.sensors.Sensor
 import khome.extending.entities.sensors.measurementValueChangedFrom
+import khome.observability.Switchable
+import kotlinx.coroutines.CoroutineScope
 import java.time.Instant
 
 typealias ContactSensor = Sensor<ContactState, ContactAttributes>
@@ -35,10 +37,28 @@ val ContactSensor.isOpen
     get() = measurement.value == ContactStateValue.OPEN
 
 val ContactSensor.isClosed
-    get() = measurement.value == ContactStateValue.OPEN
+    get() = measurement.value == ContactStateValue.CLOSED
 
-val ContactSensor.hasClosed
-    get() = measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED)
+inline fun ContactSensor.onOpening(crossinline f: ContactSensor.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
+            f(this, observer)
+    }
 
-val ContactSensor.hasOpened
-    get() = measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN)
+inline fun ContactSensor.onOpeningAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
+            f(this, observer, coroutineScope)
+    }
+
+inline fun ContactSensor.onClosing(crossinline f: ContactSensor.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
+            f(this, observer)
+    }
+
+inline fun ContactSensor.onClosingAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
+            f(this, observer, coroutineScope)
+    }

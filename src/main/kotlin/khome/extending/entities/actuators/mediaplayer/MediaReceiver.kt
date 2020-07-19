@@ -46,22 +46,60 @@ fun KhomeApplication.MediaReceiver(objectId: String): MediaReceiver =
                 )
             }
 
-            PAUSED -> DefaultResolvedServiceCommand(
-                service = MediaPlayerService.MEDIA_PAUSE,
-                serviceData = EntityIdOnlyServiceData()
-            )
-
-            PLAYING -> desiredState.mediaPosition?.let { position ->
-                DefaultResolvedServiceCommand(
-                    service = MediaPlayerService.SEEK_POSITION,
-                    serviceData = MediaReceiverDesiredServiceData(
-                        seekPosition = position
+            PAUSED ->
+                desiredState.volumeLevel?.let { volumeLevel ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.VOLUME_SET,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            volumeLevel = volumeLevel
+                        )
                     )
+                } ?: desiredState.mediaPosition?.let { position ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.SEEK_POSITION,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            seekPosition = position
+                        )
+                    )
+                } ?: desiredState.isVolumeMuted?.let { isMuted ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.VOLUME_MUTE,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            isVolumeMuted = isMuted
+                        )
+                    )
+                } ?: DefaultResolvedServiceCommand(
+                    service = MediaPlayerService.MEDIA_PAUSE,
+                    serviceData = EntityIdOnlyServiceData()
                 )
-            } ?: DefaultResolvedServiceCommand(
-                service = MediaPlayerService.MEDIA_PLAY,
-                serviceData = EntityIdOnlyServiceData()
-            )
+
+            PLAYING ->
+                desiredState.mediaPosition?.let { position ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.SEEK_POSITION,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            seekPosition = position
+                        )
+                    )
+                } ?: desiredState.isVolumeMuted?.let { isMuted ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.VOLUME_MUTE,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            isVolumeMuted = isMuted
+                        )
+                    )
+                }
+                ?: desiredState.volumeLevel?.let { volumeLevel ->
+                    DefaultResolvedServiceCommand(
+                        service = MediaPlayerService.VOLUME_SET,
+                        serviceData = MediaReceiverDesiredServiceData(
+                            volumeLevel = volumeLevel
+                        )
+                    )
+                } ?: DefaultResolvedServiceCommand(
+                    service = MediaPlayerService.MEDIA_PLAY,
+                    serviceData = EntityIdOnlyServiceData()
+                )
 
             OFF -> {
                 DefaultResolvedServiceCommand(
@@ -121,7 +159,7 @@ data class MediaReceiverDesiredServiceData(
     val seekPosition: Double? = null
 ) : DesiredServiceData()
 
-val MediaReceiver.isOFF
+val MediaReceiver.isOff
     get() = actualState.value == OFF
 
 val MediaReceiver.isIdle
@@ -130,11 +168,42 @@ val MediaReceiver.isIdle
 val MediaReceiver.isPlaying
     get() = actualState.value == PLAYING
 
-val MediaReceiver.isON
-    get() = actualState.value == IDLE || actualState.value == PLAYING
+val MediaReceiver.isOn
+    get() = actualState.value != OFF || actualState.value != UNKNOWN
 
 val MediaReceiver.isPaused
     get() = actualState.value == PAUSED
+
+fun MediaReceiver.turnOn() {
+    desiredState = MediaReceiverState(value = IDLE)
+}
+
+fun MediaReceiver.turnOff() {
+    desiredState = MediaReceiverState(value = OFF)
+}
+
+fun MediaReceiver.play() {
+    desiredState = MediaReceiverState(value = PLAYING)
+}
+
+fun MediaReceiver.pause() {
+    desiredState = MediaReceiverState(value = PAUSED)
+}
+
+fun MediaReceiver.setVolumeTo(level: Double) {
+    if (actualState.value == UNKNOWN || actualState.value == OFF)
+        throw RuntimeException("Volume can not be set when MediaReceiver is ${actualState.value}")
+
+    desiredState = MediaReceiverState(value = actualState.value, volumeLevel = level)
+}
+
+fun MediaReceiver.muteVolume() {
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = true)
+}
+
+fun MediaReceiver.unMuteVolume() {
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = false)
+}
 
 fun MediaReceiver.onPlaybackStarted(f: MediaReceiver.(Switchable) -> Unit) =
     attachObserver {
@@ -151,7 +220,9 @@ fun MediaReceiver.onPlaybackStartedAsync(f: suspend MediaReceiver.(Switchable, C
 fun MediaReceiver.onPlaybackStopped(f: MediaReceiver.(Switchable) -> Unit) =
     attachObserver {
         if (stateValueChangedFrom(PLAYING to IDLE) ||
-            stateValueChangedFrom(PLAYING to OFF)
+            stateValueChangedFrom(PLAYING to OFF) ||
+            stateValueChangedFrom(PAUSED to OFF) ||
+            stateValueChangedFrom(PAUSED to IDLE)
         ) {
             f(this, it)
         }
@@ -177,4 +248,89 @@ fun MediaReceiver.onPlaybackPausedAsync(f: suspend MediaReceiver.(Switchable, Co
     attachAsyncObserver { observer, coroutineScope ->
         if (stateValueChangedFrom(PLAYING to PAUSED))
             f(this, observer, coroutineScope)
+    }
+
+fun MediaReceiver.onPlaybackResumed(f: MediaReceiver.(Switchable) -> Unit) =
+    attachObserver {
+        if (stateValueChangedFrom( PAUSED to PLAYING))
+            f(this, it)
+    }
+
+fun MediaReceiver.onPlaybackResumedAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (stateValueChangedFrom( PAUSED to PLAYING))
+            f(this, observer, coroutineScope)
+    }
+
+fun MediaReceiver.onVolumeIncreasing(threshold: Double? = null, f: MediaReceiver.(Switchable) -> Unit) =
+    attachObserver { observer ->
+        if (history[1].state.volumeLevel != null &&
+            actualState.volumeLevel != null
+        ) {
+            threshold?.let {
+                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
+                    actualState.volumeLevel!! > threshold
+                ) f(this, observer)
+            } ?: run {
+                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
+                    f(this, observer)
+            }
+        }
+    }
+
+fun MediaReceiver.onVolumeIncreasingAsync(
+    threshold: Double? = null,
+    f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit
+) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (history[1].state.volumeLevel != null &&
+            actualState.volumeLevel != null
+        ) {
+            threshold?.let {
+                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
+                    actualState.volumeLevel!! > threshold
+                ) f(this, observer, coroutineScope)
+            } ?: run {
+                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
+                    f(this, observer, coroutineScope)
+            }
+        }
+    }
+
+fun MediaReceiver.onVolumeDecreasing(
+    threshold: Double? = null,
+    f: MediaReceiver.(Switchable) -> Unit
+) =
+    attachObserver { observer ->
+        if (history[1].state.volumeLevel != null &&
+            actualState.volumeLevel != null
+        ) {
+            threshold?.let {
+                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
+                    actualState.volumeLevel!! < threshold
+                ) f(this, observer)
+            } ?: run {
+                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
+                    f(this, observer)
+            }
+        }
+    }
+
+fun MediaReceiver.onVolumeDecreasingAsync(
+    threshold: Double? = null,
+    f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit
+) =
+    attachAsyncObserver { observer, coroutineScope ->
+        if (history[1].state.volumeLevel != null &&
+            actualState.volumeLevel != null
+        ) {
+            threshold?.let {
+                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
+                    actualState.volumeLevel!! < threshold
+                ) f(this, observer, coroutineScope)
+            } ?: run {
+                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
+                    f(this, observer, coroutineScope)
+            }
+        }
     }
