@@ -12,12 +12,12 @@ Simple Example:
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    LivingRoomLuminance.attachObserver { //this: Sensor<LuminanceState,LuminanceAttributes>
-        if (measurement.value < 3.0) {
+    LivingRoomMotion.attachObserver { //this: Sensor<SwitchableState,MotionSensorAttributes>
+        if (measurement.value == SwitchableValue.ON) {
             LivingRoomMainLight.desiredState = SwitchableState(ON)
         }
     }
@@ -26,21 +26,20 @@ fun main() {
 }
 ```
 
-In this little example, we observed the luminance sensor in the living room and when the measurement of the luminance drops under 3 lux, we change the state of the main light in the living room to ON.
+In this little example, we observed the motion sensor in the living room and when the sensors motion alarm turns to on, we change the state of the main light in the living room to ON.
 As you can see here, Khome encourages you to think in states rather than services you have to call. This is less error-prone and helps the developer to stay in the mindset of states. This distinguishes Khome from most other automation libraries.
 
-Khome comes with a lot of predefined factory functions, data classes, observers and more for generic entity types but also with a low-level API that lets you develop your own custom entities as needed.
-
+Khome comes with a lot of predefined factory functions, data classes, observers and more for generic entity types.
 To achieve the same result than shown above, we can also use Khomes higher-level API which lets you write concise code.
 
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomLuminance = KHOME.LuminanceSensor("livingRoom_luminance")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    LivingRoomLuminance.onDecreasing(3.0) { //this: LuminanceSensor
+    LivingRoomMotion.onMotionAlarm { //this: LuminanceSensor
         LivingRoomMainLight.turnOn()
     }
 
@@ -119,7 +118,7 @@ or [Working with the Command Line Compiler](https://kotlinlang.org/docs/tutorial
 I recommend using Kotlin with Intellij IDEA to get started. It's the best way to get into it. You can download the free [Community Edition](http://www.jetbrains.com/idea/download/index.html) from JetBrains.
 
 ### Working with Khome
-- [Quick start](docs/Quickstart.md) (to be finished)
+- [Quick start](docs/Quickstart.md)
 - [Sensors, Actuators and Observers](docs/SensorsAndActuators.md)
 - [Home Assistant Events](docs/HomeAssistantEvents.md) (coming soon)
 - [Predefined entity types](docs/PredefinedEntityTypes.md) (to be finished)
