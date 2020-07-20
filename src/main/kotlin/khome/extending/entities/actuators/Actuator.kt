@@ -18,10 +18,10 @@ fun <S : State<*>, A : Attributes> Actuator<S, A>.callService(
 fun <S : State<*>, A : Attributes, SV> Actuator<S, A>.stateValueChangedFrom(values: Pair<SV, SV>) =
     history[1].state.value == values.first && actualState.value == values.second
 
-val Actuator<SwitchableState, Attributes>.isOn
+val Actuator<SwitchableState, *>.isOn
     get() = actualState.value == SwitchableValue.ON
 
-val Actuator<SwitchableState, Attributes>.isOff
+val Actuator<SwitchableState, *>.isOff
     get() = actualState.value == SwitchableValue.OFF
 
 fun <A : Attributes> Actuator<SwitchableState, A>.turnOn() {
