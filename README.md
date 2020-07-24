@@ -39,7 +39,7 @@ val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
 val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
 
 fun main() {
-    LivingRoomMotion.onMotionAlarm { //this: LuminanceSensor
+    LivingRoomMotion.onMotionAlarm { //this: MotionSensor
         LivingRoomMainLight.turnOn()
     }
 
