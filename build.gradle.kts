@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.71"
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "0.11.0-dev-59"
     `maven-publish`
     id("io.gitlab.arturbosch.detekt") version "1.9.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
