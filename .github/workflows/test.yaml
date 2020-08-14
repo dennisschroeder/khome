@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Commit check
-        uses: docker://commitsar/commitsar:latest
+        uses: docker://commitsar/commitsar:latest@sha256:ea5dc5c27b0b00f780ab9eac6c9bb474b52c1d2a623ec0b37644d33007407a45
 
       - name: Code Check
         run: ./gradlew --no-daemon clean check
