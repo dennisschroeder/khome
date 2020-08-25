@@ -113,102 +113,26 @@ fun Television.setSource(source: String) {
     desiredState = TelevisionState(value = SwitchableValue.ON, source = source)
 }
 
-fun Television.onActivation(f: Television.(Switchable) -> Unit) =
+fun Television.onTurnedOn(f: Television.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer)
     }
 
-fun Television.onActivationAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
+fun Television.onTurnedOnAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer, coroutineScope)
     }
 
-fun Television.onDeactivation(f: Television.(Switchable) -> Unit) =
+fun Television.onTurnedOff(f: Television.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer)
     }
 
-fun Television.onDeactivationAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
+fun Television.onTurnedOffAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer, coroutineScope)
-    }
-
-fun Television.onVolumeIncreasing(
-    threshold: Double? = null,
-    f: Television.(Switchable) -> Unit
-) =
-    attachObserver { observer ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! > threshold
-                ) f(this, observer)
-            } ?: run {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
-                    f(this, observer)
-            }
-        }
-    }
-
-fun Television.onVolumeIncreasingAsync(
-    threshold: Double? = null,
-    f: suspend Television.(Switchable, CoroutineScope) -> Unit
-) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! > threshold
-                ) f(this, observer, coroutineScope)
-            } ?: run {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
-                    f(this, observer, coroutineScope)
-            }
-        }
-    }
-
-fun Television.onVolumeDecreasing(
-    threshold: Double? = null,
-    f: Television.(Switchable) -> Unit
-) =
-    attachObserver { observer ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! < threshold
-                ) f(this, observer)
-            } ?: run {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
-                    f(this, observer)
-            }
-        }
-    }
-
-fun Television.onVolumeDecreasingAsync(
-    threshold: Double? = null,
-    f: suspend Television.(Switchable, CoroutineScope) -> Unit
-) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! < threshold
-                ) f(this, observer, coroutineScope)
-            } ?: run {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
-                    f(this, observer, coroutineScope)
-            }
-        }
     }
