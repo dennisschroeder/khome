@@ -9,6 +9,7 @@ import khome.communicating.ServiceCommandResolver
 import khome.communicating.ServiceType
 import khome.entities.Attributes
 import khome.entities.State
+import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.IDLE
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.OFF
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PAUSED
@@ -262,75 +263,14 @@ fun MediaReceiver.onPlaybackResumedAsync(f: suspend MediaReceiver.(Switchable, C
             f(this, observer, coroutineScope)
     }
 
-fun MediaReceiver.onVolumeIncreasing(threshold: Double? = null, f: MediaReceiver.(Switchable) -> Unit) =
+fun MediaReceiver.onTurnedOn(f: MediaReceiver.(Switchable) -> Unit) =
     attachObserver { observer ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! > threshold
-                ) f(this, observer)
-            } ?: run {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
-                    f(this, observer)
-            }
-        }
+        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
+            f(this, observer)
     }
 
-fun MediaReceiver.onVolumeIncreasingAsync(
-    threshold: Double? = null,
-    f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit
-) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! > threshold
-                ) f(this, observer, coroutineScope)
-            } ?: run {
-                if (history[1].state.volumeLevel!! < actualState.volumeLevel!!)
-                    f(this, observer, coroutineScope)
-            }
-        }
-    }
-
-fun MediaReceiver.onVolumeDecreasing(
-    threshold: Double? = null,
-    f: MediaReceiver.(Switchable) -> Unit
-) =
-    attachObserver { observer ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! < threshold
-                ) f(this, observer)
-            } ?: run {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
-                    f(this, observer)
-            }
-        }
-    }
-
-fun MediaReceiver.onVolumeDecreasingAsync(
-    threshold: Double? = null,
-    f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit
-) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (history[1].state.volumeLevel != null &&
-            actualState.volumeLevel != null
-        ) {
-            threshold?.let {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!! &&
-                    actualState.volumeLevel!! < threshold
-                ) f(this, observer, coroutineScope)
-            } ?: run {
-                if (history[1].state.volumeLevel!! > actualState.volumeLevel!!)
-                    f(this, observer, coroutineScope)
-            }
-        }
-    }
+fun MediaReceiver.onTurnedOnAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
+attachAsyncObserver { observer, coroutineScope ->
+    if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
+        f(this, observer, coroutineScope)
+}
