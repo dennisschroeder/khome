@@ -33,7 +33,6 @@ val jupiterVersion: String by project
 val assertVersion: String by project
 val dataBobVersion: String by project
 val jsonAssertVersion: String by project
-val gsonVersion: String by project
 val kotlinLoggingVersion: String by project
 
 dependencies {

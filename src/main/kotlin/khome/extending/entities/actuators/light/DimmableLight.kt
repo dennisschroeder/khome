@@ -54,6 +54,12 @@ data class DimmableLightState(override val value: SwitchableValue, val brightnes
 
 data class DimmableLightServiceData(private val brightness: Int) : DesiredServiceData()
 
+val DimmableLight.isOn
+    get() = actualState.value == SwitchableValue.ON
+
+val DimmableLight.isOff
+    get() = actualState.value == SwitchableValue.OFF
+
 fun DimmableLight.turnOn() {
     desiredState = DimmableLightState(SwitchableValue.ON)
 }

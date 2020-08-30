@@ -24,25 +24,25 @@ val Sensor<SwitchableState, *>.isOn
 val Sensor<SwitchableState, *>.isOff
     get() = measurement.value == SwitchableValue.OFF
 
-inline fun <A : Attributes> Sensor<SwitchableState, A>.onActivation(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onTurnedOn(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer)
     }
 
-inline fun <A : Attributes> Sensor<SwitchableState, A>.onActivationAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onTurnedOnAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
             f(this, observer, coroutineScope)
     }
 
-inline fun <A : Attributes> Sensor<SwitchableState, A>.onDeactivation(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onTurnedOff(crossinline f: Sensor<SwitchableState, A>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer)
     }
 
-inline fun <A : Attributes> Sensor<SwitchableState, A>.onDeactivationAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
+inline fun <A : Attributes> Sensor<SwitchableState, A>.onTurnedOffAsync(crossinline f: suspend Sensor<SwitchableState, A>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer, coroutineScope)
