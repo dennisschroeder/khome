@@ -90,6 +90,12 @@ data class ColorableLightState(
     val colorTemp: Int? = null
 ) : State<SwitchableValue>
 
+val ColorableLight.isOn
+    get() = actualState.value == SwitchableValue.ON
+
+val ColorableLight.isOff
+    get() = actualState.value == SwitchableValue.OFF
+
 fun ColorableLight.turnOn() {
     desiredState = ColorableLightState(SwitchableValue.ON)
 }

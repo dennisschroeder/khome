@@ -38,27 +38,27 @@ val Person<PersonState>.isHome
     get() = measurement.value == PersonStateValue.HOME
 
 val Person<PersonState>.isAway
-    get() = measurement.value == PersonStateValue.NOT_HOME
+    get() = measurement.value != PersonStateValue.HOME
 
-inline fun Person<PersonState>.onArrival(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
+inline fun Person<PersonState>.onArrivedHome(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
             f(this, observer)
     }
 
-inline fun Person<PersonState>.onArrivalAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
+inline fun Person<PersonState>.onArrivedHomeAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
             f(this, observer, coroutineScope)
     }
 
-inline fun Person<PersonState>.onLeaving(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
+inline fun Person<PersonState>.onLeftHome(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
             f(this, observer)
     }
 
-inline fun Person<PersonState>.onLeavingAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
+inline fun Person<PersonState>.onLeftHomeAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
             f(this, observer, coroutineScope)

@@ -39,25 +39,25 @@ val ContactSensor.isOpen
 val ContactSensor.isClosed
     get() = measurement.value == ContactStateValue.CLOSED
 
-inline fun ContactSensor.onOpening(crossinline f: ContactSensor.(Switchable) -> Unit) =
+inline fun ContactSensor.onOpened(crossinline f: ContactSensor.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
             f(this, observer)
     }
 
-inline fun ContactSensor.onOpeningAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
+inline fun ContactSensor.onOpenedAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
             f(this, observer, coroutineScope)
     }
 
-inline fun ContactSensor.onClosing(crossinline f: ContactSensor.(Switchable) -> Unit) =
+inline fun ContactSensor.onClosed(crossinline f: ContactSensor.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
             f(this, observer)
     }
 
-inline fun ContactSensor.onClosingAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
+inline fun ContactSensor.onClosedAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
             f(this, observer, coroutineScope)

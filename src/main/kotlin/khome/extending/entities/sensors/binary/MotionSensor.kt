@@ -34,13 +34,13 @@ inline fun MotionSensor.onMotionAlarmAsync(crossinline f: suspend MotionSensor.(
             f(this, observer, coroutineScope)
     }
 
-inline fun MotionSensor.onMotionAlarmClearance(crossinline f: MotionSensor.(Switchable) -> Unit) =
+inline fun MotionSensor.onMotionAlarmCleared(crossinline f: MotionSensor.(Switchable) -> Unit) =
     attachObserver { observer ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer)
     }
 
-inline fun MotionSensor.onMotionAlarmClearanceAsync(crossinline f: suspend MotionSensor.(Switchable, CoroutineScope) -> Unit) =
+inline fun MotionSensor.onMotionAlarmClearedAsync(crossinline f: suspend MotionSensor.(Switchable, CoroutineScope) -> Unit) =
     attachAsyncObserver { observer, coroutineScope ->
         if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
             f(this, observer, coroutineScope)
