@@ -1,6 +1,7 @@
 package khome.entities.devices
 
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeApplicationImpl
 import khome.core.mapping.ObjectMapper
@@ -18,6 +19,7 @@ import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import mu.KotlinLogging
 import kotlin.reflect.KClass
 
 internal class SensorImpl<S : State<*>, A : Attributes>(
@@ -49,6 +51,7 @@ internal class SensorImpl<S : State<*>, A : Attributes>(
     fun trySetActualStateFromAny(newState: JsonObject) {
         @Suppress("UNCHECKED_CAST")
         measurement = mapper.fromJson(newState, stateType.java) as S
+        checkNotNull(measurement.value) { "State value shall not be null. Please check your State definition " }
     }
 
     @ObsoleteCoroutinesApi

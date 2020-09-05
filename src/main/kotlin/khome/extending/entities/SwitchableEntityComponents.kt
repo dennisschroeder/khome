@@ -15,7 +15,10 @@ enum class SwitchableValue {
     ON,
 
     @SerializedName("off")
-    OFF
+    OFF,
+
+    @SerializedName("unavailable")
+    UNAVAILABLE
 }
 
 data class DefaultAttributes(
@@ -35,4 +38,6 @@ fun mapSwitchable(switchableValue: SwitchableValue) =
             service = ServiceType.TURN_OFF,
             serviceData = EntityIdOnlyServiceData()
         )
+
+        SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
     }

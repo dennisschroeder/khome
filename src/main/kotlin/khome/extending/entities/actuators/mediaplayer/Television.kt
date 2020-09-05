@@ -54,6 +54,8 @@ fun KhomeApplication.Television(objectId: String): Television =
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
+
+            SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
         }
     })
 
