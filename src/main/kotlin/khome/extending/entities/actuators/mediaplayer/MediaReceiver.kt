@@ -14,7 +14,7 @@ import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.IDLE
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.OFF
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PAUSED
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PLAYING
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.UNKNOWN
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.UNAVAILABLE
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +109,7 @@ fun KhomeApplication.MediaReceiver(objectId: String): MediaReceiver =
                 )
             }
 
-            UNKNOWN -> throw IllegalStateException("State cannot be changed to UNKNOWN")
+            UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
         }
     })
 
@@ -121,8 +121,8 @@ data class MediaReceiverState(
 ) : State<MediaReceiverValue>
 
 enum class MediaReceiverValue {
-    @SerializedName("unknown")
-    UNKNOWN,
+    @SerializedName("unavailable")
+    UNAVAILABLE,
 
     @SerializedName("off")
     OFF,
@@ -170,7 +170,7 @@ val MediaReceiver.isPlaying
     get() = actualState.value == PLAYING
 
 val MediaReceiver.isOn
-    get() = actualState.value != OFF || actualState.value != UNKNOWN
+    get() = actualState.value != OFF || actualState.value != UNAVAILABLE
 
 val MediaReceiver.isPaused
     get() = actualState.value == PAUSED
@@ -192,7 +192,7 @@ fun MediaReceiver.pause() {
 }
 
 fun MediaReceiver.setVolumeTo(level: Double) {
-    if (actualState.value == UNKNOWN || actualState.value == OFF)
+    if (actualState.value == UNAVAILABLE || actualState.value == OFF)
         throw RuntimeException("Volume can not be set when MediaReceiver is ${actualState.value}")
 
     desiredState = MediaReceiverState(value = actualState.value, volumeLevel = level)

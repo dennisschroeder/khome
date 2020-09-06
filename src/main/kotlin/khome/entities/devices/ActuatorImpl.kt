@@ -54,6 +54,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     fun trySetActualStateFromAny(newState: JsonObject) {
         @Suppress("UNCHECKED_CAST")
         actualState = mapper.fromJson(newState, stateType.java) as S
+        checkNotNull(actualState.value) { "State value shall not be null. Please check your State definition  " }
     }
 
     fun trySetAttributesFromAny(newAttributes: JsonObject) {

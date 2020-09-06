@@ -49,6 +49,7 @@ internal class SensorImpl<S : State<*>, A : Attributes>(
     fun trySetActualStateFromAny(newState: JsonObject) {
         @Suppress("UNCHECKED_CAST")
         measurement = mapper.fromJson(newState, stateType.java) as S
+        checkNotNull(measurement.value) { "State value shall not be null. Please check your State definition " }
     }
 
     @ObsoleteCoroutinesApi

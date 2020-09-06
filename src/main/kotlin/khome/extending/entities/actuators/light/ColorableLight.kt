@@ -70,6 +70,8 @@ fun KhomeApplication.ColorableLight(objectId: String): ColorableLight =
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
+
+            SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
         }
     })
 
