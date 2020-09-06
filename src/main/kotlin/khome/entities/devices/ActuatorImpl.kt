@@ -21,7 +21,6 @@ import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import mu.KotlinLogging
 import kotlin.reflect.KClass
 
 @KtorExperimentalAPI
