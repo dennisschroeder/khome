@@ -37,22 +37,22 @@ val kotlinLoggingVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    compile("io.ktor:ktor-client-core:$ktorVersion")
-    compile("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    compile("io.ktor:ktor-client-cio:$ktorVersion")
-    compile("io.ktor:ktor-client-json-jvm:$ktorVersion")
-    compile("io.ktor:ktor-client-gson:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-gson:$ktorVersion")
     implementation("org.koin:koin-core:$koinVersion")
-    compile("org.slf4j:slf4j-simple:1.7.30")
-    compile("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
     testImplementation("org.koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
         exclude(group = "junit")
     }
     testImplementation("io.mockk:mockk:$mockkVersion")
-    compile("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
-    testCompile("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
-    testCompile("org.skyscreamer:jsonassert:$jsonAssertVersion")
+    implementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
+    testImplementation("org.skyscreamer:jsonassert:$jsonAssertVersion")
 
     testImplementation("io.github.daviddenton:databob.kotlin:$dataBobVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")

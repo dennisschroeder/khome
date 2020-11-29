@@ -3,9 +3,10 @@ package khome.extending.entities
 import com.google.gson.annotations.SerializedName
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.EntityIdOnlyServiceData
-import khome.communicating.ServiceType
 import khome.entities.Attributes
 import khome.entities.State
+import khome.values.UserId
+import khome.values.service
 import java.time.Instant
 
 data class SwitchableState(override val value: SwitchableValue) : State<SwitchableValue>
@@ -22,7 +23,7 @@ enum class SwitchableValue {
 }
 
 data class DefaultAttributes(
-    override val userId: String?,
+    override val userId: UserId?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
@@ -31,11 +32,11 @@ data class DefaultAttributes(
 fun mapSwitchable(switchableValue: SwitchableValue) =
     when (switchableValue) {
         SwitchableValue.ON -> DefaultResolvedServiceCommand(
-            service = ServiceType.TURN_ON,
+            service = "turn_on".service,
             serviceData = EntityIdOnlyServiceData()
         )
         SwitchableValue.OFF -> DefaultResolvedServiceCommand(
-            service = ServiceType.TURN_OFF,
+            service = "turn_off".service,
             serviceData = EntityIdOnlyServiceData()
         )
 

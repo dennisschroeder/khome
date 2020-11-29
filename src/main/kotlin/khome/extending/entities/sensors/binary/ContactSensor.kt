@@ -7,14 +7,14 @@ import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.sensors.Sensor
 import khome.extending.entities.sensors.measurementValueChangedFrom
-import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.ObjectId
+import khome.values.UserId
 import java.time.Instant
 
 typealias ContactSensor = Sensor<ContactState, ContactAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.ContactSensor(objectId: String): ContactSensor = Sensor(objectId)
+fun KhomeApplication.ContactSensor(objectId: ObjectId): ContactSensor = Sensor(objectId)
 
 data class ContactState(override val value: ContactStateValue) : State<ContactStateValue>
 
@@ -27,7 +27,7 @@ enum class ContactStateValue {
 }
 
 data class ContactAttributes(
-    override val userId: String?,
+    override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String
@@ -39,26 +39,18 @@ val ContactSensor.isOpen
 val ContactSensor.isClosed
     get() = measurement.value == ContactStateValue.CLOSED
 
-inline fun ContactSensor.onOpened(crossinline f: ContactSensor.(Switchable) -> Unit) =
-    attachObserver { observer ->
+inline fun ContactSensor.onOpened(
+    crossinline f: ContactSensor.() -> Unit
+) =
+    attachObserver {
         if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
-            f(this, observer)
+            f(this)
     }
 
-inline fun ContactSensor.onOpenedAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
-            f(this, observer, coroutineScope)
-    }
-
-inline fun ContactSensor.onClosed(crossinline f: ContactSensor.(Switchable) -> Unit) =
-    attachObserver { observer ->
+inline fun ContactSensor.onClosed(
+    crossinline f: ContactSensor.() -> Unit
+) =
+    attachObserver {
         if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
-            f(this, observer)
-    }
-
-inline fun ContactSensor.onClosedAsync(crossinline f: suspend ContactSensor.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
-            f(this, observer, coroutineScope)
+            f(this)
     }

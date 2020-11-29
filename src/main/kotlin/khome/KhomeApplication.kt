@@ -1,15 +1,19 @@
 package khome
 
 import khome.communicating.ServiceCommandResolver
+import khome.core.KhomeDispatchers
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
 import khome.errorHandling.ErrorResponseData
-import khome.events.AsyncEventHandlerFunction
 import khome.events.EventHandlerFunction
 import khome.observability.Switchable
+import khome.testing.KhomeTestApplication
+import khome.values.Domain
+import khome.values.EntityId
+import khome.values.Service
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 /**
@@ -23,6 +27,8 @@ interface KhomeApplication {
      * This method blocks the current thread.
      */
     fun runBlocking()
+
+    fun runTesting(block: KhomeTestApplication.() -> Unit)
 
     /**
      * [Sensor] factory function
@@ -79,16 +85,8 @@ interface KhomeApplication {
     fun <ED> attachEventHandler(
         eventType: String,
         eventDataType: KClass<*>,
-        eventHandler: EventHandlerFunction<ED>
-    ): Switchable
-
-    /**
-     * Attaches an [AsyncEventHandlerFunction] to Khome and starts the home assistant event subscription.
-     */
-    fun <ED> attachAsyncEventHandler(
-        eventType: String,
-        eventDataType: KClass<*>,
-        eventHandler: AsyncEventHandlerFunction<ED>
+        eventHandler: EventHandlerFunction<ED>,
+        context: CoroutineContext = KhomeDispatchers.SingleThread
     ): Switchable
 
     /**
@@ -107,7 +105,7 @@ interface KhomeApplication {
     fun emitEvent(eventType: String, eventData: Any? = null)
 
     /**
-     * Attaches an [ErrorResponseHandlerRegistry] to Khome.
+     * Attaches an error response handler to Khome.
      *
      * @param errorResponseHandler the handler to be attached.
      */
@@ -120,5 +118,5 @@ interface KhomeApplication {
      * @param service the name of the service to call
      * @param parameterBag the parameters to be send with the command
      */
-    fun <PB> callService(domain: String, service: String, parameterBag: PB)
+    fun <PB> callService(domain: Domain, service: Service, parameterBag: PB)
 }

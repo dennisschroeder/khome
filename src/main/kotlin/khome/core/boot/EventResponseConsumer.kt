@@ -14,7 +14,8 @@ import khome.core.ResponseType
 import khome.core.ResultResponse
 import khome.core.StateChangedResponse
 import khome.core.boot.statehandling.flattenStateAttributes
-import khome.core.mapping.ObjectMapper
+import khome.core.mapping.ObjectMapperInterface
+import khome.core.mapping.fromJson
 import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
 import khome.errorHandling.ErrorResponseData
@@ -25,21 +26,25 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
+interface EventResponseConsumer {
+    suspend fun consumeBlocking()
+}
+
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
-internal class EventResponseConsumer(
-    override val khomeSession: KhomeSession,
-    private val objectMapper: ObjectMapper,
+internal class EventResponseConsumerImpl(
+    private val khomeSession: KhomeSession,
+    private val objectMapper: ObjectMapperInterface,
     private val sensorStateUpdater: SensorStateUpdater,
     private val actuatorStateUpdater: ActuatorStateUpdater,
     private val eventHandlerByEventType: EventHandlerByEventType,
     private val errorResponseHandler: (ErrorResponseData) -> Unit
-) : StartSequenceStep {
+) : EventResponseConsumer {
     private val logger = KotlinLogging.logger { }
 
     @ExperimentalStdlibApi
-    override suspend fun runStartSequenceStep() = coroutineScope {
+    override suspend fun consumeBlocking() = coroutineScope {
         khomeSession.consumeEachMappedToResponse { response, frameText ->
             when (response.type) {
                 ResponseType.EVENT -> {

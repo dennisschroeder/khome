@@ -4,22 +4,25 @@ import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.EntityId
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.domain
+import khome.values.service
 import java.time.Instant
 import java.time.LocalDateTime
 
 typealias InputDateTime = Actuator<InputDateTimeState, InputDateTimeAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.InputDateTime(objectId: String): InputDateTime =
-    Actuator(EntityId("input_datetime", objectId), ServiceCommandResolver { desiredState ->
+fun KhomeApplication.InputDateTime(objectId: ObjectId): InputDateTime =
+    Actuator(EntityId.fromPair("input_datetime".domain to objectId), ServiceCommandResolver { desiredState ->
         DefaultResolvedServiceCommand(
-            service = ServiceType.SET_DATETIME,
+            service = "set_datetime".service,
             serviceData = InputDateTimeServiceData(
                 desiredState.value
             )
@@ -36,7 +39,7 @@ data class InputDateTimeAttributes(
     val month: Int,
     val day: Int,
     val timestamp: Int,
-    override val userId: String?,
+    override val userId: UserId?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

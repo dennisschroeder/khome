@@ -7,13 +7,16 @@ import khome.KhomeApplicationImpl
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.core.boot.statehandling.flattenStateAttributes
 import khome.core.koin.KhomeKoinContext
 import khome.core.koin.KoinContainer
-import khome.core.mapping.ObjectMapper
+import khome.core.mapping.ObjectMapperInterface
+import khome.core.mapping.fromJson
 import khome.entities.Attributes
 import khome.entities.State
+import khome.khomeApplication
+import khome.values.UserId
+import khome.values.service
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -32,18 +35,18 @@ internal class ActuatorTest {
     data class ActuatorTestAttributes(
         val arrayAttribute: List<Int>,
         val doubleAttribute: Double,
-        override val userId: String?,
+        override val userId: UserId?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
         override val friendlyName: String
     ) : Attributes
 
     @BeforeAll
-    fun startKoin() {
-        KhomeKoinContext.startKoinApplication()
+    fun createKhome() {
+        khomeApplication()
     }
 
-    private val mapper: ObjectMapper
+    private val mapper: ObjectMapperInterface
         get() = KoinContainer.get()
 
     @Test
@@ -55,7 +58,7 @@ internal class ActuatorTest {
             resolver = ServiceCommandResolver {
                 DefaultResolvedServiceCommand(
                     null,
-                    ServiceType.TURN_ON,
+                    "turn_on".service,
                     EntityIdOnlyServiceData()
                 )
             },
@@ -113,7 +116,7 @@ internal class ActuatorTest {
             resolver = ServiceCommandResolver {
                 DefaultResolvedServiceCommand(
                     null,
-                    ServiceType.TURN_ON,
+                    "turn_on".service,
                     EntityIdOnlyServiceData()
                 )
             },

@@ -5,52 +5,53 @@ import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
 import khome.entities.State
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.service
 import java.time.Instant
 
 typealias Television = MediaPlayer<TelevisionState, TelevisionAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.Television(objectId: String): Television =
+fun KhomeApplication.Television(objectId: ObjectId): Television =
     MediaPlayer(objectId, ServiceCommandResolver { desiredState ->
         when (desiredState.value) {
             SwitchableValue.ON -> {
                 desiredState.isVolumeMuted?.let { isMuted ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_MUTE,
+                        service = "volume_mute".service,
                         serviceData = TelevisionDesiredServiceData(
                             isVolumeMuted = isMuted
                         )
                     )
                 } ?: desiredState.volumeLevel?.let { volumeLevel ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_SET,
+                        service = "volume_set".service,
                         serviceData = TelevisionDesiredServiceData(
                             volumeLevel = volumeLevel
                         )
                     )
                 } ?: desiredState.source?.let { source ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_SET,
+                        service = "volume_set".service,
                         serviceData = TelevisionDesiredServiceData(
                             source = source
                         )
                     )
                 } ?: DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_ON,
+                    service = "turn_on".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
 
             SwitchableValue.OFF -> {
                 DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_OFF,
+                    service = "turn_off".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
@@ -70,7 +71,7 @@ data class TelevisionAttributes(
     val mediaContentId: String,
     val mediaTitle: String,
     val mediaContentType: String,
-    override val userId: String?,
+    override val userId: UserId?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
@@ -116,25 +117,13 @@ fun Television.setSource(source: String) {
 }
 
 fun Television.onTurnedOn(f: Television.(Switchable) -> Unit) =
-    attachObserver { observer ->
+    attachObserver {
         if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, observer)
-    }
-
-fun Television.onTurnedOnAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, observer, coroutineScope)
+            f(this, it)
     }
 
 fun Television.onTurnedOff(f: Television.(Switchable) -> Unit) =
-    attachObserver { observer ->
+    attachObserver {
         if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this, observer)
-    }
-
-fun Television.onTurnedOffAsync(f: suspend Television.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this, observer, coroutineScope)
+            f(this, it)
     }

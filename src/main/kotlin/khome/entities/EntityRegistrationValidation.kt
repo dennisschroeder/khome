@@ -2,6 +2,7 @@ package khome.entities
 
 import khome.ActuatorsByApiName
 import khome.SensorsByApiName
+import khome.values.EntityId
 import mu.KotlinLogging
 
 internal class EntityRegistrationValidation(

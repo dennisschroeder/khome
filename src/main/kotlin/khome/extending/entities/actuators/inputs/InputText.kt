@@ -3,21 +3,24 @@ package khome.extending.entities.actuators.inputs
 import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
-import khome.entities.EntityId
+import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.domain
+import khome.values.service
 import java.time.Instant
 
 typealias InputText = Actuator<InputTextState, InputTextAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.InputText(objectId: String): InputText =
-    Actuator(EntityId("input_text", objectId), ServiceCommandResolver { desiredState ->
+fun KhomeApplication.InputText(objectId: ObjectId): InputText =
+    Actuator(EntityId.fromPair("input_text".domain to objectId), ServiceCommandResolver { desiredState ->
         DefaultResolvedServiceCommand(
-            service = ServiceType.SET_VALUE,
+            service = "set_value".service,
             serviceData = SettableStateValueServiceData(
                 desiredState.value
             )
@@ -32,7 +35,7 @@ data class InputTextAttributes(
     val max: Int,
     val pattern: String,
     val mode: String,
-    override val userId: String?,
+    override val userId: UserId?,
     override val friendlyName: String,
     override val lastChanged: Instant,
     override val lastUpdated: Instant

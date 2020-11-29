@@ -3,19 +3,20 @@ package khome.extending.entities.sensors
 import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
 import khome.entities.Attributes
-import khome.entities.EntityId
+import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
-import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.UserId
+import khome.values.domain
+import khome.values.objectId
 import java.time.Instant
 
 typealias Sun = Sensor<SunState, SunAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.Sun(): Sun =
-    Sensor(EntityId("sun", "sun"))
+    Sensor(EntityId.fromPair("sun".domain to "sun".objectId))
 
 data class SunState(override val value: SunValue) : State<SunValue>
 
@@ -37,7 +38,7 @@ data class SunAttributes(
     val elevation: Double,
     val azimuth: Double,
     val rising: Boolean,
-    override val userId: String?,
+    override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val friendlyName: String
@@ -49,26 +50,18 @@ val Sun.isAboveHorizon
 val Sun.isBelowHorizon
     get() = measurement.value == SunValue.BELOW_HORIZON
 
-fun Sun.onSunrise(f: Sun.(Switchable) -> Unit) =
-    attachObserver { observer ->
+fun Sun.onSunrise(
+    f: Sun.() -> Unit
+) =
+    attachObserver {
         if (measurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON))
-            f(this, observer)
+            f(this)
     }
 
-fun Sun.onSunriseAsync(f: suspend Sun.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON))
-            f(this, observer, coroutineScope)
-    }
-
-fun Sun.onSunset(f: Sun.(Switchable) -> Unit) =
-    attachObserver { observer ->
+fun Sun.onSunset(
+    f: Sun.() -> Unit
+) =
+    attachObserver {
         if (measurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON))
-            f(this, observer)
-    }
-
-fun Sun.onSunsetAsync(f: suspend Sun.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON))
-            f(this, observer, coroutineScope)
+            f(this)
     }

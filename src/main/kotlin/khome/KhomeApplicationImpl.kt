@@ -2,22 +2,21 @@ package khome
 
 import io.ktor.util.KtorExperimentalAPI
 import khome.communicating.CommandDataWithEntityId
-import khome.communicating.HassApi
+import khome.communicating.HassApiClient
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.SubscribeEventCommand
-import khome.core.ResultResponse
 import khome.core.boot.EventResponseConsumer
 import khome.core.boot.HassApiInitializer
 import khome.core.boot.StateChangeEventSubscriber
 import khome.core.boot.authentication.Authenticator
 import khome.core.boot.servicestore.ServiceStoreInitializer
 import khome.core.boot.statehandling.EntityStateInitializer
-import khome.core.koin.KhomeComponent
-import khome.core.mapping.ObjectMapper
+import khome.core.boot.subscribing.HassEventSubscriber
+import khome.core.koin.KoinContainer
+import khome.core.mapping.ObjectMapperInterface
 import khome.entities.ActuatorStateUpdater
 import khome.entities.Attributes
-import khome.entities.EntityId
+import khome.values.EntityId
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
 import khome.entities.State
@@ -26,26 +25,28 @@ import khome.entities.devices.ActuatorImpl
 import khome.entities.devices.Sensor
 import khome.entities.devices.SensorImpl
 import khome.errorHandling.ErrorResponseData
-import khome.events.AsyncEventHandlerFunction
 import khome.events.EventHandlerFunction
 import khome.events.EventSubscription
-import khome.observability.HistorySnapshot
-import khome.observability.StateAndAttributes
 import khome.observability.Switchable
+import khome.testing.KhomeTestApplication
+import khome.testing.KhomeTestApplicationImpl
+import khome.values.Domain
+import khome.values.Service
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import org.koin.core.get
 import org.koin.core.inject
+import org.koin.core.parameter.parametersOf
+import kotlin.collections.set
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
-
-typealias StateAndAttributesHistorySnapshot<S, A> = HistorySnapshot<S, A, StateAndAttributes<S, A>>
 
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription<*>>
+internal typealias HassAPiCommandHistory = MutableMap<EntityId, ServiceCommandImpl<CommandDataWithEntityId>>
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -54,15 +55,16 @@ internal typealias EventHandlerByEventType = MutableMap<String, EventSubscriptio
     ExperimentalCoroutinesApi::class
 )
 internal class KhomeApplicationImpl : KhomeApplication {
+
     private val logger = KotlinLogging.logger { }
-    private val koin = object : KhomeComponent {}
-    private val hassClient: HassClient by koin.inject()
-    private val hassApi: HassApi by koin.inject()
-    private val mapper: ObjectMapper by koin.inject()
+    private val hassClient: HassClient by KoinContainer.inject()
+    private val hassApi: HassApiClient by KoinContainer.inject()
+    private val mapper: ObjectMapperInterface by KoinContainer.inject()
 
     private val sensorsByApiName: SensorsByApiName = mutableMapOf()
     private val actuatorsByApiName: ActuatorsByApiName = mutableMapOf()
     private val actuatorsByEntity: ActuatorsByEntity = mutableMapOf()
+    private val hassAPiCommandHistory: HassAPiCommandHistory = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
 
@@ -107,18 +109,12 @@ internal class KhomeApplicationImpl : KhomeApplication {
     override fun <ED> attachEventHandler(
         eventType: String,
         eventDataType: KClass<*>,
-        eventHandler: EventHandlerFunction<ED>
+        eventHandler: EventHandlerFunction<ED>,
+        context: CoroutineContext
     ): Switchable =
-        eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as EventHandlerFunction<Any?>)
-            ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <ED> attachAsyncEventHandler(
-        eventType: String,
-        eventDataType: KClass<*>,
-        eventHandler: AsyncEventHandlerFunction<ED>
-    ): Switchable =
-        eventSubscriptionsByEventType[eventType]?.attachEventHandler(eventHandler as AsyncEventHandlerFunction<Any?>)
+        eventSubscriptionsByEventType[eventType]?.attachEventHandler(
+            eventHandler as EventHandlerFunction<Any?>
+        )
             ?: registerEventSubscription<ED>(eventType, eventDataType).attachEventHandler(eventHandler)
 
     override fun setEventHandlerExceptionHandler(f: (Throwable) -> Unit) {
@@ -133,12 +129,12 @@ internal class KhomeApplicationImpl : KhomeApplication {
         errorResponseHandlerFunction = errorResponseHandler
     }
 
-    override fun <PB> callService(domain: String, service: String, parameterBag: PB) {
+    override fun <PB> callService(domain: Domain, service: Service, parameterBag: PB) {
         ServiceCommandImpl(
             domain = domain,
             service = service,
             serviceData = parameterBag
-        ).also { hassApi.sendHassApiCommand(it) }
+        ).also { hassApi.sendCommand(it) }
     }
 
     private fun registerSensor(entityId: EntityId, sensor: SensorImpl<*, *>) {
@@ -166,49 +162,58 @@ internal class KhomeApplicationImpl : KhomeApplication {
             if (domain == null) domain = entityId.domain
             serviceData?.entityId = entityId
         }
-        hassApi.sendHassApiCommand(commandImpl)
+        hassAPiCommandHistory[entityId] = commandImpl
+        hassApi.sendCommand(commandImpl)
     }
 
     override fun runBlocking() =
         runBlocking {
             hassClient.startSession {
-
-                Authenticator(
-                    khomeSession = this,
-                    configuration = get()
-                ).runStartSequenceStep()
-
-                ServiceStoreInitializer(
-                    khomeSession = this,
-                    serviceStore = get()
-                ).runStartSequenceStep()
-
-                HassApiInitializer(khomeSession = this).runStartSequenceStep()
-
-                eventSubscriptionsByEventType.forEach { entry ->
-                    SubscribeEventCommand(entry.key).also { command -> hassApi.sendHassApiCommand(command) }
-                    consumeSingleMessage<ResultResponse>()
-                        .takeIf { resultResponse -> resultResponse.success }
-                        ?.let { logger.info { "Subscribed to event: ${entry.key}" } }
+                val authenticator: Authenticator by KoinContainer.inject { parametersOf(this) }
+                val serviceStoreInitializer: ServiceStoreInitializer by KoinContainer.inject { parametersOf(this) }
+                val hassApiInitializer: HassApiInitializer by KoinContainer.inject { parametersOf(this) }
+                val hassEventSubscriber: HassEventSubscriber by KoinContainer.inject {
+                    parametersOf(this, eventSubscriptionsByEventType)
                 }
 
-                EntityStateInitializer(
-                    khomeSession = this,
-                    sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
-                    actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
-                    entityRegistrationValidation = EntityRegistrationValidation(actuatorsByApiName, sensorsByApiName)
-                ).runStartSequenceStep()
+                val entityStateInitializer: EntityStateInitializer by KoinContainer.inject {
+                    parametersOf(
+                        this,
+                        SensorStateUpdater(sensorsByApiName),
+                        ActuatorStateUpdater(actuatorsByApiName),
+                        EntityRegistrationValidation(actuatorsByApiName, sensorsByApiName)
+                    )
+                }
 
-                StateChangeEventSubscriber(khomeSession = this).runStartSequenceStep()
+                val stateChangeEventSubscriber: StateChangeEventSubscriber by KoinContainer.inject { parametersOf(this) }
+                val eventResponseConsumer: EventResponseConsumer by KoinContainer.inject {
+                    parametersOf(
+                        this,
+                        SensorStateUpdater(sensorsByApiName),
+                        ActuatorStateUpdater(actuatorsByApiName),
+                        eventSubscriptionsByEventType,
+                        errorResponseHandlerFunction
+                    )
+                }
 
-                EventResponseConsumer(
-                    khomeSession = this,
-                    objectMapper = get(),
-                    sensorStateUpdater = SensorStateUpdater(sensorsByApiName),
-                    actuatorStateUpdater = ActuatorStateUpdater(actuatorsByApiName),
-                    eventHandlerByEventType = eventSubscriptionsByEventType,
-                    errorResponseHandler = errorResponseHandlerFunction
-                ).runStartSequenceStep()
+                authenticator.authenticate()
+                serviceStoreInitializer.initialize()
+                hassApiInitializer.initialize()
+                hassEventSubscriber.subscribe()
+                entityStateInitializer.initialize()
+                stateChangeEventSubscriber.subscribe()
+                eventResponseConsumer.consumeBlocking()
             }
         }
+
+    override fun runTesting(block: KhomeTestApplication.() -> Unit) {
+        val testApp = KhomeTestApplicationImpl(
+            sensorsByApiName,
+            actuatorsByApiName,
+            actuatorsByEntity,
+            mapper,
+            hassAPiCommandHistory
+        ).apply(block)
+        testApp.reset()
+    }
 }

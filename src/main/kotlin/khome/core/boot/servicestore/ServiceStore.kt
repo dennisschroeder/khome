@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 interface ServiceStoreInterface {
     val list: ConcurrentHashMap<String, List<String>>
 
-    operator fun set(domain: String, services: List<String>): Unit
+    operator fun set(domain: String, services: List<String>)
     operator fun get(domain: String) = list[domain]
     operator fun contains(domain: String): Boolean
     fun clear()
