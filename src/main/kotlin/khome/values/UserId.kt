@@ -5,6 +5,8 @@ package khome.values
 import khome.core.mapping.KhomeTypeAdapter
 
 data class UserId private constructor(val value: String) {
+    override fun toString(): String = value
+
     companion object : KhomeTypeAdapter<UserId> {
         override fun <P> from(value: P): UserId {
             return UserId(value as String)

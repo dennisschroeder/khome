@@ -11,6 +11,7 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.Brightness
 import khome.values.ObjectId
 import khome.values.service
 
@@ -52,9 +53,9 @@ fun KhomeApplication.DimmableLight(objectId: ObjectId): DimmableLight =
         }
     })
 
-data class DimmableLightState(override val value: SwitchableValue, val brightness: Int? = null) : State<SwitchableValue>
+data class DimmableLightState(override val value: SwitchableValue, val brightness: Brightness? = null) : State<SwitchableValue>
 
-data class DimmableLightServiceData(private val brightness: Int) : DesiredServiceData()
+data class DimmableLightServiceData(private val brightness: Brightness) : DesiredServiceData()
 
 val DimmableLight.isOn
     get() = actualState.value == SwitchableValue.ON
@@ -70,7 +71,7 @@ fun DimmableLight.turnOff() {
     desiredState = DimmableLightState(SwitchableValue.OFF)
 }
 
-fun DimmableLight.setBrightness(level: Int) {
+fun DimmableLight.setBrightness(level: Brightness) {
     desiredState = DimmableLightState(SwitchableValue.ON, level)
 }
 

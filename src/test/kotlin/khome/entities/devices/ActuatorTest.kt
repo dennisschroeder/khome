@@ -15,6 +15,7 @@ import khome.core.mapping.fromJson
 import khome.entities.Attributes
 import khome.entities.State
 import khome.khomeApplication
+import khome.values.FriendlyName
 import khome.values.UserId
 import khome.values.service
 import org.junit.jupiter.api.AfterAll
@@ -38,7 +39,7 @@ internal class ActuatorTest {
         override val userId: UserId?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
-        override val friendlyName: String
+        override val friendlyName: FriendlyName
     ) : Attributes
 
     @BeforeAll
@@ -99,7 +100,7 @@ internal class ActuatorTest {
         assertThat(sut.actualState.intAttribute).isEqualTo(73)
         assertThat(sut.attributes.arrayAttribute).isEqualTo(listOf(1, 2, 3, 4, 5))
         assertThat(sut.attributes.doubleAttribute).isEqualTo(30.0)
-        assertThat(sut.attributes.friendlyName).isEqualTo("Test Entity")
+        assertThat(sut.attributes.friendlyName).isEqualTo(FriendlyName.from("Test Entity"))
         assertThat(sut.attributes.lastChanged).isEqualTo(
             OffsetDateTime.parse("2016-11-26T01:37:24.265390+00:00").toInstant()
         )

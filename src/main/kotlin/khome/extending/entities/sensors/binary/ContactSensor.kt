@@ -7,6 +7,7 @@ import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.sensors.Sensor
 import khome.extending.entities.sensors.measurementValueChangedFrom
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import java.time.Instant
@@ -30,7 +31,7 @@ data class ContactAttributes(
     override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
-    override val friendlyName: String
+    override val friendlyName: FriendlyName
 ) : Attributes
 
 val ContactSensor.isOpen

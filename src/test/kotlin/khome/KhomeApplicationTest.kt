@@ -11,6 +11,7 @@ import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor
 import khome.values.EntityId
+import khome.values.FriendlyName
 import khome.values.UserId
 import khome.values.domain
 import khome.values.objectId
@@ -32,7 +33,7 @@ internal class KhomeApplicationTest {
         override val userId: UserId?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
-        override val friendlyName: String
+        override val friendlyName: FriendlyName
     ) : Attributes
 
     @Nested
@@ -56,7 +57,7 @@ internal class KhomeApplicationTest {
         override val userId: UserId?,
         override val lastChanged: Instant,
         override val lastUpdated: Instant,
-        override val friendlyName: String
+        override val friendlyName: FriendlyName
     ) : Attributes
 
     @Nested

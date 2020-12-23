@@ -10,7 +10,13 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.Brightness
+import khome.values.ColorName
+import khome.values.ColorTemperature
+import khome.values.HSColor
 import khome.values.ObjectId
+import khome.values.RGBColor
+import khome.values.XYColor
 import khome.values.service
 
 typealias RGBWLight = Actuator<RGBWLightState, LightAttributes>
@@ -75,20 +81,20 @@ fun KhomeApplication.RGBWLight(objectId: ObjectId): RGBWLight =
     })
 
 data class RGBWLightServiceData(
-    private val brightness: Int? = null,
-    private val hsColor: List<Double>? = null,
-    private val rgbColor: List<Int>? = null,
-    private val xyColor: List<Double>? = null,
-    private val colorTemp: Int? = null
+    private val brightness: Brightness? = null,
+    private val hsColor: HSColor? = null,
+    private val rgbColor: RGBColor? = null,
+    private val xyColor: XYColor? = null,
+    private val colorTemp: ColorTemperature? = null
 ) : DesiredServiceData()
 
 data class RGBWLightState(
     override val value: SwitchableValue,
-    val brightness: Int? = null,
-    val hsColor: List<Double>? = null,
-    val rgbColor: List<Int>? = null,
-    val xyColor: List<Double>? = null,
-    val colorTemp: Int? = null
+    val brightness: Brightness? = null,
+    val hsColor: HSColor? = null,
+    val rgbColor: RGBColor? = null,
+    val xyColor: XYColor? = null,
+    val colorTemp: ColorTemperature? = null
 ) : State<SwitchableValue>
 
 val RGBWLight.isOn
@@ -105,27 +111,30 @@ fun RGBWLight.turnOff() {
     desiredState = RGBWLightState(SwitchableValue.OFF)
 }
 
-fun RGBWLight.setBrightness(level: Int) {
+fun RGBWLight.setBrightness(level: Brightness) {
     desiredState = RGBWLightState(SwitchableValue.ON, level)
 }
 
 fun RGBWLight.setRGB(red: Int, green: Int, blue: Int) {
-    desiredState = RGBWLightState(SwitchableValue.ON, rgbColor = listOf(red, green, blue))
+    desiredState = RGBWLightState(SwitchableValue.ON, rgbColor = RGBColor.from(red, green, blue))
 }
 
 fun RGBWLight.setHS(hue: Double, saturation: Double) {
-    desiredState = RGBWLightState(SwitchableValue.ON, hsColor = listOf(hue, saturation))
+    desiredState = RGBWLightState(SwitchableValue.ON, hsColor = HSColor.from(hue, saturation))
 }
 
 fun RGBWLight.setXY(x: Double, y: Double) {
-    desiredState = RGBWLightState(SwitchableValue.ON, xyColor = listOf(x, y))
+    desiredState = RGBWLightState(SwitchableValue.ON, xyColor = XYColor.from(x, y))
 }
 
-fun RGBWLight.setColorTemperature(temperature: Int) {
-    desiredState = RGBWLightState(SwitchableValue.ON, colorTemp = temperature)
+fun RGBWLight.setColorTemperature(temperature: ColorTemperature) {
+    when (temperature.unit) {
+        ColorTemperature.Unit.MIRED -> desiredState = RGBWLightState(SwitchableValue.ON, colorTemp = temperature)
+        ColorTemperature.Unit.KELVIN -> callService("turn_on".service, KelvinServiceData(temperature))
+    }
 }
 
-fun RGBWLight.setColor(name: String) {
+fun RGBWLight.setColor(name: ColorName) {
     callService("turn_on".service, NamedColorServiceData(name))
 }
 

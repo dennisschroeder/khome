@@ -12,6 +12,7 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
 import khome.observability.Switchable
 import khome.values.EntityId
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import khome.values.domain
@@ -71,7 +72,7 @@ data class PositionableCoverAttributes(
     override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
-    override val friendlyName: String
+    override val friendlyName: FriendlyName
 ) : Attributes
 
 data class PositionableCoverServiceData(val position: Int) : DesiredServiceData()

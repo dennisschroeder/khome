@@ -12,9 +12,14 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.actuators.climate.ClimateControl
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.FriendlyName
+import khome.values.HvacMode
 import khome.values.ObjectId
+import khome.values.PresetMode
 import khome.values.Temperature
 import khome.values.UserId
+import khome.values.hvacMode
+import khome.values.presetMode
 import khome.values.service
 import java.time.Instant
 
@@ -35,9 +40,9 @@ fun KhomeApplication.Thermostat(objectId: ObjectId): Thermostat {
                 desiredState.temperature?.let { temperature ->
                     DefaultResolvedServiceCommand(
                         service = "set_temperature".service,
-                        serviceData = ThermostatServiceData(temperature, hvacMode = "heat")
+                        serviceData = ThermostatServiceData(temperature, hvacMode = "heat".hvacMode)
                     )
-                } ?: (if (desiredState.presetMode == "none") null else desiredState.presetMode)?.let { preset ->
+                } ?: (if (desiredState.presetMode.isNone) null else desiredState.presetMode)?.let { preset ->
                     DefaultResolvedServiceCommand(
                         service = "set_preset_mode".service,
                         serviceData = ThermostatServiceData(presetMode = preset)
@@ -54,16 +59,16 @@ fun KhomeApplication.Thermostat(objectId: ObjectId): Thermostat {
 data class ThermostatState(
     override val value: ThermostatStateValue,
     val temperature: Temperature? = null,
-    val presetMode: String = "none"
+    val presetMode: PresetMode = "none".presetMode
 ) : State<ThermostatStateValue>
 
 data class ThermostatAttributes(
-    val hvacModes: List<String>,
-    val presetModes: List<String>,
+    val hvacModes: List<HvacMode>,
+    val presetModes: List<PresetMode>,
     val currentTemperature: Temperature,
     val minTemp: Temperature,
     val maxTemp: Temperature,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
     override val userId: UserId?
@@ -79,8 +84,8 @@ enum class ThermostatStateValue {
 
 data class ThermostatServiceData(
     val temperature: Temperature? = null,
-    val presetMode: String? = null,
-    val hvacMode: String? = null
+    val presetMode: PresetMode? = null,
+    val hvacMode: HvacMode? = null
 ) : DesiredServiceData()
 
 val Thermostat.isHeating
@@ -100,7 +105,7 @@ fun Thermostat.turnOn() {
     desiredState = ThermostatState(ThermostatStateValue.HEAT)
 }
 
-fun Thermostat.setPreset(preset: String) {
+fun Thermostat.setPreset(preset: PresetMode) {
     desiredState = ThermostatState(ThermostatStateValue.HEAT, presetMode = preset)
 }
 
@@ -108,7 +113,7 @@ fun Thermostat.setTargetTemperature(temperature: Temperature) {
     desiredState = ThermostatState(ThermostatStateValue.HEAT, temperature = temperature)
 }
 
-fun Thermostat.turnOnBoost() = setPreset("boost")
+fun Thermostat.turnOnBoost() = setPreset("boost".presetMode)
 
 fun Thermostat.onTurnedOn(f: Thermostat.(Switchable) -> Unit) =
     attachObserver {

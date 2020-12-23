@@ -8,6 +8,9 @@ import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.ColorName
+import khome.values.ColorTemperature
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import khome.values.domain
@@ -22,9 +25,10 @@ inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Light
 data class LightAttributes(
     val supported_features: Int,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
 
-data class NamedColorServiceData(val color_name: String) : DesiredServiceData()
+data class NamedColorServiceData(val color_name: ColorName) : DesiredServiceData()
+data class KelvinServiceData(val kelvin: ColorTemperature) : DesiredServiceData()

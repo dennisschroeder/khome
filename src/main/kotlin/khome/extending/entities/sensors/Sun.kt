@@ -7,6 +7,7 @@ import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
+import khome.values.FriendlyName
 import khome.values.UserId
 import khome.values.domain
 import khome.values.objectId
@@ -41,7 +42,7 @@ data class SunAttributes(
     override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
-    override val friendlyName: String
+    override val friendlyName: FriendlyName
 ) : Attributes
 
 val Sun.isAboveHorizon

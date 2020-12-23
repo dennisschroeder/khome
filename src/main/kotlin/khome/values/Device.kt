@@ -5,6 +5,8 @@ package khome.values
 import khome.core.mapping.KhomeTypeAdapter
 
 data class Device private constructor(val value: String) {
+    override fun toString(): String = "$value.device"
+
     companion object : KhomeTypeAdapter<Device> {
         override fun <P> from(value: P): Device {
             return Device(value as String)
@@ -18,4 +20,4 @@ data class Device private constructor(val value: String) {
 }
 
 val String.device
-    get() = Service.from(this)
+    get() = Device.from(this)

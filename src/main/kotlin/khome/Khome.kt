@@ -44,17 +44,36 @@ import khome.core.mapping.adapter.default.LocalDateAdapter
 import khome.core.mapping.adapter.default.LocalDateTimeAdapter
 import khome.core.mapping.adapter.default.LocalTimeAdapter
 import khome.core.mapping.adapter.default.OffsetDateTimeAdapter
+import khome.core.mapping.adapter.default.RegexTypeAdapter
 import khome.entities.ActuatorStateUpdater
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
 import khome.errorHandling.ErrorResponseData
+import khome.values.Brightness
+import khome.values.ColorTemperature
 import khome.values.Device
 import khome.values.Domain
 import khome.values.EntityId
+import khome.values.FriendlyName
+import khome.values.HSColor
+import khome.values.HvacMode
+import khome.values.Icon
+import khome.values.Initial
+import khome.values.Max
+import khome.values.Min
+import khome.values.Mode
 import khome.values.ObjectId
+import khome.values.Option
+import khome.values.PersonId
+import khome.values.PowerConsumption
+import khome.values.PresetMode
+import khome.values.RGBColor
 import khome.values.Service
+import khome.values.Step
 import khome.values.Temperature
+import khome.values.UnitOfMeasurement
 import khome.values.UserId
+import khome.values.XYColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.inject
@@ -256,6 +275,7 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<LocalDateTime, String>(LocalDateTimeAdapter())
     registerTypeAdapter<LocalDate, String>(LocalDateAdapter())
     registerTypeAdapter<LocalTime, String>(LocalTimeAdapter())
+    registerTypeAdapter<Regex, String>(RegexTypeAdapter())
     registerTypeAdapter<EntityId, String>(EntityId)
     registerTypeAdapter<UserId, String>(UserId)
     registerTypeAdapter<Temperature, Double>(Temperature)
@@ -263,4 +283,22 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<ObjectId, String>(ObjectId)
     registerTypeAdapter<Service, String>(Service)
     registerTypeAdapter<Device, String>(Device)
+    registerTypeAdapter<Brightness, String>(Brightness)
+    registerTypeAdapter<RGBColor, Array<Int>>(RGBColor)
+    registerTypeAdapter<HSColor, Array<Double>>(HSColor)
+    registerTypeAdapter<XYColor, Array<Double>>(XYColor)
+    registerTypeAdapter<ColorTemperature, Int>(ColorTemperature)
+    registerTypeAdapter<PowerConsumption, Double>(PowerConsumption)
+    registerTypeAdapter<Icon, String>(Icon)
+    registerTypeAdapter<PresetMode, String>(PresetMode)
+    registerTypeAdapter<HvacMode, String>(HvacMode)
+    registerTypeAdapter<FriendlyName, String>(FriendlyName)
+    registerTypeAdapter<Option, String>(Option)
+    registerTypeAdapter<Mode, String>(Mode)
+    registerTypeAdapter<Min, Double>(Min)
+    registerTypeAdapter<Max, Double>(Max)
+    registerTypeAdapter<Step, Double>(Step)
+    registerTypeAdapter<Initial, Double>(Initial)
+    registerTypeAdapter<UnitOfMeasurement, String>(UnitOfMeasurement)
+    registerTypeAdapter<PersonId, String>(PersonId)
 }

@@ -6,6 +6,7 @@ import khome.entities.devices.Sensor
 import khome.extending.entities.SwitchableState
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.sensors.measurementValueChangedFrom
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import java.time.Instant
@@ -17,7 +18,7 @@ fun KhomeApplication.MotionSensor(objectId: ObjectId): MotionSensor = BinarySens
 
 data class MotionSensorAttributes(
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

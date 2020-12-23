@@ -16,6 +16,7 @@ import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PLAYING
 import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.UNAVAILABLE
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import khome.values.service
@@ -150,7 +151,7 @@ data class MediaReceiverAttributes(
     val appName: String?,
     val entityPicture: String,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

@@ -4,6 +4,7 @@ import khome.KhomeApplication
 import khome.entities.Attributes
 import khome.entities.devices.Sensor
 import khome.extending.entities.SwitchableState
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import java.time.Instant
@@ -18,7 +19,7 @@ data class DayTimeAttributes(
     val before: Instant,
     val nextUpdate: Instant,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

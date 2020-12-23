@@ -10,7 +10,12 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.Brightness
+import khome.values.ColorName
+import khome.values.HSColor
 import khome.values.ObjectId
+import khome.values.RGBColor
+import khome.values.XYColor
 import khome.values.service
 
 typealias RGBLight = Actuator<RGBLightState, LightAttributes>
@@ -68,18 +73,18 @@ fun KhomeApplication.RGBLight(objectId: ObjectId): RGBLight =
     })
 
 data class RGBLightServiceData(
-    private val brightness: Int? = null,
-    private val hsColor: List<Double>? = null,
-    private val rgbColor: List<Int>? = null,
-    private val xyColor: List<Double>? = null
+    private val brightness: Brightness? = null,
+    private val hsColor: HSColor? = null,
+    private val rgbColor: RGBColor? = null,
+    private val xyColor: XYColor? = null
 ) : DesiredServiceData()
 
 data class RGBLightState(
     override val value: SwitchableValue,
-    val brightness: Int? = null,
-    val hsColor: List<Double>? = null,
-    val rgbColor: List<Int>? = null,
-    val xyColor: List<Double>? = null
+    val brightness: Brightness? = null,
+    val hsColor: HSColor? = null,
+    val rgbColor: RGBColor? = null,
+    val xyColor: XYColor? = null
 ) : State<SwitchableValue>
 
 val RGBLight.isOn
@@ -96,23 +101,23 @@ fun RGBLight.turnOff() {
     desiredState = RGBLightState(SwitchableValue.OFF)
 }
 
-fun RGBLight.setBrightness(level: Int) {
+fun RGBLight.setBrightness(level: Brightness) {
     desiredState = RGBLightState(SwitchableValue.ON, level)
 }
 
 fun RGBLight.setRGB(red: Int, green: Int, blue: Int) {
-    desiredState = RGBLightState(SwitchableValue.ON, rgbColor = listOf(red, green, blue))
+    desiredState = RGBLightState(SwitchableValue.ON, rgbColor = RGBColor.from(red, green, blue))
 }
 
 fun RGBLight.setHS(hue: Double, saturation: Double) {
-    desiredState = RGBLightState(SwitchableValue.ON, hsColor = listOf(hue, saturation))
+    desiredState = RGBLightState(SwitchableValue.ON, hsColor = HSColor.from(hue, saturation))
 }
 
 fun RGBLight.setXY(x: Double, y: Double) {
-    desiredState = RGBLightState(SwitchableValue.ON, xyColor = listOf(x, y))
+    desiredState = RGBLightState(SwitchableValue.ON, xyColor = XYColor.from(x, y))
 }
 
-fun RGBLight.setColor(name: String) =
+fun RGBLight.setColor(name: ColorName) =
     callService("turn_on".service, NamedColorServiceData(name))
 
 fun RGBLight.onTurnedOn(f: RGBLight.(Switchable) -> Unit) =

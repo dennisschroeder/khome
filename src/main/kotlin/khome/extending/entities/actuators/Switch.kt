@@ -8,7 +8,9 @@ import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
 import khome.extending.entities.SwitchableState
 import khome.extending.entities.mapSwitchable
+import khome.values.FriendlyName
 import khome.values.ObjectId
+import khome.values.PowerConsumption
 import khome.values.UserId
 import khome.values.domain
 import java.time.Instant
@@ -23,12 +25,12 @@ inline fun <reified A : Attributes> KhomeApplication.Switch(objectId: ObjectId):
     })
 
 @Suppress("FunctionName")
-fun KhomeApplication.PowerSwitch(objectId: ObjectId): PowerSwitch = Switch(objectId)
+fun KhomeApplication.PowerMeasuringSwitch(objectId: ObjectId): PowerSwitch = Switch(objectId)
 
 data class PowerSwitchAttributes(
-    val powerConsumption: Double,
+    val powerConsumption: PowerConsumption,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

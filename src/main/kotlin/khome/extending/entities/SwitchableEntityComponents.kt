@@ -5,6 +5,7 @@ import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.EntityIdOnlyServiceData
 import khome.entities.Attributes
 import khome.entities.State
+import khome.values.FriendlyName
 import khome.values.UserId
 import khome.values.service
 import java.time.Instant
@@ -24,7 +25,7 @@ enum class SwitchableValue {
 
 data class DefaultAttributes(
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

@@ -9,6 +9,7 @@ import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
 import khome.values.EntityId
+import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
 import khome.values.domain
@@ -37,7 +38,7 @@ data class InputDateAttributes(
     val month: Int,
     val day: Int,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

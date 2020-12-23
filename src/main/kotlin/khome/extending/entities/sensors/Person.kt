@@ -7,7 +7,9 @@ import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
+import khome.values.FriendlyName
 import khome.values.ObjectId
+import khome.values.PersonId
 import khome.values.UserId
 import khome.values.domain
 import java.time.Instant
@@ -30,9 +32,9 @@ enum class PersonStateValue {
 
 data class PersonAttributes(
     val source: EntityId,
-    val id: String,
+    val id: PersonId,
     override val userId: UserId?,
-    override val friendlyName: String,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

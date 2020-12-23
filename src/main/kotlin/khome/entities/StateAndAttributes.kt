@@ -1,5 +1,6 @@
 package khome.entities
 
+import khome.values.FriendlyName
 import khome.values.UserId
 import java.time.Instant
 
@@ -23,5 +24,5 @@ interface Attributes {
     val userId: UserId?
     val lastChanged: Instant
     val lastUpdated: Instant
-    val friendlyName: String
+    val friendlyName: FriendlyName
 }
