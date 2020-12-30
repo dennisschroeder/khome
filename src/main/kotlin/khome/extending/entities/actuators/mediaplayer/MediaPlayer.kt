@@ -17,7 +17,3 @@ inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Media
     objectId: ObjectId,
     serviceCommandResolver: ServiceCommandResolver<S>
 ): MediaPlayer<S, A> = Actuator(EntityId.fromPair("media_player".domain to objectId), serviceCommandResolver)
-
-enum class MediaPlayerService {
-    VOLUME_MUTE, VOLUME_SET, SELECT_SOURCE, MEDIA_PLAY, MEDIA_PAUSE, SEEK_POSITION
-}

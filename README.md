@@ -12,13 +12,13 @@ Simple Example:
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
-val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion".objectId)
+val LivingRoomMainLight = KHOME.RGBWLight("livingRoom_main_light".objectId)
 
 fun main() {
     LivingRoomMotion.attachObserver { //this: Sensor<SwitchableState,MotionSensorAttributes>
         if (measurement.value == SwitchableValue.ON) {
-            LivingRoomMainLight.desiredState = SwitchableState(ON)
+            LivingRoomMainLight.desiredState = RGBWLightState(ON, colorTemp = 5000.kelvin)
         }
     }
 
@@ -35,12 +35,12 @@ To achieve the same result than shown above, we can also use Khomes higher-level
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
-val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion".objectId)
+val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light".objectId)
 
 fun main() {
     LivingRoomMotion.onMotionAlarm { //this: MotionSensor
-        LivingRoomMainLight.turnOn()
+        LivingRoomMainLight.setColorTemperature(5000.kelvin)
     }
 
     KHOME.runBlocking()

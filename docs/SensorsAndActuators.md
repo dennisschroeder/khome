@@ -16,7 +16,7 @@ A sensor fulfills 2 purposes:
 ```kotlin
 val KHOME = khomeApplication()
 
-val BedRoomTemperature = KHOME.TemperatureSensor("bedroom_temperature")
+val BedRoomTemperature = KHOME.TemperatureSensor("bedroom_temperature".objectId)
 
 fun main() {
     BedRoomTemperature.attachObserver { snapshot, _ ->
@@ -33,7 +33,7 @@ fun main() {
 ```kotlin
 val KHOME = khomeApplication()
 
-val BedRoomTemperature = KHOME.TemperatureSensor("bedroom_temperature")
+val BedRoomTemperature = KHOME.TemperatureSensor("bedroom_temperature".objectId)
 
 fun main() {
     if (BedRoomTemperature.measurement.value > 30.0) {
@@ -63,7 +63,7 @@ An actuator fulfills 3 purposes:
 ```kotlin
 val KHOME = khomeApplication()
 
-val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
+val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1".objectId)
 
 fun main() {
     BedRoomCoverOne.attachObserver {
@@ -80,7 +80,7 @@ fun main() {
 ```kotlin
 val KHOME = khomeApplication()
 
-val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
+val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1".objectId)
 
 fun main() {
     if (BedRoomCoverOne.actualState.position > 30) {
@@ -97,7 +97,7 @@ fun main() {
 val KHOME = khomeApplication()
 
 val Sun = KHOME.Sun()
-val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
+val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1".objectId)
 
 fun main() {
     Sun.attachObserver { //this:Sensor<SunState,SunAttributes>
@@ -126,13 +126,13 @@ service from the cover domain in home assistant, to prevent opening/closing.
 ```kotlin
 val KHOME = khomeApplication()
 
-val CoverLock = KHOME.InputBoolean("cover_lock")
-val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1")
+val CoverLock = KHOME.InputBoolean("cover_lock".objectId)
+val BedRoomCoverOne = KHOME.PositionableCover("bedroom_cover_1".objectId)
 
 fun main() {
     BedRoomCoverOne.attachObserver { // this: Actuator<CoverState,PositionalCoverAttributes>
         if (attributes.working == YES && CoverLock.actualState.value == ON) {
-            BedRoomCoverOne.callService("stop_cover")
+            BedRoomCoverOne.callService("stop_cover".service)
         }
     }
 
@@ -154,11 +154,11 @@ Let's take a look at a simple example from the InputBoolean entity:
 ServiceCommandResolver { desiredState ->
     when (desiredState.value) {
             SwitchableValue.ON -> DefaultResolvedServiceCommand(
-                service = TURN_ON,
+                service = "turn_on".service,
                 serviceData = EntityIdOnlyServiceData()
             )
             SwitchableValue.OFF -> DefaultResolvedServiceCommand(
-                service = TURN_OFF,
+                service = "turn_off".service,
                 serviceData = EntityIdOnlyServiceData()
             )
         }
@@ -181,7 +181,7 @@ data class SwitchableState(
 Last, but not least, the output of our `ServiceCommandResolver` is a [`DefaultResolvedServiceCommand`](../src/main/kotlin/khome/communicating/ServiceCommandResolver.kt).
 ```kotlin
 data class DefaultResolvedServiceCommand(
-    override val service: Enum<*>,
+    override val service: Service,
     override val serviceData: CommandDataWithEntityId
 ) : ResolvedServiceCommand
 ```
@@ -203,22 +203,22 @@ ServiceCommandResolver { desiredState ->
         SwitchableValue.OFF -> {
             desiredState.brightness?.let { brightness ->
                 DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_ON,
+                    service = "turn_on".service,
                     serviceData = DimmableLightServiceData(brightness)
                 )
             } ?: DefaultResolvedServiceCommand(
-                service = ServiceType.TURN_OFF,
+                service = "turn_off".service,
                 serviceData = EntityIdOnlyServiceData()
             )
         }
         SwitchableValue.ON -> {
             desiredState.brightness?.let { brightness ->
                 DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_ON,
+                    service = "turn_on".service,
                     serviceData = DimmableLightServiceData(brightness)
                 )
             } ?: DefaultResolvedServiceCommand(
-                service = ServiceType.TURN_ON,
+                service = "turn_on".service,
                 serviceData = EntityIdOnlyServiceData()
             )
         }

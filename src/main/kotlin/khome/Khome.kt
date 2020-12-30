@@ -49,30 +49,45 @@ import khome.entities.ActuatorStateUpdater
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
 import khome.errorHandling.ErrorResponseData
+import khome.values.AlbumName
+import khome.values.AppId
+import khome.values.AppName
+import khome.values.Artist
+import khome.values.Azimuth
 import khome.values.Brightness
 import khome.values.ColorTemperature
 import khome.values.Device
 import khome.values.Domain
+import khome.values.Elevation
 import khome.values.EntityId
+import khome.values.EventType
 import khome.values.FriendlyName
 import khome.values.HSColor
 import khome.values.HvacMode
 import khome.values.Icon
 import khome.values.Initial
 import khome.values.Max
+import khome.values.MediaContentId
+import khome.values.MediaDuration
+import khome.values.MediaPosition
+import khome.values.MediaSource
+import khome.values.MediaTitle
 import khome.values.Min
 import khome.values.Mode
+import khome.values.Mute
 import khome.values.ObjectId
 import khome.values.Option
 import khome.values.PersonId
 import khome.values.PowerConsumption
 import khome.values.PresetMode
 import khome.values.RGBColor
+import khome.values.Rising
 import khome.values.Service
 import khome.values.Step
 import khome.values.Temperature
 import khome.values.UnitOfMeasurement
 import khome.values.UserId
+import khome.values.VolumeLevel
 import khome.values.XYColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -301,4 +316,19 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<Initial, Double>(Initial)
     registerTypeAdapter<UnitOfMeasurement, String>(UnitOfMeasurement)
     registerTypeAdapter<PersonId, String>(PersonId)
+    registerTypeAdapter<Azimuth, Double>(Azimuth)
+    registerTypeAdapter<Elevation, Double>(Elevation)
+    registerTypeAdapter<EventType, String>(EventType)
+    registerTypeAdapter<MediaContentId, String>(MediaContentId)
+    registerTypeAdapter<MediaTitle, String>(MediaTitle)
+    registerTypeAdapter<Artist, String>(Artist)
+    registerTypeAdapter<AlbumName, String>(AlbumName)
+    registerTypeAdapter<MediaDuration, Double>(MediaDuration)
+    registerTypeAdapter<AppId, String>(AppId)
+    registerTypeAdapter<AppName, String>(AppName)
+    registerTypeAdapter<VolumeLevel, Double>(VolumeLevel)
+    registerTypeAdapter<Mute, Boolean>(Mute)
+    registerTypeAdapter<MediaPosition, Double>(MediaPosition)
+    registerTypeAdapter<MediaSource, String>(MediaSource)
+    registerTypeAdapter<Rising, Boolean>(Rising)
 }

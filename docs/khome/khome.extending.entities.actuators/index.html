@@ -1,0 +1,244 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.extending.entities.actuators - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.extending.entities.actuators</a><br/>
+<br/>
+<h2>Package khome.extending.entities.actuators</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-positionable-cover.html">PositionableCover</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">PositionableCover</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="-positionable-cover-state/index.html"><span class="identifier">PositionableCoverState</span></a><span class="symbol">,</span>&nbsp;<a href="-positionable-cover-attributes/index.html"><span class="identifier">PositionableCoverAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-positionable-cover-attributes/index.html">PositionableCoverAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PositionableCoverAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-positionable-cover-service-data/index.html">PositionableCoverServiceData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PositionableCoverServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-desired-service-data/index.html"><span class="identifier">DesiredServiceData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-positionable-cover-state/index.html">PositionableCoverState</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PositionableCoverState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="-positionable-cover-value/index.html"><span class="identifier">PositionableCoverValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-positionable-cover-value/index.html">PositionableCoverValue</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PositionableCoverValue</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-power-switch.html">PowerSwitch</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">PowerSwitch</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="-switch.html"><span class="identifier">Switch</span></a><span class="symbol">&lt;</span><a href="-power-switch-attributes/index.html"><span class="identifier">PowerSwitchAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-power-switch-attributes/index.html">PowerSwitchAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PowerSwitchAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-switch.html">Switch</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">Switch</span><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-working/index.html">Working</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">Working</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="is-closed.html">isClosed</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">isClosed</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-off.html">isOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">isOff</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-on.html">isOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">isOn</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-open.html">isOpen</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">isOpen</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-working.html">isWorking</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">isWorking</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="call-service.html">callService</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">callService</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$callService(khome.entities.devices.Actuator((khome.extending.entities.actuators.callService.S, khome.extending.entities.actuators.callService.A)), khome.values.Service, khome.communicating.CommandDataWithEntityId)/service">service</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-service/index.html"><span class="identifier">Service</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.entities.actuators$callService(khome.entities.devices.Actuator((khome.extending.entities.actuators.callService.S, khome.extending.entities.actuators.callService.A)), khome.values.Service, khome.communicating.CommandDataWithEntityId)/parameterBag">parameterBag</span><span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-command-data-with-entity-id/index.html"><span class="identifier">CommandDataWithEntityId</span></a>&nbsp;<span class="symbol">=</span>&nbsp;EntityIdOnlyServiceData()<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="close.html">close</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">close</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-cover.html">Cover</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">Cover</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$Cover(khome.KhomeApplication, khome.values.ObjectId, khome.communicating.ServiceCommandResolver((khome.extending.entities.actuators.Cover.S)))/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.entities.actuators$Cover(khome.KhomeApplication, khome.values.ObjectId, khome.communicating.ServiceCommandResolver((khome.extending.entities.actuators.Cover.S)))/serviceCommandResolver">serviceCommandResolver</span><span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-service-command-resolver/index.html"><span class="identifier">ServiceCommandResolver</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-closed.html">onClosed</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">onClosed</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onClosed(khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-opened.html">onOpened</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">onOpened</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onOpened(khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-start-working.html">onStartWorking</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">onStartWorking</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onStartWorking(khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Function1((khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-stop-working.html">onStopWorking</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">onStopWorking</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onStopWorking(khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Function1((khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-turned-off.html">onTurnedOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">onTurnedOff</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onTurnedOff(khome.entities.devices.Actuator((khome.extending.entities.SwitchableState, khome.extending.entities.actuators.onTurnedOff.A)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.SwitchableState, khome.extending.entities.actuators.onTurnedOff.A)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-turned-on.html">onTurnedOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">onTurnedOn</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$onTurnedOn(khome.entities.devices.Actuator((khome.extending.entities.SwitchableState, khome.extending.entities.actuators.onTurnedOn.A)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.SwitchableState, khome.extending.entities.actuators.onTurnedOn.A)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="open.html">open</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">open</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-positionable-cover.html">PositionableCover</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">PositionableCover</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$PositionableCover(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-power-measuring-switch.html">PowerMeasuringSwitch</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">PowerMeasuringSwitch</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$PowerMeasuringSwitch(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-power-switch.html"><span class="identifier">PowerSwitch</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-cover-position.html">setCoverPosition</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-positionable-cover.html"><span class="identifier">PositionableCover</span></a><span class="symbol">.</span><span class="identifier">setCoverPosition</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$setCoverPosition(khome.entities.devices.Actuator((khome.extending.entities.actuators.PositionableCoverState, khome.extending.entities.actuators.PositionableCoverAttributes)), kotlin.Int)/position">position</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="state-value-changed-from.html">stateValueChangedFrom</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">, </span><span class="identifier">SV</span><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">stateValueChangedFrom</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$stateValueChangedFrom(khome.entities.devices.Actuator((khome.extending.entities.actuators.stateValueChangedFrom.S, khome.extending.entities.actuators.stateValueChangedFrom.A)), kotlin.Pair((khome.extending.entities.actuators.stateValueChangedFrom.SV, )))/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><span class="identifier">SV</span><span class="symbol">,</span>&nbsp;<span class="identifier">SV</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-switch.html">Switch</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">Switch</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators$Switch(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-switch.html"><span class="identifier">Switch</span></a><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-off.html">turnOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-on.html">turnOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

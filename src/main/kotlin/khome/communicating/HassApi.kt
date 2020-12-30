@@ -12,6 +12,7 @@ import khome.core.clients.RestApiClient
 import khome.core.mapping.ObjectMapperInterface
 import khome.values.Domain
 import khome.values.EntityId
+import khome.values.EventType
 import khome.values.Service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -48,7 +49,7 @@ internal interface HassApiCommand {
     var id: Int?
 }
 
-internal class SubscribeEventCommand(private val eventType: String) : HassApiCommand {
+internal class SubscribeEventCommand(private val eventType: EventType) : HassApiCommand {
     override val type: CommandType = SUBSCRIBE_EVENTS
     override var id: Int? = null
 }

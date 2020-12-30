@@ -3,11 +3,15 @@ package khome.extending.entities.sensors
 import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
+import khome.observability.Switchable
+import khome.values.Azimuth
+import khome.values.Elevation
+import khome.values.EntityId
 import khome.values.FriendlyName
+import khome.values.Rising
 import khome.values.UserId
 import khome.values.domain
 import khome.values.objectId
@@ -36,9 +40,9 @@ data class SunAttributes(
     val next_noon: Instant,
     val next_rising: Instant,
     val next_setting: Instant,
-    val elevation: Double,
-    val azimuth: Double,
-    val rising: Boolean,
+    val elevation: Elevation,
+    val azimuth: Azimuth,
+    val rising: Rising,
     override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
@@ -51,18 +55,11 @@ val Sun.isAboveHorizon
 val Sun.isBelowHorizon
     get() = measurement.value == SunValue.BELOW_HORIZON
 
-fun Sun.onSunrise(
-    f: Sun.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON))
-            f(this)
-    }
+val Sun.isRising
+    get() = attributes.rising == Rising.TRUE
 
-fun Sun.onSunset(
-    f: Sun.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON))
-            f(this)
-    }
+fun Sun.onSunrise(f: Sun.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(SunValue.BELOW_HORIZON to SunValue.ABOVE_HORIZON, f)
+
+fun Sun.onSunset(f: Sun.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(SunValue.ABOVE_HORIZON to SunValue.BELOW_HORIZON, f)

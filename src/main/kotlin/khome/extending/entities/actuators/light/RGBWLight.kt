@@ -8,6 +8,7 @@ import khome.communicating.ServiceCommandResolver
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.SwitchableValue
+import khome.extending.entities.actuators.onStateValueChangedFrom
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
 import khome.values.Brightness
@@ -139,13 +140,7 @@ fun RGBWLight.setColor(name: ColorName) {
 }
 
 fun RGBWLight.onTurnedOn(f: RGBWLight.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, it)
-    }
+    onStateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON, f)
 
 fun RGBWLight.onTurnedOff(f: RGBWLight.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this, it)
-    }
+    onStateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF, f)

@@ -20,3 +20,6 @@ data class Domain private constructor(val value: String) {
 
 val String.domain
     get() = Domain.from(this)
+
+val Enum<*>.domain
+    get() = Domain.from(this.name)

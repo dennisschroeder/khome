@@ -47,7 +47,7 @@ Khome supports mobile phone notifications with the `KhomeApplication::notifyMobi
 val KHOME = khomeApplication()
 
 KHOME.notifyMobileApp(
-    device = "mobile_app_myDevice", 
+    device = "mobile_app_myDevice".device, 
     title = "New message for you", 
     message = "This is a notification"
 )
@@ -63,7 +63,7 @@ enum class MobilePhones {
 }
 
 KHOME.notifyMobileApp(
-    device = MobilePhones.MY_DEVICE, 
+    device = MobilePhones.MY_DEVICE.device, 
     title = "New message for you", 
     message = "This is a notification"
 )
@@ -96,7 +96,7 @@ A thumbnail is shown on the notification preview and the full size attachment is
 #### Static Attachments
 [Companion App Documentation](https://companion.home-assistant.io/docs/notifications/notification-attachments)
 ```kotlin
-KHOME.notifyMobileApp(MobilePhones.MY_DEVICE) {
+KHOME.notifyMobileApp(MobilePhones.MY_DEVICE.device) {
     title = "New message for you"
     message = "This is a notification"
     
@@ -116,7 +116,7 @@ You can also attach dynamic content such as a map or a camera stream.
 
 ##### Map:
 ```kotlin
-KHOME.notifyMobileApp(MobilePhones.MY_DEVICE) {
+KHOME.notifyMobileApp(MobilePhones.MY_DEVICE.device) {
     title = "New message for you"
     message = "This is a notification"
     
@@ -137,7 +137,7 @@ for all options.
 ##### Camera stream:
 
 ```kotlin
-KHOME.notifyMobileApp(MobilePhones.MY_DEVICE) {
+KHOME.notifyMobileApp(MobilePhones.MY_DEVICE.device) {
     title = "New message for you"
     message = "This is a notification"
     attachement()
@@ -166,7 +166,7 @@ Check out all the details at the [companion app documentation](https://companion
 An actionable notification in Khome just looks like this:
 
 ```kotlin
-KHOME.notifyMobileApp(MobilePhones.MY_DEVICE) {
+KHOME.notifyMobileApp(MobilePhones.MY_DEVICE.device) {
     title = "New message for you"
     message = "This is a notification"
 
@@ -199,8 +199,8 @@ You can also pass several device ids to all the mobile app functions, to send me
 
 ```kotlin
 KHOME.notifyMobileApp(
-    MobilePhones.MY_DEVICE,
-    MobilePhones.Another_Device, 
+    MobilePhones.MY_DEVICE.device,
+    MobilePhones.Another_Device.device, 
     title = "New message for you", 
     message = "This is a notification"
 )

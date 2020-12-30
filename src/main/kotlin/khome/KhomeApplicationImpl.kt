@@ -16,7 +16,6 @@ import khome.core.koin.KoinContainer
 import khome.core.mapping.ObjectMapperInterface
 import khome.entities.ActuatorStateUpdater
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.EntityRegistrationValidation
 import khome.entities.SensorStateUpdater
 import khome.entities.State
@@ -31,6 +30,8 @@ import khome.observability.Switchable
 import khome.testing.KhomeTestApplication
 import khome.testing.KhomeTestApplicationImpl
 import khome.values.Domain
+import khome.values.EntityId
+import khome.values.EventType
 import khome.values.Service
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -39,13 +40,12 @@ import mu.KotlinLogging
 import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
 import kotlin.collections.set
-import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 internal typealias SensorsByApiName = MutableMap<EntityId, SensorImpl<*, *>>
 internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
-internal typealias EventHandlerByEventType = MutableMap<String, EventSubscription<*>>
+internal typealias EventHandlerByEventType = MutableMap<EventType, EventSubscription<*>>
 internal typealias HassAPiCommandHistory = MutableMap<EntityId, ServiceCommandImpl<CommandDataWithEntityId>>
 
 @OptIn(
@@ -107,10 +107,9 @@ internal class KhomeApplicationImpl : KhomeApplication {
 
     @Suppress("UNCHECKED_CAST")
     override fun <ED> attachEventHandler(
-        eventType: String,
+        eventType: EventType,
         eventDataType: KClass<*>,
-        eventHandler: EventHandlerFunction<ED>,
-        context: CoroutineContext
+        eventHandler: EventHandlerFunction<ED>
     ): Switchable =
         eventSubscriptionsByEventType[eventType]?.attachEventHandler(
             eventHandler as EventHandlerFunction<Any?>
@@ -150,7 +149,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
         logger.info { "Registered Actuator with id: $entityId" }
     }
 
-    private fun <ED> registerEventSubscription(eventType: String, eventDataType: KClass<*>) =
+    private fun <ED> registerEventSubscription(eventType: EventType, eventDataType: KClass<*>) =
         EventSubscription<ED>(this, mapper, eventDataType).also { eventSubscriptionsByEventType[eventType] = it }
 
     internal fun <S : State<*>, SA : Attributes> enqueueStateChange(

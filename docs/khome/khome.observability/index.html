@@ -13,13 +13,6 @@
 <tbody>
 <tr>
 <td>
-<h4><a href="-async-observer-function.html">AsyncObserverFunction</a></h4>
-</td>
-<td>
-<code><span class="keyword">typealias </span><span class="identifier">AsyncObserverFunction</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="keyword">suspend </span><span class="identifier">CoroutineScope</span><span class="symbol">.</span><span class="symbol">(</span><span class="identifier">snapshot</span><span class="symbol">:</span>&nbsp;<a href="-history-snapshot.html"><span class="identifier">HistorySnapshot</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">,</span>&nbsp;<span class="identifier">H</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">switchable</span><span class="symbol">:</span>&nbsp;<a href="-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
 <h4><a href="-history-snapshot.html">HistorySnapshot</a></h4>
 </td>
 <td>
@@ -31,14 +24,14 @@
 <h4><a href="-observable/index.html">Observable</a></h4>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">Observable</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">Observable</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <h4><a href="-observer-function.html">ObserverFunction</a></h4>
 </td>
 <td>
-<code><span class="keyword">typealias </span><span class="identifier">ObserverFunction</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">H</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><span class="identifier">snapshot</span><span class="symbol">:</span>&nbsp;<a href="-history-snapshot.html"><span class="identifier">HistorySnapshot</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">,</span>&nbsp;<span class="identifier">H</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">observer</span><span class="symbol">:</span>&nbsp;<a href="-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">typealias </span><span class="identifier">ObserverFunction</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="identifier">E</span><span class="symbol">.</span><span class="symbol">(</span><span class="identifier">observer</span><span class="symbol">:</span>&nbsp;<a href="-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

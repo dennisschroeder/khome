@@ -8,11 +8,17 @@ import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
 import khome.entities.State
 import khome.extending.entities.SwitchableValue
-import khome.extending.entities.actuators.stateValueChangedFrom
+import khome.extending.entities.actuators.onStateValueChangedFrom
 import khome.observability.Switchable
 import khome.values.FriendlyName
+import khome.values.MediaContentId
+import khome.values.MediaContentType
+import khome.values.MediaSource
+import khome.values.MediaTitle
+import khome.values.Mute
 import khome.values.ObjectId
 import khome.values.UserId
+import khome.values.VolumeLevel
 import khome.values.service
 import java.time.Instant
 
@@ -63,15 +69,15 @@ fun KhomeApplication.Television(objectId: ObjectId): Television =
 
 data class TelevisionState(
     override val value: SwitchableValue,
-    val volumeLevel: Double? = null,
-    val isVolumeMuted: Boolean? = null,
-    val source: String? = null
+    val volumeLevel: VolumeLevel? = null,
+    val isVolumeMuted: Mute? = null,
+    val source: MediaSource? = null
 ) : State<SwitchableValue>
 
 data class TelevisionAttributes(
-    val mediaContentId: String,
-    val mediaTitle: String,
-    val mediaContentType: String,
+    val mediaContentId: MediaContentId,
+    val mediaTitle: MediaTitle,
+    val mediaContentType: MediaContentType,
     override val userId: UserId?,
     override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
@@ -79,9 +85,9 @@ data class TelevisionAttributes(
 ) : Attributes
 
 data class TelevisionDesiredServiceData(
-    val isVolumeMuted: Boolean? = null,
-    val volumeLevel: Double? = null,
-    val source: String? = null
+    val isVolumeMuted: Mute? = null,
+    val volumeLevel: VolumeLevel? = null,
+    val source: MediaSource? = null
 ) : DesiredServiceData()
 
 val Television.isOn
@@ -91,7 +97,7 @@ val Television.isOff
     get() = actualState.value == SwitchableValue.OFF
 
 val Television.isMuted
-    get() = actualState.isVolumeMuted == true
+    get() = actualState.isVolumeMuted == Mute.TRUE
 
 fun Television.turnOn() {
     desiredState = TelevisionState(value = SwitchableValue.ON)
@@ -101,30 +107,24 @@ fun Television.turnOff() {
     desiredState = TelevisionState(value = SwitchableValue.OFF)
 }
 
-fun Television.setVolumeTo(level: Double) {
+fun Television.setVolumeTo(level: VolumeLevel) {
     desiredState = TelevisionState(value = SwitchableValue.ON, volumeLevel = level)
 }
 
 fun Television.muteVolume() {
-    desiredState = TelevisionState(value = SwitchableValue.ON, isVolumeMuted = true)
+    desiredState = TelevisionState(value = SwitchableValue.ON, isVolumeMuted = Mute.TRUE)
 }
 
 fun Television.unMuteVolume() {
-    desiredState = TelevisionState(value = SwitchableValue.ON, isVolumeMuted = false)
+    desiredState = TelevisionState(value = SwitchableValue.ON, isVolumeMuted = Mute.FALSE)
 }
 
-fun Television.setSource(source: String) {
+fun Television.setSource(source: MediaSource) {
     desiredState = TelevisionState(value = SwitchableValue.ON, source = source)
 }
 
 fun Television.onTurnedOn(f: Television.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, it)
-    }
+    onStateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON, f)
 
 fun Television.onTurnedOff(f: Television.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this, it)
-    }
+    onStateValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF, f)

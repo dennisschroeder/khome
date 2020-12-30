@@ -1,0 +1,153 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.extending.entities.sensors.binary - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.extending.entities.sensors.binary</a><br/>
+<br/>
+<h2>Package khome.extending.entities.sensors.binary</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-contact-attributes/index.html">ContactAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ContactAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-contact-sensor.html">ContactSensor</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">ContactSensor</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-sensor/index.html"><span class="identifier">Sensor</span></a><span class="symbol">&lt;</span><a href="-contact-state/index.html"><span class="identifier">ContactState</span></a><span class="symbol">,</span>&nbsp;<a href="-contact-attributes/index.html"><span class="identifier">ContactAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-contact-state/index.html">ContactState</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ContactState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="-contact-state-value/index.html"><span class="identifier">ContactStateValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-contact-state-value/index.html">ContactStateValue</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ContactStateValue</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-day-time.html">DayTime</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">DayTime</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-sensor/index.html"><span class="identifier">Sensor</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<a href="-day-time-attributes/index.html"><span class="identifier">DayTimeAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-day-time-attributes/index.html">DayTimeAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">DayTimeAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-motion-sensor.html">MotionSensor</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">MotionSensor</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-sensor/index.html"><span class="identifier">Sensor</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-state/index.html"><span class="identifier">SwitchableState</span></a><span class="symbol">,</span>&nbsp;<a href="-motion-sensor-attributes/index.html"><span class="identifier">MotionSensorAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-motion-sensor-attributes/index.html">MotionSensorAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MotionSensorAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="is-closed.html">isClosed</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="identifier">isClosed</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-open.html">isOpen</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="identifier">isOpen</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-binary-sensor.html">BinarySensor</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">BinarySensor</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$BinarySensor(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.entities.devices/-sensor/index.html"><span class="identifier">Sensor</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-contact-sensor.html">ContactSensor</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">ContactSensor</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$ContactSensor(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-day-time.html">DayTime</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">DayTime</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$DayTime(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-day-time.html"><span class="identifier">DayTime</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-motion-sensor.html">MotionSensor</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">MotionSensor</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$MotionSensor(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-motion-sensor.html"><span class="identifier">MotionSensor</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-closed.html">onClosed</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="identifier">onClosed</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$onClosed(khome.entities.devices.Sensor((khome.extending.entities.sensors.binary.ContactState, khome.extending.entities.sensors.binary.ContactAttributes)), kotlin.Function1((khome.entities.devices.Sensor((khome.extending.entities.sensors.binary.ContactState, khome.extending.entities.sensors.binary.ContactAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-motion-alarm.html">onMotionAlarm</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-motion-sensor.html"><span class="identifier">MotionSensor</span></a><span class="symbol">.</span><span class="identifier">onMotionAlarm</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$onMotionAlarm(khome.entities.devices.Sensor((khome.extending.entities.SwitchableState, khome.extending.entities.sensors.binary.MotionSensorAttributes)), kotlin.Function1((khome.entities.devices.Sensor((khome.extending.entities.SwitchableState, khome.extending.entities.sensors.binary.MotionSensorAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-motion-sensor.html"><span class="identifier">MotionSensor</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-motion-alarm-cleared.html">onMotionAlarmCleared</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-motion-sensor.html"><span class="identifier">MotionSensor</span></a><span class="symbol">.</span><span class="identifier">onMotionAlarmCleared</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$onMotionAlarmCleared(khome.entities.devices.Sensor((khome.extending.entities.SwitchableState, khome.extending.entities.sensors.binary.MotionSensorAttributes)), kotlin.Function1((khome.entities.devices.Sensor((khome.extending.entities.SwitchableState, khome.extending.entities.sensors.binary.MotionSensorAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-motion-sensor.html"><span class="identifier">MotionSensor</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-opened.html">onOpened</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="identifier">onOpened</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.sensors.binary$onOpened(khome.entities.devices.Sensor((khome.extending.entities.sensors.binary.ContactState, khome.extending.entities.sensors.binary.ContactAttributes)), kotlin.Function1((khome.entities.devices.Sensor((khome.extending.entities.sensors.binary.ContactState, khome.extending.entities.sensors.binary.ContactAttributes)), kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-contact-sensor.html"><span class="identifier">ContactSensor</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

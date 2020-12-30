@@ -20,6 +20,7 @@ import khome.entities.ActuatorStateUpdater
 import khome.entities.SensorStateUpdater
 import khome.errorHandling.ErrorResponseData
 import khome.errorHandling.ErrorResponseHandlerImpl
+import khome.values.EventType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -88,10 +89,10 @@ internal class EventResponseConsumerImpl(
 
     private fun handleEventResponse(frameText: Frame.Text) {
         mapFrameTextToResponse<EventResponse>(frameText)
-            .takeIf { it.event.eventType in eventHandlerByEventType }
+            .takeIf { EventType.from(it.event.eventType) in eventHandlerByEventType }
             ?.let { eventResponse ->
                 logger.debug { "Event response: $eventResponse" }
-                eventHandlerByEventType[eventResponse.event.eventType]
+                eventHandlerByEventType[EventType.from(eventResponse.event.eventType)]
                     ?.invokeEventHandler(eventResponse.event.data)
                     ?: logger.warn { "No event found for event type: ${eventResponse.event.eventType}" }
             }

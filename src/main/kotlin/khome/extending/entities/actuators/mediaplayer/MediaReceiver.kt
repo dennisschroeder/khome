@@ -8,17 +8,30 @@ import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
 import khome.entities.State
-import khome.extending.entities.SwitchableValue
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.IDLE
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.OFF
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PAUSED
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PLAYING
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.UNAVAILABLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.IDLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.OFF
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.PAUSED
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.PLAYING
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.UNAVAILABLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.UNKNOWN
+import khome.extending.entities.actuators.onStateValueChangedFrom
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
+import khome.values.AlbumName
+import khome.values.AppId
+import khome.values.AppName
+import khome.values.Artist
+import khome.values.EntityPicture
 import khome.values.FriendlyName
+import khome.values.MediaContentId
+import khome.values.MediaContentType
+import khome.values.MediaDuration
+import khome.values.MediaPosition
+import khome.values.MediaTitle
+import khome.values.Mute
 import khome.values.ObjectId
 import khome.values.UserId
+import khome.values.VolumeLevel
 import khome.values.service
 import java.time.Instant
 
@@ -111,18 +124,22 @@ fun KhomeApplication.MediaReceiver(objectId: ObjectId): MediaReceiver =
                 )
             }
 
+            UNKNOWN -> throw IllegalStateException("State cannot be changed to UNKNOWN")
             UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
         }
     })
 
 data class MediaReceiverState(
-    override val value: MediaReceiverValue,
-    val volumeLevel: Double? = null,
-    val isVolumeMuted: Boolean? = null,
-    val mediaPosition: Double? = null
-) : State<MediaReceiverValue>
+    override val value: MediaReceiverStateValue,
+    val volumeLevel: VolumeLevel? = null,
+    val isVolumeMuted: Mute? = null,
+    val mediaPosition: MediaPosition? = null
+) : State<MediaReceiverStateValue>
 
-enum class MediaReceiverValue {
+enum class MediaReceiverStateValue {
+    @SerializedName("unknown")
+    UNKNOWN,
+
     @SerializedName("unavailable")
     UNAVAILABLE,
 
@@ -140,16 +157,16 @@ enum class MediaReceiverValue {
 }
 
 data class MediaReceiverAttributes(
-    val mediaContentId: String?,
-    val mediaTitle: String?,
-    val mediaArtist: String?,
-    val mediaAlbumName: String?,
-    val mediaContentType: String?,
-    val mediaDuration: Double?,
+    val mediaContentId: MediaContentId?,
+    val mediaTitle: MediaTitle?,
+    val mediaArtist: Artist?,
+    val mediaAlbumName: AlbumName?,
+    val mediaContentType: MediaContentType?,
+    val mediaDuration: MediaDuration?,
     val mediaPositionUpdatedAt: Instant?,
-    val appId: String?,
-    val appName: String?,
-    val entityPicture: String,
+    val appId: AppId?,
+    val appName: AppName?,
+    val entityPicture: EntityPicture,
     override val userId: UserId?,
     override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
@@ -157,9 +174,9 @@ data class MediaReceiverAttributes(
 ) : Attributes
 
 data class MediaReceiverDesiredServiceData(
-    val isVolumeMuted: Boolean? = null,
-    val volumeLevel: Double? = null,
-    val seekPosition: Double? = null
+    val isVolumeMuted: Mute? = null,
+    val volumeLevel: VolumeLevel? = null,
+    val seekPosition: MediaPosition? = null
 ) : DesiredServiceData()
 
 val MediaReceiver.isOff
@@ -193,7 +210,7 @@ fun MediaReceiver.pause() {
     desiredState = MediaReceiverState(value = PAUSED)
 }
 
-fun MediaReceiver.setVolumeTo(level: Double) {
+fun MediaReceiver.setVolumeTo(level: VolumeLevel) {
     if (actualState.value == UNAVAILABLE || actualState.value == OFF)
         throw RuntimeException("Volume can not be set when MediaReceiver is ${actualState.value}")
 
@@ -201,18 +218,15 @@ fun MediaReceiver.setVolumeTo(level: Double) {
 }
 
 fun MediaReceiver.muteVolume() {
-    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = true)
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = Mute.TRUE)
 }
 
 fun MediaReceiver.unMuteVolume() {
-    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = false)
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = Mute.FALSE)
 }
 
 fun MediaReceiver.onPlaybackStarted(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(IDLE to PLAYING))
-            f(this, it)
-    }
+    onStateValueChangedFrom(IDLE to PLAYING, f)
 
 fun MediaReceiver.onPlaybackStopped(f: MediaReceiver.(Switchable) -> Unit) =
     attachObserver {
@@ -226,19 +240,13 @@ fun MediaReceiver.onPlaybackStopped(f: MediaReceiver.(Switchable) -> Unit) =
     }
 
 fun MediaReceiver.onPlaybackPaused(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(PLAYING to PAUSED))
-            f(this, it)
-    }
+    onStateValueChangedFrom(PLAYING to PAUSED, f)
 
 fun MediaReceiver.onPlaybackResumed(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(PAUSED to PLAYING))
-            f(this, it)
-    }
+    onStateValueChangedFrom(PAUSED to PLAYING, f)
 
 fun MediaReceiver.onTurnedOn(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, it)
-    }
+    onStateValueChangedFrom(UNKNOWN to IDLE, f)
+
+fun MediaReceiver.onTurnedOff(f: MediaReceiver.(Switchable) -> Unit) =
+    onStateValueChangedFrom(IDLE to OFF, f)

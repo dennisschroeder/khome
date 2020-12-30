@@ -10,7 +10,7 @@ import khome.entities.Attributes
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.actuators.climate.ClimateControl
-import khome.extending.entities.actuators.stateValueChangedFrom
+import khome.extending.entities.actuators.onStateValueChangedFrom
 import khome.observability.Switchable
 import khome.values.FriendlyName
 import khome.values.HvacMode
@@ -116,13 +116,7 @@ fun Thermostat.setTargetTemperature(temperature: Temperature) {
 fun Thermostat.turnOnBoost() = setPreset("boost".presetMode)
 
 fun Thermostat.onTurnedOn(f: Thermostat.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(ThermostatStateValue.OFF to ThermostatStateValue.HEAT))
-            f(this, it)
-    }
+    onStateValueChangedFrom(ThermostatStateValue.OFF to ThermostatStateValue.HEAT, f)
 
 fun Thermostat.onTurnedOff(f: Thermostat.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(ThermostatStateValue.HEAT to ThermostatStateValue.OFF))
-            f(this, it)
-    }
+    onStateValueChangedFrom(ThermostatStateValue.HEAT to ThermostatStateValue.OFF, f)

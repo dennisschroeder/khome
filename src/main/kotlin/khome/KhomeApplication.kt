@@ -1,7 +1,6 @@
 package khome
 
 import khome.communicating.ServiceCommandResolver
-import khome.core.KhomeDispatchers
 import khome.entities.Attributes
 import khome.entities.State
 import khome.entities.devices.Actuator
@@ -12,8 +11,8 @@ import khome.observability.Switchable
 import khome.testing.KhomeTestApplication
 import khome.values.Domain
 import khome.values.EntityId
+import khome.values.EventType
 import khome.values.Service
-import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 /**
@@ -83,10 +82,9 @@ interface KhomeApplication {
      * Attaches an [EventHandlerFunction] to Khome and starts the home assistant event subscription.
      */
     fun <ED> attachEventHandler(
-        eventType: String,
+        eventType: EventType,
         eventDataType: KClass<*>,
-        eventHandler: EventHandlerFunction<ED>,
-        context: CoroutineContext = KhomeDispatchers.SingleThread
+        eventHandler: EventHandlerFunction<ED>
     ): Switchable
 
     /**

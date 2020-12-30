@@ -11,14 +11,15 @@ used within conditions of automation. See [home assistant documentation](https:/
 
 | Element    | Name | Sourcecode | KDocs |
 |------------|------|------------|-------|
-| Factory    | InputBoolean   |  [Link](../src/main/kotlin/khome/extending/actuators/Helper.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending.actuators/-input-boolean.html)      |
-| State      | SwitchableState     |  [Link](../src/main/kotlin/khome/extending/DeviceStates.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-switchable-state/index.html)      |
-| Attributes | InputBooleanAttributes    |  [Link](../src/main/kotlin/khome/extending/DeviceAttributes.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-boolean-attributes/index.html)      |
+| Factory    | KhomeApplication::InputBoolean   |  [Link](../src/main/kotlin/khome/extending/entities/actuators/inputs/InputBoolean.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending.actuators/-input-boolean.html)      |
+| State      | SwitchableState     |  [Link](../src/main/kotlin/khome/extending/entities/SwitchableEntityComponents.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-switchable-state/index.html)      |
+| StateValue | SwitchableStateValue | [Link](../src/main/kotlin/khome/extending/entities/SwitchableEntityComponents.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-switchable-value/index.html)      |
+| Attributes | InputBooleanAttributes    |  [Link](../src/main/kotlin/khome/extending/entities/actuators/inputs/InputBoolean.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-boolean-attributes/index.html)      |
 
 Example:
 ```kotlin
 val KHOME: KhomeApplication = khomeApplication()
-val SleepMode = KHOME.InputBoolean("sleep_mode")
+val SleepMode: InputBoolean = KHOME.InputBoolean("sleep_mode".objectId)
 
 fun main() { 
     SleepMode.attachObserver { //this:Actuator<SwitchableState,InputBooleanAttributes>
@@ -29,14 +30,81 @@ fun main() {
     KHOME.runBlocking()
 }
 ```
+
+#### Properties
+##### isOn
+```kotlin 
+val Actuator<SwitchableState, *>.isOn
+```
+Is true when the actual state value is equal to `SwitchableStateValue.ON`.
+
+##### isOff
+```kotlin 
+val Actuator<SwitchableState, *>.isOff
+```
+Is true when the actual state value is equal to `SwitchableStateValue.OFF`.
+
+#### Methods
+
+##### turnOn()
+```kotlin
+fun <A : Attributes> Actuator<SwitchableState, A>.turnOn() 
+```
+Since in Home Assistant InputBoolean states are ON and OFF, you can "turn on" the InputBoolean-Helper by calling this method resulting in
+a state change.
+
+##### turnOff()
+```kotlin
+fun <A : Attributes> Actuator<SwitchableState, A>.turnOff() 
+```
+Since in Home Assistant InputBoolean states are ON and OFF, you can "turn off" the InputBoolean-Helper by calling this method.
+
+##### onTurnedOn {...}
+```kotlin 
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onTurnedOn(
+    crossinline f: Actuator<SwitchableState, A>.(Switchable) -> Unit
+)
+```
+The passed lambda gets executed when the state of the InputBoolean entity switches from OFF to ON.
+Inside the lambda you have access to all properties and members of your entity. 
+
+##### onTurnedOff {...}
+```kotlin 
+inline fun <A : Attributes> Actuator<SwitchableState, A>.onTurnedOff(
+    crossinline f: Actuator<SwitchableState, A>.(Switchable) -> Unit
+)
+```
+The passed lambda gets executed when the state of the InputBoolean entity switches from ON to OFF.
+Inside the lambda you have access to all properties and members of your entity. 
+
+
 ### Input Number
 The input_number integration allows the user to define values that can be controlled via the frontend and can be used within conditions of automation. 
 The frontend can display a slider, or a numeric input box. Changes to the slider or numeric input box generate state events. 
 These state events can be utilized as automation triggers as well. See [home assistant documentation](https://www.home-assistant.io/integrations/input_number/) for more.
 
-...<br>
-...<br>
-...... coming soon!
+| Element    | Name | Sourcecode | KDocs |
+|------------|------|------------|-------|
+| Factory    | KhomeApplication::InputNumber   |  [Link](../src/main/kotlin/khome/extending/entities/actuators/inputs/InputNumber.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending.actuators/-input-number.html)      |
+| State      | InputNumberState     |  [Link](../src/main/kotlin/khome/extending/entities/SwitchableEntityComponents.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-number-state/index.html)      |
+| StateValue | Double | - | -      |
+| Attributes | InputNumberAttributes    |  [Link](../src/main/kotlin/khome/extending/entities/actuators/inputs/InputNumber.kt) | [Link](https://dennisschroeder.github.io/khome/khome/khome.extending/-input-number-attributes/index.html)      |
+
+Example:
+```kotlin
+val KHOME: KhomeApplication = khomeApplication()
+val MaxVolume: InputNumber = KHOME.InputNumber("max_volume".objectId)
+val GoogleHomeKitchen: MediaReceiver = KHOME.MediaReceiver("google_home_kitchen".objectId)
+
+fun main() { 
+    GoogleHomeKitchen.attachObserver { //this:Actuator<InputNumberState, InputNumberAttributes>
+        if (actualState.value <= 10.0) {
+            //... turn off lights, close covers, activate the alarm, etc.
+        }
+    }
+    KHOME.runBlocking()
+}
+```
 
 
 ### Input Text

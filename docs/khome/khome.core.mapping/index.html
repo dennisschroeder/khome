@@ -13,59 +13,37 @@
 <tbody>
 <tr>
 <td>
-<h4><a href="-entity-id-adapter/index.html">EntityIdAdapter</a></h4>
+<h4><a href="-khome-type-adapter/index.html">KhomeTypeAdapter</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">EntityIdAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><a href="../khome.entities/-entity-id/index.html"><span class="identifier">EntityId</span></a><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-instant-adapter/index.html">InstantAdapter</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">InstantAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">Instant</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-local-date-adapter/index.html">LocalDateAdapter</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">LocalDateAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">LocalDate</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-local-date-time-adapter/index.html">LocalDateTimeAdapter</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">LocalDateTimeAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">LocalDateTime</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-local-time-adapter/index.html">LocalTimeAdapter</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">LocalTimeAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">LocalTime</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">KhomeTypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <h4><a href="-object-mapper/index.html">ObjectMapper</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">ObjectMapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">KhomeComponent</span><span class="symbol">, </span><a href="-object-mapper-interface.html"><span class="identifier">ObjectMapperInterface</span></a></code></td>
+<code><span class="keyword">class </span><span class="identifier">ObjectMapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">KhomeComponent</span><span class="symbol">, </span><a href="-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a></code></td>
 </tr>
 <tr>
 <td>
-<h4><a href="-object-mapper-interface.html">ObjectMapperInterface</a></h4>
+<h4><a href="-object-mapper-interface/index.html">ObjectMapperInterface</a></h4>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">ObjectMapperInterface</span></code></td>
 </tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
 <tr>
 <td>
-<h4><a href="-offset-date-time-adapter/index.html">OffsetDateTimeAdapter</a></h4>
+<h4><a href="from-json.html">fromJson</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">OffsetDateTimeAdapter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">TypeAdapter</span><span class="symbol">&lt;</span><span class="identifier">OffsetDateTime</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <a href="-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a><span class="symbol">.</span><span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping$fromJson(khome.core.mapping.ObjectMapperInterface, kotlin.String)/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <a href="-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a><span class="symbol">.</span><span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping$fromJson(khome.core.mapping.ObjectMapperInterface, com.google.gson.JsonElement)/json">json</span><span class="symbol">:</span>&nbsp;<span class="identifier">JsonElement</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code></td>
 </tr>
 </tbody>
 </table>

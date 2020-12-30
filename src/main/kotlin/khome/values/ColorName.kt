@@ -21,3 +21,6 @@ data class ColorName private constructor(val value: String) {
 
 val String.color
     get() = ColorName.from(this)
+
+val Enum<*>.color
+    get() = ColorName.from(this.name)

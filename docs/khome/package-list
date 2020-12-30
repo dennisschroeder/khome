@@ -1,23 +1,59 @@
 $dokka.format:html
 $dokka.linkExtension:html
-
+$dokka.location:khome.values$brightness#kotlin.Intkhome.values/kotlin.-int/brightness.html
+$dokka.location:khome.values$color#kotlin.Enum(())khome.values/kotlin.-enum/color.html
+$dokka.location:khome.values$color#kotlin.Stringkhome.values/kotlin.-string/color.html
+$dokka.location:khome.values$degree#kotlin.Doublekhome.values/kotlin.-double/degree.html
+$dokka.location:khome.values$degree#kotlin.Intkhome.values/kotlin.-int/degree.html
+$dokka.location:khome.values$device#kotlin.Enum(())khome.values/kotlin.-enum/device.html
+$dokka.location:khome.values$device#kotlin.Stringkhome.values/kotlin.-string/device.html
+$dokka.location:khome.values$domain#kotlin.Enum(())khome.values/kotlin.-enum/domain.html
+$dokka.location:khome.values$domain#kotlin.Stringkhome.values/kotlin.-string/domain.html
+$dokka.location:khome.values$eventType#kotlin.Enum(())khome.values/kotlin.-enum/event-type.html
+$dokka.location:khome.values$eventType#kotlin.Stringkhome.values/kotlin.-string/event-type.html
+$dokka.location:khome.values$hvacMode#kotlin.Stringkhome.values/kotlin.-string/hvac-mode.html
+$dokka.location:khome.values$icon#kotlin.Stringkhome.values/kotlin.-string/icon.html
+$dokka.location:khome.values$kelvin#kotlin.Intkhome.values/kotlin.-int/kelvin.html
+$dokka.location:khome.values$mired#kotlin.Intkhome.values/kotlin.-int/mired.html
+$dokka.location:khome.values$mode#kotlin.Stringkhome.values/kotlin.-string/mode.html
+$dokka.location:khome.values$objectId#kotlin.Stringkhome.values/kotlin.-string/object-id.html
+$dokka.location:khome.values$option#kotlin.Enum(())khome.values/kotlin.-enum/option.html
+$dokka.location:khome.values$option#kotlin.Stringkhome.values/kotlin.-string/option.html
+$dokka.location:khome.values$position#kotlin.Doublekhome.values/kotlin.-double/position.html
+$dokka.location:khome.values$position#kotlin.Intkhome.values/kotlin.-int/position.html
+$dokka.location:khome.values$presetMode#kotlin.Stringkhome.values/kotlin.-string/preset-mode.html
+$dokka.location:khome.values$service#kotlin.Stringkhome.values/kotlin.-string/service.html
+$dokka.location:khome.values$volume#kotlin.Doublekhome.values/kotlin.-double/volume.html
+$dokka.location:khome.values$volume#kotlin.Intkhome.values/kotlin.-int/volume.html
 khome
 khome.communicating
 khome.core
 khome.core.boot
+khome.core.boot.authentication
 khome.core.boot.servicestore
 khome.core.boot.statehandling
+khome.core.boot.subscribing
 khome.core.clients
 khome.core.exceptions
 khome.core.mapping
+khome.core.mapping.adapter.default
 khome.core.mapping.exceptions
 khome.core.observing
 khome.entities
 khome.entities.devices
 khome.errorHandling
 khome.events
-khome.extending
-khome.extending.actuators
-khome.extending.notifications
-khome.extending.sensors
+khome.extending.entities
+khome.extending.entities.actuators
+khome.extending.entities.actuators.climate
+khome.extending.entities.actuators.climate.thermostate
+khome.extending.entities.actuators.inputs
+khome.extending.entities.actuators.light
+khome.extending.entities.actuators.mediaplayer
+khome.extending.entities.sensors
+khome.extending.entities.sensors.binary
+khome.extending.events
+khome.extending.serviceCalls.notifications
 khome.observability
+khome.testing
+khome.values

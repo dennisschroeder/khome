@@ -36,13 +36,6 @@ Serves all the tools necessary for the application to run.</p>
 <p>The lambda with <a href="-khome/index.html">Khome</a> as receiver to configure Khome</p>
 <code><span class="keyword">typealias </span><span class="identifier">KhomeBuilder</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="-khome/index.html"><span class="identifier">Khome</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
-<tr>
-<td>
-<h4><a href="-state-and-attributes-history-snapshot.html">StateAndAttributesHistorySnapshot</a></h4>
-</td>
-<td>
-<code><span class="keyword">typealias </span><span class="identifier">StateAndAttributesHistorySnapshot</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.observability/-history-snapshot.html"><span class="identifier">HistorySnapshot</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">,</span>&nbsp;<a href="../khome.observability/-state-and-attributes.html"><span class="identifier">StateAndAttributes</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
-</tr>
 </tbody>
 </table>
 <h3>Functions</h3>
@@ -55,6 +48,13 @@ Serves all the tools necessary for the application to run.</p>
 <td>
 <p>The main entry point to start your application</p>
 <code><span class="keyword">fun </span><span class="identifier">khomeApplication</span><span class="symbol">(</span><span class="identifier" id="khome$khomeApplication(kotlin.Function1((khome.Khome, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-khome-builder.html"><span class="identifier">KhomeBuilder</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-khome-application/index.html"><span class="identifier">KhomeApplication</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="register-type-adapter.html">registerTypeAdapter</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="-khome/index.html"><span class="identifier">Khome</span></a><span class="symbol">.</span><span class="identifier">registerTypeAdapter</span><span class="symbol">(</span><span class="identifier" id="khome$registerTypeAdapter(khome.Khome, khome.core.mapping.KhomeTypeAdapter((khome.registerTypeAdapter.T)))/adapter">adapter</span><span class="symbol">:</span>&nbsp;<a href="../khome.core.mapping/-khome-type-adapter/index.html"><span class="identifier">KhomeTypeAdapter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 </tbody>
 </table>

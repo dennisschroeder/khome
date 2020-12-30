@@ -77,16 +77,16 @@ For a deeper understanding of Khome's capabilities, we encourage you to read the
 ```kotlin
 val KHOME = khomeApplication()
 
-val HallwayLight = KHOME.DimmableLight("hallway_main")
-val HallwayMotionSensor = KHOME.MotionSensor("hallway")
+val HallwayLight = KHOME.DimmableLight("hallway_main".objectId)
+val HallwayMotionSensor = KHOME.MotionSensor("hallway".objectId)
 val Sun = KHOME.Sun()
 
 fun main() {
     HallwayMotionSensor.attacheObserver {
         if (Sun.measurement.value == SunValue.BELOW_HORIZON) {
             when(measurement.value) {
-                ON -> HallwayLight.desiredState = SwitchableState(ON)
-                OFF -> HallwayLight.desiredState = SwitchableState(OFF)
+                ON -> HallwayLight.turnOn()
+                OFF -> HallwayLight.turnOff()
             }
         }
     }
@@ -100,20 +100,16 @@ fun main() {
 val KHOME = khomeApplication()
 val Sun = KHOME.Sun()
 val BedRoomCovers = listOf(
-    KHOME.PositionableCover("bedroom_one"),
-    KHOME.PositionableCover("bedroom_two"),
-    KHOME.PositionableCover("bedroom_three"),
-    KHOME.PositionableCover("bedroom_four"),
+    KHOME.PositionableCover("bedroom_one".objectId),
+    KHOME.PositionableCover("bedroom_two".objectId),
+    KHOME.PositionableCover("bedroom_three".objectId),
+    KHOME.PositionableCover("bedroom_four".objectId),
 )
 
 fun main() {
-    Sun.attachObserver {
-        if (history[1].state.value == SunValue.BELOW_HORIZON &&
-            measurement.value == SunValue.ABOVE_HORIZON
-        ) {
-            for (cover in BedRoomCovers) {
-                cover.desiredState = CoverState(value = CoverValue.OPEN, position = 60)
-            }
+    Sun.onSunrise {
+        for (cover in BedRoomCovers) {
+            cover.desiredState = CoverState(value = CoverValue.OPEN, position = 60)
         }
     }   
 }
@@ -126,8 +122,8 @@ fun main() {
 ```kotlin
 val KHOME = khomeApplication()
 
-val GardenShedDoor = KHOME.ContactSensor("garden_shed")
-val LateNight = KHOME.DayTime("late_night")
+val GardenShedDoor = KHOME.ContactSensor("garden_shed".objectId)
+val LateNight = KHOME.DayTime("late_night".objectId)
 
 enum class MobilePhone {
     MY_PHONE
@@ -159,17 +155,17 @@ The previous positions get stored in a state store and when the tv got turned of
 ```kotlin
 val KHOME = khomeApplication()
 
-val TelevisionLivingroom = KHOME.Television("tv_livingroom")
+val TelevisionLivingroom = KHOME.Television("tv_livingroom".objectId)
 val ResetStateHistory = mutableMapOf<Cover,CoverState>()
 
 val televisionWatchingCoverPosition = 
-    KHOME.InputNumber("television_watching_cover_position").actualState.toInt()
+    KHOME.InputNumber("television_watching_cover_position".objectId).actualState.toInt()
 val defaultCoverPosition = 75
 
 val LivingRoomCovers = listOf(
-    KHOME.PositionableCover("livingroom_one"),
-    KHOME.PositionableCover("livingroom_two"),
-    KHOME.PositionableCover("livingroom_three")
+    KHOME.PositionableCover("livingroom_one".objectId),
+    KHOME.PositionableCover("livingroom_two".objectId),
+    KHOME.PositionableCover("livingroom_three".objectId)
 )
 
 fun main() {
@@ -177,7 +173,7 @@ fun main() {
         if (turnedOn) {
             for (cover in LivingRoomCovers) {
                 ResetStateHistory[cover] = cover.actualState
-                cover.desiredState = CoverState(CoverValue.OPEN, televisionWatchingCoverPosition)
+                cover.setCoverPosition(televisionWatchingCoverPosition)
             }
         }
         

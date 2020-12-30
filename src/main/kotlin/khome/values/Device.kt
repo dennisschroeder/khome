@@ -21,3 +21,6 @@ data class Device private constructor(val value: String) {
 
 val String.device
     get() = Device.from(this)
+
+val Enum<*>.device
+    get() = Device.from(this.name)

@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MessageData - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.extending.serviceCalls.notifications</a>&nbsp;/&nbsp;<a href="./index.html">MessageData</a><br/>
+<br/>
+<h1>MessageData</h1>
+<code><span class="keyword">class </span><span class="identifier">MessageData</span></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-presentation-options/index.html">PresentationOptions</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PresentationOptions</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">MessageData</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="apns-headers.html">apnsHeaders</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">apnsHeaders</span><span class="symbol">: </span><a href="../-apns-headers/index.html"><span class="identifier">ApnsHeaders</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="entity-id.html">entityId</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">entityId</span><span class="symbol">: </span><a href="../../khome.values/-entity-id/index.html"><span class="identifier">EntityId</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="presentation-options.html">presentationOptions</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">presentationOptions</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">PresentationOptions</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="subtitle.html">subtitle</a></h4>
+</td>
+<td>
+<code><span class="keyword">lateinit</span> <span class="keyword">var </span><span class="identifier">subtitle</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="attachment.html">attachment</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">attachment</span><span class="symbol">(</span><span class="identifier" id="khome.extending.serviceCalls.notifications.MessageData$attachment(kotlin.String, kotlin.String, kotlin.Boolean)/url">url</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="khome.extending.serviceCalls.notifications.MessageData$attachment(kotlin.String, kotlin.String, kotlin.Boolean)/contentType">contentType</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="khome.extending.serviceCalls.notifications.MessageData$attachment(kotlin.String, kotlin.String, kotlin.Boolean)/hideThumbnail">hideThumbnail</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="map-action-data.html">mapActionData</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mapActionData</span><span class="symbol">(</span><span class="identifier" id="khome.extending.serviceCalls.notifications.MessageData$mapActionData(kotlin.Function1((khome.extending.serviceCalls.notifications.MapActionData, kotlin.Unit)))/builder">builder</span><span class="symbol">:</span>&nbsp;<a href="../-map-action-data/index.html"><span class="identifier">MapActionData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="push.html">push</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">push</span><span class="symbol">(</span><span class="identifier" id="khome.extending.serviceCalls.notifications.MessageData$push(kotlin.Function1((khome.extending.serviceCalls.notifications.PushData, kotlin.Unit)))/builder">builder</span><span class="symbol">:</span>&nbsp;<a href="../-push-data/index.html"><span class="identifier">PushData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-push-data/index.html"><span class="identifier">PushData</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

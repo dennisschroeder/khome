@@ -116,12 +116,8 @@ fun PositionableCover.onStopWorking(f: PositionableCover.() -> Unit) =
         }
     }
 
-fun PositionableCover.onClosed(f: PositionableCover.(Switchable) -> Unit) = attachObserver {
-    if (stateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED))
-        f(this, it)
-}
+fun PositionableCover.onClosed(f: PositionableCover.(Switchable) -> Unit) =
+    onStateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED, f)
 
-fun PositionableCover.onOpened(f: PositionableCover.(Switchable) -> Unit) = attachObserver {
-    if (stateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN))
-        f(this, it)
-}
+fun PositionableCover.onOpened(f: PositionableCover.(Switchable) -> Unit) =
+    onStateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN, f)
