@@ -4,16 +4,18 @@ import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.Configuration
 import khome.core.clients.WebSocketClient
+import khome.core.mapping.ObjectMapperInterface
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import java.net.ConnectException
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
-internal class HassClient(
+internal class HassClientImpl(
     private val config: Configuration,
-    private val httpClient: WebSocketClient
-) {
+    private val httpClient: WebSocketClient,
+    private val objectMapper: ObjectMapperInterface
+) : HassClient {
     private val logger = KotlinLogging.logger { }
 
     private val method = HttpMethod.Get
@@ -21,7 +23,7 @@ internal class HassClient(
     private val isSecure: Boolean = config.secure
 
     @ObsoleteCoroutinesApi
-    suspend fun startSession(block: suspend KhomeSession.() -> Unit) =
+    override suspend fun startSession(block: suspend KhomeSession.() -> Unit) =
         startSessionCatching(block)
 
     private suspend fun startSessionCatching(block: suspend KhomeSession.() -> Unit) =
@@ -32,14 +34,14 @@ internal class HassClient(
                     host = config.host,
                     port = config.port,
                     path = path,
-                    block = { block(KhomeSession(this)) }
+                    block = { block(KhomeSession(this, objectMapper)) }
                 )
                 false -> httpClient.websocket(
                     method = method,
                     host = config.host,
                     port = config.port,
                     path = path,
-                    block = { block(KhomeSession(this)) }
+                    block = { block(KhomeSession(this, objectMapper)) }
                 )
             }
         } catch (exception: ConnectException) {
@@ -47,4 +49,10 @@ internal class HassClient(
         } catch (exception: RuntimeException) {
             logger.error(exception) { "Could not start khome due to: ${exception.message}" }
         }
+}
+
+internal interface HassClient {
+    @ObsoleteCoroutinesApi
+    @KtorExperimentalAPI
+    suspend fun startSession(block: suspend KhomeSession.() -> Unit)
 }

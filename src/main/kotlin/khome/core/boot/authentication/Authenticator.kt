@@ -2,15 +2,14 @@ package khome.core.boot.authentication
 
 import khome.KhomeSession
 import khome.core.Configuration
-import khome.core.boot.StartSequenceStep
 import mu.KotlinLogging
 
-internal class Authenticator(
-    override val khomeSession: KhomeSession,
+internal class AuthenticatorImpl(
+    private val khomeSession: KhomeSession,
     configuration: Configuration
-) : StartSequenceStep {
+) : Authenticator {
 
-    override suspend fun runStartSequenceStep() =
+    override suspend fun authenticate() =
         consumeInitialResponse()
             .let { initialResponse ->
                 when (initialResponse.type) {
@@ -45,4 +44,8 @@ internal class Authenticator(
         } catch (e: Exception) {
             logger.error(e) { "Could not send authentication message" }
         }
+}
+
+interface Authenticator {
+    suspend fun authenticate()
 }

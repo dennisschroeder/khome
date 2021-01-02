@@ -1,5 +1,7 @@
 package khome.entities
 
+import khome.values.FriendlyName
+import khome.values.UserId
 import java.time.Instant
 
 /**
@@ -19,8 +21,8 @@ interface State<T> {
  * Defines the minimum structure of a valid attributes object.
  * */
 interface Attributes {
-    val userId: String?
+    val userId: UserId?
     val lastChanged: Instant
     val lastUpdated: Instant
-    val friendlyName: String
+    val friendlyName: FriendlyName
 }

@@ -1,6 +1,6 @@
 
 ![GitHub Actions status](https://github.com/dennisschroeder/khome/workflows/Latest%20push/badge.svg)
-![LINE](https://img.shields.io/badge/line--coverage-7%25-red.svg)
+![LINE](https://img.shields.io/badge/line--coverage-10%25-red.svg)
 [![](https://jitpack.io/v/dennisschroeder/khome.svg)](https://jitpack.io/#dennisschroeder/khome)
 
 # Khome
@@ -12,13 +12,13 @@ Simple Example:
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
-val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion".objectId)
+val LivingRoomMainLight = KHOME.RGBWLight("livingRoom_main_light".objectId)
 
 fun main() {
     LivingRoomMotion.attachObserver { //this: Sensor<SwitchableState,MotionSensorAttributes>
         if (measurement.value == SwitchableValue.ON) {
-            LivingRoomMainLight.desiredState = SwitchableState(ON)
+            LivingRoomMainLight.desiredState = RGBWLightState(ON, colorTemp = 5000.kelvin)
         }
     }
 
@@ -30,17 +30,17 @@ In this little example, we observed the motion sensor in the living room and whe
 As you can see here, Khome encourages you to think in states rather than services you have to call. This is less error-prone and helps the developer to stay in the mindset of states. This distinguishes Khome from most other automation libraries.
 
 Khome comes with a lot of predefined factory functions, data classes, observers and more for generic entity types.
-To achieve the same result than shown above, we can also use Khomes higher-level API which lets you write concise code.
+To achieve the same result than shown above, we can also use Khomes higher-level API which lets you write concise code with ease.
 
 ```kotlin
 val KHOME = khomeApplication()
 
-val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion")
-val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light")
+val LivingRoomMotion = KHOME.LuminanceSensor("livingRoom_motion".objectId)
+val LivingRoomMainLight = KHOME.SwitchableLight("livingRoom_main_light".objectId)
 
 fun main() {
     LivingRoomMotion.onMotionAlarm { //this: MotionSensor
-        LivingRoomMainLight.turnOn()
+        LivingRoomMainLight.setColorTemperature(5000.kelvin)
     }
 
     KHOME.runBlocking()
@@ -53,10 +53,6 @@ HA is an open-source home-automation platform written in Python 3 that puts loca
 a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.
 
 If you're not already familiar with Home Assistant, you find all you need on the [Getting Started page](https://www.home-assistant.io/getting-started/).
-
-## Warning
-This project is in an early state. You can't rely on it **yet**. But I encourage you to test it and report [issues](https://github.com/dennisschroeder/khome/issues).
-Changes in the API, removal of features, or other changes will occur. Of course, [contributions](https://github.com/dennisschroeder/khome/pulls) are also very welcome.
 
 ## If you are from...
 

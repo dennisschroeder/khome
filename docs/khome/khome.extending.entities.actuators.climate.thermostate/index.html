@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.extending.entities.actuators.climate.thermostate - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.extending.entities.actuators.climate.thermostate</a><br/>
+<br/>
+<h2>Package khome.extending.entities.actuators.climate.thermostate</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-thermostat.html">Thermostat</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">Thermostat</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><a href="-thermostat-state/index.html"><span class="identifier">ThermostatState</span></a><span class="symbol">,</span>&nbsp;<a href="-thermostat-attributes/index.html"><span class="identifier">ThermostatAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-thermostat-attributes/index.html">ThermostatAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ThermostatAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-thermostat-service-data/index.html">ThermostatServiceData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ThermostatServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-desired-service-data/index.html"><span class="identifier">DesiredServiceData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-thermostat-state/index.html">ThermostatState</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ThermostatState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="-thermostat-state-value/index.html"><span class="identifier">ThermostatStateValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-thermostat-state-value/index.html">ThermostatStateValue</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ThermostatStateValue</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="is-heating.html">isHeating</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">isHeating</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-off.html">isOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">isOff</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-on.html">isOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">isOn</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="on-turned-off.html">onTurnedOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">onTurnedOff</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.climate.thermostate$onTurnedOff(khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-turned-on.html">onTurnedOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">onTurnedOn</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.climate.thermostate$onTurnedOn(khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-preset.html">setPreset</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">setPreset</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.climate.thermostate$setPreset(khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), khome.values.PresetMode)/preset">preset</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-preset-mode/index.html"><span class="identifier">PresetMode</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-target-temperature.html">setTargetTemperature</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">setTargetTemperature</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.climate.thermostate$setTargetTemperature(khome.entities.devices.Actuator((khome.extending.entities.actuators.climate.thermostate.ThermostatState, khome.extending.entities.actuators.climate.thermostate.ThermostatAttributes)), khome.values.Temperature)/temperature">temperature</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-temperature/index.html"><span class="identifier">Temperature</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-thermostat.html">Thermostat</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">Thermostat</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.climate.thermostate$Thermostat(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-off.html">turnOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-on.html">turnOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-on-boost.html">turnOnBoost</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-thermostat.html"><span class="identifier">Thermostat</span></a><span class="symbol">.</span><span class="identifier">turnOnBoost</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

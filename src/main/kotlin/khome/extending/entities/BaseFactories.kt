@@ -3,7 +3,7 @@ package khome.extending.entities
 import khome.KhomeApplication
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
-import khome.entities.EntityId
+import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.entities.devices.Sensor

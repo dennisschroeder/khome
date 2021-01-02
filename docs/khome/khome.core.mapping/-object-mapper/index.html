@@ -8,7 +8,7 @@
 <a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.core.mapping</a>&nbsp;/&nbsp;<a href="./index.html">ObjectMapper</a><br/>
 <br/>
 <h1>ObjectMapper</h1>
-<code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">class </span><span class="identifier">ObjectMapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">KhomeComponent</span><span class="symbol">, </span><a href="../-object-mapper-interface.html"><span class="identifier">ObjectMapperInterface</span></a></code>
+<code><span class="identifier">@ObsoleteCoroutinesApi</span> <span class="keyword">class </span><span class="identifier">ObjectMapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">KhomeComponent</span><span class="symbol">, </span><a href="../-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a></code>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -21,18 +21,6 @@
 </tr>
 </tbody>
 </table>
-<h3>Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="delegate.html">delegate</a></h4>
-</td>
-<td>
-<code><span class="keyword">val </span><span class="identifier">delegate</span><span class="symbol">: </span><span class="identifier">Gson</span></code></td>
-</tr>
-</tbody>
-</table>
 <h3>Functions</h3>
 <table>
 <tbody>
@@ -41,7 +29,6 @@
 <h4><a href="from-json.html">fromJson</a></h4>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping.ObjectMapper$fromJson(kotlin.String)/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code><br/>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping.ObjectMapper$fromJson(com.google.gson.JsonElement, java.lang.Class((khome.core.mapping.ObjectMapper.fromJson.Target)))/json">json</span><span class="symbol">:</span>&nbsp;<span class="identifier">JsonElement</span><span class="symbol">, </span><span class="identifier" id="khome.core.mapping.ObjectMapper$fromJson(com.google.gson.JsonElement, java.lang.Class((khome.core.mapping.ObjectMapper.fromJson.Target)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code><br/>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping.ObjectMapper$fromJson(kotlin.String, java.lang.Class((khome.core.mapping.ObjectMapper.fromJson.Target)))/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="khome.core.mapping.ObjectMapper$fromJson(kotlin.String, java.lang.Class((khome.core.mapping.ObjectMapper.fromJson.Target)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code></td>
 </tr>
@@ -51,6 +38,19 @@
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Destination</span><span class="symbol">&gt;</span> <span class="identifier">toJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping.ObjectMapper$toJson(khome.core.mapping.ObjectMapper.toJson.Destination)/from">from</span><span class="symbol">:</span>&nbsp;<span class="identifier">Destination</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="../from-json.html">fromJson</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <a href="../-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a><span class="symbol">.</span><span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping$fromJson(khome.core.mapping.ObjectMapperInterface, kotlin.String)/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">Target</span><span class="symbol">&gt;</span> <a href="../-object-mapper-interface/index.html"><span class="identifier">ObjectMapperInterface</span></a><span class="symbol">.</span><span class="identifier">fromJson</span><span class="symbol">(</span><span class="identifier" id="khome.core.mapping$fromJson(khome.core.mapping.ObjectMapperInterface, com.google.gson.JsonElement)/json">json</span><span class="symbol">:</span>&nbsp;<span class="identifier">JsonElement</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Target</span></code></td>
 </tr>
 </tbody>
 </table>

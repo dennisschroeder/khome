@@ -7,20 +7,19 @@ import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
 import khome.core.MessageInterface
-import khome.core.koin.KhomeComponent
-import khome.core.mapping.ObjectMapper
+import khome.core.mapping.ObjectMapperInterface
+import khome.core.mapping.fromJson
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
-import org.koin.core.get
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
 internal class KhomeSession(
-    delegate: DefaultClientWebSocketSession
-) : KhomeComponent, ClientWebSocketSession by delegate {
+    delegate: DefaultClientWebSocketSession,
+    val objectMapper: ObjectMapperInterface
+) : ClientWebSocketSession by delegate {
 
     private val logger = KotlinLogging.logger {}
-    val objectMapper: ObjectMapper = get()
     suspend fun callWebSocketApi(message: String) =
         send(message).also { logger.debug { "Called hass api with message: $message" } }
 

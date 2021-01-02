@@ -4,34 +4,41 @@ import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.EntityId
+import khome.values.FriendlyName
+import khome.values.ObjectId
+import khome.values.Option
+import khome.values.UserId
+import khome.values.domain
+import khome.values.service
 import java.time.Instant
 
-typealias InputSelect<reified S> = Actuator<S, InputSelectAttributes>
+typealias InputSelect = Actuator<InputSelectState, InputSelectAttributes>
 
 @Suppress("FunctionName")
-inline fun <reified S : State<Enum<*>>> KhomeApplication.InputSelect(objectId: String): InputSelect<S> =
-    Actuator(EntityId("input_select", objectId), ServiceCommandResolver { desiredState ->
+fun KhomeApplication.InputSelect(objectId: ObjectId): InputSelect =
+    Actuator(EntityId.fromPair("input_select".domain to objectId), ServiceCommandResolver { desiredState ->
         DefaultResolvedServiceCommand(
-            service = ServiceType.SELECT_OPTION,
+            service = "select_option".service,
             serviceData = InputSelectServiceData(
-                desiredState.value.name
+                desiredState.value
             )
         )
     })
 
 data class InputSelectAttributes(
-    val options: List<String>,
+    val options: List<Option>,
     val editable: Boolean,
-    override val userId: String?,
-    override val friendlyName: String,
+    override val userId: UserId?,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
 
-data class InputSelectServiceData(val option: String) : DesiredServiceData()
+data class InputSelectServiceData(val option: Option) : DesiredServiceData()
+
+data class InputSelectState(override val value: Option) : State<Option>

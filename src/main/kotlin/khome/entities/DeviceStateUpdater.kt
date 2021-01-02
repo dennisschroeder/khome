@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import io.ktor.util.KtorExperimentalAPI
 import khome.ActuatorsByApiName
 import khome.SensorsByApiName
+import khome.values.EntityId
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 

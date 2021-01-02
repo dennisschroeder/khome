@@ -22,6 +22,11 @@ interface Sensor<S : State<*>, A : Attributes> : Observable<Sensor<S, A>>, WithH
     val measurement: S
 
     /**
+     * Number of observers attached to the sensor.
+     */
+    val observerCount: Int
+
+    /**
      * Represents the current attributes of the entity in Khome.
      */
     override val attributes: A

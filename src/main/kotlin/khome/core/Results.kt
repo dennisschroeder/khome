@@ -2,7 +2,7 @@ package khome.core
 
 import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
-import khome.entities.EntityId
+import khome.values.EntityId
 import java.time.OffsetDateTime
 
 internal data class ResolverResponse(val id: Int, val type: ResponseType) : MessageInterface

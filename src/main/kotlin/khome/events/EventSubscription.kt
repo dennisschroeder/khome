@@ -2,15 +2,14 @@ package khome.events
 
 import com.google.gson.JsonElement
 import khome.KhomeApplicationImpl
-import khome.core.mapping.ObjectMapper
-import khome.errorHandling.AsyncEventHandlerExceptionHandler
+import khome.core.mapping.ObjectMapperInterface
 import khome.errorHandling.EventHandlerExceptionHandler
 import khome.observability.Switchable
 import kotlin.reflect.KClass
 
 internal class EventSubscription<ED>(
     private val app: KhomeApplicationImpl,
-    private val mapper: ObjectMapper,
+    private val mapper: ObjectMapperInterface,
     private val eventDataType: KClass<*>
 ) {
     private val eventHandler: MutableList<EventHandler<ED>> = mutableListOf()
@@ -19,12 +18,6 @@ internal class EventSubscription<ED>(
         EventHandlerImpl(
             handler,
             EventHandlerExceptionHandler(app.eventHandlerExceptionHandlerFunction)
-        ).also { eventHandler.add(it) }
-
-    fun attachEventHandler(handler: AsyncEventHandlerFunction<ED>): Switchable =
-        AsyncEventHandlerImpl(
-            handler,
-            AsyncEventHandlerExceptionHandler(app.eventHandlerExceptionHandlerFunction)
         ).also { eventHandler.add(it) }
 
     @Suppress("UNCHECKED_CAST")
