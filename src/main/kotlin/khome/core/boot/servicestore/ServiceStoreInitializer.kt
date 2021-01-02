@@ -1,19 +1,18 @@
 package khome.core.boot.servicestore
 
 import khome.KhomeSession
-import khome.core.boot.StartSequenceStep
 import khome.communicating.CALLER_ID
 import mu.KotlinLogging
 
-internal class ServiceStoreInitializer (
-    override val khomeSession: KhomeSession,
+internal class ServiceStoreInitializerImpl (
+    private val khomeSession: KhomeSession,
     private val serviceStore: ServiceStoreInterface
-) : StartSequenceStep {
+) : ServiceStoreInitializer {
     private val logger = KotlinLogging.logger { }
     private val servicesRequest =
         ServicesRequest(CALLER_ID.incrementAndGet())
 
-    override suspend fun runStartSequenceStep() {
+    override suspend fun initialize() {
         sendServicesRequest()
         logger.info { "Requested registered homeassistant services" }
         storeServices(consumeServicesResponse())
@@ -42,4 +41,8 @@ internal class ServiceStoreInitializer (
             }
             logger.info { "Stored homeassistant services in local service store" }
         }
+}
+
+interface ServiceStoreInitializer {
+    suspend fun initialize()
 }

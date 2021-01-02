@@ -1,65 +1,46 @@
 package khome.extending.entities.sensors
 
-import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.Sensor
 import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.EntityId
+import khome.values.FriendlyName
+import khome.values.ObjectId
+import khome.values.PersonId
+import khome.values.UserId
+import khome.values.Zone
+import khome.values.domain
+import khome.values.zone
 import java.time.Instant
 
-typealias Person<reified S> = Sensor<S, PersonAttributes>
+typealias Person = Sensor<PersonState, PersonAttributes>
 
 @Suppress("FunctionName")
-inline fun <reified S : State<*>> KhomeApplication.Person(objectId: String): Person<S> = Sensor(EntityId("person", objectId))
+fun KhomeApplication.Person(objectId: ObjectId): Person =
+    Sensor(EntityId.fromPair("person".domain to objectId))
 
-data class PersonState(override val value: PersonStateValue) : State<PersonStateValue>
-
-enum class PersonStateValue {
-    @SerializedName("home")
-    HOME,
-    @SerializedName("not_home")
-    NOT_HOME
-}
+data class PersonState(override val value: Zone) : State<Zone>
 
 data class PersonAttributes(
     val source: EntityId,
-    val id: String,
-    override val userId: String,
-    override val friendlyName: String,
+    val id: PersonId,
+    override val userId: UserId?,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
 
-val Person<PersonState>.isHome
-    get() = measurement.value == PersonStateValue.HOME
+val Person.isHome
+    get() = measurement.value == "home".zone
 
-val Person<PersonState>.isAway
-    get() = measurement.value != PersonStateValue.HOME
+val Person.isAway
+    get() = measurement.value != "home".zone
 
-inline fun Person<PersonState>.onArrivedHome(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
-    attachObserver { observer ->
-        if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
-            f(this, observer)
-    }
+inline fun Person.onArrivedHome(crossinline f: Person.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom("home".zone to "not_home".zone, f)
 
-inline fun Person<PersonState>.onArrivedHomeAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
-            f(this, observer, coroutineScope)
-    }
-
-inline fun Person<PersonState>.onLeftHome(crossinline f: Person<PersonState>.(Switchable) -> Unit) =
-    attachObserver { observer ->
-        if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
-            f(this, observer)
-    }
-
-inline fun Person<PersonState>.onLeftHomeAsync(crossinline f: suspend Person<PersonState>.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (measurementValueChangedFrom(PersonStateValue.HOME to PersonStateValue.NOT_HOME))
-            f(this, observer, coroutineScope)
-    }
+inline fun Person.onLeftHome(crossinline f: Person.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom("not_home".zone to "home".zone, f)

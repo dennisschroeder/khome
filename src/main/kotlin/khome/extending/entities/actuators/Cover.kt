@@ -6,46 +6,50 @@ import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
 import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.EntityId
+import khome.values.FriendlyName
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.domain
+import khome.values.service
 import java.time.Instant
 
 typealias PositionableCover = Actuator<PositionableCoverState, PositionableCoverAttributes>
 
 @Suppress("FunctionName")
 inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Cover(
-    objectId: String,
+    objectId: ObjectId,
     serviceCommandResolver: ServiceCommandResolver<S>
-): Actuator<S, A> = Actuator(EntityId("cover", objectId), serviceCommandResolver)
+): Actuator<S, A> = Actuator(EntityId.fromPair("cover".domain to objectId), serviceCommandResolver)
 
 @Suppress("FunctionName")
-fun KhomeApplication.PositionableCover(objectId: String): PositionableCover =
+fun KhomeApplication.PositionableCover(objectId: ObjectId): PositionableCover =
     Cover(objectId, ServiceCommandResolver { state ->
         when (state.value) {
             PositionableCoverValue.OPEN -> state.currentPosition?.let { position ->
                 DefaultResolvedServiceCommand(
-                    service = ServiceType.SET_COVER_POSITION,
+                    service = "set_cover_position".service,
                     serviceData = PositionableCoverServiceData(position)
                 )
             } ?: DefaultResolvedServiceCommand(
-                service = ServiceType.OPEN_COVER,
+                service = "open_cover".service,
                 serviceData = EntityIdOnlyServiceData()
             )
 
             PositionableCoverValue.CLOSED -> DefaultResolvedServiceCommand(
-                service = ServiceType.CLOSE_COVER,
+                service = "close_cover".service,
                 serviceData = EntityIdOnlyServiceData()
             )
         }
     })
 
-data class PositionableCoverState(override val value: PositionableCoverValue, val currentPosition: Int? = null) : State<PositionableCoverValue>
+data class PositionableCoverState(override val value: PositionableCoverValue, val currentPosition: Int? = null) :
+    State<PositionableCoverValue>
 
 enum class PositionableCoverValue {
     @SerializedName("open")
@@ -65,10 +69,10 @@ enum class Working {
 
 data class PositionableCoverAttributes(
     val working: Working,
-    override val userId: String?,
+    override val userId: UserId?,
     override val lastChanged: Instant,
     override val lastUpdated: Instant,
-    override val friendlyName: String
+    override val friendlyName: FriendlyName
 ) : Attributes
 
 data class PositionableCoverServiceData(val position: Int) : DesiredServiceData()
@@ -94,60 +98,26 @@ fun PositionableCover.setCoverPosition(position: Int) {
     desiredState = PositionableCoverState(PositionableCoverValue.OPEN, position)
 }
 
-fun PositionableCover.onStartWorking(f: PositionableCover.(Switchable) -> Unit) =
-    attachObserver { observer ->
+fun PositionableCover.onStartWorking(f: PositionableCover.() -> Unit) =
+    attachObserver {
         if (history[1].attributes.working == Working.NO &&
             attributes.working == Working.YES
         ) {
-            f(this, observer)
+            f(this)
         }
     }
 
-fun PositionableCover.onStartWorkingAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, scope ->
-        if (history[1].attributes.working == Working.NO &&
-            attributes.working == Working.YES
-        ) {
-            f(this, observer, scope)
-        }
-    }
-
-fun PositionableCover.onStopWorking(f: PositionableCover.(Switchable) -> Unit) =
-    attachObserver { observer ->
+fun PositionableCover.onStopWorking(f: PositionableCover.() -> Unit) =
+    attachObserver {
         if (history[1].attributes.working == Working.YES &&
             attributes.working == Working.NO
         ) {
-            f(this, observer)
+            f(this)
         }
     }
 
-fun PositionableCover.onStopWorkingAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, scope ->
-        if (history[1].attributes.working == Working.YES &&
-            attributes.working == Working.NO
-        ) {
-            f(this, observer, scope)
-        }
-    }
+fun PositionableCover.onClosed(f: PositionableCover.(Switchable) -> Unit) =
+    onStateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED, f)
 
-fun PositionableCover.onClosing(f: PositionableCover.(Switchable) -> Unit) =
-    attachObserver { observer ->
-        if (stateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED))
-            f(this, observer)
-    }
-
-fun PositionableCover.onClosingAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, scope ->
-        if (stateValueChangedFrom(PositionableCoverValue.OPEN to PositionableCoverValue.CLOSED)) f(this, observer, scope)
-    }
-
-fun PositionableCover.onOpening(f: PositionableCover.(Switchable) -> Unit) =
-    attachObserver { observer ->
-        if (stateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN))
-            f(this, observer)
-    }
-
-fun PositionableCover.onOpeningAsync(f: suspend PositionableCover.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, scope ->
-        if (stateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN)) f(this, observer, scope)
-    }
+fun PositionableCover.onOpened(f: PositionableCover.(Switchable) -> Unit) =
+    onStateValueChangedFrom(PositionableCoverValue.CLOSED to PositionableCoverValue.OPEN, f)

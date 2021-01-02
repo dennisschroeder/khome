@@ -13,4 +13,4 @@ internal interface KhomeComponent : KoinComponent {
         checkNotNull(KhomeKoinContext.application) { "No KoinApplication found" }.koin
 }
 
-object KoinContainer : KhomeComponent
+internal object KoinContainer : KhomeComponent

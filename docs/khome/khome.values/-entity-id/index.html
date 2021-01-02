@@ -1,0 +1,95 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>EntityId - khome</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">khome</a>&nbsp;/&nbsp;<a href="../index.html">khome.values</a>&nbsp;/&nbsp;<a href="./index.html">EntityId</a><br/>
+<br/>
+<h1>EntityId</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">EntityId</span></code>
+<p>The EntityId of an <a href="../../khome.entities.devices/-actuator/index.html">Actuator</a> or <a href="../../khome.entities.devices/-sensor/index.html">Sensor</a></p>
+<p>The entity id is not a member of an <a href="../../khome.entities.devices/-actuator/index.html">Actuator</a> or <a href="../../khome.entities.devices/-sensor/index.html">Sensor</a> but is used
+as a key in the registries.</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-companion/index.html">Companion</a></h4>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../khome.core.mapping/-khome-type-adapter/index.html"><span class="identifier">KhomeTypeAdapter</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">EntityId</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="domain.html">domain</a></h4>
+</td>
+<td>
+<p>the domain that the entity belongs to e.g. cover, light, sensor</p>
+<code><span class="keyword">val </span><span class="identifier">domain</span><span class="symbol">: </span><a href="../-domain/index.html"><span class="identifier">Domain</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="object-id.html">objectId</a></h4>
+</td>
+<td>
+<p>the object id of an entity</p>
+<code><span class="keyword">val </span><span class="identifier">objectId</span><span class="symbol">: </span><a href="../-object-id/index.html"><span class="identifier">ObjectId</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-string.html">toString</a></h4>
+</td>
+<td>
+<p>The EntityId's string representation.</p>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="from.html">from</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span><span class="symbol">&gt;</span> <span class="identifier">from</span><span class="symbol">(</span><span class="identifier" id="khome.values.EntityId.Companion$from(khome.values.EntityId.Companion.from.P)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">P</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">EntityId</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="from-pair.html">fromPair</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fromPair</span><span class="symbol">(</span><span class="identifier" id="khome.values.EntityId.Companion$fromPair(kotlin.Pair((khome.values.Domain, khome.values.ObjectId)))/pair">pair</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><a href="../-domain/index.html"><span class="identifier">Domain</span></a><span class="symbol">,</span>&nbsp;<a href="../-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">EntityId</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="from-string.html">fromString</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fromString</span><span class="symbol">(</span><span class="identifier" id="khome.values.EntityId.Companion$fromString(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">EntityId</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="to.html">to</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span><span class="symbol">&gt;</span> <span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="khome.values.EntityId.Companion$to(khome.values.EntityId)/value">value</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">EntityId</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">P</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

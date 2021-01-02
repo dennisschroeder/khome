@@ -1,19 +1,19 @@
 package khome.core.boot
 
 import khome.KhomeSession
-import khome.core.ResultResponse
 import khome.communicating.CALLER_ID
+import khome.core.ResultResponse
 import mu.KotlinLogging
 
-internal class StateChangeEventSubscriber(
-    override val khomeSession: KhomeSession
-) : StartSequenceStep {
+internal class StateChangeEventSubscriberImpl(
+    val khomeSession: KhomeSession
+) : StateChangeEventSubscriber {
 
     private val logger = KotlinLogging.logger { }
     private val id
         get() = CALLER_ID.incrementAndGet()
 
-    override suspend fun runStartSequenceStep() {
+    override suspend fun subscribe() {
         sendEventListenerRequest()
         consumeResultResponse().let { resultResponse ->
             when (resultResponse.success) {
@@ -31,4 +31,8 @@ internal class StateChangeEventSubscriber(
 
     private suspend fun consumeResultResponse() =
         khomeSession.consumeSingleMessage<ResultResponse>()
+}
+
+interface StateChangeEventSubscriber {
+    suspend fun subscribe()
 }

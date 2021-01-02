@@ -6,43 +6,58 @@ import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.EntityIdOnlyServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
 import khome.entities.State
-import khome.extending.entities.SwitchableValue
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.IDLE
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.OFF
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PAUSED
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.PLAYING
-import khome.extending.entities.actuators.mediaplayer.MediaReceiverValue.UNAVAILABLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.IDLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.OFF
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.PAUSED
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.PLAYING
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.UNAVAILABLE
+import khome.extending.entities.actuators.mediaplayer.MediaReceiverStateValue.UNKNOWN
+import khome.extending.entities.actuators.onStateValueChangedFrom
 import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
-import kotlinx.coroutines.CoroutineScope
+import khome.values.AlbumName
+import khome.values.AppId
+import khome.values.AppName
+import khome.values.Artist
+import khome.values.EntityPicture
+import khome.values.FriendlyName
+import khome.values.MediaContentId
+import khome.values.MediaContentType
+import khome.values.MediaDuration
+import khome.values.MediaPosition
+import khome.values.MediaTitle
+import khome.values.Mute
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.VolumeLevel
+import khome.values.service
 import java.time.Instant
 
 typealias MediaReceiver = MediaPlayer<MediaReceiverState, MediaReceiverAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.MediaReceiver(objectId: String): MediaReceiver =
+fun KhomeApplication.MediaReceiver(objectId: ObjectId): MediaReceiver =
     MediaPlayer(objectId, ServiceCommandResolver { desiredState ->
         when (desiredState.value) {
             IDLE -> {
                 desiredState.isVolumeMuted?.let { isMuted ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_MUTE,
+                        service = "volume_mute".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             isVolumeMuted = isMuted
                         )
                     )
                 } ?: desiredState.volumeLevel?.let { volumeLevel ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_SET,
+                        service = "volume_set".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             volumeLevel = volumeLevel
                         )
                     )
                 } ?: DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_ON,
+                    service = "turn_on".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
@@ -50,41 +65,41 @@ fun KhomeApplication.MediaReceiver(objectId: String): MediaReceiver =
             PAUSED ->
                 desiredState.volumeLevel?.let { volumeLevel ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_SET,
+                        service = "volume_set".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             volumeLevel = volumeLevel
                         )
                     )
                 } ?: desiredState.mediaPosition?.let { position ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.SEEK_POSITION,
+                        service = "seek_position".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             seekPosition = position
                         )
                     )
                 } ?: desiredState.isVolumeMuted?.let { isMuted ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_MUTE,
+                        service = "volume_mute".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             isVolumeMuted = isMuted
                         )
                     )
                 } ?: DefaultResolvedServiceCommand(
-                    service = MediaPlayerService.MEDIA_PAUSE,
+                    service = "media_pause".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
 
             PLAYING ->
                 desiredState.mediaPosition?.let { position ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.SEEK_POSITION,
+                        service = "seek_position".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             seekPosition = position
                         )
                     )
                 } ?: desiredState.isVolumeMuted?.let { isMuted ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_MUTE,
+                        service = "volume_mute".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             isVolumeMuted = isMuted
                         )
@@ -92,35 +107,39 @@ fun KhomeApplication.MediaReceiver(objectId: String): MediaReceiver =
                 }
                 ?: desiredState.volumeLevel?.let { volumeLevel ->
                     DefaultResolvedServiceCommand(
-                        service = MediaPlayerService.VOLUME_SET,
+                        service = "volume_set".service,
                         serviceData = MediaReceiverDesiredServiceData(
                             volumeLevel = volumeLevel
                         )
                     )
                 } ?: DefaultResolvedServiceCommand(
-                    service = MediaPlayerService.MEDIA_PLAY,
+                    service = "media_play".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
 
             OFF -> {
                 DefaultResolvedServiceCommand(
-                    service = ServiceType.TURN_OFF,
+                    service = "turn_off".service,
                     serviceData = EntityIdOnlyServiceData()
                 )
             }
 
+            UNKNOWN -> throw IllegalStateException("State cannot be changed to UNKNOWN")
             UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
         }
     })
 
 data class MediaReceiverState(
-    override val value: MediaReceiverValue,
-    val volumeLevel: Double? = null,
-    val isVolumeMuted: Boolean? = null,
-    val mediaPosition: Double? = null
-) : State<MediaReceiverValue>
+    override val value: MediaReceiverStateValue,
+    val volumeLevel: VolumeLevel? = null,
+    val isVolumeMuted: Mute? = null,
+    val mediaPosition: MediaPosition? = null
+) : State<MediaReceiverStateValue>
 
-enum class MediaReceiverValue {
+enum class MediaReceiverStateValue {
+    @SerializedName("unknown")
+    UNKNOWN,
+
     @SerializedName("unavailable")
     UNAVAILABLE,
 
@@ -138,26 +157,26 @@ enum class MediaReceiverValue {
 }
 
 data class MediaReceiverAttributes(
-    val mediaContentId: String?,
-    val mediaTitle: String?,
-    val mediaArtist: String?,
-    val mediaAlbumName: String?,
-    val mediaContentType: String?,
-    val mediaDuration: Double?,
+    val mediaContentId: MediaContentId?,
+    val mediaTitle: MediaTitle?,
+    val mediaArtist: Artist?,
+    val mediaAlbumName: AlbumName?,
+    val mediaContentType: MediaContentType?,
+    val mediaDuration: MediaDuration?,
     val mediaPositionUpdatedAt: Instant?,
-    val appId: String?,
-    val appName: String?,
-    val entityPicture: String,
-    override val userId: String?,
-    override val friendlyName: String,
+    val appId: AppId?,
+    val appName: AppName?,
+    val entityPicture: EntityPicture,
+    override val userId: UserId?,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes
 
 data class MediaReceiverDesiredServiceData(
-    val isVolumeMuted: Boolean? = null,
-    val volumeLevel: Double? = null,
-    val seekPosition: Double? = null
+    val isVolumeMuted: Mute? = null,
+    val volumeLevel: VolumeLevel? = null,
+    val seekPosition: MediaPosition? = null
 ) : DesiredServiceData()
 
 val MediaReceiver.isOff
@@ -191,7 +210,7 @@ fun MediaReceiver.pause() {
     desiredState = MediaReceiverState(value = PAUSED)
 }
 
-fun MediaReceiver.setVolumeTo(level: Double) {
+fun MediaReceiver.setVolumeTo(level: VolumeLevel) {
     if (actualState.value == UNAVAILABLE || actualState.value == OFF)
         throw RuntimeException("Volume can not be set when MediaReceiver is ${actualState.value}")
 
@@ -199,24 +218,15 @@ fun MediaReceiver.setVolumeTo(level: Double) {
 }
 
 fun MediaReceiver.muteVolume() {
-    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = true)
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = Mute.TRUE)
 }
 
 fun MediaReceiver.unMuteVolume() {
-    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = false)
+    desiredState = MediaReceiverState(value = actualState.value, isVolumeMuted = Mute.FALSE)
 }
 
 fun MediaReceiver.onPlaybackStarted(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(IDLE to PLAYING))
-            f(this, it)
-    }
-
-fun MediaReceiver.onPlaybackStartedAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (stateValueChangedFrom(IDLE to PLAYING))
-            f(this, observer, coroutineScope)
-    }
+    onStateValueChangedFrom(IDLE to PLAYING, f)
 
 fun MediaReceiver.onPlaybackStopped(f: MediaReceiver.(Switchable) -> Unit) =
     attachObserver {
@@ -229,48 +239,14 @@ fun MediaReceiver.onPlaybackStopped(f: MediaReceiver.(Switchable) -> Unit) =
         }
     }
 
-fun MediaReceiver.onPlaybackStoppedAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (
-            stateValueChangedFrom(PLAYING to IDLE) ||
-            stateValueChangedFrom(PLAYING to OFF)
-        ) {
-            f(this, observer, coroutineScope)
-        }
-    }
-
 fun MediaReceiver.onPlaybackPaused(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom(PLAYING to PAUSED))
-            f(this, it)
-    }
-
-fun MediaReceiver.onPlaybackPausedAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (stateValueChangedFrom(PLAYING to PAUSED))
-            f(this, observer, coroutineScope)
-    }
+    onStateValueChangedFrom(PLAYING to PAUSED, f)
 
 fun MediaReceiver.onPlaybackResumed(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver {
-        if (stateValueChangedFrom( PAUSED to PLAYING))
-            f(this, it)
-    }
-
-fun MediaReceiver.onPlaybackResumedAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
-    attachAsyncObserver { observer, coroutineScope ->
-        if (stateValueChangedFrom( PAUSED to PLAYING))
-            f(this, observer, coroutineScope)
-    }
+    onStateValueChangedFrom(PAUSED to PLAYING, f)
 
 fun MediaReceiver.onTurnedOn(f: MediaReceiver.(Switchable) -> Unit) =
-    attachObserver { observer ->
-        if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this, observer)
-    }
+    onStateValueChangedFrom(UNKNOWN to IDLE, f)
 
-fun MediaReceiver.onTurnedOnAsync(f: suspend MediaReceiver.(Switchable, CoroutineScope) -> Unit) =
-attachAsyncObserver { observer, coroutineScope ->
-    if (stateValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-        f(this, observer, coroutineScope)
-}
+fun MediaReceiver.onTurnedOff(f: MediaReceiver.(Switchable) -> Unit) =
+    onStateValueChangedFrom(IDLE to OFF, f)

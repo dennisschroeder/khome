@@ -6,20 +6,18 @@ import khome.KhomeApplicationImpl
 import khome.communicating.CommandDataWithEntityId
 import khome.communicating.ServiceCommandImpl
 import khome.communicating.ServiceCommandResolver
-import khome.core.mapping.ObjectMapper
+import khome.core.mapping.ObjectMapperInterface
 import khome.core.observing.CircularBuffer
 import khome.entities.Attributes
 import khome.entities.State
-import khome.errorHandling.AsyncEventHandlerExceptionHandler
 import khome.errorHandling.ObserverExceptionHandler
-import khome.observability.AsyncObserverFunction
-import khome.observability.AsyncObserverImpl
 import khome.observability.ObservableDelegateNoInitial
 import khome.observability.Observer
 import khome.observability.ObserverFunction
 import khome.observability.ObserverImpl
 import khome.observability.StateAndAttributes
 import khome.observability.Switchable
+import khome.values.Service
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlin.reflect.KClass
 
@@ -27,7 +25,7 @@ import kotlin.reflect.KClass
 @ObsoleteCoroutinesApi
 internal class ActuatorImpl<S : State<*>, A : Attributes>(
     private val app: KhomeApplicationImpl,
-    private val mapper: ObjectMapper,
+    private val mapper: ObjectMapperInterface,
     private val resolver: ServiceCommandResolver<S>,
     private val stateType: KClass<*>,
     private val attributesType: KClass<*>
@@ -37,6 +35,12 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     private val _history = CircularBuffer<StateAndAttributes<S, A>>(10)
     override var actualState: S by ObservableDelegateNoInitial(this, observers, _history)
 
+    override val history: List<StateAndAttributes<S, A>>
+        get() = _history.snapshot
+
+    override val observerCount: Int
+        get() = observers.size
+
     @KtorExperimentalAPI
     override var desiredState: S? = null
         set(newDesiredState) {
@@ -44,7 +48,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
                 val resolvedServiceCommand = resolver.resolve(desiredState)
                 ServiceCommandImpl(
                     domain = resolvedServiceCommand.domain,
-                    service = resolvedServiceCommand.service.name,
+                    service = resolvedServiceCommand.service,
                     serviceData = resolvedServiceCommand.serviceData
                 ).also { app.enqueueStateChange(this, it) }
             }
@@ -63,7 +67,7 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
     }
 
     @KtorExperimentalAPI
-    override fun callService(service: String, parameterBag: CommandDataWithEntityId) {
+    override fun callService(service: Service, parameterBag: CommandDataWithEntityId) {
         ServiceCommandImpl(
             service = service,
             serviceData = parameterBag
@@ -75,13 +79,4 @@ internal class ActuatorImpl<S : State<*>, A : Attributes>(
             observer,
             ObserverExceptionHandler(app.observerExceptionHandlerFunction)
         ).also { observers.add(it) }
-
-    override fun attachAsyncObserver(observer: AsyncObserverFunction<Actuator<S, A>>): Switchable =
-        AsyncObserverImpl(
-            observer,
-            AsyncEventHandlerExceptionHandler(app.observerExceptionHandlerFunction)
-        ).also { observers.add(it) }
-
-    override val history: List<StateAndAttributes<S, A>>
-        get() = _history.snapshot
 }

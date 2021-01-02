@@ -1,15 +1,9 @@
 package khome.observability
 
 import khome.errorHandling.ObserverExceptionHandler
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.CoroutineContext
 
 typealias ObserverFunction<E> = E.(observer: Switchable) -> Unit
-typealias AsyncObserverFunction<E> = suspend E.(observer: Switchable, coroutineScope: CoroutineScope) -> Unit
 
 internal interface Observer<E> {
     fun update(entity: E)
@@ -41,7 +35,6 @@ interface Switchable {
 
 interface Observable<E> {
     fun attachObserver(observer: ObserverFunction<E>): Switchable
-    fun attachAsyncObserver(observer: AsyncObserverFunction<E>): Switchable
 }
 
 internal class ObserverImpl<E>(
@@ -62,24 +55,5 @@ internal class ObserverImpl<E>(
         } catch (e: Throwable) {
             exceptionHandler.handleExceptions(e)
         }
-    }
-}
-
-internal class AsyncObserverImpl<E>(
-    private val f: AsyncObserverFunction<E>,
-    private val exceptionHandler: CoroutineExceptionHandler,
-    context: CoroutineContext = Dispatchers.IO
-) : Switchable, Observer<E> {
-
-    private val enabled: AtomicBoolean = AtomicBoolean(true)
-
-    override fun enable() = enabled.set(true)
-    override fun disable() = enabled.set(false)
-    override fun isEnabled(): Boolean = enabled.get()
-
-    private val coroutineScope: CoroutineScope = CoroutineScope(context)
-    override fun update(entity: E) {
-        if (!enabled.get()) return
-        coroutineScope.launch(exceptionHandler) { f.invoke(entity, this@AsyncObserverImpl, this) }
     }
 }

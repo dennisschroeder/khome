@@ -2,55 +2,37 @@ package khome.extending.serviceCalls.notifications
 
 import com.google.gson.annotations.SerializedName
 import khome.KhomeApplication
-import khome.entities.EntityId
-import khome.extending.serviceCalls.Domain.NOTIFY
+import khome.values.Device
+import khome.values.EntityId
+import khome.values.Service
+import khome.values.domain
 
 private const val REQUEST_LOCATION_UPDATE = "request_location_update"
 
-fun KhomeApplication.notifyMobileApp(device: Enum<*>, message: String, title: String? = null) =
-    notifyMobileApp(device.name, message, title)
-
-fun KhomeApplication.notifyMobileApp(device: String, message: String, title: String? = null) =
+fun KhomeApplication.notifyMobileApp(device: Device, message: String, title: String? = null) =
     callService(
-        domain = NOTIFY.name,
-        service = device,
+        domain = "notify".domain,
+        service = Service.fromDevice(device),
         parameterBag = NotificationMessage(
             message = message,
             title = title
         )
     )
 
-fun KhomeApplication.notifyMobileApp(device: Enum<*>, messageBuilder: NotificationWithDataMessage.() -> Unit) =
-    notifyMobileApp(device.name, messageBuilder)
-
-inline fun KhomeApplication.notifyMobileApp(device: String, messageBuilder: NotificationWithDataMessage.() -> Unit) =
+inline fun KhomeApplication.notifyMobileApp(device: Device, messageBuilder: NotificationWithDataMessage.() -> Unit) =
     callService(
-        domain = NOTIFY.name,
-        service = device,
+        domain = "notify".domain,
+        service = Service.fromDevice(device),
         parameterBag = NotificationWithDataMessage().apply(messageBuilder)
     )
 
-fun KhomeApplication.notifyMobileApp(vararg devices: Enum<*>, title: String, message: String) =
+fun KhomeApplication.notifyMobileApp(vararg devices: Device, title: String, message: String) =
     devices.forEach { device -> notifyMobileApp(device, message, title) }
 
-fun KhomeApplication.notifyMobileApp(vararg devices: String, title: String, message: String) =
-    devices.forEach { device -> notifyMobileApp(device, message, title) }
-
-fun KhomeApplication.notifyMobileApp(
-    vararg devices: Enum<*>,
-    messageBuilder: NotificationWithDataMessage.() -> Unit
-) = devices.forEach { device -> notifyMobileApp(device, messageBuilder) }
-
-fun KhomeApplication.requestLocationUpdate(device: String) =
+fun KhomeApplication.requestLocationUpdate(device: Device) =
     notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE)
 
-fun KhomeApplication.requestLocationUpdate(device: Enum<*>) =
-    notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE)
-
-fun KhomeApplication.requestLocationUpdate(vararg devices: String) =
-    devices.forEach { device -> notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE) }
-
-fun KhomeApplication.requestLocationUpdate(vararg devices: Enum<*>) =
+fun KhomeApplication.requestLocationUpdate(vararg devices: Device) =
     devices.forEach { device -> notifyMobileApp(device, message = REQUEST_LOCATION_UPDATE) }
 
 data class NotificationMessage(
@@ -74,7 +56,7 @@ class MessageData {
     var presentationOptions: List<PresentationOptions>? = null
     private var attachment: AttachmentData? = null
 
-    var actionData: Any? = null
+    private var actionData: Any? = null
     var entityId: EntityId? = null
 
     enum class PresentationOptions {

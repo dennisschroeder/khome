@@ -7,11 +7,17 @@ import io.ktor.util.KtorExperimentalAPI
 import khome.KhomeSession
 import khome.communicating.CommandType.CALL_SERVICE
 import khome.communicating.CommandType.SUBSCRIBE_EVENTS
+import khome.core.KhomeDispatchers
 import khome.core.clients.RestApiClient
-import khome.core.mapping.ObjectMapper
-import khome.entities.EntityId
+import khome.core.mapping.ObjectMapperInterface
+import khome.values.Domain
+import khome.values.EntityId
+import khome.values.EventType
+import khome.values.Service
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -43,7 +49,7 @@ internal interface HassApiCommand {
     var id: Int?
 }
 
-internal class SubscribeEventCommand(private val eventType: String) : HassApiCommand {
+internal class SubscribeEventCommand(private val eventType: EventType) : HassApiCommand {
     override val type: CommandType = SUBSCRIBE_EVENTS
     override var id: Int? = null
 }
@@ -57,8 +63,8 @@ class EntityIdOnlyServiceData : DesiredServiceData()
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI
 internal data class ServiceCommandImpl<SD>(
-    var domain: String? = null,
-    val service: String,
+    var domain: Domain? = null,
+    val service: Service,
     override var id: Int? = null,
     val serviceData: SD? = null,
     override val type: CommandType = CALL_SERVICE
@@ -66,18 +72,16 @@ internal data class ServiceCommandImpl<SD>(
 
 @KtorExperimentalAPI
 @ObsoleteCoroutinesApi
-internal class HassApi(
+internal class HassApiClientImpl(
     private val khomeSession: KhomeSession,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapperInterface,
     private val restApiClient: RestApiClient
-) {
+) : HassApiClient {
     private val logger = KotlinLogging.logger { }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private val serviceContext = ServiceCoroutineContext()
 
-    @Synchronized
-    fun sendHassApiCommand(command: HassApiCommand) =
-        coroutineScope.launch(serviceContext) {
+    override fun sendCommand(command: HassApiCommand) =
+        coroutineScope.launch(KhomeDispatchers.CommandDispatcher) {
             command.id = CALLER_ID.incrementAndGet() // has to be called within single thread to prevent race conditions
             objectMapper.toJson(command).let { serializedCommand ->
                 khomeSession.callWebSocketApi(serializedCommand)
@@ -85,7 +89,7 @@ internal class HassApi(
             }
         }
 
-    fun emitEvent(eventType: String, eventData: Any?) {
+    override fun emitEvent(eventType: String, eventData: Any?) {
         coroutineScope.launch {
             restApiClient.post<HttpResponse> {
                 url { encodedPath = "/api/events/$eventType" }
@@ -94,11 +98,17 @@ internal class HassApi(
         }
     }
 
-    fun emitEventAsync(eventType: String, eventData: Any?) =
+    override fun emitEventAsync(eventType: String, eventData: Any?) =
         coroutineScope.async {
             restApiClient.post<HttpResponse> {
                 url { encodedPath = "/api/events/$eventType" }
                 body = eventData ?: EmptyContent
             }
         }
+}
+
+internal interface HassApiClient {
+    fun sendCommand(command: HassApiCommand): Job
+    fun emitEvent(eventType: String, eventData: Any?)
+    fun emitEventAsync(eventType: String, eventData: Any?): Deferred<HttpResponse>
 }

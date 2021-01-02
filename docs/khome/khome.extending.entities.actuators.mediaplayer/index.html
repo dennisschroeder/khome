@@ -1,0 +1,267 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>khome.extending.entities.actuators.mediaplayer - khome</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">khome</a>&nbsp;/&nbsp;<a href="./index.html">khome.extending.entities.actuators.mediaplayer</a><br/>
+<br/>
+<h2>Package khome.extending.entities.actuators.mediaplayer</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-media-player.html">MediaPlayer</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">MediaPlayer</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="identifier">A</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="../khome.entities.devices/-actuator/index.html"><span class="identifier">Actuator</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver.html">MediaReceiver</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">MediaReceiver</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="-media-player.html"><span class="identifier">MediaPlayer</span></a><span class="symbol">&lt;</span><a href="-media-receiver-state/index.html"><span class="identifier">MediaReceiverState</span></a><span class="symbol">,</span>&nbsp;<a href="-media-receiver-attributes/index.html"><span class="identifier">MediaReceiverAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver-attributes/index.html">MediaReceiverAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MediaReceiverAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver-desired-service-data/index.html">MediaReceiverDesiredServiceData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MediaReceiverDesiredServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-desired-service-data/index.html"><span class="identifier">DesiredServiceData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver-state/index.html">MediaReceiverState</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MediaReceiverState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="-media-receiver-state-value/index.html"><span class="identifier">MediaReceiverStateValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver-state-value/index.html">MediaReceiverStateValue</a></h4>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">MediaReceiverStateValue</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-television.html">Television</a></h4>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">Television</span>&nbsp;<span class="symbol">=</span>&nbsp;<a href="-media-player.html"><span class="identifier">MediaPlayer</span></a><span class="symbol">&lt;</span><a href="-television-state/index.html"><span class="identifier">TelevisionState</span></a><span class="symbol">,</span>&nbsp;<a href="-television-attributes/index.html"><span class="identifier">TelevisionAttributes</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-television-attributes/index.html">TelevisionAttributes</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TelevisionAttributes</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-television-desired-service-data/index.html">TelevisionDesiredServiceData</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TelevisionDesiredServiceData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-desired-service-data/index.html"><span class="identifier">DesiredServiceData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-television-state/index.html">TelevisionState</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TelevisionState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><a href="../khome.extending.entities/-switchable-value/index.html"><span class="identifier">SwitchableValue</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="is-idle.html">isIdle</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">isIdle</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-muted.html">isMuted</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">isMuted</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-off.html">isOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">isOff</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">val </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">isOff</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-on.html">isOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">isOn</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">val </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">isOn</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-paused.html">isPaused</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">isPaused</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-playing.html">isPlaying</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">isPlaying</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-media-player.html">MediaPlayer</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-state/index.html"><span class="identifier">State</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../khome.entities/-attributes/index.html"><span class="identifier">Attributes</span></a><span class="symbol">&gt;</span> <a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">MediaPlayer</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$MediaPlayer(khome.KhomeApplication, khome.values.ObjectId, khome.communicating.ServiceCommandResolver((khome.extending.entities.actuators.mediaplayer.MediaPlayer.S)))/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">, </span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$MediaPlayer(khome.KhomeApplication, khome.values.ObjectId, khome.communicating.ServiceCommandResolver((khome.extending.entities.actuators.mediaplayer.MediaPlayer.S)))/serviceCommandResolver">serviceCommandResolver</span><span class="symbol">:</span>&nbsp;<a href="../khome.communicating/-service-command-resolver/index.html"><span class="identifier">ServiceCommandResolver</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-media-player.html"><span class="identifier">MediaPlayer</span></a><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">,</span>&nbsp;<span class="identifier">A</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-media-receiver.html">MediaReceiver</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">MediaReceiver</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$MediaReceiver(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mute-volume.html">muteVolume</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">muteVolume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">muteVolume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-playback-paused.html">onPlaybackPaused</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onPlaybackPaused</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onPlaybackPaused(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-playback-resumed.html">onPlaybackResumed</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onPlaybackResumed</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onPlaybackResumed(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-playback-started.html">onPlaybackStarted</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onPlaybackStarted</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onPlaybackStarted(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-playback-stopped.html">onPlaybackStopped</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onPlaybackStopped</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onPlaybackStopped(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-turned-off.html">onTurnedOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onTurnedOff</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onTurnedOff(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">onTurnedOff</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onTurnedOff(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="on-turned-on.html">onTurnedOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">onTurnedOn</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onTurnedOn(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">onTurnedOn</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$onTurnedOn(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), kotlin.Function2((khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), khome.observability.Switchable, kotlin.Unit)))/f">f</span><span class="symbol">:</span>&nbsp;<a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="symbol">(</span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../khome.observability/-switchable/index.html"><span class="identifier">Switchable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="pause.html">pause</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">pause</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="play.html">play</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">play</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-source.html">setSource</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">setSource</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$setSource(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), khome.values.MediaSource)/source">source</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-media-source/index.html"><span class="identifier">MediaSource</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-volume-to.html">setVolumeTo</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">setVolumeTo</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$setVolumeTo(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.MediaReceiverState, khome.extending.entities.actuators.mediaplayer.MediaReceiverAttributes)), khome.values.VolumeLevel)/level">level</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-volume-level/index.html"><span class="identifier">VolumeLevel</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">setVolumeTo</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$setVolumeTo(khome.entities.devices.Actuator((khome.extending.entities.actuators.mediaplayer.TelevisionState, khome.extending.entities.actuators.mediaplayer.TelevisionAttributes)), khome.values.VolumeLevel)/level">level</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-volume-level/index.html"><span class="identifier">VolumeLevel</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-television.html">Television</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../khome/-khome-application/index.html"><span class="identifier">KhomeApplication</span></a><span class="symbol">.</span><span class="identifier">Television</span><span class="symbol">(</span><span class="identifier" id="khome.extending.entities.actuators.mediaplayer$Television(khome.KhomeApplication, khome.values.ObjectId)/objectId">objectId</span><span class="symbol">:</span>&nbsp;<a href="../khome.values/-object-id/index.html"><span class="identifier">ObjectId</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-television.html"><span class="identifier">Television</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-off.html">turnOff</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">turnOff</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="turn-on.html">turnOn</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">turnOn</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="un-mute-volume.html">unMuteVolume</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-media-receiver.html"><span class="identifier">MediaReceiver</span></a><span class="symbol">.</span><span class="identifier">unMuteVolume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-television.html"><span class="identifier">Television</span></a><span class="symbol">.</span><span class="identifier">unMuteVolume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -8,6 +8,7 @@ import khome.observability.Observable
 import khome.observability.StateAndAttributes
 import khome.observability.WithAttributes
 import khome.observability.WithHistory
+import khome.values.Service
 
 /**
  * An Actuator holding entity state and attributes
@@ -38,10 +39,15 @@ interface Actuator<S : State<*>, A : Attributes> : Observable<Actuator<S, A>>, W
     var desiredState: S?
 
     /**
+     * Number of observers attached to the actuator.
+     */
+    val observerCount: Int
+
+    /**
      * Sends a service command over the Websocket API to home assistant
      *
      * @param service the name of the action/service to execute
      * @param parameterBag the service parameter object. Has to inherit [CommandDataWithEntityId].
      */
-    fun callService(service: String, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
+    fun callService(service: Service, parameterBag: CommandDataWithEntityId = EntityIdOnlyServiceData())
 }

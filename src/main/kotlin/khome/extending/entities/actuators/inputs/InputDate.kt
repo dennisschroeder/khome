@@ -4,22 +4,26 @@ import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.DesiredServiceData
 import khome.communicating.ServiceCommandResolver
-import khome.communicating.ServiceType
 import khome.entities.Attributes
-import khome.entities.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.EntityId
+import khome.values.FriendlyName
+import khome.values.ObjectId
+import khome.values.UserId
+import khome.values.domain
+import khome.values.service
 import java.time.Instant
 import java.time.LocalDate
 
 typealias InputDate = Actuator<InputDateState, InputDateAttributes>
 
 @Suppress("FunctionName")
-fun KhomeApplication.InputDate(objectId: String): InputDate =
-    Actuator(EntityId("input_datetime", objectId), ServiceCommandResolver { desiredState ->
+fun KhomeApplication.InputDate(objectId: ObjectId): InputDate =
+    Actuator(EntityId.fromPair("input_datetime".domain to objectId), ServiceCommandResolver { desiredState ->
         DefaultResolvedServiceCommand(
-            service = ServiceType.SET_DATETIME,
+            service = "set_datetime".service,
             serviceData = InputDateServiceData(desiredState.value)
         )
     })
@@ -33,8 +37,8 @@ data class InputDateAttributes(
     val year: Int,
     val month: Int,
     val day: Int,
-    override val userId: String?,
-    override val friendlyName: String,
+    override val userId: UserId?,
+    override val friendlyName: FriendlyName,
     override val lastChanged: Instant,
     override val lastUpdated: Instant
 ) : Attributes

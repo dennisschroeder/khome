@@ -1,11 +1,14 @@
 package khome.extending.serviceCalls.notifications
 
 import khome.KhomeApplication
-import khome.extending.callService
-import khome.extending.serviceCalls.Domain.PERSISTENT_NOTIFICATION
-import khome.extending.serviceCalls.notifications.PersistentNotification.CREATE
-import khome.extending.serviceCalls.notifications.PersistentNotification.DISMISS
-import khome.extending.serviceCalls.notifications.PersistentNotification.MARK_READ
+
+import khome.values.domain
+import khome.values.service
+
+val PERSISTENT_NOTIFICATION = "persistent_notification".domain
+val CREATE = "create".service
+val DISMISS = "dismiss".service
+val MARK_READ = "mark_read".service
 
 fun KhomeApplication.createPersistentNotification(message: String, title: String? = null, notificationId: String? = null) =
     callService(PERSISTENT_NOTIFICATION, CREATE,
@@ -33,7 +36,3 @@ internal data class PersistentNotificationMessage(
 )
 
 internal data class PersistentNotificationId(val notificationId: String)
-
-internal enum class PersistentNotification {
-    CREATE, DISMISS, MARK_READ
-}
