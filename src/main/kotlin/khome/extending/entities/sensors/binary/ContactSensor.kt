@@ -6,7 +6,8 @@ import khome.entities.Attributes
 import khome.entities.State
 import khome.entities.devices.Sensor
 import khome.extending.entities.sensors.Sensor
-import khome.extending.entities.sensors.measurementValueChangedFrom
+import khome.extending.entities.sensors.onMeasurementValueChangedFrom
+import khome.observability.Switchable
 import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
@@ -40,18 +41,8 @@ val ContactSensor.isOpen
 val ContactSensor.isClosed
     get() = measurement.value == ContactStateValue.CLOSED
 
-inline fun ContactSensor.onOpened(
-    crossinline f: ContactSensor.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN))
-            f(this)
-    }
+inline fun ContactSensor.onOpened(crossinline f: ContactSensor.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(ContactStateValue.CLOSED to ContactStateValue.OPEN, f)
 
-inline fun ContactSensor.onClosed(
-    crossinline f: ContactSensor.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED))
-            f(this)
-    }
+inline fun ContactSensor.onClosed(crossinline f: ContactSensor.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(ContactStateValue.OPEN to ContactStateValue.CLOSED, f)

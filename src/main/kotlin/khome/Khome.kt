@@ -89,6 +89,7 @@ import khome.values.UnitOfMeasurement
 import khome.values.UserId
 import khome.values.VolumeLevel
 import khome.values.XYColor
+import khome.values.Zone
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.inject
@@ -331,4 +332,5 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<MediaPosition, Double>(MediaPosition)
     registerTypeAdapter<MediaSource, String>(MediaSource)
     registerTypeAdapter<Rising, Boolean>(Rising)
+    registerTypeAdapter<Zone, String>(Zone)
 }

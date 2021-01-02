@@ -5,7 +5,8 @@ import khome.entities.Attributes
 import khome.entities.devices.Sensor
 import khome.extending.entities.SwitchableState
 import khome.extending.entities.SwitchableValue
-import khome.extending.entities.sensors.measurementValueChangedFrom
+import khome.extending.entities.sensors.onMeasurementValueChangedFrom
+import khome.observability.Switchable
 import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId
@@ -23,18 +24,8 @@ data class MotionSensorAttributes(
     override val lastUpdated: Instant
 ) : Attributes
 
-inline fun MotionSensor.onMotionAlarm(
-    crossinline f: MotionSensor.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON))
-            f(this)
-    }
+inline fun MotionSensor.onMotionAlarm(crossinline f: MotionSensor.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(SwitchableValue.OFF to SwitchableValue.ON, f)
 
-inline fun MotionSensor.onMotionAlarmCleared(
-    crossinline f: MotionSensor.() -> Unit
-) =
-    attachObserver {
-        if (measurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF))
-            f(this)
-    }
+inline fun MotionSensor.onMotionAlarmCleared(crossinline f: MotionSensor.(Switchable) -> Unit) =
+    onMeasurementValueChangedFrom(SwitchableValue.ON to SwitchableValue.OFF, f)
