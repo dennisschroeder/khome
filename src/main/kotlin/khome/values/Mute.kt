@@ -22,5 +22,3 @@ data class Mute private constructor(val value: Boolean) {
         val FALSE: Mute get() = from(false)
     }
 }
-
-

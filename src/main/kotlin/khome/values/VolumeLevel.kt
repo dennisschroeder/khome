@@ -10,8 +10,8 @@ data class VolumeLevel private constructor(val value: Double) {
     companion object : KhomeTypeAdapter<VolumeLevel> {
         override fun <P> from(value: P): VolumeLevel {
             val volume = value as Double
-            check(volume >= 0) { "Volume can not be a negative value"}
-            check(volume <= 100) { "Volume can not be greater than 100(percent)"}
+            check(volume >= 0) { "Volume can not be a negative value" }
+            check(volume <= 100) { "Volume can not be greater than 100(percent)" }
             return VolumeLevel(volume)
         }
 

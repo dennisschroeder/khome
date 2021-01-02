@@ -44,4 +44,3 @@ inline fun Person.onArrivedHome(crossinline f: Person.(Switchable) -> Unit) =
 
 inline fun Person.onLeftHome(crossinline f: Person.(Switchable) -> Unit) =
     onMeasurementValueChangedFrom("not_home".zone to "home".zone, f)
-

@@ -9,7 +9,6 @@ import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.SwitchableValue
 import khome.extending.entities.actuators.onStateValueChangedFrom
-import khome.extending.entities.actuators.stateValueChangedFrom
 import khome.observability.Switchable
 import khome.values.Brightness
 import khome.values.ColorName

@@ -22,5 +22,3 @@ data class Rising private constructor(val value: Boolean) {
         val FALSE get(): Rising = from(false)
     }
 }
-
-
