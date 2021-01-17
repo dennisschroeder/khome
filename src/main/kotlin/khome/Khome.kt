@@ -78,6 +78,7 @@ import khome.values.Mute
 import khome.values.ObjectId
 import khome.values.Option
 import khome.values.PersonId
+import khome.values.Position
 import khome.values.PowerConsumption
 import khome.values.PresetMode
 import khome.values.RGBColor
@@ -333,4 +334,5 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<MediaSource, String>(MediaSource)
     registerTypeAdapter<Rising, Boolean>(Rising)
     registerTypeAdapter<Zone, String>(Zone)
+    registerTypeAdapter<Position, Int>(Position)
 }

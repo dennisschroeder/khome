@@ -14,6 +14,7 @@ import khome.observability.Switchable
 import khome.values.EntityId
 import khome.values.FriendlyName
 import khome.values.ObjectId
+import khome.values.Position
 import khome.values.UserId
 import khome.values.domain
 import khome.values.service
@@ -48,8 +49,10 @@ fun KhomeApplication.PositionableCover(objectId: ObjectId): PositionableCover =
         }
     })
 
-data class PositionableCoverState(override val value: PositionableCoverValue, val currentPosition: Int? = null) :
-    State<PositionableCoverValue>
+data class PositionableCoverState(
+    override val value: PositionableCoverValue,
+    val currentPosition: Position? = null
+) : State<PositionableCoverValue>
 
 enum class PositionableCoverValue {
     @SerializedName("open")
@@ -75,7 +78,7 @@ data class PositionableCoverAttributes(
     override val friendlyName: FriendlyName
 ) : Attributes
 
-data class PositionableCoverServiceData(val position: Int) : DesiredServiceData()
+data class PositionableCoverServiceData(val position: Position) : DesiredServiceData()
 
 val PositionableCover.isOpen
     get() = actualState.value == PositionableCoverValue.OPEN
@@ -94,11 +97,11 @@ fun PositionableCover.close() {
     desiredState = PositionableCoverState(PositionableCoverValue.CLOSED)
 }
 
-fun PositionableCover.setCoverPosition(position: Int) {
+fun PositionableCover.setCoverPosition(position: Position) {
     desiredState = PositionableCoverState(PositionableCoverValue.OPEN, position)
 }
 
-fun PositionableCover.onStartWorking(f: PositionableCover.() -> Unit) =
+fun PositionableCover.onStartedWorking(f: PositionableCover.() -> Unit) =
     attachObserver {
         if (history[1].attributes.working == Working.NO &&
             attributes.working == Working.YES
@@ -107,7 +110,7 @@ fun PositionableCover.onStartWorking(f: PositionableCover.() -> Unit) =
         }
     }
 
-fun PositionableCover.onStopWorking(f: PositionableCover.() -> Unit) =
+fun PositionableCover.onStoppedWorking(f: PositionableCover.() -> Unit) =
     attachObserver {
         if (history[1].attributes.working == Working.YES &&
             attributes.working == Working.NO
