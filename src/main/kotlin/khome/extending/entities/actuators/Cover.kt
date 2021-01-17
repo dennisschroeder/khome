@@ -54,6 +54,7 @@ data class PositionableCoverState(
     val currentPosition: Position? = null
 ) : State<PositionableCoverValue>
 
+
 enum class PositionableCoverValue {
     @SerializedName("open")
     OPEN,
