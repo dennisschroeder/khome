@@ -47,6 +47,7 @@ internal typealias ActuatorsByApiName = MutableMap<EntityId, ActuatorImpl<*, *>>
 internal typealias ActuatorsByEntity = MutableMap<ActuatorImpl<*, *>, EntityId>
 internal typealias EventHandlerByEventType = MutableMap<EventType, EventSubscription<*>>
 internal typealias HassAPiCommandHistory = MutableMap<EntityId, ServiceCommandImpl<CommandDataWithEntityId>>
+internal typealias ApplicationReadyCallbacks = MutableList<KhomeApplication.() -> Unit>
 
 @OptIn(
     ExperimentalStdlibApi::class,
@@ -67,6 +68,8 @@ internal class KhomeApplicationImpl : KhomeApplication {
     private val hassAPiCommandHistory: HassAPiCommandHistory = mutableMapOf()
 
     private val eventSubscriptionsByEventType: EventHandlerByEventType = mutableMapOf()
+
+    private val applicationReadyCallbacks: ApplicationReadyCallbacks = mutableListOf()
 
     var observerExceptionHandlerFunction: (Throwable) -> Unit = { exception ->
         logger.error(exception) { "Caught exception in observer" }
@@ -165,6 +168,10 @@ internal class KhomeApplicationImpl : KhomeApplication {
         hassApi.sendCommand(commandImpl)
     }
 
+    override fun onApplicationReady(f: KhomeApplication.() -> Unit) {
+        applicationReadyCallbacks.add(f)
+    }
+
     override fun runBlocking() =
         runBlocking {
             hassClient.startSession {
@@ -201,6 +208,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
                 hassEventSubscriber.subscribe()
                 entityStateInitializer.initialize()
                 stateChangeEventSubscriber.subscribe()
+                applicationReadyCallbacks.forEach { it.invoke(this@KhomeApplicationImpl) }
                 eventResponseConsumer.consumeBlocking()
             }
         }
