@@ -117,4 +117,11 @@ interface KhomeApplication {
      * @param parameterBag the parameters to be send with the command
      */
     fun <PB> callService(domain: Domain, service: Service, parameterBag: PB)
+
+    /**
+     * Gets executed when the application did all checks and set all initial states
+     *
+     * @param f the callback function that gets executed on application ready state
+     */
+    fun onApplicationReady(f: KhomeApplication.() -> Unit)
 }
