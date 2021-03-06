@@ -214,6 +214,7 @@ internal class KhomeApplicationImpl : KhomeApplication {
         }
 
     override fun runTesting(block: KhomeTestApplication.() -> Unit) {
+        applicationReadyCallbacks.forEach { it.invoke(this@KhomeApplicationImpl) }
         val testApp = KhomeTestApplicationImpl(
             sensorsByApiName,
             actuatorsByApiName,
