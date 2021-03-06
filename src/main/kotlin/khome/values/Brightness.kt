@@ -9,7 +9,7 @@ data class Brightness private constructor(val value: Int) {
 
     companion object : KhomeTypeAdapter<Brightness> {
         override fun <P> from(value: P): Brightness {
-            return Brightness((value as String).toInt())
+            return Brightness(value as Int)
         }
 
         @Suppress("UNCHECKED_CAST")

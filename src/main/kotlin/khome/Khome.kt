@@ -55,6 +55,7 @@ import khome.values.AppName
 import khome.values.Artist
 import khome.values.Azimuth
 import khome.values.Brightness
+import khome.values.ColorName
 import khome.values.ColorTemperature
 import khome.values.Device
 import khome.values.Domain
@@ -300,11 +301,12 @@ internal fun Khome.registerDefaultTypeAdapter() {
     registerTypeAdapter<ObjectId, String>(ObjectId)
     registerTypeAdapter<Service, String>(Service)
     registerTypeAdapter<Device, String>(Device)
-    registerTypeAdapter<Brightness, String>(Brightness)
+    registerTypeAdapter<Brightness, Int>(Brightness)
     registerTypeAdapter<RGBColor, Array<Int>>(RGBColor)
     registerTypeAdapter<HSColor, Array<Double>>(HSColor)
     registerTypeAdapter<XYColor, Array<Double>>(XYColor)
     registerTypeAdapter<ColorTemperature, Int>(ColorTemperature)
+    registerTypeAdapter<ColorName, String>(ColorName)
     registerTypeAdapter<PowerConsumption, Double>(PowerConsumption)
     registerTypeAdapter<Icon, String>(Icon)
     registerTypeAdapter<PresetMode, String>(PresetMode)
