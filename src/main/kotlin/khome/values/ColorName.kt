@@ -24,3 +24,4 @@ val String.color
 
 val Enum<*>.color
     get() = ColorName.from(this.name)
+
