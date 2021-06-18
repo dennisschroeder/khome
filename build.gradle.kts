@@ -31,7 +31,6 @@ val koinVersion: String by project
 val mockkVersion: String by project
 val jupiterVersion: String by project
 val assertVersion: String by project
-val dataBobVersion: String by project
 val jsonAssertVersion: String by project
 val kotlinLoggingVersion: String by project
 
@@ -54,7 +53,6 @@ dependencies {
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonAssertVersion")
 
-    testImplementation("io.github.daviddenton:databob.kotlin:$dataBobVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
 
