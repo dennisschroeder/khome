@@ -6,6 +6,8 @@ import mu.KotlinLogging
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
+import org.koin.environmentProperties
+import org.koin.fileProperties
 
 /**
  * The Khome encapsulated public Koin context

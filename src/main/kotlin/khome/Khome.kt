@@ -94,7 +94,7 @@ import khome.values.XYColor
 import khome.values.Zone
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.koin.core.inject
+import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.time.Instant

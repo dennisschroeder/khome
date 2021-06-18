@@ -3,7 +3,7 @@ package khome.core.koin
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.Koin
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 @ObsoleteCoroutinesApi
 @KtorExperimentalAPI

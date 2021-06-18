@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.koin.core.get
+import org.koin.core.component.get
 import java.time.Instant
 import java.time.OffsetDateTime
 

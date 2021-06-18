@@ -42,10 +42,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
-    implementation("org.koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-    testImplementation("org.koin:koin-test:$koinVersion") {
+    testImplementation("io.insert-koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
         exclude(group = "junit")
     }

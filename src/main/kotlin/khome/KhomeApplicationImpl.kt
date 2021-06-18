@@ -37,7 +37,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import org.koin.core.inject
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import kotlin.collections.set
 import kotlin.reflect.KClass
