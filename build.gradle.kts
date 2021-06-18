@@ -19,11 +19,10 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenLocal()
+    mavenCentral()
     google()
-    jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
     maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-    jcenter() { url = uri("https://dl.bintray.com/kotlin/dokka") }
 }
 
 val ktorVersion: String by project
