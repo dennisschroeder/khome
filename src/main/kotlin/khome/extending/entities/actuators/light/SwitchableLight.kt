@@ -11,6 +11,9 @@ typealias SwitchableLight = Actuator<SwitchableState, LightAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.SwitchableLight(objectId: ObjectId): SwitchableLight =
-    Light(objectId, ServiceCommandResolver { desiredState ->
-        mapSwitchable(desiredState.value)
-    })
+    Light(
+        objectId,
+        ServiceCommandResolver { desiredState ->
+            mapSwitchable(desiredState.value)
+        }
+    )

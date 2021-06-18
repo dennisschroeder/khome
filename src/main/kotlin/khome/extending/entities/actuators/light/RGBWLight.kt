@@ -23,62 +23,63 @@ typealias RGBWLight = Actuator<RGBWLightState, LightAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.RGBWLight(objectId: ObjectId): RGBWLight =
-    Light(objectId, ServiceCommandResolver { desiredState ->
-        when (desiredState.value) {
-            SwitchableValue.OFF -> {
-                DefaultResolvedServiceCommand(
-                    service = "turn_off".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
-
-            SwitchableValue.ON -> {
-                desiredState.colorTemp?.let {
+    Light(
+        objectId,
+        ServiceCommandResolver { desiredState ->
+            when (desiredState.value) {
+                SwitchableValue.OFF -> {
                     DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBWLightServiceData(
-                            colorTemp = it
-                        )
-                    )
-                } ?: desiredState.hsColor?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBWLightServiceData(
-                            hsColor = it
-                        )
-                    )
-                } ?: desiredState.rgbColor?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBWLightServiceData(
-                            rgbColor = it
-                        )
-                    )
-                } ?: desiredState.brightness?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBWLightServiceData(
-                            brightness = it
-                        )
-                    )
-                } ?: desiredState.xyColor?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBWLightServiceData(
-                            xyColor = it
-                        )
+                        service = "turn_off".service,
+                        serviceData = EntityIdOnlyServiceData()
                     )
                 }
 
-                ?: DefaultResolvedServiceCommand(
-                    service = "turn_on".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
+                SwitchableValue.ON -> {
+                    desiredState.colorTemp?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBWLightServiceData(
+                                colorTemp = it
+                            )
+                        )
+                    } ?: desiredState.hsColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBWLightServiceData(
+                                hsColor = it
+                            )
+                        )
+                    } ?: desiredState.rgbColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBWLightServiceData(
+                                rgbColor = it
+                            )
+                        )
+                    } ?: desiredState.brightness?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBWLightServiceData(
+                                brightness = it
+                            )
+                        )
+                    } ?: desiredState.xyColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBWLightServiceData(
+                                xyColor = it
+                            )
+                        )
+                    } ?: DefaultResolvedServiceCommand(
+                        service = "turn_on".service,
+                        serviceData = EntityIdOnlyServiceData()
+                    )
+                }
 
-            SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+                SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+            }
         }
-    })
+    )
 
 data class RGBWLightServiceData(
     private val brightness: Brightness? = null,

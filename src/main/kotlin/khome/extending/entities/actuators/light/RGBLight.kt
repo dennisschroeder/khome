@@ -22,55 +22,56 @@ typealias RGBLight = Actuator<RGBLightState, LightAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.RGBLight(objectId: ObjectId): RGBLight =
-    Light(objectId, ServiceCommandResolver { desiredState ->
-        when (desiredState.value) {
-            SwitchableValue.OFF -> {
-                DefaultResolvedServiceCommand(
-                    service = "turn_off".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
-
-            SwitchableValue.ON -> {
-                desiredState.hsColor?.let {
+    Light(
+        objectId,
+        ServiceCommandResolver { desiredState ->
+            when (desiredState.value) {
+                SwitchableValue.OFF -> {
                     DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBLightServiceData(
-                            hsColor = it
-                        )
-                    )
-                } ?: desiredState.rgbColor?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBLightServiceData(
-                            rgbColor = it
-                        )
-                    )
-                } ?: desiredState.brightness?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBLightServiceData(
-                            brightness = it
-                        )
-                    )
-                } ?: desiredState.xyColor?.let {
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = RGBLightServiceData(
-                            xyColor = it
-                        )
+                        service = "turn_off".service,
+                        serviceData = EntityIdOnlyServiceData()
                     )
                 }
 
-                ?: DefaultResolvedServiceCommand(
-                    service = "turn_on".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
+                SwitchableValue.ON -> {
+                    desiredState.hsColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBLightServiceData(
+                                hsColor = it
+                            )
+                        )
+                    } ?: desiredState.rgbColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBLightServiceData(
+                                rgbColor = it
+                            )
+                        )
+                    } ?: desiredState.brightness?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBLightServiceData(
+                                brightness = it
+                            )
+                        )
+                    } ?: desiredState.xyColor?.let {
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = RGBLightServiceData(
+                                xyColor = it
+                            )
+                        )
+                    } ?: DefaultResolvedServiceCommand(
+                        service = "turn_on".service,
+                        serviceData = EntityIdOnlyServiceData()
+                    )
+                }
 
-            SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+                SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+            }
         }
-    })
+    )
 
 data class RGBLightServiceData(
     private val brightness: Brightness? = null,

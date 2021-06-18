@@ -4,12 +4,12 @@ import khome.KhomeApplication
 import khome.communicating.DesiredServiceData
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
 import khome.values.ColorName
 import khome.values.ColorTemperature
+import khome.values.EntityId
 import khome.values.FriendlyName
 import khome.values.ObjectId
 import khome.values.UserId

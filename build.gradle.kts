@@ -120,7 +120,7 @@ detekt {
 }
 
 ktlint {
-    version.set("0.22.0")
+    version.set("0.41.0")
     ignoreFailures.set(false)
 }
 

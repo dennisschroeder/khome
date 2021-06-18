@@ -2,9 +2,9 @@ package khome.extending.entities.sensors.binary
 
 import khome.KhomeApplication
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Sensor
+import khome.values.EntityId
 import khome.values.ObjectId
 import khome.values.domain
 

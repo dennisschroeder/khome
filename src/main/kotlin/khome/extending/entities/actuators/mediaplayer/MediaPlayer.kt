@@ -3,10 +3,10 @@ package khome.extending.entities.actuators.mediaplayer
 import khome.KhomeApplication
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.EntityId
 import khome.values.ObjectId
 import khome.values.domain
 
