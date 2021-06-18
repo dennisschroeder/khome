@@ -1,5 +1,4 @@
 
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -63,8 +62,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks {
-    val dokka by getting(DokkaTask::class)
-
     dokka {
         outputFormat = "html"
         outputDirectory = "$rootDir/docs"
@@ -74,7 +71,7 @@ tasks {
 defaultTasks("dokka")
 
 val sourcesJar by tasks.registering(Jar::class) {
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
@@ -104,9 +101,9 @@ tasks {
 
     jacocoTestReport {
         reports {
-            xml.isEnabled = true
-            csv.isEnabled = false
-            html.isEnabled = true
+            xml.required.set(true)
+            csv.required.set(false)
+            html.required.set(true)
         }
     }
 }
