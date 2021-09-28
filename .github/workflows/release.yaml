@@ -10,7 +10,7 @@ jobs:
     steps:
 
       - name: Checkout master
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Run tests and lint the code
         run: ./gradlew --no-daemon clean check
