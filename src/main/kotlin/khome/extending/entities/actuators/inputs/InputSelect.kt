@@ -21,14 +21,17 @@ typealias InputSelect = Actuator<InputSelectState, InputSelectAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.InputSelect(objectId: ObjectId): InputSelect =
-    Actuator(EntityId.fromPair("input_select".domain to objectId), ServiceCommandResolver { desiredState ->
-        DefaultResolvedServiceCommand(
-            service = "select_option".service,
-            serviceData = InputSelectServiceData(
-                desiredState.value
+    Actuator(
+        EntityId.fromPair("input_select".domain to objectId),
+        ServiceCommandResolver { desiredState ->
+            DefaultResolvedServiceCommand(
+                service = "select_option".service,
+                serviceData = InputSelectServiceData(
+                    desiredState.value
+                )
             )
-        )
-    })
+        }
+    )
 
 data class InputSelectAttributes(
     val options: List<Option>,

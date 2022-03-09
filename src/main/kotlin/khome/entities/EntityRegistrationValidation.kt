@@ -59,7 +59,7 @@ internal class EntityRegistrationValidation(
             
             ################ ERROR #################
             
-        """.trimIndent()
+            """.trimIndent()
         }
 
         throw EntityRegistrationValidationException("Entity registration validation failed!")

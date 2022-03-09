@@ -21,14 +21,17 @@ typealias InputDateTime = Actuator<InputDateTimeState, InputDateTimeAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.InputDateTime(objectId: ObjectId): InputDateTime =
-    Actuator(EntityId.fromPair("input_datetime".domain to objectId), ServiceCommandResolver { desiredState ->
-        DefaultResolvedServiceCommand(
-            service = "set_datetime".service,
-            serviceData = InputDateTimeServiceData(
-                desiredState.value
+    Actuator(
+        EntityId.fromPair("input_datetime".domain to objectId),
+        ServiceCommandResolver { desiredState ->
+            DefaultResolvedServiceCommand(
+                service = "set_datetime".service,
+                serviceData = InputDateTimeServiceData(
+                    desiredState.value
+                )
             )
-        )
-    })
+        }
+    )
 
 data class InputDateTimeState(override val value: LocalDateTime) : State<LocalDateTime>
 
