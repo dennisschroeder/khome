@@ -31,6 +31,7 @@ val assertVersion: String by project
 val dataBobVersion: String by project
 val jsonAssertVersion: String by project
 val kotlinLoggingVersion: String by project
+val slf4jVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -40,7 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
     implementation("io.insert-koin:koin-core:$koinVersion")
-    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
