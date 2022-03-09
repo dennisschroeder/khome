@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.6.10"
     `maven-publish`
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
@@ -63,15 +63,14 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks {
-    val dokka by getting(DokkaTask::class)
+    val dokkaHtml by getting(DokkaTask::class)
 
-    dokka {
-        outputFormat = "html"
-        outputDirectory = "$rootDir/docs"
+    dokkaHtml {
+        outputDirectory.set(rootDir.resolve("docs"))
     }
 }
 
-defaultTasks("dokka")
+defaultTasks("dokkaHtml")
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
