@@ -27,7 +27,7 @@ val ktorVersion: String by project
 val koinVersion: String by project
 val mockkVersion: String by project
 val jupiterVersion: String by project
-val assertVersion: String by project
+val assertKVersion: String by project
 val dataBobVersion: String by project
 val jsonAssertVersion: String by project
 val kotlinLoggingVersion: String by project
@@ -49,7 +49,7 @@ dependencies {
     }
     testImplementation("io.mockk:mockk:$mockkVersion")
     implementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonAssertVersion")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
