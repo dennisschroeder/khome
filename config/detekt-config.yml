@@ -5,6 +5,9 @@ console-reports:
     - 'ComplexityReport'
     - 'NotificationReport'
 
+build:
+  maxIssues: 10 # break the build if more than ten weighted issues are found
+
 # disabled rule-sets
 comments:
   active: false

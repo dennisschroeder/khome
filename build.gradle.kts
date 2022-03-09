@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "1.4.30"
     id("org.jetbrains.dokka") version "0.10.1"
     `maven-publish`
-    id("io.gitlab.arturbosch.detekt") version "1.9.1"
+    id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
@@ -20,10 +20,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 repositories {
     mavenLocal()
     google()
-    jcenter()
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
-    maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-    jcenter() { url = uri("https://dl.bintray.com/kotlin/dokka") }
+    mavenCentral()
 }
 
 val ktorVersion: String by project
@@ -42,10 +39,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
-    implementation("org.koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-    testImplementation("org.koin:koin-test:$koinVersion") {
+    testImplementation("io.insert-koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
         exclude(group = "junit")
     }
@@ -54,7 +51,6 @@ dependencies {
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonAssertVersion")
 
-    testImplementation("io.github.daviddenton:databob.kotlin:$dataBobVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
 
