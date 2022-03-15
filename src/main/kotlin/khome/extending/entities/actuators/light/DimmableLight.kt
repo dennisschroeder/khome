@@ -19,39 +19,42 @@ typealias DimmableLight = Actuator<DimmableLightState, LightAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.DimmableLight(objectId: ObjectId): DimmableLight =
-    Light(objectId, ServiceCommandResolver { desiredState ->
-        when (desiredState.value) {
-            SwitchableValue.OFF -> {
-                val resolvedServiceCommand: ResolvedServiceCommand = desiredState.brightness?.let { brightness ->
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = DimmableLightServiceData(
-                            brightness
+    Light(
+        objectId,
+        ServiceCommandResolver { desiredState ->
+            when (desiredState.value) {
+                SwitchableValue.OFF -> {
+                    val resolvedServiceCommand: ResolvedServiceCommand = desiredState.brightness?.let { brightness ->
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = DimmableLightServiceData(
+                                brightness
+                            )
                         )
+                    } ?: DefaultResolvedServiceCommand(
+                        service = "turn_off".service,
+                        serviceData = EntityIdOnlyServiceData()
                     )
-                } ?: DefaultResolvedServiceCommand(
-                    service = "turn_off".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-                resolvedServiceCommand
-            }
-            SwitchableValue.ON -> {
-                desiredState.brightness?.let { brightness ->
-                    DefaultResolvedServiceCommand(
-                        service = "turn_on".service,
-                        serviceData = DimmableLightServiceData(
-                            brightness
+                    resolvedServiceCommand
+                }
+                SwitchableValue.ON -> {
+                    desiredState.brightness?.let { brightness ->
+                        DefaultResolvedServiceCommand(
+                            service = "turn_on".service,
+                            serviceData = DimmableLightServiceData(
+                                brightness
+                            )
                         )
+                    } ?: DefaultResolvedServiceCommand(
+                        service = "turn_on".service,
+                        serviceData = EntityIdOnlyServiceData()
                     )
-                } ?: DefaultResolvedServiceCommand(
-                    service = "turn_on".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
+                }
 
-            SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+                SwitchableValue.UNAVAILABLE -> throw IllegalStateException("State cannot be changed to UNAVAILABLE")
+            }
         }
-    })
+    )
 
 data class DimmableLightState(override val value: SwitchableValue, val brightness: Brightness? = null) : State<SwitchableValue>
 

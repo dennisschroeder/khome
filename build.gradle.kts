@@ -4,10 +4,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.6.10"
     `maven-publish`
-    id("io.gitlab.arturbosch.detekt") version "1.9.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
+    id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
     id("com.github.dawnwords.jacoco.badge") version "0.2.0"
@@ -20,20 +20,18 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 repositories {
     mavenLocal()
     google()
-    jcenter()
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
-    maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-    jcenter() { url = uri("https://dl.bintray.com/kotlin/dokka") }
+    mavenCentral()
 }
 
 val ktorVersion: String by project
 val koinVersion: String by project
 val mockkVersion: String by project
 val jupiterVersion: String by project
-val assertVersion: String by project
+val assertKVersion: String by project
 val dataBobVersion: String by project
 val jsonAssertVersion: String by project
 val kotlinLoggingVersion: String by project
+val slf4jVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -42,19 +40,18 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-    testImplementation("org.koin:koin-test:$koinVersion") {
+    testImplementation("io.insert-koin:koin-test:$koinVersion") {
         exclude(group = "org.mockito")
         exclude(group = "junit")
     }
     testImplementation("io.mockk:mockk:$mockkVersion")
     implementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertVersion")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
     testImplementation("org.skyscreamer:jsonassert:$jsonAssertVersion")
 
-    testImplementation("io.github.daviddenton:databob.kotlin:$dataBobVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
 
@@ -66,15 +63,14 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks {
-    val dokka by getting(DokkaTask::class)
+    val dokkaHtml by getting(DokkaTask::class)
 
-    dokka {
-        outputFormat = "html"
-        outputDirectory = "$rootDir/docs"
+    dokkaHtml {
+        outputDirectory.set(rootDir.resolve("docs"))
     }
 }
 
-defaultTasks("dokka")
+defaultTasks("dokkaHtml")
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
@@ -120,7 +116,7 @@ detekt {
 }
 
 ktlint {
-    version.set("0.22.0")
+    version.set("0.44.0")
     ignoreFailures.set(false)
 }
 

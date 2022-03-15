@@ -4,10 +4,10 @@ import khome.KhomeApplication
 import khome.communicating.DefaultResolvedServiceCommand
 import khome.communicating.ServiceCommandResolver
 import khome.entities.Attributes
-import khome.values.EntityId
 import khome.entities.State
 import khome.entities.devices.Actuator
 import khome.extending.entities.Actuator
+import khome.values.EntityId
 import khome.values.FriendlyName
 import khome.values.Max
 import khome.values.Min
@@ -22,14 +22,17 @@ typealias InputText = Actuator<InputTextState, InputTextAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.InputText(objectId: ObjectId): InputText =
-    Actuator(EntityId.fromPair("input_text".domain to objectId), ServiceCommandResolver { desiredState ->
-        DefaultResolvedServiceCommand(
-            service = "set_value".service,
-            serviceData = SettableStateValueServiceData(
-                desiredState.value
+    Actuator(
+        EntityId.fromPair("input_text".domain to objectId),
+        ServiceCommandResolver { desiredState ->
+            DefaultResolvedServiceCommand(
+                service = "set_value".service,
+                serviceData = SettableStateValueServiceData(
+                    desiredState.value
+                )
             )
-        )
-    })
+        }
+    )
 
 data class InputTextState(override val value: String) : State<String>
 

@@ -4,7 +4,7 @@ import khome.KhomeSession
 import khome.communicating.CALLER_ID
 import mu.KotlinLogging
 
-internal class ServiceStoreInitializerImpl (
+internal class ServiceStoreInitializerImpl(
     private val khomeSession: KhomeSession,
     private val serviceStore: ServiceStoreInterface
 ) : ServiceStoreInitializer {

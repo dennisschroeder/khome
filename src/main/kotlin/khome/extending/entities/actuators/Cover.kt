@@ -30,24 +30,27 @@ inline fun <reified S : State<*>, reified A : Attributes> KhomeApplication.Cover
 
 @Suppress("FunctionName")
 fun KhomeApplication.PositionableCover(objectId: ObjectId): PositionableCover =
-    Cover(objectId, ServiceCommandResolver { state ->
-        when (state.value) {
-            PositionableCoverValue.OPEN -> state.currentPosition?.let { position ->
-                DefaultResolvedServiceCommand(
-                    service = "set_cover_position".service,
-                    serviceData = PositionableCoverServiceData(position)
+    Cover(
+        objectId,
+        ServiceCommandResolver { state ->
+            when (state.value) {
+                PositionableCoverValue.OPEN -> state.currentPosition?.let { position ->
+                    DefaultResolvedServiceCommand(
+                        service = "set_cover_position".service,
+                        serviceData = PositionableCoverServiceData(position)
+                    )
+                } ?: DefaultResolvedServiceCommand(
+                    service = "open_cover".service,
+                    serviceData = EntityIdOnlyServiceData()
                 )
-            } ?: DefaultResolvedServiceCommand(
-                service = "open_cover".service,
-                serviceData = EntityIdOnlyServiceData()
-            )
 
-            PositionableCoverValue.CLOSED -> DefaultResolvedServiceCommand(
-                service = "close_cover".service,
-                serviceData = EntityIdOnlyServiceData()
-            )
+                PositionableCoverValue.CLOSED -> DefaultResolvedServiceCommand(
+                    service = "close_cover".service,
+                    serviceData = EntityIdOnlyServiceData()
+                )
+            }
         }
-    })
+    )
 
 data class PositionableCoverState(
     override val value: PositionableCoverValue,

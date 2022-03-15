@@ -9,12 +9,12 @@ import khome.SensorsByApiName
 import khome.communicating.HassApiClient
 import khome.core.boot.statehandling.flattenStateAttributes
 import khome.core.koin.KhomeKoinContext
-import khome.core.mapping.fromJson
 import khome.core.mapping.ObjectMapperInterface
+import khome.core.mapping.fromJson
 import khome.entities.ActuatorStateUpdater
-import khome.values.EntityId
 import khome.entities.SensorStateUpdater
 import khome.entities.devices.Actuator
+import khome.values.EntityId
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.koin.dsl.module

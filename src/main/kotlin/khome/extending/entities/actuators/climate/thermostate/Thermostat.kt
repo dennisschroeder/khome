@@ -27,33 +27,36 @@ typealias Thermostat = Actuator<ThermostatState, ThermostatAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.Thermostat(objectId: ObjectId): Thermostat {
-    return ClimateControl(objectId, ServiceCommandResolver { desiredState ->
-        when (desiredState.value) {
-            ThermostatStateValue.OFF -> {
-                DefaultResolvedServiceCommand(
-                    service = "turn_off".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
-            }
+    return ClimateControl(
+        objectId,
+        ServiceCommandResolver { desiredState ->
+            when (desiredState.value) {
+                ThermostatStateValue.OFF -> {
+                    DefaultResolvedServiceCommand(
+                        service = "turn_off".service,
+                        serviceData = EntityIdOnlyServiceData()
+                    )
+                }
 
-            ThermostatStateValue.HEAT -> {
-                desiredState.temperature?.let { temperature ->
-                    DefaultResolvedServiceCommand(
-                        service = "set_temperature".service,
-                        serviceData = ThermostatServiceData(temperature, hvacMode = "heat".hvacMode)
+                ThermostatStateValue.HEAT -> {
+                    desiredState.temperature?.let { temperature ->
+                        DefaultResolvedServiceCommand(
+                            service = "set_temperature".service,
+                            serviceData = ThermostatServiceData(temperature, hvacMode = "heat".hvacMode)
+                        )
+                    } ?: (if (desiredState.presetMode.isNone) null else desiredState.presetMode)?.let { preset ->
+                        DefaultResolvedServiceCommand(
+                            service = "set_preset_mode".service,
+                            serviceData = ThermostatServiceData(presetMode = preset)
+                        )
+                    } ?: DefaultResolvedServiceCommand(
+                        service = "turn_on".service,
+                        serviceData = EntityIdOnlyServiceData()
                     )
-                } ?: (if (desiredState.presetMode.isNone) null else desiredState.presetMode)?.let { preset ->
-                    DefaultResolvedServiceCommand(
-                        service = "set_preset_mode".service,
-                        serviceData = ThermostatServiceData(presetMode = preset)
-                    )
-                } ?: DefaultResolvedServiceCommand(
-                    service = "turn_on".service,
-                    serviceData = EntityIdOnlyServiceData()
-                )
+                }
             }
         }
-    })
+    )
 }
 
 data class ThermostatState(

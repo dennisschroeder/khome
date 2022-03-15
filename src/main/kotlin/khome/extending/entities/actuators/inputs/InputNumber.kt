@@ -24,14 +24,17 @@ typealias InputNumber = Actuator<InputNumberState, InputNumberAttributes>
 
 @Suppress("FunctionName")
 fun KhomeApplication.InputNumber(objectId: ObjectId): InputNumber =
-    Actuator(EntityId.fromPair("input_number".domain to objectId), ServiceCommandResolver { desiredState ->
-        DefaultResolvedServiceCommand(
-            service = "set_value".service,
-            serviceData = SettableStateValueServiceData(
-                desiredState.value
+    Actuator(
+        EntityId.fromPair("input_number".domain to objectId),
+        ServiceCommandResolver { desiredState ->
+            DefaultResolvedServiceCommand(
+                service = "set_value".service,
+                serviceData = SettableStateValueServiceData(
+                    desiredState.value
+                )
             )
-        )
-    })
+        }
+    )
 
 data class InputNumberState(override val value: Double) : State<Double>
 

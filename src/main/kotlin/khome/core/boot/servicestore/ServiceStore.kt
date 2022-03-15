@@ -11,7 +11,8 @@ interface ServiceStoreInterface {
     fun clear()
 }
 
-internal class ServiceStore : Iterable<MutableMap.MutableEntry<String, List<String>>>,
+internal class ServiceStore :
+    Iterable<MutableMap.MutableEntry<String, List<String>>>,
     ServiceStoreInterface {
     override val list = ConcurrentHashMap<String, List<String>>()
     override operator fun iterator() = list.iterator()
