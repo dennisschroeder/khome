@@ -16,7 +16,7 @@ jobs:
         run: ./gradlew --no-daemon clean check
 
       - name: Create Github Release
-        uses: codfish/semantic-release-action@v1
+        uses: codfish/semantic-release-action@v2
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
