@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "1.4.30"
     id("org.jetbrains.dokka") version "1.6.10"
     `maven-publish`
-    id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     jacoco
